@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C3 / C6 — Tap · LongPress · Drag</title>
+<style>
+  :root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--fg:#e6edf3;--dim:#8b949e;
+        --ok:#3fb950;--warn:#d29922;--bad:#f85149;--accent:#58a6ff;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;height:100dvh;overflow:hidden}
+  body{display:flex;flex-direction:column}
+
+  #guide{flex:0 0 auto;background:var(--panel);border-bottom:1px solid var(--line);padding:8px 10px}
+  #gTop{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}
+  #gStep{font-size:11px;color:var(--dim)}
+  #gCfg{font-size:11px;color:var(--accent);text-align:right}
+  #gAction{font-size:15px;font-weight:700;line-height:1.3}
+  #gWhy{font-size:11px;color:var(--dim);margin-top:3px}
+  #gProg{display:flex;gap:4px;align-items:center;margin-top:7px;flex-wrap:wrap}
+  .dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);flex:0 0 auto}
+  .dot.done{background:var(--ok);border-color:var(--ok)}
+  .btn{background:transparent;color:var(--fg);border:1px solid var(--line);
+       border-radius:5px;padding:6px 10px;font:inherit}
+  .btn.primary{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:700}
+  .btn:disabled{color:var(--dim);opacity:.45}
+  #gNav{display:flex;gap:6px;margin-top:7px}
+  #devLabel{flex:1;min-width:0;background:#0a0e14;border:1px solid var(--line);
+            color:var(--fg);border-radius:5px;padding:6px 8px;font:inherit}
+
+  #stage{flex:0 0 26dvh;display:flex;align-items:center;justify-content:center;
+         border-bottom:1px solid var(--line);background:#0a0e14;padding:10px;overflow:hidden}
+  #card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+        padding:16px 14px;width:100%;max-width:420px;will-change:transform}
+  #card.active{border-color:var(--accent);background:#1c2b3a}
+  #card p{margin:0 0 10px;color:var(--fg)}
+  #child{background:#1f6feb;color:#fff;border:0;border-radius:6px;
+         padding:10px 14px;font:inherit;font-weight:700}
+
+  #panel{flex:1 1 auto;overflow-y:auto;padding:8px 10px 40px}
+  #verdict{border:1px solid var(--line);border-radius:6px;padding:8px;
+           margin-bottom:8px;background:var(--panel)}
+  #chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px}
+  .chip{border:1px solid var(--line);border-radius:4px;padding:2px 6px;font-size:11px;color:var(--dim)}
+  .chip.hit{border-color:var(--ok);color:var(--ok);font-weight:700}
+  .chip.bad{border-color:var(--bad);color:var(--bad);font-weight:700}
+  #vNote{font-size:11px;color:var(--dim)}
+  .row{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
+  .row .k{color:var(--dim)}.row .v{text-align:right}
+  hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+  h3{font-size:11px;color:var(--dim);margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em}
+  #log{max-height:130px;overflow-y:auto}
+  #log div{white-space:pre;color:var(--dim)}
+  #log div.cancel{color:var(--bad);font-weight:700}
+  #log div.down{color:var(--accent)}
+  #log div.native{color:var(--warn)}
+  #hist div{padding:3px 0;border-bottom:1px solid var(--line);white-space:pre-wrap}
+  #busy{color:var(--warn)}
+</style>
+</head>
+<body>
+
+<div id="guide">
+  <div id="gTop"><span id="gStep">—</span><span id="gCfg">—</span></div>
+  <div id="gAction">—</div>
+  <div id="gWhy">—</div>
+  <div id="gProg"></div>
+  <div id="gNav">
+    <button class="btn" id="prevBtn">◀ prev</button>
+    <button class="btn primary" id="nextBtn">next ▶</button>
+    <input id="devLabel" placeholder="device">
+  </div>
+</div>
+
+<div id="stage">
+  <div id="card">
+    <p>Drag me. This sentence is selectable text.</p>
+    <button id="child">Child button</button>
+  </div>
+</div>
+
+<div id="panel">
+  <div id="verdict">
+    <div id="chips"></div>
+    <div id="vNote">Follow the instruction. Verdict appears 700 ms after release.</div>
+  </div>
+
+  <h3>live <span id="busy"></span></h3>
+  <div class="row"><span class="k">duration</span><span class="v" id="mDur">—</span></div>
+  <div class="row"><span class="k">distance</span><span class="v" id="mDist">—</span></div>
+  <div class="row"><span class="k">max distance</span><span class="v" id="mMax">—</span></div>
+  <div class="row"><span class="k">click delay</span><span class="v" id="mClick">—</span></div>
+  <div class="row"><span class="k">contextmenu at</span><span class="v" id="mCtx">—</span></div>
+  <div class="row"><span class="k">selected chars</span><span class="v" id="mSel">—</span></div>
+  <div class="row"><span class="k">pointermove count</span><span class="v" id="mMoves">—</span></div>
+
+  <hr><h3>event log</h3><div id="log"></div>
+  <hr><h3>results <span id="hCount"></span></h3>
+  <div style="display:flex;gap:6px;margin-bottom:6px">
+    <button class="btn" id="copyBtn">copy all results</button>
+    <button class="btn" id="undoBtn">undo last</button>
+    <button class="btn" id="clearBtn">clear</button>
+  </div>
+  <div id="hist"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= protocol ================= */
+var STEPS = [
+  {reps:5, sel:'auto', callout:'default', target:'card',
+   act:'카드를 탭하세요 (절대 움직이지 말 것)',
+   why:'기준선 — 정지 탭에서 click이 나오는지'},
+  {reps:5, sel:'auto', callout:'default', target:'card',
+   act:'탭하되 손가락을 아주 조금(5px쯤) 움직이세요',
+   why:'미세 이동에서도 click이 유지되는지'},
+  {reps:5, sel:'auto', callout:'default', target:'card',
+   act:'20~30px 정도 움직이고 떼세요',
+   why:'브라우저가 click을 취소하는 지점'},
+  {reps:5, sel:'auto', callout:'default', target:'card',
+   act:'150px 이상 크게 드래그하고 떼세요',
+   why:'드래그 후 click이 발생하는지 (embla #24)'},
+  {reps:3, sel:'auto', callout:'default', target:'child',
+   act:'파란 버튼을 그냥 탭하세요',
+   why:'기준선 — 자식 요소가 click을 받는지'},
+  {reps:5, sel:'auto', callout:'default', target:'child',
+   act:'파란 버튼에서 시작해 150px 드래그하고 떼세요',
+   why:'드래그 후 자식 click이 발생하는지 (motion #363)'},
+  {reps:5, sel:'auto', callout:'default', target:'card',
+   act:'움직이지 말고 1초 이상 꾹 누르고 떼세요',
+   why:'네이티브 롱프레스 — contextmenu / 선택 콜아웃'},
+  {reps:5, sel:'none', callout:'none', target:'card',
+   act:'다시 1초 이상 꾹 누르고 떼세요',
+   why:'user-select:none + touch-callout:none 이 막아주는지'},
+  {reps:5, sel:'none', callout:'none', target:'card',
+   act:'1초 꾹 누른 뒤, 손 떼지 말고 100px 드래그',
+   why:'롱프레스 후에도 드래그가 살아있는지'},
+  {reps:6, sel:'none', callout:'none', target:'card',
+   act:'빠르게 두 번씩 탭하세요 (3세트 = 6회)',
+   why:'더블탭에서 dblclick / 확대가 일어나는지'}
+];
+
+var si=0, results=[], counts={}, TAIL=700;
+
+var card=document.getElementById('card');
+var child=document.getElementById('child');
+var logEl=document.getElementById('log');
+var histEl=document.getElementById('hist');
+var cooldown=false;
+
+/* ---------- device ---------- */
+var autoDev='detecting…';
+(function detect(){
+  var ua=navigator.userAgent, mtp=navigator.maxTouchPoints||0;
+  var scr=screen.width+'×'+screen.height+'@'+(window.devicePixelRatio||1);
+  var isIPad=/Macintosh/.test(ua)&&mtp>1, os, ver='', m;
+  if(/iPhone|iPod/.test(ua)){os='iOS'; if((m=ua.match(/OS (\d+[_\d]*)/)))ver=m[1].replace(/_/g,'.');}
+  else if(/iPad/.test(ua)||isIPad){os='iPadOS'; if((m=ua.match(/OS (\d+[_\d]*)/)))ver=m[1].replace(/_/g,'.');}
+  else if(/Android/.test(ua)){os='Android'; if((m=ua.match(/Android (\d+(?:\.\d+)?)/)))ver=m[1];}
+  else if(/Macintosh/.test(ua)){os='macOS';} else if(/Windows/.test(ua)){os='Windows';} else {os='other';}
+  var br='?',bv='',b;
+  if((b=ua.match(/CriOS\/(\d+)/))){br='Chrome-iOS';bv=b[1];}
+  else if((b=ua.match(/Edg\/(\d+)/))){br='Edge';bv=b[1];}
+  else if((b=ua.match(/Chrome\/(\d+)/))){br='Chrome';bv=b[1];}
+  else if((b=ua.match(/Firefox\/(\d+)/))){br='Firefox';bv=b[1];}
+  else if((b=ua.match(/Version\/(\d+\.\d+)[^ ]* Safari/))){br='Safari';bv=b[1];}
+  else if(/Safari/.test(ua)){br='Safari';}
+  function build(model){
+    return [os+(ver?' '+ver:''), br+(bv?' '+bv:''), model||null, scr, 'touch='+mtp]
+           .filter(Boolean).join(' / ');
+  }
+  function done(s){ autoDev=s; var el=document.getElementById('devLabel');
+    if(!el.value) el.value=s; log('device: '+s); }
+  if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+    navigator.userAgentData.getHighEntropyValues(['platform','platformVersion','model'])
+      .then(function(h){ if(h.platform)os=h.platform;
+        if(h.platformVersion)ver=String(h.platformVersion).replace(/(\.0)+$/,'');
+        done(build(h.model||'')); }).catch(function(){ done(build('')); });
+  } else { done(build(isIPad?'iPad (Mac-UA)':'')); }
+})();
+
+/* ---------- step control ---------- */
+function applyStep(){
+  var s=STEPS[si];
+  card.style.touchAction='none';
+  card.style.userSelect=s.sel; card.style.webkitUserSelect=s.sel;
+  card.style.webkitTouchCallout=s.callout==='none'?'none':'';
+  document.getElementById('gCfg').textContent=
+    'touch-action: none · user-select: '+s.sel+
+    (s.callout==='none'?' · callout: none':'');
+}
+function renderStep(){
+  var s=STEPS[si]; applyStep();
+  document.getElementById('gStep').textContent='STEP '+(si+1)+' / '+STEPS.length+
+    '   target: '+(s.target==='child'?'파란 버튼':'카드');
+  document.getElementById('gAction').textContent=s.act;
+  document.getElementById('gWhy').textContent=s.why;
+  child.style.outline = s.target==='child' ? '2px solid var(--warn)' : '';
+  var done=counts[si]||0, p=document.getElementById('gProg'); p.innerHTML='';
+  for(var k=0;k<s.reps;k++){ var d=document.createElement('div');
+    d.className='dot'+(k<done?' done':''); p.appendChild(d); }
+  var lbl=document.createElement('span'); lbl.style.color='var(--dim)'; lbl.style.marginLeft='4px';
+  lbl.textContent=done+' / '+s.reps+(done>=s.reps?'  ✓ 완료 — next':'');
+  p.appendChild(lbl);
+  document.getElementById('prevBtn').disabled=si===0;
+  document.getElementById('nextBtn').disabled=si===STEPS.length-1;
+  log('--- STEP '+(si+1)+'  select='+s.sel+' callout='+s.callout+' ---');
+}
+document.getElementById('nextBtn').onclick=function(){ if(si<STEPS.length-1){si++;renderStep();} };
+document.getElementById('prevBtn').onclick=function(){ if(si>0){si--;renderStep();} };
+
+/* ---------- logging ---------- */
+var t0=0;
+function log(m,c){ var d=document.createElement('div'); d.textContent=m; if(c)d.className=c;
+  logEl.appendChild(d); logEl.scrollTop=logEl.scrollHeight;
+  while(logEl.childNodes.length>160) logEl.removeChild(logEl.firstChild); }
+function rel(){ return String(Math.round(performance.now()-t0)).padStart(5,' '); }
+function set(id,v){ document.getElementById(id).textContent=v; }
+
+/* ---------- gesture ---------- */
+var S=null, pending=null, tailTimer=null;
+
+card.addEventListener('pointerdown', onDown);
+
+function onDown(e){
+  if(cooldown){ log('cooldown — 팝업을 닫고 다시 시도'); return; }
+  if(pending){ settle(pending); }           // 이전 제스처 즉시 마감 (더블탭 대응)
+  if(S) return;
+  if(tailTimer){ clearTimeout(tailTimer); tailTimer=null; }
+  t0=performance.now(); logEl.innerHTML='';
+  try{ window.getSelection().removeAllRanges(); }catch(err){}
+
+  S={id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, dy:0, max:0,
+     moves:0, drag:false, start:performance.now(), step:si,
+     onChild: e.target===child || child.contains(e.target),
+     f:{click:false, childClick:false, ctx:false, dbl:false, sel:false, cancel:false},
+     clickAt:null, ctxAt:null, selChars:0};
+
+  set('mDur','—'); set('mDist','—'); set('mMax','0.0px');
+  set('mClick','—'); set('mCtx','—'); set('mSel','—'); set('mMoves','0');
+  document.getElementById('busy').textContent='';
+  renderChips(null);
+  document.getElementById('vNote').textContent='… in progress';
+  log(rel()+' pointerdown   target='+(S.onChild?'child':'card'),'down');
+
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onCancel);
+}
+
+function onMove(e){
+  if(!S||e.pointerId!==S.id) return;
+  S.moves++; S.dx=e.clientX-S.x0; S.dy=e.clientY-S.y0;
+  var d=Math.hypot(S.dx,S.dy); if(d>S.max)S.max=d;
+  set('mDur', Math.round(performance.now()-S.start)+'ms');
+  set('mDist', d.toFixed(1)+'px'); set('mMax', S.max.toFixed(1)+'px');
+  set('mMoves', String(S.moves));
+  if(!S.drag && d>=8){ S.drag=true; card.classList.add('active');
+    log(rel()+' DRAG ACTIVE   d='+d.toFixed(1)+'px'); }
+  if(S.drag) card.style.transform='translate('+S.dx+'px,'+S.dy+'px)';
+  if(S.moves<=5||S.moves%15===0) log(rel()+' pointermove   d='+d.toFixed(1)+'px');
+}
+function onUp(e){ if(!S||e.pointerId!==S.id)return; log(rel()+' pointerup'); finish(); }
+function onCancel(e){ if(!S||e.pointerId!==S.id)return; S.f.cancel=true;
+  log(rel()+' POINTERCANCEL','cancel'); finish(); }
+
+/* ---------- native events under observation ---------- */
+card.addEventListener('click', function(e){
+  var g=S||pending; if(!g) return;
+  if(e.target===child||child.contains(e.target)) return;
+  g.f.click=true; g.clickAt=Math.round(performance.now()-g.start);
+  set('mClick', g.clickAt+'ms'); log(rel()+' click','native');
+});
+child.addEventListener('click', function(e){
+  var g=S||pending; if(!g) return;
+  g.f.childClick=true; g.clickAt=Math.round(performance.now()-g.start);
+  set('mClick', g.clickAt+'ms (child)'); log(rel()+' click on CHILD','native');
+});
+card.addEventListener('contextmenu', function(){
+  var g=S||pending; if(!g) return;
+  g.f.ctx=true; g.ctxAt=Math.round(performance.now()-g.start);
+  set('mCtx', g.ctxAt+'ms'); log(rel()+' contextmenu','native');
+});
+card.addEventListener('dblclick', function(){
+  var g=S||pending; if(!g) return; g.f.dbl=true; log(rel()+' dblclick','native');
+});
+document.addEventListener('selectstart', function(){
+  var g=S||pending; if(!g) return; g.f.sel=true; log(rel()+' selectstart','native');
+});
+
+/* ---------- finish ---------- */
+function finish(){
+  pending=S; S=null;
+  pending.endAt=performance.now();
+  window.removeEventListener('pointermove', onMove);
+  window.removeEventListener('pointerup', onUp);
+  window.removeEventListener('pointercancel', onCancel);
+  document.getElementById('busy').textContent='measuring '+TAIL+'ms…';
+  setTimeout(function(){ card.style.transform=''; card.classList.remove('active'); }, 380);
+  tailTimer=setTimeout(function(){ settle(pending); }, TAIL);
+}
+
+function renderChips(g){
+  var box=document.getElementById('chips'); box.innerHTML='';
+  var defs=[['click','click'],['childClick','child click'],['ctx','contextmenu'],
+            ['dbl','dblclick'],['sel','selectstart'],['cancel','pointercancel']];
+  defs.forEach(function(d){
+    var c=document.createElement('span'); c.className='chip'; c.textContent=d[1];
+    if(g&&g.f[d[0]]) c.className='chip '+(d[0]==='cancel'?'bad':'hit');
+    box.appendChild(c);
+  });
+}
+
+function settle(g){
+  if(!g) return;
+  if(tailTimer){ clearTimeout(tailTimer); tailTimer=null; }
+  if(pending===g) pending=null;
+  document.getElementById('busy').textContent='';
+
+  try{ g.selChars=(window.getSelection().toString()||'').length; }catch(e){ g.selChars=0; }
+  set('mSel', g.selChars+' chars');
+  renderChips(g);
+
+  var dist=Math.hypot(g.dx,g.dy);
+  var dur=Math.round((g.endAt||performance.now())-g.start);
+  var fired=[];
+  if(g.f.click)fired.push('click'); if(g.f.childClick)fired.push('childClick');
+  if(g.f.ctx)fired.push('contextmenu'); if(g.f.dbl)fired.push('dblclick');
+  if(g.f.sel)fired.push('selectstart'); if(g.f.cancel)fired.push('pointercancel');
+  var fs=fired.length?fired.join(' + '):'(none)';
+  document.getElementById('vNote').textContent=
+    fs+'  ·  dist='+dist.toFixed(1)+'px max='+g.max.toFixed(1)+'px dur='+dur+'ms';
+
+  var r={step:g.step+1, fired:fs, dist:dist.toFixed(1), max:g.max.toFixed(1),
+         dur:dur, clickAt:g.clickAt, ctxAt:g.ctxAt, sel:g.selChars,
+         moves:g.moves, onChild:g.onChild};
+  
+  if(g.selChars>0 || g.f.ctx){
+    cooldown=true;
+    document.getElementById('vNote').textContent=
+      '⚠ 네이티브 메뉴가 떴습니다. 닫고 1.5초 뒤 다시 시도하세요.';
+    setTimeout(function(){ cooldown=false; }, 1500);
+  }
+  results.push(r); counts[g.step]=(counts[g.step]||0)+1;
+
+  var line=document.createElement('div');
+  line.textContent='S'+r.step+'  '+fs+'\n'+
+    '  dist='+r.dist+'px max='+r.max+'px dur='+r.dur+'ms'+
+    (r.clickAt!==null?' clickAt='+r.clickAt+'ms':'')+
+    (r.ctxAt!==null?' ctxAt='+r.ctxAt+'ms':'')+
+    ' sel='+r.sel+'ch moves='+r.moves;
+  histEl.insertBefore(line, histEl.firstChild);
+  document.getElementById('hCount').textContent='('+results.length+')';
+  if(g.step===si) renderStep();
+}
+
+/* ---------- io ---------- */
+document.getElementById('undoBtn').onclick=function(){
+  var r=results.pop(); if(!r)return;
+  counts[r.step-1]=Math.max(0,(counts[r.step-1]||1)-1);
+  if(histEl.firstChild) histEl.removeChild(histEl.firstChild);
+  document.getElementById('hCount').textContent='('+results.length+')'; renderStep();
+};
+document.getElementById('clearBtn').onclick=function(){
+  results=[]; counts={}; histEl.innerHTML=''; logEl.innerHTML='';
+  document.getElementById('hCount').textContent=''; renderStep();
+};
+document.getElementById('copyBtn').onclick=function(){
+  var dev=document.getElementById('devLabel').value.trim()||autoDev;
+  var t='# C3 / C6 verification\ndevice: '+dev+'\nua-detect: '+autoDev+
+        '\n'+new Date().toISOString()+'\n';
+  STEPS.forEach(function(s,idx){
+    var rs=results.filter(function(r){return r.step===idx+1;});
+    t+='\n## STEP '+(idx+1)+'  select='+s.sel+' callout='+s.callout+
+       ' target='+s.target+'  ('+rs.length+'/'+s.reps+')\n   action: '+s.act+'\n';
+    rs.forEach(function(r,j){
+      t+='   '+(j+1)+'. '+r.fired+'\n'+
+         '      dist='+r.dist+'px max='+r.max+'px dur='+r.dur+'ms'+
+         (r.clickAt!==null?' clickAt='+r.clickAt+'ms':'')+
+         (r.ctxAt!==null?' ctxAt='+r.ctxAt+'ms':'')+
+         ' selChars='+r.sel+' moves='+r.moves+'\n';
+    });
+    if(!rs.length) t+='   (no trials)\n';
+  });
+  var ta=document.createElement('textarea'); ta.value=t;
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+  var b=this,o=b.textContent; b.textContent='copied';
+  setTimeout(function(){b.textContent=o;},1200);
+};
+
+renderChips(null);
+renderStep();
+log('ready');
+})();
+</script>
+</body>
+</html>

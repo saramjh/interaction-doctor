@@ -86,28 +86,151 @@
 ### C3 — Tap ↔ Drag
 
 **Symptom**
-🚧 unverified
+
+- Dragging a card also triggers its click handler — the item opens after you drop it.
+- A tap does nothing on Android but works on iPhone, or the reverse.
+- A button inside a draggable card stops responding once dragging is added.
+- The first tap on a card feels sluggish on iOS.
 
 **Cause**
-🚧 unverified
+
+Tap and drag share the same pointer stream. Something has to decide, after the
+gesture ends, whether it was a tap. Browsers already make that decision for touch
+input — but the rule differs by platform, and for mouse input there is effectively
+no rule at all.
+
+On touch, the browser suppresses the synthetic `click` once the pointer has moved
+past its own slop distance. On Android that distance is exactly the platform
+constant; on iOS it is larger and not purely distance-based.
+
+On desktop, `click` is dispatched whenever `mousedown` and `mouseup` land in the
+same element, regardless of how far the cursor travelled in between. A 1,195 px
+drag still produced a `click` in measurement. The browser gives you nothing here —
+you must suppress it yourself.
 
 **Resolution**
-🚧 unverified
+
+Track whether the gesture exceeded a movement threshold, and gate the click on it.
+
+```js
+let moved = false
+
+el.addEventListener("pointerdown", (e) => {
+	moved = false
+	start = { x: e.clientX, y: e.clientY }
+})
+
+el.addEventListener("pointermove", (e) => {
+	if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 8) moved = true
+})
+
+el.addEventListener("click", (e) => {
+	if (moved) {
+		e.preventDefault()
+		e.stopPropagation()
+		return
+	}
+	onTap()
+})
+```
+
+Do not skip this on the assumption that the browser handles it. It handles touch and
+does nothing for mouse.
+
+Use 8 px. Android's browser uses exactly that value, so matching it means your
+handler and the browser agree on Android instead of disagreeing in the gap between
+two thresholds.
+
+Set `user-select: none` on the draggable element. On desktop, dragging across text
+starts a selection, which suppresses `click` unpredictably and produced inconsistent
+results in measurement until selection was disabled.
 
 **Precedence**
-🚧 unverified
+
+Distance at which the synthetic `click` stops firing. Values pooled across three
+sessions per device.
+
+|                            | click fires up to | click suppressed from | boundary              |
+| -------------------------- | ----------------- | --------------------- | --------------------- |
+| Android 10 / Chrome 143    | 7.9 px            | 8.2 px                | **exact, no overlap** |
+| iPadOS 26.6 / Safari       | 42.9 px           | 20.6 px               | overlapping 20–43 px  |
+| iOS 18.7 / Safari          | 44.8 px           | 43.7 px               | overlapping 43–45 px  |
+| macOS / Chrome 142 (mouse) | 1195 px           | —                     | **never suppressed**  |
+
+Android's boundary falls exactly between 7.9 px and 8.2 px with no exceptions across
+roughly 40 trials, matching `ViewConfiguration.TOUCH_SLOP` = 8dp. Treat that constant
+as the real browser behaviour, not just an Android UI value.
+
+iOS has no single distance threshold. A 20.6 px gesture was suppressed while a
+42.9 px one was not, in the same session. Suppressed trials frequently coincided
+with text selection engaging (`selChars > 0`), which suggests selection arbitration
+participates in the decision. **Do not derive an iOS slop constant from these
+numbers.**
+
+After a long drag, touch platforms suppress `click` completely:
+
+|                                   | drags | click fired |
+| --------------------------------- | ----- | ----------- |
+| touch, on the card                | 37    | **0**       |
+| touch, starting on a child button | 36    | **0**       |
+| mouse, on the card                | 14    | **7**       |
+| mouse, starting on a child button | 18    | 2           |
+
+Every mouse trial that did _not_ fire `click` was one where the cursor was released
+outside the element. When the cursor stayed inside, `click` fired at any distance.
+The child button is small, so a drag almost always ends outside it — which is why
+child clicks appear to vanish under dragging.
+
+Click timing after `pointerup` also differs:
+
+```
+Android    2 – 6 ms      effectively immediate
+macOS       1 – 2 ms      effectively immediate
+iPadOS     32 – 41 ms
+iOS        32 – 55 ms
+```
+
+The iOS delay is the source of "the first tap feels slow". It is not your handler.
 
 **In the wild**
-🚧 unverified
+
+- [embla-carousel #24](https://github.com/davidjerleke/embla-carousel/issues/24) — dragging the
+  carousel and releasing fires a `click` on the child element. Reproduced on
+  desktop: `click` fired after drags of 560–1195 px.
+- [motion #363](https://github.com/motiondivision/motion/issues/363) — `mousedown` never fires on
+  children of a draggable element. 🚧 Not verified: this harness observes `click`,
+  not `mousedown`.
 
 **How to verify**
-🚧 unverified
+
+Use `tools/c3-c6-tap-longpress-drag.html`, steps 1–6.
+
+Minimum reproduction:
+
+1. Attach both a click handler and pointer-based dragging to one element.
+2. On a phone, tap without moving — click fires. Move ~15 px and release —
+   on Android the click is gone, on iOS it usually survives.
+3. On desktop, drag the element 300 px and release inside it — click fires.
+4. Put a button inside the element and drag starting from the button. The button's
+   click disappears on touch, and on desktop only when the cursor lands outside it.
 
 **Verified on**
-🚧 unverified
+
+- Android 10 / Chrome 143 · 412×892 @3.5 · 2026-08-29
+- iPadOS 26.6 / Safari 26.6 (iPad Pro) · 1024×1366 @2 · 2026-08-29
+- iOS 18.7 / Safari (iPhone) · 375×667 @2 · 2026-08-29
+- macOS 26.6.2 / Chrome 142 (mouse) · 2140×1391 @2 · 2026-08-29
+
+Measured with `touch-action: none` throughout, to isolate this conflict from
+[C10](#c10--drag--scroll).
 
 **References**
-🚧 unverified
+
+- [Android — `ViewConfiguration.getScaledTouchSlop()`](https://developer.android.com/reference/android/view/ViewConfiguration)
+- [W3C Pointer Events Level 3](https://www.w3.org/TR/pointerevents3/)
+- [MDN — `Element: click` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event)
+- 🚧 Needed: the UI Events clause specifying that `click` targets the nearest common
+  ancestor of `mousedown` and `mouseup`. Behaviour observed but clause not yet cited.
 
 ---
 
@@ -170,28 +293,160 @@
 ### C6 — LongPress ↔ Drag
 
 **Symptom**
-🚧 unverified
+
+- Holding an item opens the browser's own menu instead of starting the drag.
+- Long-press works on Android but nothing happens on iPhone.
+- Text gets selected and a blue callout appears when the user tries to hold and drag.
+- After the iOS callout appears, the next tap does nothing — it only dismisses the menu.
+- Long-press-to-drag freezes partway through on Android.
 
 **Cause**
-🚧 unverified
+
+Every platform already assigns a meaning to holding a finger down, and each assigns
+a different one.
+
+Android Chrome fires `contextmenu` at a fixed delay. iOS and iPadOS Safari fire no
+`contextmenu` at all — they begin a text selection and present a native callout.
+Desktop browsers have no long-press concept whatsoever; holding the mouse button for
+two seconds produces an ordinary `click` on release.
+
+So there is no cross-platform event that means "the user held down". Any long-press
+interaction has to be implemented with your own timer, and the platform's native
+behaviour has to be suppressed separately on each platform — with a different
+mechanism for each.
 
 **Resolution**
-🚧 unverified
+
+Three separate pieces are required. None of them is sufficient alone.
+
+```css
+.holdable {
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none; /* iOS: suppress the selection callout */
+}
+```
+
+```js
+el.addEventListener("contextmenu", (e) => e.preventDefault()) // Android
+```
+
+```js
+let timer = null // all platforms
+el.addEventListener("pointerdown", (e) => {
+	timer = setTimeout(onLongPress, 500)
+})
+;["pointerup", "pointercancel"].forEach((t) =>
+	el.addEventListener(t, () => {
+		clearTimeout(timer)
+		timer = null
+	}),
+)
+el.addEventListener("pointermove", (e) => {
+	if (movedBeyond(8)) {
+		clearTimeout(timer)
+		timer = null
+	}
+})
+```
+
+- `user-select: none` stops iOS selection and the Android selection path, but **does
+  not stop Android's `contextmenu`** — that still fired 12/12 with selection
+  disabled. The `preventDefault` above is not optional.
+- `-webkit-touch-callout: none` is what removes the iOS callout. Without it the
+  callout appears and swallows the following touch.
+- The timer is the only portable detector. `contextmenu` never fires on iOS, so
+  using it as the long-press signal produces a feature that silently does not exist
+  on iPhone.
+- Clear the timer on `pointermove` past threshold as well as on `pointerup` and
+  `pointercancel`. A hold that turns into a drag is not a long press.
+
+Use 500 ms. Android's own `contextmenu` fires within 495–513 ms across 30 trials, so
+matching it keeps your handler aligned with the platform rather than racing it.
 
 **Precedence**
-🚧 unverified
+
+|                                          | Android 10 / Chrome 143   | iPadOS 26.6     | iOS 18.7       | macOS Chrome (mouse) |
+| ---------------------------------------- | ------------------------- | --------------- | -------------- | -------------------- |
+| `contextmenu` on hold                    | **495–513 ms, 30/30**     | never           | never          | never                |
+| text selection on hold                   | via `selectstart`         | `selChars` 5–12 | `selChars` 5–6 | on drag only         |
+| `pointercancel` on hold                  | intermittent, ~530 ms     | none            | none           | none                 |
+| hold then release                        | menu opens                | callout opens   | callout opens  | ordinary `click`     |
+| `user-select: none` blocks selection     | yes                       | yes             | yes            | yes                  |
+| `user-select: none` blocks `contextmenu` | **no, 12/12 still fired** | n/a             | n/a            | n/a                  |
+| long-press → drag works                  | yes                       | yes             | yes            | yes                  |
+
+Four findings worth stating separately:
+
+1. **Android's `contextmenu` is remarkably precise.** 495–513 ms across every trial
+   in three sessions, a spread of 18 ms. It is a reliable reference point, and also
+   a reliable hazard.
+
+2. **`contextmenu` fires mid-drag.** In the long-press-then-drag step it fired in
+   11/13 Android trials, always at ~500 ms, while the finger was still moving. If it
+   is not prevented, the native menu opens on top of an in-progress drag.
+
+3. **Android can cancel the pointer stream during a hold.** With selection enabled,
+   `pointercancel` appeared in 4/21 trials, all at ~530 ms — shortly after the
+   selection engaged. With `user-select: none`, it never occurred. A long-press drag
+   over selectable text can therefore lose its pointer stream on Android for reasons
+   unrelated to scrolling.
+
+4. **The iOS callout blocks the next touch.** Once the native selection callout is
+   open, subsequent touches go to the overlay rather than the page — `pointerdown`
+   never arrives. During measurement this was unmistakable: trials alternated
+   between a genuine long press and a tap that only dismissed the menu. In a real
+   app, the user's next tap is consumed by the menu and appears to do nothing.
+
+On iOS the selection also grows while the finger is held: `selChars` went from 6 to
+12 within a single 2.8 s hold. The longer the user holds, the more text is selected.
 
 **In the wild**
-🚧 unverified
+
+- [dnd-kit #1398](https://github.com/clauderic/dnd-kit/issues/1398) — draggable elements
+  activating only on long press, with a request for minimal activation delay.
+
+🚧 Additional real-world reports for this pair not yet collected.
 
 **How to verify**
-🚧 unverified
+
+Use `tools/c3-c6-tap-longpress-drag.html`, steps 7–9. Step 7 uses default text
+settings, step 8 applies `user-select: none` and `-webkit-touch-callout: none`, and
+step 9 holds and then drags.
+
+On iOS, dismiss the callout between trials — while it is open the page receives no
+pointer events, and a trial run without dismissing it produces alternating garbage.
+
+Minimum reproduction:
+
+1. Add a 500 ms timer-based long press to an element containing text.
+2. Hold on Android — the native context menu opens over your handler.
+3. Hold on iPhone — text is selected and a callout appears; no `contextmenu` fires.
+4. Hold on desktop for two seconds and release — an ordinary `click` fires.
+5. Apply `user-select: none` only. iOS is fixed; Android still opens the menu.
 
 **Verified on**
-🚧 unverified
+
+- Android 10 / Chrome 143 · 412×892 @3.5 · 2026-08-29
+- iPadOS 26.6 / Safari 26.6 (iPad Pro) · 1024×1366 @2 · 2026-08-29
+- iOS 18.7 / Safari (iPhone) · 375×667 @2 · 2026-08-29
+- macOS 26.6.2 / Chrome 142 (mouse) · 2140×1391 @2 · 2026-08-29
+
+Measured with `touch-action: none` throughout, to isolate this conflict from
+[C10](#c10--drag--scroll).
+
+🚧 Not verified: whether the Android `contextmenu` delay is configurable or varies
+by device, and whether `-webkit-touch-callout` has any effect on iPadOS in
+desktop-class Safari specifically.
 
 **References**
-🚧 unverified
+
+- [W3C Pointer Events Level 3 — suppressing a pointer event stream](https://www.w3.org/TR/pointerevents3/)
+- [MDN — `Element: contextmenu` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event)
+- [MDN — `user-select`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select)
+- [MDN — `-webkit-touch-callout`](https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-touch-callout)
+- [Android — `ViewConfiguration.getLongPressTimeout()`](https://developer.android.com/reference/android/view/ViewConfiguration)
 
 ---
 

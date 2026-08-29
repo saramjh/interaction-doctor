@@ -1,0 +1,170 @@
+# C3 / C6 verification
+device: iPadOS / Safari 26.6 / iPad (Mac-UA) / 1024×1366@2 / touch=5
+ua-detect: iPadOS / Safari 26.6 / iPad (Mac-UA) / 1024×1366@2 / touch=5
+2026-08-29T05:45:57.239Z
+
+## STEP 1  select=auto callout=default target=card  (5/5)
+   action: 카드를 탭하세요 (절대 움직이지 말 것)
+   1. click + selectstart
+      dist=0.0px max=0.0px dur=29ms clickAt=70ms selChars=0 moves=0
+   2. click + selectstart
+      dist=0.0px max=0.0px dur=23ms clickAt=59ms selChars=0 moves=0
+   3. click + selectstart
+      dist=0.0px max=0.0px dur=28ms clickAt=63ms selChars=0 moves=0
+   4. click + selectstart
+      dist=0.0px max=0.0px dur=29ms clickAt=64ms selChars=0 moves=0
+   5. click + selectstart
+      dist=0.0px max=0.0px dur=28ms clickAt=63ms selChars=0 moves=0
+
+## STEP 2  select=auto callout=default target=card  (9/5)
+   action: 탭하되 손가락을 아주 조금(5px쯤) 움직이세요
+   1. click + selectstart
+      dist=26.0px max=26.0px dur=184ms clickAt=218ms selChars=0 moves=15
+   2. click + selectstart
+      dist=28.2px max=28.2px dur=173ms clickAt=208ms selChars=0 moves=13
+   3. click + selectstart
+      dist=15.5px max=15.5px dur=176ms clickAt=212ms selChars=0 moves=9
+   4. click + selectstart
+      dist=0.0px max=0.0px dur=234ms clickAt=273ms selChars=0 moves=0
+   5. (none)
+      dist=20.6px max=20.6px dur=172ms selChars=6 moves=9
+   6. click + selectstart
+      dist=18.5px max=18.5px dur=83ms clickAt=585ms selChars=0 moves=8
+   7. click + selectstart
+      dist=0.0px max=0.0px dur=31ms clickAt=67ms selChars=0 moves=0
+   8. click + selectstart
+      dist=16.1px max=18.5px dur=55ms clickAt=90ms selChars=0 moves=3
+   9. click + selectstart
+      dist=16.2px max=16.2px dur=54ms clickAt=87ms selChars=0 moves=2
+
+## STEP 3  select=auto callout=default target=card  (11/5)
+   action: 20~30px 정도 움직이고 떼세요
+   1. (none)
+      dist=56.0px max=56.0px dur=343ms selChars=0 moves=33
+   2. (none)
+      dist=35.0px max=38.0px dur=237ms selChars=0 moves=24
+   3. click + selectstart
+      dist=30.6px max=31.4px dur=261ms clickAt=296ms selChars=0 moves=13
+   4. click + selectstart
+      dist=41.7px max=42.8px dur=239ms clickAt=274ms selChars=0 moves=16
+   5. click + selectstart
+      dist=23.8px max=23.8px dur=284ms clickAt=323ms selChars=0 moves=20
+   6. click + selectstart
+      dist=17.9px max=17.9px dur=214ms clickAt=249ms selChars=0 moves=18
+   7. click + selectstart
+      dist=40.4px max=40.4px dur=239ms clickAt=274ms selChars=0 moves=17
+   8. click + selectstart
+      dist=29.3px max=29.3px dur=198ms clickAt=233ms selChars=0 moves=13
+   9. click + selectstart
+      dist=38.2px max=38.2px dur=185ms clickAt=220ms selChars=0 moves=17
+   10. click + selectstart
+      dist=28.2px max=28.2px dur=181ms clickAt=215ms selChars=0 moves=15
+   11. click + selectstart
+      dist=42.0px max=42.0px dur=139ms clickAt=174ms selChars=0 moves=15
+
+## STEP 4  select=auto callout=default target=card  (5/5)
+   action: 150px 이상 크게 드래그하고 떼세요
+   1. (none)
+      dist=281.2px max=281.2px dur=2158ms selChars=0 moves=97
+   2. (none)
+      dist=172.9px max=172.9px dur=713ms selChars=0 moves=48
+   3. (none)
+      dist=293.2px max=293.2px dur=298ms selChars=0 moves=35
+   4. (none)
+      dist=235.5px max=236.6px dur=464ms selChars=0 moves=45
+   5. (none)
+      dist=259.3px max=259.3px dur=286ms selChars=0 moves=33
+
+## STEP 5  select=auto callout=default target=child  (4/3)
+   action: 파란 버튼을 그냥 탭하세요
+   1. childClick
+      dist=0.0px max=0.0px dur=23ms clickAt=25ms selChars=0 moves=0
+   2. childClick
+      dist=0.0px max=0.0px dur=26ms clickAt=28ms selChars=0 moves=0
+   3. childClick
+      dist=0.0px max=0.0px dur=39ms clickAt=40ms selChars=0 moves=0
+   4. click + selectstart
+      dist=0.0px max=0.0px dur=301ms clickAt=338ms selChars=0 moves=0
+
+## STEP 6  select=auto callout=default target=child  (6/5)
+   action: 파란 버튼에서 시작해 150px 드래그하고 떼세요
+   1. (none)
+      dist=498.7px max=498.7px dur=1787ms selChars=0 moves=123
+   2. (none)
+      dist=257.1px max=258.1px dur=694ms selChars=0 moves=76
+   3. (none)
+      dist=227.8px max=227.8px dur=401ms selChars=0 moves=43
+   4. (none)
+      dist=279.8px max=279.8px dur=344ms selChars=0 moves=37
+   5. (none)
+      dist=279.7px max=279.7px dur=621ms selChars=0 moves=71
+   6. (none)
+      dist=468.8px max=468.8px dur=420ms selChars=0 moves=47
+
+## STEP 7  select=auto callout=default target=card  (6/5)
+   action: 움직이지 말고 1초 이상 꾹 누르고 떼세요
+   1. (none)
+      dist=0.0px max=0.0px dur=2989ms selChars=6 moves=0
+   2. click + selectstart
+      dist=0.0px max=0.0px dur=20ms clickAt=56ms selChars=0 moves=0
+   3. (none)
+      dist=5.3px max=5.3px dur=2837ms selChars=12 moves=3
+   4. click + selectstart
+      dist=0.0px max=0.0px dur=39ms clickAt=74ms selChars=0 moves=0
+   5. (none)
+      dist=0.0px max=0.0px dur=4230ms selChars=6 moves=0
+   6. (none)
+      dist=3.5px max=3.5px dur=2724ms selChars=6 moves=4
+
+## STEP 8  select=none callout=none target=card  (7/5)
+   action: 다시 1초 이상 꾹 누르고 떼세요
+   1. (none)
+      dist=0.0px max=0.0px dur=3338ms selChars=0 moves=0
+   2. (none)
+      dist=0.0px max=0.0px dur=2338ms selChars=0 moves=0
+   3. (none)
+      dist=1.4px max=1.4px dur=2347ms selChars=0 moves=5
+   4. (none)
+      dist=0.0px max=0.0px dur=2483ms selChars=0 moves=0
+   5. (none)
+      dist=0.0px max=0.0px dur=2647ms selChars=0 moves=0
+   6. (none)
+      dist=3.6px max=4.2px dur=1670ms selChars=0 moves=6
+   7. (none)
+      dist=5.1px max=6.9px dur=2255ms selChars=0 moves=7
+
+## STEP 9  select=none callout=none target=card  (9/5)
+   action: 1초 꾹 누른 뒤, 손 떼지 말고 100px 드래그
+   1. (none)
+      dist=62.0px max=67.9px dur=1426ms selChars=0 moves=65
+   2. (none)
+      dist=148.7px max=151.7px dur=2155ms selChars=0 moves=70
+   3. (none)
+      dist=160.0px max=160.3px dur=1677ms selChars=0 moves=59
+   4. (none)
+      dist=99.5px max=105.0px dur=1610ms selChars=0 moves=86
+   5. (none)
+      dist=279.8px max=279.8px dur=1651ms selChars=0 moves=53
+   6. (none)
+      dist=240.4px max=240.4px dur=1648ms selChars=0 moves=62
+   7. (none)
+      dist=148.6px max=148.6px dur=1246ms selChars=0 moves=49
+   8. (none)
+      dist=232.8px max=232.8px dur=1587ms selChars=0 moves=48
+   9. (none)
+      dist=342.3px max=342.3px dur=1496ms selChars=0 moves=75
+
+## STEP 10  select=none callout=none target=card  (6/6)
+   action: 빠르게 두 번씩 탭하세요 (3세트 = 6회)
+   1. childClick
+      dist=0.0px max=0.0px dur=34ms clickAt=36ms selChars=0 moves=0
+   2. childClick
+      dist=0.0px max=0.0px dur=25ms clickAt=27ms selChars=0 moves=0
+   3. childClick
+      dist=0.0px max=0.0px dur=19ms clickAt=22ms selChars=0 moves=0
+   4. childClick
+      dist=0.0px max=0.0px dur=30ms clickAt=32ms selChars=0 moves=0
+   5. childClick
+      dist=0.0px max=0.0px dur=35ms clickAt=38ms selChars=0 moves=0
+   6. childClick
+      dist=0.0px max=0.0px dur=39ms clickAt=42ms selChars=0 moves=0

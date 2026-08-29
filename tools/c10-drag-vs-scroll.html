@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C10 — Drag vs Scroll (guided)</title>
+<style>
+  :root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--fg:#e6edf3;--dim:#8b949e;
+        --ok:#3fb950;--warn:#d29922;--bad:#f85149;--accent:#58a6ff;--gap:#21262d;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;height:100dvh;overflow:hidden}
+  body{display:flex;flex-direction:column}
+
+  /* ---------- guide ---------- */
+  #guide{flex:0 0 auto;background:var(--panel);border-bottom:1px solid var(--line);padding:8px 10px}
+  #gTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}
+  #gStep{font-size:11px;color:var(--dim)}
+  #gCfg{font-size:11px;color:var(--accent)}
+  #gAction{font-size:15px;font-weight:700;line-height:1.3}
+  #gWhy{font-size:11px;color:var(--dim);margin-top:3px}
+  #gProg{display:flex;gap:4px;align-items:center;margin-top:7px;flex-wrap:wrap}
+  .dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);flex:0 0 auto}
+  .dot.done{background:var(--ok);border-color:var(--ok)}
+  .btn{background:transparent;color:var(--fg);border:1px solid var(--line);
+       border-radius:5px;padding:6px 10px;font:inherit;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:700}
+  .btn:disabled{color:var(--dim);opacity:.45}
+  #gNav{display:flex;gap:6px;margin-top:7px;align-items:center}
+  #devLabel{flex:1;min-width:0;background:#0a0e14;border:1px solid var(--line);
+            color:var(--fg);border-radius:5px;padding:6px 8px;font:inherit}
+
+  /* ---------- stage ---------- */
+  #stage{flex:0 0 32dvh;overflow:hidden;border-bottom:1px solid var(--line);
+         position:relative;background:#0a0e14}
+  #scroller{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px}
+  .item{background:var(--panel);border:1px solid var(--line);border-radius:6px;
+        padding:13px 12px;margin-bottom:8px;user-select:none;-webkit-user-select:none;
+        will-change:transform}
+  .item.active{border-color:var(--accent);background:#1c2b3a}
+  .gapzone{background:var(--gap);border:1px dashed var(--line);border-radius:6px;
+           padding:11px 12px;margin-bottom:8px;color:var(--dim);text-align:center;
+           user-select:none;-webkit-user-select:none}
+  .gapzone.hl{border-color:var(--warn);color:var(--warn)}
+
+  /* ---------- panel ---------- */
+  #panel{flex:1 1 auto;overflow-y:auto;padding:8px 10px 40px}
+  #verdict{border:1px solid var(--line);border-radius:6px;padding:8px;
+           margin-bottom:8px;background:var(--panel)}
+  #vText{font-size:14px;font-weight:700}
+  #vNote{font-size:11px;color:var(--dim);margin-top:2px}
+  .v-both{color:var(--bad)}.v-drag{color:var(--ok)}.v-scroll{color:var(--warn)}
+  .v-cancel{color:var(--bad)}.v-none{color:var(--dim)}
+  .row{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
+  .row .k{color:var(--dim)}.row .v{text-align:right}
+  hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+  h3{font-size:11px;color:var(--dim);margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em}
+  #log{max-height:130px;overflow-y:auto}
+  #log div{white-space:pre;color:var(--dim)}
+  #log div.cancel{color:var(--bad);font-weight:700}
+  #log div.down{color:var(--accent)}
+  #log div.scroll{color:var(--warn)}
+  #hist div{padding:3px 0;border-bottom:1px solid var(--line);white-space:pre-wrap}
+  details{margin-top:8px}
+  summary{color:var(--dim);cursor:pointer}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden;margin:4px 4px 0 0}
+  .seg button{background:transparent;color:var(--dim);border:0;padding:5px 8px;font:inherit}
+  .seg button.on{background:var(--accent);color:#04121f;font-weight:700}
+  #busy{color:var(--warn)}
+</style>
+</head>
+<body>
+
+<div id="guide">
+  <div id="gTop">
+    <span id="gStep">—</span>
+    <span id="gCfg">—</span>
+  </div>
+  <div id="gAction">—</div>
+  <div id="gWhy">—</div>
+  <div id="gProg"></div>
+  <div id="gNav">
+    <button class="btn" id="prevBtn">◀ prev</button>
+    <button class="btn primary" id="nextBtn">next ▶</button>
+    <input id="devLabel" placeholder="device label (e.g. iPhone 15 / iOS 18.5)">
+  </div>
+</div>
+
+<div id="stage"><div id="scroller"></div></div>
+
+<div id="panel">
+  <div id="verdict">
+    <div id="vText" class="v-none">— ready —</div>
+    <div id="vNote">Follow the instruction above. Verdict appears 600 ms after you lift your finger.</div>
+  </div>
+
+  <h3>live <span id="busy"></span></h3>
+  <div class="row"><span class="k">pointerType</span><span class="v" id="mType">—</span></div>
+  <div class="row"><span class="k">duration</span><span class="v" id="mDur">—</span></div>
+  <div class="row"><span class="k">dx / dy</span><span class="v" id="mDelta">—</span></div>
+  <div class="row"><span class="k">distance</span><span class="v" id="mDist">—</span></div>
+  <div class="row"><span class="k">angle</span><span class="v" id="mAngle">—</span></div>
+  <div class="row"><span class="k">computed touch-action</span><span class="v" id="mTA">—</span></div>
+  <div class="row"><span class="k">scroll during</span><span class="v" id="mSD">—</span></div>
+  <div class="row"><span class="k">scroll after (600ms)</span><span class="v" id="mST">—</span></div>
+  <div class="row"><span class="k">drag active</span><span class="v" id="mDrag">—</span></div>
+  <div class="row"><span class="k">pointermove count</span><span class="v" id="mMoves">—</span></div>
+
+  <hr><h3>event log</h3><div id="log"></div>
+  <hr><h3>results <span id="hCount"></span></h3>
+  <div style="display:flex;gap:6px;margin-bottom:6px">
+    <button class="btn" id="copyBtn">copy all results</button>
+    <button class="btn" id="undoBtn">undo last</button>
+    <button class="btn" id="clearBtn">clear</button>
+  </div>
+  <div id="hist"></div>
+
+  <details>
+    <summary>manual override (free mode)</summary>
+    <div class="seg" id="taSeg">
+      <button data-v="auto">auto</button><button data-v="none">none</button>
+      <button data-v="pan-y">pan-y</button><button data-v="pan-x">pan-x</button>
+      <button data-v="manipulation">manip</button>
+    </div>
+    <div class="seg" id="capSeg">
+      <button data-v="1">capture on</button><button data-v="0">capture off</button>
+    </div>
+  </details>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= protocol ================= */
+var STEPS = [
+  {ta:'auto', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 아래로 쭉 미세요',
+   why:'기본값에서 드래그가 가능한지'},
+  {ta:'auto', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 옆으로 쭉 미세요',
+   why:'가로 방향은 다른지'},
+  {ta:'none', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 아래로 쭉 미세요',
+   why:'드래그가 완전히 확보되는지'},
+  {ta:'none', cap:1, reps:3, zone:'gap',
+   act:'점선 회색 띠를 잡고 위아래로 미세요',
+   why:'리스트 스크롤이 살아있는지 (dnd-kit #453)'},
+  {ta:'pan-y', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 아래로 쭉 미세요',
+   why:'세로는 스크롤에 양보하는지'},
+  {ta:'pan-y', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 옆으로 쭉 미세요',
+   why:'가로 드래그가 확보되는지'},
+  {ta:'pan-y', cap:1, reps:5, zone:'item',
+   act:'아주 천천히 대각선으로 미세요 (1~2초)',
+   why:'느린 대각선에서 누가 이기는지 (vaul #358)'},
+  {ta:'pan-x', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 아래로 쭉 미세요',
+   why:'반대 축에서 어떻게 되는지'},
+  {ta:'manipulation', cap:1, reps:5, zone:'item',
+   act:'항목을 잡고 아래로 쭉 미세요',
+   why:'플랫폼별 차이가 있는지'},
+  {ta:'none', cap:0, reps:3, zone:'item',
+   act:'항목을 잡고 아래로 쭉 미세요',
+   why:'setPointerCapture 없이도 되는지'}
+];
+
+var si = 0, cfg = {ta:'auto', cap:1}, results = [], counts = {};
+var TAIL = 600;
+
+/* ================= build ================= */
+var scroller = document.getElementById('scroller');
+var logEl = document.getElementById('log');
+var histEl = document.getElementById('hist');
+
+for (var i=1;i<=16;i++){
+  if (i===4 || i===9 || i===14){
+    var g = document.createElement('div');
+    g.className='gapzone'; g.textContent='— scroll zone (not draggable) —';
+    scroller.appendChild(g);
+  }
+  var d = document.createElement('div');
+  d.className='item'; d.textContent='Item '+String(i).padStart(2,'0');
+  scroller.appendChild(d);
+}
+var items = [].slice.call(scroller.querySelectorAll('.item'));
+var gaps  = [].slice.call(scroller.querySelectorAll('.gapzone'));
+
+/* ---------- device auto-detect ---------- */
+var autoDev = 'detecting…';
+
+function detectDevice(cb){
+  var ua = navigator.userAgent;
+  var mtp = navigator.maxTouchPoints || 0;
+  var scr = screen.width + '×' + screen.height + '@' + (window.devicePixelRatio || 1);
+
+  // iPadOS reports a Mac UA; touch points disambiguate it
+  var isIPad = /Macintosh/.test(ua) && mtp > 1;
+
+  var os, ver = '', m;
+  if (/iPhone|iPod/.test(ua)) {
+    os = 'iOS';
+    if ((m = ua.match(/OS (\d+[_\d]*)/))) ver = m[1].replace(/_/g, '.');
+  } else if (/iPad/.test(ua)) {
+    os = 'iPadOS';
+    if ((m = ua.match(/OS (\d+[_\d]*)/))) ver = m[1].replace(/_/g, '.');
+  } else if (isIPad) {
+    os = 'iPadOS';                       // desktop-mode iPad
+  } else if (/Android/.test(ua)) {
+    os = 'Android';
+    if ((m = ua.match(/Android (\d+(?:\.\d+)?)/))) ver = m[1];
+  } else if (/Macintosh/.test(ua)) { os = 'macOS'; }
+  else if (/Windows/.test(ua))     { os = 'Windows'; }
+  else                             { os = 'other'; }
+
+  var br = '?', bv = '', b;
+  if      ((b = ua.match(/CriOS\/(\d+)/)))   { br = 'Chrome-iOS';  bv = b[1]; }
+  else if ((b = ua.match(/FxiOS\/(\d+)/)))   { br = 'Firefox-iOS'; bv = b[1]; }
+  else if ((b = ua.match(/Edg\/(\d+)/)))     { br = 'Edge';        bv = b[1]; }
+  else if ((b = ua.match(/Chrome\/(\d+)/)))  { br = 'Chrome';      bv = b[1]; }
+  else if ((b = ua.match(/Firefox\/(\d+)/))) { br = 'Firefox';     bv = b[1]; }
+  else if ((b = ua.match(/Version\/(\d+\.\d+)[^ ]* Safari/))) { br = 'Safari'; bv = b[1]; }
+  else if (/Safari/.test(ua))                { br = 'Safari'; }
+
+  function build(model){
+    return [ os + (ver ? ' ' + ver : ''),
+             br + (bv ? ' ' + bv : ''),
+             model || null,
+             scr,
+             'touch=' + mtp ].filter(Boolean).join(' / ');
+  }
+
+  // Chromium: real model name + OS version
+  if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+    navigator.userAgentData
+      .getHighEntropyValues(['platform', 'platformVersion', 'model'])
+      .then(function(h){
+        if (h.platform) os = h.platform;
+        if (h.platformVersion) ver = String(h.platformVersion).replace(/(\.0)+$/, '');
+        cb(build(h.model || ''));
+      })
+      .catch(function(){ cb(build('')); });
+  } else {
+    cb(build(isIPad ? 'iPad (Mac-UA)' : ''));
+  }
+}
+
+detectDevice(function(s){
+  autoDev = s;
+  var el = document.getElementById('devLabel');
+  if (!el.value) el.value = s;              // 자동 입력
+  log('device: ' + s);
+});
+
+document.getElementById('devLabel').placeholder = 'device (auto-filled; edit if needed)';
+
+/* ================= step control ================= */
+function applyCfg(){
+  items.forEach(function(el){ el.style.touchAction = cfg.ta; });
+  document.querySelectorAll('#taSeg button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.v===cfg.ta); });
+  document.querySelectorAll('#capSeg button').forEach(function(b){
+    b.classList.toggle('on', +b.dataset.v===cfg.cap); });
+}
+function renderStep(){
+  var s = STEPS[si];
+  cfg.ta = s.ta; cfg.cap = s.cap; applyCfg();
+  document.getElementById('gStep').textContent = 'STEP '+(si+1)+' / '+STEPS.length;
+  document.getElementById('gCfg').textContent =
+    'touch-action: '+s.ta+(s.cap?'':'  · capture OFF');
+  document.getElementById('gAction').textContent = s.act;
+  document.getElementById('gWhy').textContent = s.why;
+  gaps.forEach(function(g){ g.classList.toggle('hl', s.zone==='gap'); });
+  var done = counts[si]||0;
+  var p = document.getElementById('gProg'); p.innerHTML='';
+  for (var k=0;k<s.reps;k++){
+    var dot=document.createElement('div');
+    dot.className='dot'+(k<done?' done':'');
+    p.appendChild(dot);
+  }
+  var lbl=document.createElement('span');
+  lbl.style.color='var(--dim)'; lbl.style.marginLeft='4px';
+  lbl.textContent = done+' / '+s.reps + (done>=s.reps ? '  ✓ 완료 — next 누르세요' : '');
+  p.appendChild(lbl);
+  document.getElementById('prevBtn').disabled = si===0;
+  document.getElementById('nextBtn').disabled = si===STEPS.length-1;
+  document.getElementById('nextBtn').textContent =
+    (si===STEPS.length-1)?'끝':'next ▶';
+  log('--- STEP '+(si+1)+'  ta='+s.ta+' cap='+s.cap+' ---');
+}
+document.getElementById('nextBtn').onclick=function(){ if(si<STEPS.length-1){si++;renderStep();} };
+document.getElementById('prevBtn').onclick=function(){ if(si>0){si--;renderStep();} };
+
+function seg(id,fn){
+  document.getElementById(id).addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return; fn(b.dataset.v); applyCfg();
+    log('manual override → ta='+cfg.ta+' cap='+cfg.cap);
+  });
+}
+seg('taSeg', function(v){ cfg.ta=v; });
+seg('capSeg', function(v){ cfg.cap=+v; });
+
+/* ================= logging ================= */
+var t0=0;
+function log(m,c){
+  var d=document.createElement('div'); d.textContent=m; if(c)d.className=c;
+  logEl.appendChild(d); logEl.scrollTop=logEl.scrollHeight;
+  while(logEl.childNodes.length>160) logEl.removeChild(logEl.firstChild);
+}
+function rel(){ return String(Math.round(performance.now()-t0)).padStart(5,' '); }
+function set(id,v){ document.getElementById(id).textContent=v; }
+
+/* ================= scroll observation ================= */
+var scrollStart=0, scrollDuring=0, scrollTotal=0, watching=false, phase='idle';
+scroller.addEventListener('scroll', function(){
+  if(!watching) return;
+  var d = scroller.scrollTop - scrollStart;
+  if (Math.abs(d) > Math.abs(scrollTotal)) scrollTotal = d;
+  if (phase==='gesture') {
+    scrollDuring = scrollTotal;
+    set('mSD', scrollDuring.toFixed(0)+'px');
+  } else {
+    set('mST', (scrollTotal-scrollDuring).toFixed(0)+'px');
+  }
+  log(rel()+' scroll        top='+scroller.scrollTop.toFixed(0)+
+      ' Δ='+d.toFixed(0)+(phase==='tail'?'  [after release]':''), 'scroll');
+}, {passive:true});
+
+/* ================= gesture ================= */
+var S=null, tailTimer=null;
+
+items.forEach(function(el){ el.addEventListener('pointerdown', onDown); });
+gaps.forEach(function(el){ el.addEventListener('pointerdown', onDown); });
+
+function onDown(e){
+  if(S) return;
+  if(tailTimer){ clearTimeout(tailTimer); tailTimer=null; }
+  t0=performance.now(); logEl.innerHTML='';
+    // 매 시도를 리스트 중앙에서 시작
+    if (scroller.scrollTop < 40 ||
+      scroller.scrollTop > scroller.scrollHeight - scroller.clientHeight - 40) {
+    scroller.scrollTop = (scroller.scrollHeight - scroller.clientHeight) / 2;
+  }
+  scrollStart=scroller.scrollTop; scrollDuring=0; scrollTotal=0;
+  watching=true; phase='gesture';
+
+  S={el:e.currentTarget,id:e.pointerId,type:e.pointerType,
+   isGap:e.currentTarget.classList.contains('gapzone'),   // ← 추가
+   x0:e.clientX,y0:e.clientY,dx:0,dy:0,moves:0,drag:false,
+   cancelled:false,start:performance.now(),step:si,
+   ta:cfg.ta,cap:cfg.cap};
+
+  set('mType', e.pointerType+(e.isPrimary?' (primary)':''));
+  set('mTA', getComputedStyle(S.el).touchAction);
+  set('mSD','0px'); set('mST','—'); set('mDrag','no'); set('mMoves','0');
+  document.getElementById('busy').textContent='';
+  document.getElementById('vText').className='v-none';
+  document.getElementById('vText').textContent='… in progress';
+  document.getElementById('vNote').textContent='';
+
+  log(rel()+' pointerdown   type='+e.pointerType+' ta='+getComputedStyle(S.el).touchAction,'down');
+
+  if(cfg.cap){
+    try{ S.el.setPointerCapture(e.pointerId); log(rel()+' setPointerCapture ok'); }
+    catch(err){ log(rel()+' setPointerCapture FAILED'); }
+  }
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onCancel);
+}
+
+function onMove(e){
+  if(!S||e.pointerId!==S.id) return;
+  S.moves++; S.dx=e.clientX-S.x0; S.dy=e.clientY-S.y0;
+  var dist=Math.hypot(S.dx,S.dy), ang=Math.round(Math.atan2(S.dy,S.dx)*180/Math.PI);
+  set('mDur', Math.round(performance.now()-S.start)+'ms');
+  set('mDelta', S.dx.toFixed(0)+' / '+S.dy.toFixed(0));
+  set('mDist', dist.toFixed(1)+'px'); set('mAngle', ang+'°');
+  set('mMoves', String(S.moves));
+  if(!S.drag && dist>=8){
+    S.drag=true; S.el.classList.add('active');
+    set('mDrag','YES @ '+dist.toFixed(1)+'px');
+    log(rel()+' DRAG ACTIVE   dist='+dist.toFixed(1)+'px');
+  }
+  if(!S.drag && !S.isGap && dist>=8){
+    S.drag=true; S.el.classList.add('active');
+    set('mDrag','YES @ '+dist.toFixed(1)+'px');
+    log(rel()+' DRAG ACTIVE   dist='+dist.toFixed(1)+'px');
+  }
+  if(S.moves<=6||S.moves%12===0) log(rel()+' pointermove   d='+dist.toFixed(1)+'px a='+ang+'°');
+}
+
+function onUp(e){ if(!S||e.pointerId!==S.id) return; log(rel()+' pointerup'); finish(); }
+function onCancel(e){
+  if(!S||e.pointerId!==S.id) return;
+  S.cancelled=true; log(rel()+' POINTERCANCEL  ← browser took over','cancel'); finish();
+}
+
+function finish(){
+  var s=S; S=null; phase='tail';
+  window.removeEventListener('pointermove', onMove);
+  window.removeEventListener('pointerup', onUp);
+  window.removeEventListener('pointercancel', onCancel);
+  document.getElementById('busy').textContent='measuring '+TAIL+'ms…';
+  setTimeout(function(){ s.el.style.transform=''; s.el.classList.remove('active'); }, 380);
+  tailTimer = setTimeout(function(){ settle(s); }, TAIL);
+}
+
+function settle(s){
+  watching=false; phase='idle'; tailTimer=null;
+  document.getElementById('busy').textContent='';
+
+  var tail = scrollTotal - scrollDuring;
+  var dist = Math.hypot(s.dx,s.dy);
+  var dur  = Math.round(performance.now()-s.start) - TAIL;
+  var ang  = Math.round(Math.atan2(s.dy,s.dx)*180/Math.PI);
+  var sd = Math.abs(scrollDuring)>=2, st = Math.abs(tail)>=2;
+
+  var verdict, cls, note;
+  if (s.cancelled && st) {
+    verdict='CANCELLED → SCROLL'; cls='v-scroll';
+    note='Browser cancelled the pointer stream, then scrolled '+tail.toFixed(0)+'px. Scroll won.';
+  } else if (s.cancelled && sd) {
+    verdict='CANCELLED (scrolled during)'; cls='v-scroll';
+    note='Scroll started before cancel: '+scrollDuring.toFixed(0)+'px.';
+  } else if (s.cancelled) {
+    verdict='CANCELLED (no scroll)'; cls='v-cancel';
+    note='Pointer stream cancelled but the container never scrolled. Note this — it is unusual.';
+  } else if (s.drag && sd) {
+    verdict='BOTH — CONFLICT'; cls='v-both';
+    note='Item moved AND container scrolled ('+scrollDuring.toFixed(0)+'px) in the same gesture.';
+  } else if (s.drag) {
+    verdict='DRAG only'; cls='v-drag';
+    note='No scroll during or after. Drag fully owned the stream.';
+  } else if (sd||st) {
+    verdict='SCROLL only'; cls='v-scroll';
+    note='Drag never activated (moved '+dist.toFixed(1)+'px).';
+  } else {
+    verdict='NEITHER'; cls='v-none';
+    note='Below 8px and no scroll.';
+  }
+
+  document.getElementById('vText').className=cls;
+  document.getElementById('vText').textContent=verdict;
+  document.getElementById('vNote').textContent=note;
+  set('mST', tail.toFixed(0)+'px');
+
+  var r={step:s.step+1, ta:s.ta, cap:s.cap, verdict:verdict,
+         dx:s.dx.toFixed(0), dy:s.dy.toFixed(0), dist:dist.toFixed(1),
+         angle:ang, dur:dur, sd:scrollDuring.toFixed(0), st:tail.toFixed(0),
+         moves:s.moves, cancelled:s.cancelled};
+  results.push(r);
+  counts[s.step]=(counts[s.step]||0)+1;
+
+  var line=document.createElement('div');
+  line.textContent='S'+r.step+'  ta='+r.ta+' cap='+(r.cap?'Y':'N')+'\n'+
+    '  → '+verdict+'  (d='+r.dist+'px a='+r.angle+'° dur='+r.dur+'ms\n'+
+    '     scroll during='+r.sd+'px after='+r.st+'px moves='+r.moves+')';
+  histEl.insertBefore(line, histEl.firstChild);
+  document.getElementById('hCount').textContent='('+results.length+')';
+  if (s.step===si) renderStep();
+}
+
+/* ================= results io ================= */
+document.getElementById('undoBtn').onclick=function(){
+  var r=results.pop(); if(!r) return;
+  counts[r.step-1]=Math.max(0,(counts[r.step-1]||1)-1);
+  if(histEl.firstChild) histEl.removeChild(histEl.firstChild);
+  document.getElementById('hCount').textContent='('+results.length+')';
+  renderStep();
+};
+document.getElementById('clearBtn').onclick=function(){
+  results=[]; counts={}; histEl.innerHTML=''; logEl.innerHTML='';
+  document.getElementById('hCount').textContent=''; renderStep();
+};
+document.getElementById('copyBtn').onclick=function(){
+  var dev=document.getElementById('devLabel').value.trim()||autoDev;
+  var t='# C10 verification (guided v2)\ndevice: '+dev+'\nua-detect: '+autoDev+
+        '\n'+new Date().toISOString()+'\n';
+  STEPS.forEach(function(s,idx){
+    var rs=results.filter(function(r){return r.step===idx+1;});
+    t+='\n## STEP '+(idx+1)+'  ta='+s.ta+' cap='+s.cap+'  ('+rs.length+'/'+s.reps+')\n';
+    t+='   action: '+s.act+'\n';
+    rs.forEach(function(r,j){
+      t+='   '+(j+1)+'. '+r.verdict+' | dx='+r.dx+' dy='+r.dy+' dist='+r.dist+
+         'px angle='+r.angle+'° dur='+r.dur+'ms\n'+
+         '      scrollDuring='+r.sd+'px scrollAfter='+r.st+'px moves='+r.moves+
+         ' cancelled='+r.cancelled+'\n';
+    });
+    if(!rs.length) t+='   (no trials)\n';
+  });
+  var ta=document.createElement('textarea'); ta.value=t;
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+  var b=this,o=b.textContent; b.textContent='copied';
+  setTimeout(function(){b.textContent=o;},1200);
+};
+
+renderStep();
+log('ready — '+autoDev);
+})();
+</script>
+</body>
+</html>

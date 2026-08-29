@@ -1,0 +1,150 @@
+# C10 verification (guided v2)
+device: iPadOS / Safari 26.6 / iPad (Mac-UA) / 1024×1366@2 / touch=5
+ua-detect: iPadOS / Safari 26.6 / iPad (Mac-UA) / 1024×1366@2 / touch=5
+2026-08-29T02:29:00.077Z
+
+## STEP 1  ta=auto cap=1  (5/5)
+   action: 항목을 잡고 아래로 쭉 미세요
+   1. CANCELLED → SCROLL | dx=2 dy=13 dist=13.1px angle=83° dur=355ms
+      scrollDuring=0px scrollAfter=-60px moves=10 cancelled=true
+   2. CANCELLED → SCROLL | dx=1 dy=11 dist=10.5px angle=85° dur=286ms
+      scrollDuring=0px scrollAfter=-71px moves=6 cancelled=true
+   3. CANCELLED → SCROLL | dx=-1 dy=12 dist=12.0px angle=92° dur=262ms
+      scrollDuring=0px scrollAfter=-89px moves=8 cancelled=true
+   4. CANCELLED → SCROLL | dx=0 dy=13 dist=12.5px angle=90° dur=95ms
+      scrollDuring=0px scrollAfter=-93px moves=6 cancelled=true
+   5. CANCELLED → SCROLL | dx=-3 dy=-13 dist=13.3px angle=-103° dur=54ms
+      scrollDuring=0px scrollAfter=165px moves=3 cancelled=true
+
+## STEP 2  ta=auto cap=1  (5/5)
+   action: 항목을 잡고 옆으로 쭉 미세요
+   1. CANCELLED → SCROLL | dx=-268 dy=10 dist=267.7px angle=178° dur=749ms
+      scrollDuring=0px scrollAfter=-95px moves=59 cancelled=true
+   2. CANCELLED → SCROLL | dx=124 dy=10 dist=124.4px angle=5° dur=555ms
+      scrollDuring=0px scrollAfter=-13px moves=34 cancelled=true
+   3. CANCELLED → SCROLL | dx=-331 dy=11 dist=330.7px angle=178° dur=807ms
+      scrollDuring=0px scrollAfter=-3px moves=66 cancelled=true
+   4. DRAG only | dx=314 dy=-8 dist=313.6px angle=-1° dur=880ms
+      scrollDuring=0px scrollAfter=0px moves=71 cancelled=false
+   5. CANCELLED → SCROLL | dx=-221 dy=11 dist=220.7px angle=177° dur=495ms
+      scrollDuring=0px scrollAfter=-10px moves=50 cancelled=true
+
+## STEP 3  ta=none cap=1  (5/5)
+   action: 항목을 잡고 아래로 쭉 미세요
+   1. DRAG only | dx=-3 dy=-256 dist=255.5px angle=-91° dur=1038ms
+      scrollDuring=0px scrollAfter=0px moves=99 cancelled=false
+   2. DRAG only | dx=7 dy=318 dist=318.1px angle=89° dur=797ms
+      scrollDuring=0px scrollAfter=0px moves=77 cancelled=false
+   3. DRAG only | dx=-8 dy=-156 dist=156.2px angle=-93° dur=770ms
+      scrollDuring=0px scrollAfter=0px moves=63 cancelled=false
+   4. DRAG only | dx=3 dy=-197 dist=196.5px angle=-89° dur=845ms
+      scrollDuring=0px scrollAfter=0px moves=78 cancelled=false
+   5. DRAG only | dx=2 dy=-210 dist=209.5px angle=-90° dur=872ms
+      scrollDuring=0px scrollAfter=0px moves=73 cancelled=false
+
+## STEP 4  ta=none cap=1  (3/3)
+   action: 점선 회색 띠를 잡고 위아래로 미세요
+   1. CANCELLED → SCROLL | dx=0 dy=-13 dist=13.0px angle=-90° dur=244ms
+      scrollDuring=0px scrollAfter=110px moves=9 cancelled=true
+   2. CANCELLED → SCROLL | dx=-1 dy=11 dist=10.5px angle=95° dur=241ms
+      scrollDuring=0px scrollAfter=-97px moves=8 cancelled=true
+   3. CANCELLED → SCROLL | dx=-4 dy=-12 dist=12.6px angle=-108° dur=120ms
+      scrollDuring=0px scrollAfter=111px moves=3 cancelled=true
+
+## STEP 5  ta=pan-y cap=1  (5/5)
+   action: 항목을 잡고 아래로 쭉 미세요
+   1. CANCELLED → SCROLL | dx=-1 dy=11 dist=11.0px angle=93° dur=487ms
+      scrollDuring=0px scrollAfter=-85px moves=16 cancelled=true
+   2. CANCELLED → SCROLL | dx=0 dy=-12 dist=12.0px angle=-90° dur=177ms
+      scrollDuring=0px scrollAfter=117px moves=5 cancelled=true
+   3. CANCELLED → SCROLL | dx=1 dy=14 dist=13.5px angle=88° dur=84ms
+      scrollDuring=0px scrollAfter=-138px moves=6 cancelled=true
+   4. CANCELLED → SCROLL | dx=-2 dy=-13 dist=13.1px angle=-97° dur=186ms
+      scrollDuring=0px scrollAfter=113px moves=7 cancelled=true
+   5. CANCELLED → SCROLL | dx=1 dy=14 dist=13.5px angle=86° dur=104ms
+      scrollDuring=0px scrollAfter=-78px moves=6 cancelled=true
+
+## STEP 6  ta=pan-y cap=1  (5/5)
+   action: 항목을 잡고 옆으로 쭉 미세요
+   1. DRAG only | dx=-314 dy=0 dist=313.5px angle=180° dur=1063ms
+      scrollDuring=0px scrollAfter=0px moves=120 cancelled=false
+   2. DRAG only | dx=589 dy=-25 dist=589.0px angle=-2° dur=1445ms
+      scrollDuring=0px scrollAfter=0px moves=147 cancelled=false
+   3. DRAG only | dx=-426 dy=12 dist=426.2px angle=178° dur=945ms
+      scrollDuring=0px scrollAfter=0px moves=103 cancelled=false
+   4. DRAG only | dx=522 dy=7 dist=521.5px angle=1° dur=855ms
+      scrollDuring=0px scrollAfter=0px moves=98 cancelled=false
+   5. DRAG only | dx=-474 dy=3 dist=473.5px angle=180° dur=871ms
+      scrollDuring=0px scrollAfter=0px moves=101 cancelled=false
+
+## STEP 7  ta=pan-y cap=1  (14/5)
+   action: 아주 천천히 대각선으로 미세요 (1~2초)
+   1. CANCELLED → SCROLL | dx=-10 dy=11 dist=14.5px angle=134° dur=954ms
+      scrollDuring=0px scrollAfter=-21px moves=36 cancelled=true
+   2. CANCELLED → SCROLL | dx=1 dy=-11 dist=10.5px angle=-85° dur=384ms
+      scrollDuring=0px scrollAfter=46px moves=14 cancelled=true
+   3. CANCELLED → SCROLL | dx=-12 dy=15 dist=18.8px angle=130° dur=111ms
+      scrollDuring=0px scrollAfter=-87px moves=5 cancelled=true
+   4. CANCELLED → SCROLL | dx=-3 dy=-11 dist=11.3px angle=-103° dur=295ms
+      scrollDuring=0px scrollAfter=13px moves=9 cancelled=true
+   5. CANCELLED → SCROLL | dx=16 dy=11 dist=18.7px angle=34° dur=1077ms
+      scrollDuring=0px scrollAfter=-11px moves=40 cancelled=true
+   6. CANCELLED → SCROLL | dx=-7 dy=11 dist=12.8px angle=121° dur=1762ms
+      scrollDuring=0px scrollAfter=-18px moves=32 cancelled=true
+   7. CANCELLED → SCROLL | dx=15 dy=-11 dist=17.9px angle=-36° dur=546ms
+      scrollDuring=0px scrollAfter=7px moves=20 cancelled=true
+   8. CANCELLED → SCROLL | dx=23 dy=-11 dist=24.8px angle=-25° dur=1102ms
+      scrollDuring=0px scrollAfter=3px moves=46 cancelled=true
+   9. CANCELLED → SCROLL | dx=-17 dy=11 dist=20.0px angle=148° dur=509ms
+      scrollDuring=0px scrollAfter=-9px moves=23 cancelled=true
+   10. CANCELLED → SCROLL | dx=-19 dy=11 dist=21.3px angle=150° dur=962ms
+      scrollDuring=0px scrollAfter=-5px moves=42 cancelled=true
+   11. CANCELLED → SCROLL | dx=-23 dy=11 dist=25.3px angle=155° dur=1235ms
+      scrollDuring=0px scrollAfter=-7px moves=50 cancelled=true
+   12. CANCELLED → SCROLL | dx=17 dy=-11 dist=20.0px angle=-32° dur=1488ms
+      scrollDuring=0px scrollAfter=4px moves=44 cancelled=true
+   13. CANCELLED → SCROLL | dx=16 dy=-11 dist=18.7px angle=-34° dur=1513ms
+      scrollDuring=0px scrollAfter=8px moves=48 cancelled=true
+   14. CANCELLED → SCROLL | dx=-16 dy=11 dist=19.1px angle=147° dur=711ms
+      scrollDuring=0px scrollAfter=-8px moves=26 cancelled=true
+
+## STEP 8  ta=pan-x cap=1  (7/5)
+   action: 항목을 잡고 아래로 쭉 미세요
+   1. CANCELLED (no scroll) | dx=1 dy=20 dist=20.0px angle=89° dur=88ms
+      scrollDuring=0px scrollAfter=0px moves=8 cancelled=true
+   2. CANCELLED (no scroll) | dx=1 dy=17 dist=17.0px angle=87° dur=93ms
+      scrollDuring=0px scrollAfter=0px moves=8 cancelled=true
+   3. CANCELLED (no scroll) | dx=1 dy=-150 dist=149.5px angle=-90° dur=678ms
+      scrollDuring=0px scrollAfter=0px moves=71 cancelled=true
+   4. CANCELLED (no scroll) | dx=1 dy=76 dist=76.0px angle=90° dur=419ms
+      scrollDuring=0px scrollAfter=0px moves=43 cancelled=true
+   5. CANCELLED (no scroll) | dx=-1 dy=-27 dist=26.5px angle=-91° dur=268ms
+      scrollDuring=0px scrollAfter=0px moves=17 cancelled=true
+   6. DRAG only | dx=1 dy=115 dist=114.5px angle=90° dur=962ms
+      scrollDuring=0px scrollAfter=0px moves=93 cancelled=false
+   7. CANCELLED (no scroll) | dx=-5 dy=-53 dist=52.7px angle=-95° dur=446ms
+      scrollDuring=0px scrollAfter=0px moves=40 cancelled=true
+
+## STEP 9  ta=manipulation cap=1  (6/5)
+   action: 항목을 잡고 아래로 쭉 미세요
+   1. BOTH — CONFLICT | dx=3 dy=-105 dist=104.5px angle=-88° dur=526ms
+      scrollDuring=91px scrollAfter=0px moves=49 cancelled=false
+   2. BOTH — CONFLICT | dx=-2 dy=99 dist=99.0px angle=91° dur=278ms
+      scrollDuring=-83px scrollAfter=-92px moves=29 cancelled=false
+   3. BOTH — CONFLICT | dx=9 dy=263 dist=263.2px angle=88° dur=846ms
+      scrollDuring=-249px scrollAfter=0px moves=92 cancelled=false
+   4. BOTH — CONFLICT | dx=-7 dy=-151 dist=151.2px angle=-93° dur=819ms
+      scrollDuring=139px scrollAfter=0px moves=87 cancelled=false
+   5. BOTH — CONFLICT | dx=9 dy=-156 dist=156.3px angle=-87° dur=1447ms
+      scrollDuring=146px scrollAfter=0px moves=107 cancelled=false
+   6. BOTH — CONFLICT | dx=5 dy=-114 dist=114.1px angle=-88° dur=828ms
+      scrollDuring=100px scrollAfter=0px moves=73 cancelled=false
+
+## STEP 10  ta=none cap=0  (3/3)
+   action: 항목을 잡고 아래로 쭉 미세요
+   1. DRAG only | dx=0 dy=-210 dist=210.0px angle=-90° dur=1222ms
+      scrollDuring=0px scrollAfter=0px moves=125 cancelled=false
+   2. DRAG only | dx=0 dy=-265 dist=264.5px angle=-90° dur=1447ms
+      scrollDuring=0px scrollAfter=0px moves=152 cancelled=false
+   3. DRAG only | dx=12 dy=-347 dist=347.2px angle=-88° dur=1063ms
+      scrollDuring=0px scrollAfter=0px moves=117 cancelled=false
