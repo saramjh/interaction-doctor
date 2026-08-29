@@ -1,0 +1,94 @@
+# C3 / C6 verification
+device: Android 10 / Chrome 143 / 412×892@3.5 / touch=5
+ua-detect: Android 10 / Chrome 143 / 412×892@3.5 / touch=5
+2026-08-29T06:21:48.729Z
+
+## STEP 1  select=auto callout=default target=card  (0/5)
+   action: 카드를 탭하세요 (절대 움직이지 말 것)
+   (no trials)
+
+## STEP 2  select=auto callout=default target=card  (0/5)
+   action: 탭하되 손가락을 아주 조금(5px쯤) 움직이세요
+   (no trials)
+
+## STEP 3  select=auto callout=default target=card  (0/5)
+   action: 20~30px 정도 움직이고 떼세요
+   (no trials)
+
+## STEP 4  select=auto callout=default target=card  (0/5)
+   action: 150px 이상 크게 드래그하고 떼세요
+   (no trials)
+
+## STEP 5  select=auto callout=default target=child  (0/3)
+   action: 파란 버튼을 그냥 탭하세요
+   (no trials)
+
+## STEP 6  select=auto callout=default target=child  (0/5)
+   action: 파란 버튼에서 시작해 150px 드래그하고 떼세요
+   (no trials)
+
+## STEP 7  select=auto callout=default target=card  (0/5)
+   action: 움직이지 말고 1초 이상 꾹 누르고 떼세요
+   (no trials)
+
+## STEP 8  select=none callout=none target=card  (0/5)
+   action: 다시 1초 이상 꾹 누르고 떼세요
+   (no trials)
+
+## STEP 9  select=none callout=none target=card  (0/5)
+   action: 1초 꾹 누른 뒤, 손 떼지 말고 100px 드래그
+   (no trials)
+
+## STEP 10  select=none callout=none target=card  (0/6)
+   action: 빠르게 두 번씩 탭하세요 (3세트 = 6회)
+   (no trials)
+
+## STEP 11  select=none callout=none target=card  (12/6)
+   action: 카드 위쪽 문장을 빠르게 두 번씩 탭 (3세트)
+   1. click
+      dist=0.0px max=0.0px dur=44ms clickAt=48ms selChars=0 moves=4
+   2. click + dblclick
+      dist=0.2px max=0.2px dur=61ms clickAt=63ms selChars=0 moves=7
+   3. click
+      dist=0.0px max=0.0px dur=69ms clickAt=72ms selChars=0 moves=8
+   4. click + dblclick
+      dist=0.0px max=0.0px dur=66ms clickAt=68ms selChars=0 moves=7
+   5. click
+      dist=0.0px max=0.0px dur=57ms clickAt=59ms selChars=0 moves=7
+   6. click + dblclick
+      dist=0.0px max=0.0px dur=68ms clickAt=70ms selChars=0 moves=8
+   7. click
+      dist=0.0px max=0.0px dur=57ms clickAt=60ms selChars=0 moves=7
+   8. click + dblclick
+      dist=0.0px max=0.0px dur=52ms clickAt=54ms selChars=0 moves=6
+   9. click
+      dist=0.0px max=0.0px dur=65ms clickAt=67ms selChars=0 moves=7
+   10. click + dblclick
+      dist=0.0px max=0.0px dur=57ms clickAt=58ms selChars=0 moves=6
+   11. click
+      dist=0.0px max=0.0px dur=49ms clickAt=51ms selChars=0 moves=6
+   12. click + dblclick
+      dist=0.0px max=0.0px dur=67ms clickAt=69ms selChars=0 moves=8
+
+## STEP 12  select=none callout=none target=card  (10/6)
+   action: 같은 자리를 빠르게 두 번씩 탭 (3세트)
+   1. click
+      dist=0.0px max=0.0px dur=68ms clickAt=70ms selChars=0 moves=8
+   2. click + dblclick
+      dist=0.0px max=0.0px dur=93ms clickAt=95ms selChars=0 moves=11
+   3. click
+      dist=0.0px max=0.0px dur=67ms clickAt=70ms selChars=0 moves=8
+   4. click
+      dist=0.0px max=0.0px dur=77ms clickAt=80ms selChars=0 moves=9
+   5. click + dblclick
+      dist=0.0px max=0.0px dur=76ms clickAt=78ms selChars=0 moves=9
+   6. click
+      dist=0.0px max=0.0px dur=83ms clickAt=84ms selChars=0 moves=10
+   7. click
+      dist=0.0px max=0.0px dur=68ms clickAt=71ms selChars=0 moves=8
+   8. click + dblclick
+      dist=0.0px max=0.0px dur=58ms clickAt=61ms selChars=0 moves=7
+   9. click
+      dist=0.0px max=0.0px dur=85ms clickAt=90ms selChars=0 moves=10
+   10. click
+      dist=0.0px max=0.0px dur=53ms clickAt=55ms selChars=0 moves=6

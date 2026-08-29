@@ -30,12 +30,12 @@ c3c6-macos-2.txt   C3/C6 harness, macOS — steps 4 and 6 only, horizontal drags
 
 ## Devices
 
-| label | OS / browser | viewport | touch points |
-|---|---|---|---|
-| android | Android 10 / Chrome 143 | 412×892 @3.5 | 5 |
-| ipad | iPadOS 26.6 / Safari 26.6 (iPad Pro) | 1024×1366 @2 | 5 |
-| iphone | iOS 18.7 / Safari | 375×667 @2 | 5 |
-| macos | macOS 26.6.2 / Chrome 142 | 2140×1391 @2 | 0 (mouse) |
+| label   | OS / browser                         | viewport     | touch points |
+| ------- | ------------------------------------ | ------------ | ------------ |
+| android | Android 10 / Chrome 143              | 412×892 @3.5 | 5            |
+| ipad    | iPadOS 26.6 / Safari 26.6 (iPad Pro) | 1024×1366 @2 | 5            |
+| iphone  | iOS 18.7 / Safari                    | 375×667 @2   | 5            |
+| macos   | macOS 26.6.2 / Chrome 142            | 2140×1391 @2 | 0 (mouse)    |
 
 All measurements taken 2026-08-29.
 
@@ -76,15 +76,22 @@ remain valid.
 
 **5. C3/C6 step 10 targeted the child button.**
 The card contains a centred button and it was tapped instead of the card body in
-every session. `dblclick` figures are valid — the event fires on the same path
-either way — but **double-tap zoom behaviour was never measured**, and
-`touch-action: none` was in force throughout, which suppresses it anyway.
-See C1, marked 🚧.
+every session. `dblclick` figures from step 10 are valid — the event fires on the
+same path either way — but the card body was only exercised in steps 11–12.
 
 **6. Desktop drags leaving the element.**
 In `c3c6-macos-1.txt`, large drags moved the card outside the clipped stage area.
 Re-run as `c3c6-macos-2.txt` with horizontal-only drags. Both files are retained:
 the second is authoritative for steps 4 and 6, the first for steps 1–3 and 7–10.
+
+**7. Double-tap zoom could not be measured.**
+Steps 11–12 vary `touch-action` and record `dblclick` reliably, but zoom itself was
+never triggered. The harness page is `width=device-width` with no horizontally
+overflowing content, so Android Chrome found no block to zoom to and no zoom
+occurred anywhere on the page. On iOS, zoom occurred outside the card but not on it,
+including under `touch-action: auto` — so the card's failure to zoom is not
+attributable to `touch-action`. Isolating zoom behaviour requires a page built for
+that purpose. See C1, marked 🚧.
 
 ---
 

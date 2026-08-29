@@ -140,7 +140,13 @@ var STEPS = [
    why:'롱프레스 후에도 드래그가 살아있는지'},
   {reps:6, sel:'none', callout:'none', target:'card',
    act:'빠르게 두 번씩 탭하세요 (3세트 = 6회)',
-   why:'더블탭에서 dblclick / 확대가 일어나는지'}
+   why:'더블탭에서 dblclick / 확대가 일어나는지'},
+   {reps:6, sel:'none', callout:'none', target:'card', ta:'manipulation',
+   act:'카드 위쪽 문장을 빠르게 두 번씩 탭 (3세트)',
+   why:'manipulation이 더블탭 확대를 막아주는지'},
+  {reps:6, sel:'none', callout:'none', target:'card', ta:'auto',
+   act:'같은 자리를 빠르게 두 번씩 탭 (3세트)',
+   why:'기본값에서는 확대가 일어나는지'}
 ];
 
 var si=0, results=[], counts={}, TAIL=700;
@@ -185,7 +191,7 @@ var autoDev='detecting…';
 /* ---------- step control ---------- */
 function applyStep(){
   var s=STEPS[si];
-  card.style.touchAction='none';
+  card.style.touchAction = s.ta || 'none';        // ← 이 줄로 교체
   card.style.userSelect=s.sel; card.style.webkitUserSelect=s.sel;
   card.style.webkitTouchCallout=s.callout==='none'?'none':'';
   document.getElementById('gCfg').textContent=
