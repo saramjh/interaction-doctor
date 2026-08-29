@@ -1,0 +1,265 @@
+# C8 / C9 / C11 / C13 verification
+device: Android 10 / Chrome 143 / 412×892@3.5 / touch=5
+ua-detect: Android 10 / Chrome 143 / 412×892@3.5 / touch=5
+2026-08-29T06:56:31.458Z
+
+## STEP 1  [C8]  ta=pan-y sel=auto  (5/5)
+   action: 항목을 움직이지 말고 1.5초 이상 꾹 누르세요
+   1. contextmenu + selection
+      dist=0.0px max=0.0px dur=2688ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=501ms selChars=0 moves=313
+   2. contextmenu + selection
+      dist=0.4px max=0.4px dur=2152ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=499ms selChars=0 moves=257
+   3. contextmenu + selection
+      dist=0.0px max=0.0px dur=2503ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=501ms selChars=0 moves=300
+   4. contextmenu + selection
+      dist=0.0px max=0.0px dur=2319ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=500ms selChars=0 moves=277
+   5. contextmenu + selection
+      dist=0.0px max=0.0px dur=1810ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=505ms selChars=0 moves=217
+
+## STEP 2  [C8]  ta=pan-y sel=auto  (18/5)
+   action: 리스트를 세게 튕긴 뒤, 굴러가는 중에 눌러서 1.5초 유지
+   1. drag + scroll + pointercancel
+      dist=15.8px max=15.8px dur=38ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=735px selChars=0 moves=5
+   2. contextmenu + selection
+      dist=2.9px max=2.9px dur=3298ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=499ms selChars=0 moves=393
+   3. drag + scroll + pointercancel
+      dist=10.5px max=10.5px dur=26ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=-845px selChars=0 moves=4
+   4. contextmenu + selection
+      dist=5.8px max=5.8px dur=2568ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=498ms selChars=0 moves=306
+   5. drag + scroll + pointercancel
+      dist=13.3px max=13.3px dur=31ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=336px selChars=0 moves=5
+   6. drag + scroll + pointercancel
+      dist=17.6px max=17.6px dur=38ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=-336px selChars=0 moves=5
+   7. contextmenu + selection
+      dist=5.8px max=5.8px dur=1661ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=499ms selChars=0 moves=198
+   8. drag + scroll + pointercancel
+      dist=13.9px max=13.9px dur=39ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=355px selChars=0 moves=6
+   9. scroll
+      dist=0.0px max=0.0px dur=1454ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=12px after=0px selChars=0 moves=173
+   10. drag + scroll + pointercancel
+      dist=11.3px max=11.3px dur=16ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=469px selChars=0 moves=3
+   11. scroll
+      dist=0.0px max=0.0px dur=2923ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=8px after=0px selChars=0 moves=349
+   12. drag + pointercancel
+      dist=11.8px max=11.8px dur=27ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=4
+   13. contextmenu + selection
+      dist=0.9px max=0.9px dur=1921ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=498ms selChars=0 moves=230
+   14. drag + scroll + pointercancel
+      dist=10.5px max=10.5px dur=33ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=-481px selChars=0 moves=5
+   15. drag + scroll + pointercancel
+      dist=15.0px max=15.0px dur=71ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=-86px selChars=0 moves=9
+   16. scroll
+      dist=4.6px max=4.6px dur=1620ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=-2px after=0px selChars=0 moves=194
+   17. drag + scroll + pointercancel
+      dist=11.6px max=11.6px dur=79ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=-163px selChars=0 moves=10
+   18. scroll
+      dist=1.2px max=1.2px dur=1745ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=-4px after=0px selChars=0 moves=209
+
+## STEP 3  [C8]  ta=none sel=auto  (6/5)
+   action: 항목을 움직이지 말고 1.5초 이상 꾹 누르세요
+   1. contextmenu + selection
+      dist=0.0px max=0.0px dur=1811ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=498ms selChars=0 moves=216
+   2. contextmenu + selection
+      dist=0.0px max=0.0px dur=1788ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=502ms selChars=0 moves=214
+   3. contextmenu + selection
+      dist=0.0px max=0.0px dur=1820ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=500ms selChars=0 moves=216
+   4. contextmenu + selection
+      dist=0.0px max=0.0px dur=1812ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=499ms selChars=0 moves=217
+   5. contextmenu + selection
+      dist=1.0px max=1.0px dur=1775ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=500ms selChars=0 moves=213
+   6. contextmenu + selection
+      dist=0.9px max=0.9px dur=1836ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px ctxAt=501ms selChars=0 moves=220
+
+## STEP 4  [C9]  ta=pan-y sel=none  (8/5)
+   action: 항목을 가로로 빠르게 튕기듯 미세요
+   1. drag
+      dist=75.2px max=75.2px dur=40ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=4
+   2. drag
+      dist=199.8px max=199.8px dur=53ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+   3. drag
+      dist=280.7px max=280.7px dur=50ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+   4. drag
+      dist=261.1px max=261.1px dur=53ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+   5. drag
+      dist=299.5px max=299.5px dur=62ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+   6. drag
+      dist=117.9px max=117.9px dur=30ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=3
+   7. drag
+      dist=274.5px max=274.5px dur=57ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+   8. drag
+      dist=304.2px max=304.2px dur=56ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+
+## STEP 5  [C9]  ta=pan-y sel=none  (5/5)
+   action: 항목을 가로로 아주 천천히 미세요 (1초 이상)
+   1. drag
+      dist=283.9px max=283.9px dur=1922ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=228
+   2. drag
+      dist=299.0px max=299.0px dur=2161ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=259
+   3. drag
+      dist=242.8px max=242.8px dur=1871ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=223
+   4. drag
+      dist=278.7px max=278.7px dur=1661ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=198
+   5. drag
+      dist=255.4px max=255.4px dur=1706ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=205
+
+## STEP 6  [C9]  ta=pan-y sel=none  (5/5)
+   action: 항목을 천천히 대각선으로 미세요
+   1. drag
+      dist=329.3px max=329.3px dur=3686ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=441
+   2. drag
+      dist=292.1px max=292.1px dur=2751ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=329
+   3. drag
+      dist=322.9px max=322.9px dur=2705ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=325
+   4. drag
+      dist=320.5px max=320.5px dur=1612ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=193
+   5. drag
+      dist=313.8px max=313.8px dur=1494ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=178
+
+## STEP 7  [C11]  ta=none sel=none  (6/5)
+   action: 한 손가락으로 드래그 시작 → 유지한 채 두 번째 손가락 추가
+   1. drag + 2ptr + pinch
+      dist=177.3px max=189.4px dur=3319ms axis=horizontal
+      scale=0.579–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=393
+   2. drag + 2ptr + pinch
+      dist=175.6px max=175.6px dur=1579ms axis=horizontal
+      scale=0.412–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=188
+   3. drag + 2ptr + pinch
+      dist=105.0px max=151.7px dur=1848ms axis=horizontal
+      scale=0.422–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=217
+   4. drag + 2ptr + pinch + axisflip
+      dist=170.0px max=176.0px dur=2052ms axis=vertical
+      scale=0.522–1.024 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=244
+   5. drag + 2ptr + pinch + axisflip
+      dist=140.2px max=140.2px dur=905ms axis=vertical
+      scale=1.000–1.918 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=107
+   6. drag
+      dist=98.2px max=107.0px dur=773ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=92
+
+## STEP 8  [C11]  ta=pan-y sel=none  (6/5)
+   action: 같은 동작을 pan-y 에서 반복
+   1. drag + scroll + PAGEZOOM + pointercancel
+      dist=8.9px max=8.9px dur=127ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.246 scroll during=0px after=-97px selChars=0 moves=15
+   2. drag + 2ptr + pinch + PAGEZOOM
+      dist=95.6px max=120.4px dur=1952ms axis=horizontal
+      scale=0.620–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=229
+   3. drag + 2ptr + pinch
+      dist=51.3px max=92.2px dur=1651ms axis=horizontal
+      scale=0.777–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=198
+   4. drag + 2ptr + pinch + PAGEZOOM + axisflip
+      dist=157.0px max=159.9px dur=1648ms axis=vertical
+      scale=0.832–1.000 zoom=1.000→1.038 scroll during=0px after=0px selChars=0 moves=196
+   5. drag + 2ptr + pinch + PAGEZOOM
+      dist=121.8px max=139.6px dur=1541ms axis=horizontal
+      scale=0.706–1.000 zoom=1.038→1.000 scroll during=0px after=0px selChars=0 moves=178
+   6. drag + scroll + pointercancel
+      dist=8.1px max=8.1px dur=97ms axis=vertical
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=-12px selChars=0 moves=12
+
+## STEP 9  [C13]  ta=pan-y sel=none  (7/5)
+   action: 두 손가락으로 항목 위에서 벌리세요 (핀치 확대)
+   1. drag + 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=8.7px max=8.7px dur=345ms axis=horizontal
+      scale=1.000–1.146 zoom=1.000→1.610 scroll during=0px after=-0px selChars=0 moves=40
+   2. 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=7.2px max=7.2px dur=328ms axis=-
+      scale=1.000–1.185 zoom=1.000→1.999 scroll during=0px after=0px selChars=0 moves=40
+   3. 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=5.7px max=5.7px dur=273ms axis=-
+      scale=1.000–1.127 zoom=1.000→1.513 scroll during=0px after=0px selChars=0 moves=34
+   4. (none)
+      dist=0.0px max=0.0px dur=60ms axis=-
+      scale=1.000–1.000 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=7
+   5. drag + 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=11.2px max=11.2px dur=145ms axis=horizontal
+      scale=1.000–1.132 zoom=1.000→1.994 scroll during=0px after=0px selChars=0 moves=18
+   6. 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=0.6px max=0.6px dur=158ms axis=-
+      scale=1.000–1.139 zoom=1.000→2.251 scroll during=0px after=0px selChars=0 moves=19
+   7. 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=0.1px max=0.1px dur=129ms axis=-
+      scale=1.000–1.152 zoom=1.000→2.276 scroll during=0px after=1px selChars=0 moves=16
+
+## STEP 10  [C13]  ta=none sel=none  (5/5)
+   action: 같은 핀치를 none 에서 반복
+   1. drag + 2ptr + pinch
+      dist=23.0px max=38.5px dur=1268ms axis=horizontal
+      scale=0.971–2.725 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=149
+   2. drag + 2ptr + pinch
+      dist=11.3px max=108.2px dur=1043ms axis=horizontal
+      scale=1.000–3.126 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=124
+   3. drag + 2ptr + pinch
+      dist=29.8px max=110.7px dur=967ms axis=horizontal
+      scale=1.000–3.310 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=115
+   4. drag + 2ptr + pinch
+      dist=6.5px max=41.9px dur=966ms axis=horizontal
+      scale=1.000–3.426 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=115
+   5. 2ptr + pinch
+      dist=0.0px max=0.0px dur=1058ms axis=-
+      scale=1.000–3.973 zoom=1.000→1.000 scroll during=0px after=0px selChars=0 moves=6
+
+## STEP 11  [C13]  ta=auto sel=none  (5/5)
+   action: 같은 핀치를 auto 에서 반복
+   1. 2ptr + pinch + pointercancel
+      dist=5.9px max=5.9px dur=124ms axis=-
+      scale=1.000–1.156 zoom=1.000→1.000 scroll during=0px after=-0px selChars=0 moves=16
+   2. drag + 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=8.5px max=8.5px dur=168ms axis=horizontal
+      scale=1.000–1.190 zoom=1.000→1.774 scroll during=0px after=1px selChars=0 moves=21
+   3. 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=4.4px max=4.4px dur=198ms axis=-
+      scale=1.000–1.199 zoom=1.000→2.158 scroll during=0px after=0px selChars=0 moves=24
+   4. 2ptr + pinch + PAGEZOOM + pointercancel
+      dist=0.0px max=0.0px dur=128ms axis=-
+      scale=1.000–1.199 zoom=1.000→2.039 scroll during=0px after=-1px selChars=0 moves=1
+   5. drag + 2ptr + PAGEZOOM + pointercancel
+      dist=17.0px max=17.0px dur=25ms axis=horizontal
+      scale=1.000–1.000 zoom=1.000→1.297 scroll during=0px after=0px selChars=0 moves=3
