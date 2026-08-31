@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playlist</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+  }
+  h1 { font-size: 20px; }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item {
+    background: #1e1e1e;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y; /* 일반 상하 스크롤 보장 */
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #555;
+    border-radius: 4px;
+    display: none;
+    flex: 0 0 auto;
+  }
+  /* 다중 선택 모드 진입 시 체크박스 노출 */
+  .item.show-checkbox .checkbox {
+    display: block;
+  }
+  .item.selected .checkbox {
+    background: #5b8cff;
+    border-color: #5b8cff;
+  }
+  .item.selected {
+    background: #252d42;
+    border-color: #5b8cff;
+  }
+  .item.dragging {
+    opacity: 0.5;
+    background: #333;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 10;
+    transition: none;
+  }
+  .track-info {
+    flex: 1;
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  .btn-more {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 22px;
+    padding: 4px 8px;
+    cursor: pointer;
+    margin-right: 10px;
+    touch-action: manipulation;
+  }
+  .btn-more:active {
+    color: #fff;
+  }
+  .drag-handle {
+    font-size: 20px;
+    color: #666;
+    cursor: grab;
+    padding: 4px 8px;
+    touch-action: none; /* 드래그 중 스크롤 방지 */
+  }
+  .drag-handle:active {
+    cursor: grabbing;
+    color: #fff;
+  }
+  .context-menu {
+    position: absolute;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 8px 0;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .context-menu-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .context-menu-item:hover {
+    background: #3a3a3a;
+  }
+</style>
+</head>
+<body>
+
+<h1>곡 정보 편집</h1>
+
+<ul class="list" id="list">
+  <li class="item">
+    <div class="checkbox"></div>
+    <span class="track-info">Track 1: 밤편지</span>
+    <div class="actions">
+      <button class="btn-more" type="button">⋮</button>
+      <span class="drag-handle">☰</span>
+    </div>
+  </li>
+  <li class="item">
+    <div class="checkbox"></div>
+    <span class="track-info">Track 2: Dynamite</span>
+    <div class="actions">
+      <button class="btn-more" type="button">⋮</button>
+      <span class="drag-handle">☰</span>
+    </div>
+  </li>
+  <li class="item">
+    <div class="checkbox"></div>
+    <span class="track-info">Track 3: Spring Day</span>
+    <div class="actions">
+      <button class="btn-more" type="button">⋮</button>
+      <span class="drag-handle">☰</span>
+    </div>
+  </li>
+</ul>
+
+<div class="context-menu" id="contextMenu">
+  <div class="context-menu-item" id="menuDelete">재생목록에서 삭제</div>
+  <div class="context-menu-item" id="menuInfo">노래 정보 보기</div>
+</div>
+
+<script>
+  const list = document.getElementById('list');
+  const contextMenu = document.getElementById('contextMenu');
+  
+  let isMultiSelectMode = false;
+  
+  // 롱프레스 타이머 및 터치 위치 기록용 변수
+  let longPressTimer = null;
+  let activeItem = null;
+  let startX = 0;
+  let startY = 0;
+  const MOVE_THRESHOLD = 10; // 롱프레스 취소 이동 거리 임계값 (10px)
+
+  // 드래그 정렬 관련 상태 변수
+  let isDragging = false;
+  let draggingItem = null;
+  let pointerOffsetTop = 0;
+
+  // 컨텍스트 메뉴 대상 아이템
+  let selectedContextItem = null;
+
+  list.addEventListener('pointerdown', (e) => {
+    const item = e.target.closest('.item');
+    if (!item) return;
+
+    // 1. 드래그 핸들을 클릭한 경우: 롱프레스 거치지 않고 즉시 드래그 개시
+    const dragHandle = e.target.closest('.drag-handle');
+    if (dragHandle) {
+      startDrag(e, item);
+      return;
+    }
+
+    // 2. 더보기 버튼을 클릭한 경우: 롱프레스 없이 바로 컨텍스트 메뉴 표시
+    const btnMore = e.target.closest('.btn-more');
+    if (btnMore) {
+      e.stopPropagation();
+      showContextMenu(e, item);
+      return;
+    }
+
+    // 3. 다중 선택 모드가 켜진 경우: 롱프레스나 메뉴 동작 없이 그냥 선택 상태 토글
+    if (isMultiSelectMode) {
+      e.preventDefault();
+      item.classList.toggle('selected');
+      return;
+    }
+
+    // 4. 일반 트랙 영역을 터치한 경우: 다중 선택 모드로 진입하기 위한 롱프레스 타이머 가동
+    activeItem = item;
+    startX = e.clientX;
+    startY = e.clientY;
+
+    longPressTimer = setTimeout(() => {
+      isMultiSelectMode = true;
+      document.querySelectorAll('.item').forEach(el => el.classList.add('show-checkbox'));
+      item.classList.add('selected');
+      if (navigator.vibrate) navigator.vibrate(20);
+      cleanupLongPress();
+    }, 500);
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    // 드래그 정렬 중인 경우 처리
+    if (isDragging) {
+      handleDragMove(e);
+      return;
+    }
+
+    // 롱프레스 측정 도중 손가락을 과도하게 움직였을 때 롱프레스 타이머 취소 (오스크롤 방지)
+    if (longPressTimer) {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance > MOVE_THRESHOLD) {
+        cleanupLongPress();
+      }
+    }
+  });
+
+  const cleanupLongPress = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+    activeItem = null;
+  };
+
+  const handlePointerUp = (e) => {
+    cleanupLongPress();
+    if (isDragging) {
+      endDrag(e);
+    }
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+
+  // --- 드래그 앤 드롭 구현부 (FLIP 기법 보정 적용) ---
+  function startDrag(e, item) {
+    isDragging = true;
+    draggingItem = item;
+    draggingItem.classList.add('dragging');
+    draggingItem.setPointerCapture(e.pointerId);
+
+    const rect = draggingItem.getBoundingClientRect();
+    pointerOffsetTop = e.clientY - rect.top;
+  }
+
+  function handleDragMove(e) {
+    if (!isDragging || !draggingItem) return;
+
+    const currentTop = e.clientY - pointerOffsetTop;
+    const draggingHeight = draggingItem.offsetHeight;
+    const draggingCenter = currentTop + draggingHeight / 2;
+
+    const items = [...list.querySelectorAll('.item:not(.dragging)')];
+    
+    // 포인터 좌표에 따른 삽입할 위치의 아이템 탐색
+    let sibling = items.find(item => {
+      const rect = item.getBoundingClientRect();
+      return draggingCenter < rect.top + rect.height / 2;
+    });
+
+    draggingItem.style.transform = 'none';
+    if (sibling) {
+      list.insertBefore(draggingItem, sibling);
+    } else {
+      list.appendChild(draggingItem);
+    }
+
+    // DOM 정렬 후 튐 보정
+    const newRect = draggingItem.getBoundingClientRect();
+    const dy = currentTop - newRect.top;
+    draggingItem.style.transform = `translateY(${dy}px)`;
+  }
+
+  function endDrag(e) {
+    if (!isDragging || !draggingItem) return;
+    draggingItem.releasePointerCapture(e.pointerId);
+    draggingItem.classList.remove('dragging');
+    draggingItem.style.transform = '';
+    isDragging = false;
+    draggingItem = null;
+  }
+
+  // --- 컨텍스트 메뉴 제어부 ---
+  function showContextMenu(e, item) {
+    selectedContextItem = item;
+    contextMenu.style.left = `${e.clientX - 10}px`;
+    contextMenu.style.top = `${e.clientY + window.scrollY + 10}px`;
+    contextMenu.style.display = 'block';
+  }
+
+  // 외부 영역 클릭 시 컨텍스트 메뉴 종료
+  document.addEventListener('click', () => {
+    contextMenu.style.display = 'none';
+  });
+
+  // 메뉴 항목 클릭 처리
+  contextMenu.addEventListener('click', (e) => {
+    const menuItem = e.target.closest('.context-menu-item');
+    if (!menuItem) return;
+
+    if (menuItem.id === 'menuDelete') {
+      if (selectedContextItem) {
+        selectedContextItem.remove();
+      }
+    } else if (menuItem.id === 'menuInfo') {
+      if (selectedContextItem) {
+        const text = selectedContextItem.querySelector('.track-info').textContent;
+        alert(`상세 정보: ${text}`);
+      }
+    }
+    contextMenu.style.display = 'none';
+    selectedContextItem = null;
+  });
+</script>
+</body>
+</html>

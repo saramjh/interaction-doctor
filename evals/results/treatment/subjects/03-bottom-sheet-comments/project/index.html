@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>게시물</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #000;
+		color: #eee;
+		overflow: hidden;
+	}
+	#post {
+		height: 40%;
+		background: linear-gradient(160deg, #2b2b52, #0f0c29);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		color: #aaa;
+	}
+	#sheet {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 60%;
+		background: #17171c;
+		border-radius: 16px 16px 0 0;
+		display: flex;
+		flex-direction: column;
+	}
+	#handle {
+		display: flex;
+		justify-content: center;
+		padding: 10px 0;
+	}
+	#handle-bar {
+		width: 36px;
+		height: 4px;
+		border-radius: 2px;
+		background: #444;
+	}
+	#sheet-title {
+		padding: 0 16px 10px;
+		font-size: 14px;
+		font-weight: 700;
+		border-bottom: 1px solid #26262e;
+	}
+	#comments {
+		flex: 1;
+		overflow-y: auto;
+		padding: 8px 16px;
+	}
+	.comment {
+		padding: 10px 0;
+		border-bottom: 1px solid #222228;
+		font-size: 13px;
+	}
+	.comment b { color: #9db4ff; margin-right: 6px; }
+</style>
+</head>
+<body>
+<div id="post">게시물 본문 영역</div>
+<div id="sheet">
+	<div id="handle"><div id="handle-bar"></div></div>
+	<div id="sheet-title">댓글 40개</div>
+	<div id="comments"></div>
+</div>
+
+<script>
+// 댓글이 많아서 시트 안에서 스크롤해서 봐야 한다.
+// 시트 자체는 아래로 당기면 화면 밖으로 닫혀야 한다(핸들 드래그).
+
+const NAMES = ["지민", "하늘", "도윤", "서연", "민준", "예린", "준서", "채원"];
+const commentsEl = document.getElementById("comments");
+
+for (let i = 0; i < 40; i++) {
+	const c = document.createElement("div");
+	c.className = "comment";
+	c.innerHTML = "<b>" + NAMES[i % NAMES.length] + "</b>댓글 내용 " + (i + 1) + "번째 줄입니다.";
+	commentsEl.appendChild(c);
+}
+
+const sheet = document.getElementById("sheet");
+const commentsEl = document.getElementById("comments");
+const SHEET_HEIGHT = window.innerHeight * 0.6;
+const COLLAPSE_ACTIVATION_PX = 8;
+
+let startY = 0;
+let currentY = 0;
+let ownedBySheet = false;
+let isDown = false;
+
+sheet.addEventListener("pointerdown", (e) => {
+	isDown = true;
+	startY = e.clientY;
+	currentY = 0;
+
+	const inComments = e.target.closest("#comments");
+	if (!inComments) {
+		ownedBySheet = true;
+		sheet.setPointerCapture(e.pointerId);
+	} else {
+		ownedBySheet = false;
+	}
+});
+
+sheet.addEventListener("pointermove", (e) => {
+	if (!isDown) return;
+
+	const dy = e.clientY - startY;
+
+	if (ownedBySheet) {
+		e.preventDefault();
+		if (dy > 0) {
+			currentY = dy;
+			sheet.style.transform = "translateY(" + dy + "px)";
+		} else {
+			currentY = 0;
+			sheet.style.transform = "";
+		}
+		return;
+	}
+
+	const draggingDown = dy > 0;
+	const atTop = commentsEl.scrollTop <= 0;
+
+	if (draggingDown && atTop && dy > COLLAPSE_ACTIVATION_PX) {
+		ownedBySheet = true;
+		sheet.setPointerCapture(e.pointerId);
+		e.preventDefault();
+		currentY = dy;
+		sheet.style.transform = "translateY(" + dy + "px)";
+	}
+}, { passive: false });
+
+const handlePointerUp = () => {
+	if (!isDown) return;
+	isDown = false;
+	ownedBySheet = false;
+
+	if (currentY > SHEET_HEIGHT * 0.35) {
+		sheet.style.transform = "translateY(100%)";
+	} else {
+		sheet.style.transform = "";
+	}
+	currentY = 0;
+};
+
+sheet.addEventListener("pointerup", handlePointerUp);
+sheet.addEventListener("pointercancel", handlePointerUp);
+</script>
+</body>
+</html>

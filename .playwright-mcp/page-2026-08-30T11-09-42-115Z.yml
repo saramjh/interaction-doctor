@@ -1,0 +1,14 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e4]:
+    - generic [ref=f6e5]: 민지
+    - generic [ref=f6e6]: 서준
+    - generic [ref=f6e7]: 하윤
+    - generic [ref=f6e8]: 지호
+    - generic [ref=f6e9]: 유나
+    - generic [ref=f6e10]: 태윤
+    - generic [ref=f6e11]: 아린
+  - navigation [ref=f6e15]:
+    - button "홈" [ref=f6e16]
+    - button "검색" [ref=f6e17]
+    - button "알림" [ref=f6e18]
+    - button "프로필" [ref=f6e19]

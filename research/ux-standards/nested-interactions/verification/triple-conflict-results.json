@@ -1,0 +1,151 @@
+{
+  "test0_bugReproduction": {
+    "description": "?buggy=1 (armed guard disabled, exact §4 sketch): single hover move into #target, zero pointerdown events",
+    "countsBefore": {
+      "onReorder": 0,
+      "onContextMenu": 0,
+      "onMultiSelect": 0
+    },
+    "countsAfter": {
+      "onReorder": 1,
+      "onContextMenu": 0,
+      "onMultiSelect": 0
+    },
+    "log": [
+      {
+        "cb": "onReorder",
+        "sinceGestureStart": null
+      }
+    ]
+  },
+  "testA_contextMenuAt500ms": {
+    "description": "pointerdown, hold still (no move) for 550ms wall-clock, then read state",
+    "nodeSideElapsedMs": 556,
+    "counts": {
+      "onReorder": 0,
+      "onContextMenu": 1,
+      "onMultiSelect": 0
+    },
+    "log": [
+      {
+        "cb": "onContextMenu",
+        "sinceGestureStart": 501.2000000178814
+      }
+    ]
+  },
+  "testB_escalateAt1000ms": {
+    "description": "pointerdown, hold still (no move, no release) for 1050ms wall-clock — continuation of the same gesture as test a, run fresh here for a clean timeline",
+    "nodeSideElapsedMs": 1053,
+    "counts": {
+      "onReorder": 0,
+      "onContextMenu": 1,
+      "onMultiSelect": 1
+    },
+    "log": [
+      {
+        "cb": "onContextMenu",
+        "sinceGestureStart": 501.5
+      },
+      {
+        "cb": "onMultiSelect",
+        "sinceGestureStart": 1003.0999999940395
+      }
+    ]
+  },
+  "testC_moveAt300msCancelsTimer": {
+    "description": "pointerdown, hold still to 300ms, then move 30px (>8px), then keep waiting to ~700ms to confirm the context-menu timer was actually cancelled and does not fire late",
+    "moveDispatchOverheadMs": 17,
+    "countsImmediatelyAfterMove": {
+      "onReorder": 1,
+      "onContextMenu": 0,
+      "onMultiSelect": 0
+    },
+    "logImmediatelyAfterMove": [
+      {
+        "cb": "onReorder",
+        "sinceGestureStart": 326.09999999403954
+      }
+    ],
+    "countsAtAboutSevenHundredMs": {
+      "onReorder": 1,
+      "onContextMenu": 0,
+      "onMultiSelect": 0
+    },
+    "logAtAboutSevenHundredMs": [
+      {
+        "cb": "onReorder",
+        "sinceGestureStart": 326.09999999403954
+      }
+    ]
+  },
+  "testD_moveAfterMenuFired_observationOnly": {
+    "description": "pointerdown, hold still past 500ms (onContextMenu fires), THEN move 30px, then keep waiting past the 1000ms escalation mark. §4's own comment says this case is undocumented — this is a raw observation, not a pass/fail check.",
+    "countsAfterMenuFiredBeforeMove": {
+      "onReorder": 0,
+      "onContextMenu": 1,
+      "onMultiSelect": 0
+    },
+    "countsRightAfterMove": {
+      "onReorder": 0,
+      "onContextMenu": 1,
+      "onMultiSelect": 0
+    },
+    "logRightAfterMove": [
+      {
+        "cb": "onContextMenu",
+        "sinceGestureStart": 501.69999998807907
+      }
+    ],
+    "countsAtEndOfObservationWindow": {
+      "onReorder": 0,
+      "onContextMenu": 1,
+      "onMultiSelect": 0
+    },
+    "logAtEndOfObservationWindow": [
+      {
+        "cb": "onContextMenu",
+        "sinceGestureStart": 501.69999998807907
+      }
+    ]
+  },
+  "testE_earlyReleaseClearsBothTimers": {
+    "description": "pointerdown, wait 200ms (under the 500ms context-menu delay), pointerup, then wait 900ms more (past both the 500ms and 1000ms marks from the original pointerdown) to confirm neither timer fires late",
+    "countsRightAfterRelease": {
+      "onReorder": 0,
+      "onContextMenu": 0,
+      "onMultiSelect": 0
+    },
+    "countsAfterWaitingPastBothDeadlines": {
+      "onReorder": 0,
+      "onContextMenu": 0,
+      "onMultiSelect": 0
+    },
+    "logFinal": []
+  },
+  "testF_overlappingPointerIds_bonusFinding": {
+    "description": "NOT one of tasks a–e. From item-1 code review: dispatch pointerdown(pointerId=1), wait 200ms, dispatch pointerdown(pointerId=2) WITHOUT releasing pointerId=1 first (simulates a second finger touching down while the first is still held), then observe for 1100ms. §4 has no pointerId tracking at all. This is a raw observation of the resulting counts/log, reported as a finding — not fixed here, since none of tasks a–e require it.",
+    "counts": {
+      "onReorder": 0,
+      "onContextMenu": 2,
+      "onMultiSelect": 2
+    },
+    "log": [
+      {
+        "cb": "onContextMenu",
+        "sinceGestureStart": 298
+      },
+      {
+        "cb": "onContextMenu",
+        "sinceGestureStart": 501.30000001192093
+      },
+      {
+        "cb": "onMultiSelect",
+        "sinceGestureStart": 799.9000000059605
+      },
+      {
+        "cb": "onMultiSelect",
+        "sinceGestureStart": 1002.8000000119209
+      }
+    ]
+  }
+}

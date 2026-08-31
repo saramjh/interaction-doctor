@@ -1,0 +1,246 @@
+제공해주신 코드를 분석해보니 발생한 증상의 원인과 모바일 터치 인터랙션상의 개선점 2가지가 확인되었습니다.
+
+---
+
+### 1. 원인 분석
+
+#### 핵심 버그: `click` 이벤트에서 고정된 타일만 토글
+```js
+// 기존 코드
+tile.addEventListener("click", () => {
+  if (!selectMode) return;
+  toggleSelection(activeTile, Number(activeTile.dataset.index)); // ❌ 문제 지점
+});
+```
+`click` 이벤트 발생 시, 탭된 사진(`tile`과 `i`)을 토글해야 하는데 롱프레스 진입 시 한 번 저장되었던 `activeTile`만 계속 토글하도록 작성되어 있었습니다. 이 때문에 어느 사진을 눌러도 첫 사진만 선택/해제되었습니다.
+
+#### 인터랙션 오작동 방지 (common-pitfalls 및 모바일 UX 표준 적용)
+- **롱프레스 후 `click` 중복 발생**: 롱프레스로 선택 모드에 들어간 직후 손가락을 떼면 브라우저에서 `click` 이벤트가 바로 이어집니다. 이로 인해 롱프레스로 선택된 첫 사진이 떼는 순간 곧바로 해제될 수 있습니다.
+- **스크롤 시 롱프레스 취소 미비**: 사용자가 화면을 스크롤하느라 사진 위를 지날 때 이동 거리(8px) 체크가 없으면 500ms 후 원치 않게 선택 모드가 켜지는 문제가 있었습니다.
+
+---
+
+### 2. 수정 사항
+
+1. **`click` 이벤트 대상 수정**: `activeTile` 대신 클릭 이벤트가 발생한 현재 타일(`tile`)과 인덱스(`i`)를 토글하도록 변경했습니다.
+2. **이동거리(8px) 감지 및 취소**: `pointermove`에서 이동 거리가 8px을 초과하면 롱프레스 타이머를 즉시 취소하여 스크롤 시 오작동을 막았습니다.
+3. **롱프레스-클릭 충돌 방지**: 롱프레스로 선택 모드에 들어간 순간 플래그를 세워, 손을 뗄 때 뒤이어 발생하는 첫 `click` 이벤트가 해당 항목을 다시 해제하지 않도록 처리했습니다.
+4. **선택 모드 해제 및 삭제 UX 지원**: 다중 선택 모드 시 선택된 장수 표시 및 선택 해제/삭제 등의 보조 헤더 버튼을 추가했습니다.
+
+---
+
+### 3. 수정된 코드 전체 (`index.html`)
+
+```html
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>사진</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #000;
+		color: #eee;
+	}
+	header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #111;
+		border-bottom: 1px solid #333;
+	}
+	.header-btn {
+		background: none;
+		border: none;
+		color: #0a84ff;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		padding: 4px 8px;
+	}
+	.header-btn.danger {
+		color: #ff453a;
+	}
+	#grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 2px;
+		padding: 2px;
+	}
+	.photo {
+		aspect-ratio: 1;
+		position: relative;
+		background: linear-gradient(135deg, #444, #222);
+		user-select: none;
+		touch-action: manipulation;
+	}
+	.photo:nth-child(3n+1) { background: linear-gradient(135deg, #ff9a9e, #6a5acd); }
+	.photo:nth-child(3n+2) { background: linear-gradient(135deg, #84fab0, #2b5876); }
+	.photo:nth-child(3n)   { background: linear-gradient(135deg, #f6d365, #c33764); }
+	.checkmark {
+		position: absolute;
+		top: 6px;
+		right: 6px;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: #fff;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		color: #000;
+		font-weight: 700;
+		z-index: 2;
+	}
+	.photo.selected .checkmark { display: flex; }
+	.photo.selected::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: rgba(0, 122, 255, 0.35);
+		z-index: 1;
+	}
+</style>
+</head>
+<body>
+<header id="header">
+	<span id="header-title">사진 9장</span>
+	<div id="header-actions" style="display: none;">
+		<button type="button" class="header-btn danger" id="delete-btn">삭제</button>
+		<button type="button" class="header-btn" id="cancel-btn">취소</button>
+	</div>
+</header>
+<div id="grid"></div>
+
+<script>
+const PHOTO_COUNT = 9;
+const MOVE_THRESHOLD_PX = 8; // 이동 시 롱프레스 취소 임계값
+const LONG_PRESS_DELAY_MS = 500;
+
+const gridEl = document.getElementById("grid");
+const headerTitleEl = document.getElementById("header-title");
+const headerActionsEl = document.getElementById("header-actions");
+const deleteBtn = document.getElementById("delete-btn");
+const cancelBtn = document.getElementById("cancel-btn");
+
+let selectMode = false;
+const selected = new Set();
+let justEnteredByLongPress = false; // 롱프레스 직후 발생하는 클릭 중복 토글 방지 플래그
+
+function updateHeader() {
+	if (selectMode) {
+		headerTitleEl.textContent = selected.size + "장 선택됨";
+		headerActionsEl.style.display = "flex";
+	} else {
+		headerTitleEl.textContent = "사진 " + gridEl.children.length + "장";
+		headerActionsEl.style.display = "none";
+	}
+}
+
+function enterSelectMode(tile, index) {
+	selectMode = true;
+	justEnteredByLongPress = true;
+	toggleSelection(tile, index);
+}
+
+function exitSelectMode() {
+	selectMode = false;
+	selected.clear();
+	document.querySelectorAll(".photo.selected").forEach(el => el.classList.remove("selected"));
+	updateHeader();
+}
+
+function toggleSelection(tile, index) {
+	if (selected.has(index)) {
+		selected.delete(index);
+		tile.classList.remove("selected");
+	} else {
+		selected.add(index);
+		tile.classList.add("selected");
+	}
+	updateHeader();
+}
+
+for (let i = 0; i < PHOTO_COUNT; i++) {
+	const tile = document.createElement("div");
+	tile.className = "photo";
+	tile.dataset.index = String(i);
+	tile.innerHTML = '<div class="checkmark">✓</div>';
+	gridEl.appendChild(tile);
+
+	let pressTimer = null;
+	let startX = 0, startY = 0;
+	let isDown = false;
+
+	tile.addEventListener("pointerdown", (e) => {
+		isDown = true;
+		startX = e.clientX;
+		startY = e.clientY;
+
+		pressTimer = setTimeout(() => {
+			if (isDown && !selectMode) {
+				enterSelectMode(tile, i);
+			}
+		}, LONG_PRESS_DELAY_MS);
+	});
+
+	tile.addEventListener("pointermove", (e) => {
+		if (!isDown) return;
+		const dx = e.clientX - startX;
+		const dy = e.clientY - startY;
+		// 손가락이 8px 이상 이동하면 스크롤 의도로 판단하여 롱프레스 취소
+		if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+			clearTimeout(pressTimer);
+		}
+	});
+
+	const clearPointerState = () => {
+		isDown = false;
+		clearTimeout(pressTimer);
+	};
+
+	tile.addEventListener("pointerup", clearPointerState);
+	tile.addEventListener("pointercancel", clearPointerState);
+
+	// 다중 선택 모드에서 사진 탭 시 토글
+	tile.addEventListener("click", () => {
+		if (justEnteredByLongPress) {
+			justEnteredByLongPress = false;
+			return; // 롱프레스 진입 직후 뒤이어 오는 클릭 이벤트 무시
+		}
+		if (!selectMode) return;
+		toggleSelection(tile, i);
+	});
+}
+
+// 취소 버튼
+cancelBtn.addEventListener("click", exitSelectMode);
+
+// 삭제 버튼
+deleteBtn.addEventListener("click", () => {
+	if (selected.size === 0) return;
+	
+	// 선택된 인덱스 항목 삭제
+	const tiles = Array.from(gridEl.children);
+	tiles.forEach((tile) => {
+		const idx = Number(tile.dataset.index);
+		if (selected.has(idx)) {
+			tile.remove();
+		}
+	});
+
+	exitSelectMode();
+});
+</script>
+</body>
+</html>
+```

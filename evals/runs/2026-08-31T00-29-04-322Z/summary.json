@@ -1,0 +1,52 @@
+[
+  {
+    "scenario": "05-multi-select-photos",
+    "condition": "noskill",
+    "ok": true,
+    "codeLength": 3061,
+    "warning": null
+  },
+  {
+    "scenario": "05-multi-select-photos",
+    "condition": "skill",
+    "ok": true,
+    "codeLength": 4988,
+    "warning": null
+  },
+  {
+    "scenario": "06-context-menu-notes",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "06-context-menu-notes",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "07-tab-swipe-stories",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "07-tab-swipe-stories",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "08-side-drawer-menu",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "08-side-drawer-menu",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  }
+]

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track List</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+  }
+  h1 { font-size: 20px; }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item {
+    background: #1e1e1e;
+    padding: 18px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none; 
+    cursor: grab;
+    transition: transform 0.1s;
+  }
+  .item.dragging {
+    background: #333;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+
+<h1>재생목록 순서 변경</h1>
+
+<ul class="list" id="list">
+  <li class="item">🎵 Track 1: 밤편지</li>
+  <li class="item">🎵 Track 2: Dynamite</li>
+  <li class="item">🎵 Track 3: Spring Day</li>
+  <li class="item">🎵 Track 4: Hype Boy</li>
+  <li class="item">🎵 Track 5: After LIKE</li>
+  <li class="item">🎵 Track 6: ETA</li>
+  <li class="item">🎵 Track 7: Super Shy</li>
+  <li class="item">🎵 Track 8: Ditto</li>
+  <li class="item">🎵 Track 9: OMG</li>
+  <li class="item">🎵 Track 10: Attention</li>
+</ul>
+
+<script>
+  const list = document.getElementById('list');
+  let activeItem = null;
+  let startY = 0;
+
+  list.addEventListener('pointerdown', (e) => {
+    const item = e.target.closest('.item');
+    if (!item) return;
+
+    activeItem = item;
+    startY = e.clientY;
+    activeItem.classList.add('dragging');
+    activeItem.setPointerCapture(e.pointerId);
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!activeItem) return;
+    const dy = e.clientY - startY;
+    activeItem.style.transform = `translateY(${dy}px)`;
+  });
+
+  const handlePointerUp = (e) => {
+    if (!activeItem) return;
+    activeItem.releasePointerCapture(e.pointerId);
+    activeItem.classList.remove('dragging');
+    activeItem.style.transform = '';
+    activeItem = null;
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+</script>
+</body>
+</html>

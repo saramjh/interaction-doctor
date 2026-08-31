@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Double Tap Test</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+  }
+  h1 { font-size: 20px; }
+  .box {
+    width: 200px;
+    height: 200px;
+    background: #1e1e1e;
+    border: 2px solid #5b8cff;
+    border-radius: 20px;
+    margin: 40px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation; 
+  }
+</style>
+</head>
+<body>
+
+<h1>더블탭으로 하트 보내기</h1>
+
+<div class="box" id="heartBox">🤍</div>
+
+<script>
+  const box = document.getElementById('heartBox');
+  let isHeart = false;
+  let lastTapTime = 0;
+  let lastTapX = 0;
+  let lastTapY = 0;
+  const DOUBLE_TAP_DELAY_MS = 300;
+  const DOUBLE_TAP_SLOP_PX = 15;
+
+  box.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTapTime;
+    const dx = e.clientX - lastTapX;
+    const dy = e.clientY - lastTapY;
+    const distance = Math.hypot(dx, dy);
+
+    if (tapLength < DOUBLE_TAP_DELAY_MS && tapLength > 0 && distance < DOUBLE_TAP_SLOP_PX) {
+      toggleHeart();
+      lastTapTime = 0;
+    } else {
+      lastTapTime = currentTime;
+      lastTapX = e.clientX;
+      lastTapY = e.clientY;
+    }
+  });
+
+  function toggleHeart() {
+    isHeart = !isHeart;
+    box.textContent = isHeart ? '💖' : '🤍';
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+</script>
+</body>
+</html>

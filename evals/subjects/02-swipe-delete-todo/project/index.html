@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>오늘 할 일</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.row {
+		position: relative;
+		overflow: hidden;
+		border-radius: 10px;
+		margin-bottom: 8px;
+	}
+	.delete-bg {
+		position: absolute;
+		inset: 0;
+		background: #ff3b30;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 18px;
+		color: #fff;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.item {
+		position: relative;
+		background: #fff;
+		padding: 14px 16px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		touch-action: pan-y;
+		user-select: none;
+	}
+	.item input { width: 18px; height: 18px; }
+	.label { font-size: 15px; }
+</style>
+</head>
+<body>
+<header>오늘 할 일</header>
+<div id="list"></div>
+
+<script>
+// 할 일 항목을 왼쪽으로 밀면 빨간 삭제 배경이 드러나고, 충분히 밀면 삭제된다.
+
+const TODOS = [
+	"우유 사기",
+	"치과 예약",
+	"보고서 초안 검토",
+	"운동 30분",
+	"엄마한테 전화",
+	"세탁물 찾기",
+];
+
+const listEl = document.getElementById("list");
+
+function render() {
+	listEl.innerHTML = "";
+	TODOS.forEach((text, i) => {
+		const row = document.createElement("div");
+		row.className = "row";
+		row.innerHTML =
+			'<div class="delete-bg">삭제</div>' +
+			'<div class="item"><input type="checkbox" /><div class="label">' + text + "</div></div>";
+		listEl.appendChild(row);
+		attachSwipe(row.querySelector(".item"), row, i);
+	});
+}
+
+const SWIPE_DELETE_PX = 80;
+
+// 스와이프 구현: 항목을 눌러서 옆으로 밀면 그만큼 따라 움직이고,
+// 충분히 밀면 삭제된다.
+function attachSwipe(item, row, index) {
+	let startX = 0;
+
+	item.addEventListener("pointerdown", (e) => {
+		startX = e.clientX;
+	});
+
+	item.addEventListener("pointermove", (e) => {
+		const dx = e.clientX - startX;
+		if (Math.abs(dx) > 8) {
+			item.style.transform = "translateX(" + Math.min(0, dx) + "px)";
+		}
+	});
+
+	item.addEventListener("pointerup", (e) => {
+		const dx = e.clientX - startX;
+		if (Math.abs(dx) > SWIPE_DELETE_PX) {
+			TODOS.splice(index, 1);
+			render();
+		} else {
+			item.style.transform = "";
+		}
+	});
+}
+
+render();
+</script>
+</body>
+</html>

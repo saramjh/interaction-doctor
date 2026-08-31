@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track List</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+  }
+  h1 { font-size: 20px; }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item {
+    background: #1e1e1e;
+    padding: 18px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y; 
+    cursor: grab;
+    transition: transform 0.1s;
+  }
+  .item.dragging {
+    background: #333;
+    opacity: 0.8;
+    transition: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>재생목록 순서 변경</h1>
+
+<ul class="list" id="list">
+  <li class="item">🎵 Track 1: 밤편지</li>
+  <li class="item">🎵 Track 2: Dynamite</li>
+  <li class="item">🎵 Track 3: Spring Day</li>
+  <li class="item">🎵 Track 4: Hype Boy</li>
+  <li class="item">🎵 Track 5: After LIKE</li>
+  <li class="item">🎵 Track 6: ETA</li>
+  <li class="item">🎵 Track 7: Super Shy</li>
+  <li class="item">🎵 Track 8: Ditto</li>
+  <li class="item">🎵 Track 9: OMG</li>
+  <li class="item">🎵 Track 10: Attention</li>
+</ul>
+
+<script>
+  const list = document.getElementById('list');
+  const LONG_PRESS_DELAY_MS = 500;
+  const MOVE_THRESHOLD_PX = 12;
+
+  let activeItem = null;
+  let startX = 0;
+  let startY = 0;
+  let pointerId = null;
+  let pressTimer = null;
+  let isDragActive = false;
+  let isDown = false;
+
+  list.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+    const item = e.target.closest('.item');
+    if (!item) return;
+
+    isDown = true;
+    isDragActive = false;
+    activeItem = item;
+    startX = e.clientX;
+    startY = e.clientY;
+    pointerId = e.pointerId;
+
+    clearTimeout(pressTimer);
+    pressTimer = setTimeout(() => {
+      if (isDown && !isDragActive) {
+        isDragActive = true;
+        activeItem.classList.add('dragging');
+        try {
+          activeItem.setPointerCapture(pointerId);
+        } catch (err) {
+          console.warn("Failed to set pointer capture:", err);
+        }
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      }
+    }, LONG_PRESS_DELAY_MS);
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown || !activeItem) return;
+    if (e.pointerId !== pointerId) return;
+
+    const dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+
+    if (!isDragActive) {
+      if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+        clearTimeout(pressTimer);
+        isDown = false;
+        activeItem = null;
+      }
+      return;
+    }
+
+    activeItem.style.transform = `translateY(${dy}px)`;
+
+    const activeRect = activeItem.getBoundingClientRect();
+    const activeCenterY = activeRect.top + activeRect.height / 2;
+
+    const siblings = [...list.querySelectorAll('.item:not(.dragging)')];
+    
+    for (const sibling of siblings) {
+      const siblingRect = sibling.getBoundingClientRect();
+      const siblingCenterY = siblingRect.top + siblingRect.height / 2;
+
+      if (dy > 0 && activeCenterY > siblingCenterY && activeItem.nextElementSibling === sibling) {
+        list.insertBefore(activeItem, sibling.nextSibling);
+        const itemGap = siblingRect.height + 10;
+        startY += itemGap;
+        dy = e.clientY - startY;
+        activeItem.style.transform = `translateY(${dy}px)`;
+        break;
+      } else if (dy < 0 && activeCenterY < siblingCenterY && activeItem.previousElementSibling === sibling) {
+        list.insertBefore(activeItem, sibling);
+        const itemGap = siblingRect.height + 10;
+        startY -= itemGap;
+        dy = e.clientY - startY;
+        activeItem.style.transform = `translateY(${dy}px)`;
+        break;
+      }
+    }
+  });
+
+  const handlePointerUp = (e) => {
+    if (e.pointerId !== pointerId) return;
+
+    clearTimeout(pressTimer);
+
+    if (activeItem && isDragActive) {
+      try {
+        activeItem.releasePointerCapture(pointerId);
+      } catch (err) {
+        console.warn("Failed to release pointer capture:", err);
+      }
+      activeItem.classList.remove('dragging');
+      activeItem.style.transform = '';
+    }
+
+    isDown = false;
+    isDragActive = false;
+    activeItem = null;
+    pointerId = null;
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+
+  window.addEventListener('touchmove', (e) => {
+    if (isDragActive) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
+</body>
+</html>

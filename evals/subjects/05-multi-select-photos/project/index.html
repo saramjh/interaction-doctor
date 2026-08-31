@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>사진</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #000;
+		color: #eee;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+	}
+	#grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 2px;
+		padding: 2px;
+	}
+	.photo {
+		aspect-ratio: 1;
+		position: relative;
+		background: linear-gradient(135deg, #444, #222);
+		user-select: none;
+		touch-action: manipulation;
+	}
+	.photo:nth-child(3n+1) { background: linear-gradient(135deg, #ff9a9e, #6a5acd); }
+	.photo:nth-child(3n+2) { background: linear-gradient(135deg, #84fab0, #2b5876); }
+	.photo:nth-child(3n)   { background: linear-gradient(135deg, #f6d365, #c33764); }
+	.checkmark {
+		position: absolute;
+		top: 6px;
+		right: 6px;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: #fff;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		color: #000;
+		font-weight: 700;
+	}
+	.photo.selected .checkmark { display: flex; }
+	.photo.selected::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: rgba(0,122,255,0.35);
+	}
+</style>
+</head>
+<body>
+<header id="header">사진 9장</header>
+<div id="grid"></div>
+
+<script>
+// 사진을 길게 누르면 다중 선택 모드로 들어간다.
+// 다중 선택 모드에서는 다른 사진을 탭하면 그 사진도 선택 목록에 추가된다.
+
+const PHOTO_COUNT = 9;
+const gridEl = document.getElementById("grid");
+const headerEl = document.getElementById("header");
+
+let selectMode = false;
+const selected = new Set();
+let activeTile = null; // 롱프레스로 처음 선택 모드에 들어간 타일
+
+function updateHeader() {
+	headerEl.textContent = selectMode ? selected.size + "장 선택됨" : "사진 " + PHOTO_COUNT + "장";
+}
+
+function enterSelectMode(tile, index) {
+	selectMode = true;
+	activeTile = tile;
+	selected.add(index);
+	tile.classList.add("selected");
+	updateHeader();
+}
+
+function toggleSelection(tile, index) {
+	if (selected.has(index)) {
+		selected.delete(index);
+		tile.classList.remove("selected");
+	} else {
+		selected.add(index);
+		tile.classList.add("selected");
+	}
+	updateHeader();
+}
+
+for (let i = 0; i < PHOTO_COUNT; i++) {
+	const tile = document.createElement("div");
+	tile.className = "photo";
+	tile.dataset.index = String(i);
+	tile.innerHTML = '<div class="checkmark">✓</div>';
+	gridEl.appendChild(tile);
+
+	let pressTimer = null;
+
+	tile.addEventListener("pointerdown", () => {
+		pressTimer = setTimeout(() => {
+			if (!selectMode) enterSelectMode(tile, i);
+		}, 500);
+	});
+
+	tile.addEventListener("pointerup", () => {
+		clearTimeout(pressTimer);
+	});
+
+	tile.addEventListener("pointercancel", () => {
+		clearTimeout(pressTimer);
+	});
+
+	// 다중 선택 모드에서 사진을 탭하면 선택/해제를 토글한다.
+	tile.addEventListener("click", () => {
+		if (!selectMode) return;
+		toggleSelection(activeTile, Number(activeTile.dataset.index));
+	});
+}
+</script>
+</body>
+</html>

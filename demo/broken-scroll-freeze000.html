@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track List</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+  }
+  h1 { font-size: 20px; }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item {
+    display: flex;
+    align-items: center;
+    background: #1e1e1e;
+    padding: 18px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.2s, opacity 0.2s;
+  }
+  .item.dragging {
+    background: #333;
+    opacity: 0.8;
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    transition: none;
+  }
+  .handle {
+    margin-right: 15px;
+    cursor: grab;
+    touch-action: none; /* 핸들 터치 시 기본 스크롤을 막고 드래그를 허용 */
+    color: #888;
+    font-size: 20px;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 4px 8px;
+  }
+  .handle:active {
+    cursor: grabbing;
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+
+<h1>재생목록 순서 변경</h1>
+
+<ul class="list" id="list">
+  <li class="item"><span class="handle">☰</span>🎵 Track 1: 밤편지</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 2: Dynamite</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 3: Spring Day</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 4: Hype Boy</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 5: After LIKE</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 6: ETA</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 7: Super Shy</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 8: Ditto</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 9: OMG</li>
+  <li class="item"><span class="handle">☰</span>🎵 Track 10: Attention</li>
+</ul>
+
+<script>
+  const list = document.getElementById('list');
+  let activeItem = null;
+  let pointerOffsetTop = 0;
+
+  list.addEventListener('pointerdown', (e) => {
+    const handle = e.target.closest('.handle');
+    if (!handle) return;
+
+    const item = handle.closest('.item');
+    if (!item) return;
+
+    activeItem = item;
+    
+    // 포인터 좌표와 아이템 상단 좌표 간의 상대 오프셋 계산 (튐 현상 방지)
+    const rect = activeItem.getBoundingClientRect();
+    pointerOffsetTop = e.clientY - rect.top;
+
+    activeItem.classList.add('dragging');
+    activeItem.setPointerCapture(e.pointerId);
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!activeItem) return;
+
+    // 포인터 절대 위치에 따른 드래그 아이템의 실시간 상단 화면 좌표 계산
+    const currentTop = e.clientY - pointerOffsetTop;
+    const draggingHeight = activeItem.offsetHeight;
+    const draggingCenter = currentTop + draggingHeight / 2;
+
+    const items = [...list.querySelectorAll('.item:not(.dragging)')];
+    
+    // 현재 포인터 중심과 비교하여 정렬할 인접 아이템 찾기
+    let sibling = items.find(item => {
+      const rect = item.getBoundingClientRect();
+      return draggingCenter < rect.top + rect.height / 2;
+    });
+
+    // 임시로 transform을 리셋하고 DOM 이동
+    activeItem.style.transform = 'none';
+    if (sibling) {
+      list.insertBefore(activeItem, sibling);
+    } else {
+      list.appendChild(activeItem);
+    }
+
+    // DOM 이동 후의 새로운 기준 좌표(static)를 측정한 뒤 마우스 위치와의 차이를 transform으로 보정
+    const newRect = activeItem.getBoundingClientRect();
+    const dy = currentTop - newRect.top;
+    activeItem.style.transform = `translateY(${dy}px)`;
+  });
+
+  const handlePointerUp = (e) => {
+    if (!activeItem) return;
+    activeItem.releasePointerCapture(e.pointerId);
+    activeItem.classList.remove('dragging');
+    activeItem.style.transform = '';
+    activeItem = null;
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vertical reorder hold-delay — runtime verification</title>
+<style>
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: system-ui, sans-serif;
+		background: #222;
+		color: #eee;
+	}
+	#status {
+		padding: 8px 10px;
+		font-size: 12px;
+		line-height: 1.5;
+		background: #111;
+		white-space: pre-wrap;
+		min-height: 220px;
+	}
+	#list {
+		margin: 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+	.reorder-item {
+		height: 60px;
+		background: #fff;
+		color: #111;
+		border-radius: 10px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		user-select: none;
+		touch-action: none; /* 레시피 4 그대로 — 정적으로 고정 */
+	}
+	/* dragging=true일 때의 시각적 신호. 색만 바꾼다 — 위치 변화는
+	   #target의 style.transform으로 별도 확인한다 */
+	.reorder-item.dragging {
+		background: #ffcc00;
+	}
+</style>
+</head>
+<body>
+<div id="status">status: idle</div>
+<div id="list">
+	<div class="reorder-item" id="target">press-and-hold target (yellow = dragging entered)</div>
+	<div class="reorder-item">sibling (unused)</div>
+</div>
+
+<script>
+// recipes.md 레시피 4 — 세로 리스트 안의 세로 드래그(재정렬) vs 리스트 스크롤
+// 코드를 그대로 옮긴다(재작성하지 않음). 검증 목적의 wiring만 아래에 덧붙인다.
+
+const REORDER_HOLD_DELAY_MS = 500; // C6 재사용(레시피 1과 동일 패턴)
+const MOVE_CANCEL_THRESHOLD_PX = 8; // C6 재사용 — 값은 설계 판단, "취소해야
+                                     // 한다"는 결정은 [표준](Apple allowableMovement)
+
+function attachVerticalReorderResolver(el, { onReorderStart, onReorderMove, onReorderEnd }) {
+	let armed = false;          // 결함 방지: pointerdown 여부를 명시적으로 확인 (규칙 1)
+	let activePointerId = null; // 결함 방지: 다른 포인터가 끼어들면 무시 (규칙 2)
+	let startY = 0;
+	let holdTimer = null;
+	let dragging = false;
+
+	el.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return; // 이미 진행 중인 다른 포인터 — 무시
+		activePointerId = e.pointerId;
+		armed = true;
+		dragging = false;
+		startY = e.clientY;
+
+		holdTimer = setTimeout(() => {
+			if (armed && activePointerId === e.pointerId) {
+				dragging = true;
+				onReorderStart(e);
+			}
+		}, REORDER_HOLD_DELAY_MS);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (!armed || e.pointerId !== activePointerId) return; // 규칙 1+2
+		if (dragging) {
+			onReorderMove(e, e.clientY - startY);
+			return;
+		}
+		// hold-delay가 아직 안 끝났다 — 이동이 임계값을 넘으면 진입을 취소한다
+		if (Math.abs(e.clientY - startY) > MOVE_CANCEL_THRESHOLD_PX) {
+			clearTimeout(holdTimer);
+			armed = false;
+			activePointerId = null;
+			window.__cancelledLog = window.__cancelledLog || [];
+			window.__cancelledLog.push({ t: performance.now(), sinceGestureStart: window.__gestureStart == null ? null : performance.now() - window.__gestureStart });
+		}
+	});
+
+	function release(e) {
+		if (e.pointerId !== activePointerId) return; // 규칙 2
+		clearTimeout(holdTimer);
+		if (dragging) onReorderEnd(e);
+		armed = false;
+		dragging = false;
+		activePointerId = null;
+	}
+
+	// C10: "Always handle pointercancel. It is the only signal you get
+	// when the browser wins, and pointerup will not follow."
+	el.addEventListener("pointerup", release);
+	el.addEventListener("pointercancel", release);
+}
+
+// ---- page wiring (검증용, 레시피 원문의 일부가 아님) ----
+
+const target = document.getElementById("target");
+const statusEl = document.getElementById("status");
+const counts = { onReorderStart: 0, onReorderMove: 0, onReorderEnd: 0 };
+
+window.__log = []; // { cb, t (performance.now), sinceGestureStart }
+window.__gestureStart = null; // 가장 최근 pointerdown 시각(테스트 스크립트가 직접 세팅)
+
+function record(cbName, extra) {
+	const t = performance.now();
+	window.__log.push({
+		cb: cbName,
+		t,
+		sinceGestureStart: window.__gestureStart == null ? null : t - window.__gestureStart,
+		extra: extra ?? null,
+	});
+	render();
+}
+
+function render() {
+	statusEl.textContent =
+		"status: idle\n" +
+		"dragging(visual)=" + target.classList.contains("dragging") + "\n" +
+		"transform=" + (target.style.transform || "(none)") + "\n" +
+		"counts: onReorderStart=" + counts.onReorderStart +
+		" onReorderMove=" + counts.onReorderMove +
+		" onReorderEnd=" + counts.onReorderEnd + "\n" +
+		"log (cb, ms since this gesture's pointerdown):\n" +
+		window.__log.map((e) => "  " + e.cb + " @ " + (e.sinceGestureStart == null ? "?" : e.sinceGestureStart.toFixed(1)) + "ms" + (e.extra ? " " + JSON.stringify(e.extra) : "")).join("\n");
+}
+
+attachVerticalReorderResolver(target, {
+	onReorderStart(e) {
+		counts.onReorderStart++;
+		target.classList.add("dragging"); // 시각적 신호
+		record("onReorderStart", { pointerId: e.pointerId });
+	},
+	onReorderMove(e, dy) {
+		counts.onReorderMove++;
+		target.style.transform = "translateY(" + dy.toFixed(1) + "px)"; // 좌표 변화 확인용
+		record("onReorderMove", { pointerId: e.pointerId, dy: Math.round(dy) });
+	},
+	onReorderEnd(e) {
+		counts.onReorderEnd++;
+		target.classList.remove("dragging");
+		target.style.transform = "";
+		record("onReorderEnd", { pointerId: e.pointerId });
+	},
+});
+
+// 테스트 스크립트가 케이스 사이에 호출 — 페이지를 새로고침하지 않고
+// 로그/카운트/시각 상태만 초기화한다. 제스처 내부 상태(armed 등)는
+// pointerup/pointercancel로 이미 정리돼 있어야 한다(테스트 스크립트
+// 책임 — 이 함수는 그걸 대신 해주지 않는다).
+window.__resetLog = function () {
+	window.__log.length = 0;
+	window.__cancelledLog = [];
+	counts.onReorderStart = 0;
+	counts.onReorderMove = 0;
+	counts.onReorderEnd = 0;
+	window.__gestureStart = null;
+	target.classList.remove("dragging");
+	target.style.transform = "";
+	render();
+};
+
+render();
+</script>
+</body>
+</html>

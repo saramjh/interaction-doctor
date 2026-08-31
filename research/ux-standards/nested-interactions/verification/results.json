@@ -1,0 +1,208 @@
+{
+  "test0_bugReproduction": {
+    "description": "Doc's original sketch (no isDown guard, loaded with ?buggy=1): a single hover move into #content, zero mouse-down events, on a fresh page load",
+    "hoverPoint": {
+      "x": 195,
+      "y": 402.609375
+    },
+    "statusTextBeforeHover": "status: idle\ncontent.scrollTop = 0\nsheet.translateY = 0\nonSheetMove call count = 0",
+    "statusTextAfterHover": "status: idle\ncontent.scrollTop = 0\nsheet.translateY = 402.609375\nonSheetMove call count = 1",
+    "sheetTransformAfterHover": "matrix(1, 0, 0, 1, 0, 402.609)",
+    "consoleDuringTest": [
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      }
+    ]
+  },
+  "testA": {
+    "description": "scrollTop=300 before drag (not at top), dragged down 200px on content",
+    "dragInfo": {
+      "contentBox": {
+        "x": 0,
+        "y": 362.609375,
+        "width": 390,
+        "height": 481.390625
+      },
+      "fromY": 402.609375,
+      "toY": 602.609375,
+      "dragDistancePx": 200
+    },
+    "scrollTopBefore": 300,
+    "scrollTopAfter": 300,
+    "sheetTransformAfter": "matrix(1, 0, 0, 1, 0, 0)",
+    "statusTextBefore": "status: idle\ncontent.scrollTop = 300\nsheet.translateY = 0\nonSheetMove call count = 0",
+    "statusTextAfter": "status: idle\ncontent.scrollTop = 300\nsheet.translateY = 0\nonSheetMove call count = 0",
+    "consoleDuringTest": []
+  },
+  "testB": {
+    "description": "scrollTop=0 (fresh page, at top), dragged down 200px on content",
+    "dragInfo": {
+      "contentBox": {
+        "x": 0,
+        "y": 362.609375,
+        "width": 390,
+        "height": 481.390625
+      },
+      "fromY": 402.609375,
+      "toY": 602.609375,
+      "dragDistancePx": 200
+    },
+    "scrollTopBefore": 0,
+    "scrollTopAfter": 0,
+    "sheetTransformBefore": "matrix(1, 0, 0, 1, 0, 0)",
+    "sheetTransformAfter": "matrix(1, 0, 0, 1, 0, 200)",
+    "sheetInlineTransformStyle": "translateY(200px)",
+    "statusTextBefore": "status: idle\ncontent.scrollTop = 0\nsheet.translateY = 0\nonSheetMove call count = 0",
+    "statusTextAfter": "status: idle\ncontent.scrollTop = 0\nsheet.translateY = 200\nonSheetMove call count = 12",
+    "consoleDuringTest": [
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      }
+    ]
+  },
+  "testC": {
+    "description": "Same scrollTop=0 downward drag as test B (larger distance/more steps), sole purpose is capturing console/page errors triggered by calling preventDefault() inside the { passive: true } pointermove listener",
+    "dragInfo": {
+      "contentBox": {
+        "x": 0,
+        "y": 362.609375,
+        "width": 390,
+        "height": 481.390625
+      },
+      "fromY": 402.609375,
+      "toY": 702.609375,
+      "dragDistancePx": 300
+    },
+    "sheetTransformAfter": "matrix(1, 0, 0, 1, 0, 300)",
+    "statusTextAfter": "status: idle\ncontent.scrollTop = 0\nsheet.translateY = 300\nonSheetMove call count = 20",
+    "consoleDuringTest": [
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      },
+      {
+        "type": "error",
+        "text": "Unable to preventDefault inside passive event listener invocation."
+      }
+    ],
+    "pageErrorsDuringTest": []
+  }
+}

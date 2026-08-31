@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  h1 { font-size: 20px; }
+  .carousel-viewport {
+    width: 300px;
+    height: 180px;
+    margin: 20px auto;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #333;
+    border-radius: 12px;
+  }
+  .carousel-track {
+    display: flex;
+    width: 900px;
+    height: 100%;
+    transform: translateX(0);
+    transition: transform 0.3s ease-out;
+  }
+  .carousel-track.dragging {
+    transition: none;
+  }
+  .card {
+    width: 300px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .c1 { background: #5b8cff33; }
+  .c2 { background: #ff6b8533; }
+  .c3 { background: #ffb64533; }
+</style>
+</head>
+<body>
+
+<h1>오늘의 추천 콘텐츠</h1>
+
+<div class="carousel-viewport" id="viewport">
+  <div class="carousel-track" id="track">
+    <div class="card c1">1번 카드 🌅</div>
+    <div class="card c2">2번 카드 🌌</div>
+    <div class="card c3">3번 카드 🌌</div>
+  </div>
+</div>
+
+<script>
+  const viewport = document.getElementById('viewport');
+  const track = document.getElementById('track');
+  let startX = 0;
+  let currentTranslateX = 0;
+  let isDragging = false;
+  let currentIndex = 0;
+  const cardWidth = 300;
+
+  viewport.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    track.classList.add('dragging');
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const tx = -currentIndex * cardWidth + dx;
+    track.style.transform = `translateX(${tx}px)`;
+    currentTranslateX = tx;
+  });
+
+  const handlePointerUp = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    track.classList.remove('dragging');
+
+    const dx = e.clientX - startX;
+    
+    if (dx < -cardWidth / 2 && currentIndex < 2) {
+      currentIndex++;
+    } else if (dx > cardWidth / 2 && currentIndex > 0) {
+      currentIndex--;
+    }
+    
+    track.style.transform = `translateX(${-currentIndex * cardWidth}px)`;
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+</script>
+</body>
+</html>

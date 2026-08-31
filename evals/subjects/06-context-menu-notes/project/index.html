@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>메모</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #fdf6e3;
+		color: #3a3a3a;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #eee0c0;
+	}
+	#list { padding: 12px; }
+	.note {
+		background: #fffdf5;
+		border: 1px solid #eee0c0;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 10px;
+		font-size: 14px;
+		user-select: none;
+		-webkit-touch-callout: none;
+	}
+	#menu {
+		position: fixed;
+		background: #2c2c2c;
+		color: #fff;
+		border-radius: 10px;
+		overflow: hidden;
+		display: none;
+		z-index: 100;
+		min-width: 140px;
+		box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+	}
+	#menu button {
+		display: block;
+		width: 100%;
+		padding: 12px 16px;
+		background: none;
+		border: none;
+		color: inherit;
+		font-size: 14px;
+		text-align: left;
+	}
+	#menu button:active { background: #444; }
+</style>
+</head>
+<body>
+<header>메모</header>
+<div id="list"></div>
+
+<div id="menu">
+	<button>수정</button>
+	<button>공유</button>
+	<button>삭제</button>
+</div>
+
+<script>
+// 메모를 길게 누르면 수정/공유/삭제가 담긴 메뉴가 눌린 위치에 뜬다.
+
+const NOTES = [
+	"장보기: 우유, 계란, 빵",
+	"회의 3시 — 회의실 B",
+	"엄마 생신 선물 알아보기",
+	"세금 신고 서류 정리",
+	"헬스장 등록 문의",
+];
+
+const listEl = document.getElementById("list");
+const menuEl = document.getElementById("menu");
+
+NOTES.forEach((text) => {
+	const note = document.createElement("div");
+	note.className = "note";
+	note.textContent = text;
+	listEl.appendChild(note);
+	attachLongPressMenu(note);
+});
+
+function attachLongPressMenu(el) {
+	let timer = null;
+
+	el.addEventListener("pointerdown", (e) => {
+		const x = e.clientX;
+		const y = e.clientY;
+		timer = setTimeout(() => {
+			openMenu(x, y);
+		}, 500);
+	});
+
+	["pointerup", "pointercancel"].forEach((type) => {
+		el.addEventListener(type, () => clearTimeout(timer));
+	});
+}
+
+function openMenu(x, y) {
+	menuEl.style.left = x + "px";
+	menuEl.style.top = y + "px";
+	menuEl.style.display = "block";
+}
+
+document.addEventListener("click", (e) => {
+	if (!menuEl.contains(e.target)) {
+		menuEl.style.display = "none";
+	}
+});
+</script>
+</body>
+</html>

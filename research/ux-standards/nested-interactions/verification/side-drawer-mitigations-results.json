@@ -1,0 +1,39 @@
+{
+  "mitigation2_rightEdgePlacement": {
+    "description": "Geometry check: does the drawer trigger zone / drawer itself avoid the physical left edge (x=0..~40px) that iOS assigns to interactivePopGestureRecognizer?",
+    "viewportWidth": 390,
+    "triggerZoneBox": {
+      "x": 370,
+      "y": 0,
+      "width": 20,
+      "height": 664
+    },
+    "triggerZoneTouchesLeftEdge": false,
+    "triggerZoneTouchesRightEdge": true,
+    "drawerClosedBox": {
+      "x": 390,
+      "y": 0,
+      "width": 240,
+      "height": 664
+    },
+    "drawerClosedIsOffscreenRight": true
+  },
+  "mitigation3_buttonFallback": {
+    "description": "Does clicking the always-present hamburger button open the drawer, using zero swipe/drag gesture simulation?",
+    "stateBefore": {
+      "hasOpenClass": false,
+      "ariaHidden": "true"
+    },
+    "stateAfter": {
+      "hasOpenClass": true,
+      "ariaHidden": "false"
+    },
+    "drawerBoxAfterClick": {
+      "x": 150,
+      "y": 0,
+      "width": 240,
+      "height": 664
+    },
+    "drawerIsNowOnScreen": true
+  }
+}

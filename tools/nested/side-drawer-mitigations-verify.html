@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Side drawer mitigations — runtime verification</title>
+<style>
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: system-ui, sans-serif;
+		background: #222;
+		color: #eee;
+		overflow: hidden;
+	}
+	/* Mitigation 1 from §4: ask the browser to suppress swipe navigation.
+	   Playwright cannot verify whether this actually suppresses the OS/
+	   browser-chrome gesture (see the doc's §1-2 and the new §5). It is
+	   included here only so the page matches §4 exactly; this file does
+	   not attempt to test it. */
+	html {
+		overscroll-behavior-x: contain;
+	}
+	#status {
+		padding: 8px 10px;
+		font-size: 12px;
+		line-height: 1.5;
+		background: #111;
+		white-space: pre-wrap;
+	}
+	#hamburger {
+		margin: 12px;
+		font-size: 20px;
+		padding: 6px 14px;
+		background: #333;
+		color: #fff;
+		border: 1px solid #555;
+		border-radius: 6px;
+	}
+	/* Mitigation 2 from §4: open from the right edge, not the left edge
+	   iOS assigns to interactivePopGestureRecognizer. */
+	.drawer-trigger-zone {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: auto;
+		width: 20px;
+		background: rgba(255, 255, 255, 0.08);
+	}
+	#drawer {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: 240px;
+		background: #fff;
+		color: #111;
+		box-shadow: -4px 0 12px rgba(0, 0, 0, 0.4);
+		transform: translateX(100%);
+		transition: transform 0.2s;
+		padding: 16px;
+		box-sizing: border-box;
+	}
+	#drawer.open {
+		transform: translateX(0);
+	}
+</style>
+</head>
+<body>
+<div id="status">status: idle</div>
+<!-- Mitigation 3 from §4: a tap target that opens the drawer regardless
+     of whether any swipe gesture ever reaches the page. -->
+<button type="button" id="hamburger" aria-label="메뉴 열기" onclick="openDrawer()">☰</button>
+
+<div class="drawer-trigger-zone" id="triggerZone"></div>
+<div id="drawer" aria-hidden="true">
+	<p>Drawer content</p>
+	<button type="button" onclick="closeDrawer()">Close</button>
+</div>
+
+<script>
+// Wiring for §4's mitigations 2 and 3. Mitigation 1
+// (overscroll-behavior-x: contain) is declared above unmodified from §4
+// but is NOT exercised by this page — see side-drawer-back-gesture.md §5
+// for why that one is not Playwright-verifiable at all, on any browser
+// this tool can automate.
+
+const drawer = document.getElementById("drawer");
+const statusEl = document.getElementById("status");
+let openCount = 0;
+
+function render() {
+	statusEl.textContent =
+		"status: idle\n" +
+		"drawer.open class present = " + drawer.classList.contains("open") + "\n" +
+		"openDrawer() call count = " + openCount;
+}
+
+function openDrawer() {
+	openCount++;
+	drawer.classList.add("open");
+	drawer.setAttribute("aria-hidden", "false");
+	render();
+}
+
+function closeDrawer() {
+	drawer.classList.remove("open");
+	drawer.setAttribute("aria-hidden", "true");
+	render();
+}
+
+render();
+</script>
+</body>
+</html>

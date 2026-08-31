@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bottom sheet nested scroll — runtime verification</title>
+<style>
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: system-ui, sans-serif;
+		background: #222;
+		color: #eee;
+		overflow: hidden;
+	}
+	#page {
+		position: relative;
+		height: 100%;
+	}
+	#status {
+		position: absolute;
+		top: 0; left: 0; right: 0;
+		padding: 8px 10px;
+		font-size: 12px;
+		line-height: 1.5;
+		background: #111;
+		white-space: pre;
+	}
+	#sheet {
+		position: absolute;
+		left: 0; right: 0; bottom: 0;
+		height: 60vh;
+		background: #fff;
+		color: #111;
+		border-top: 2px solid #444;
+		border-radius: 12px 12px 0 0;
+		transform: translateY(0px);
+		display: flex;
+		flex-direction: column;
+	}
+	#handle {
+		flex: 0 0 auto;
+		text-align: center;
+		padding: 6px 0;
+		font-size: 11px;
+		color: #888;
+	}
+	#content {
+		flex: 1 1 auto;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.item {
+		height: 44px;
+		display: flex;
+		align-items: center;
+		padding: 0 14px;
+		border-bottom: 1px solid #eee;
+		font-size: 14px;
+		user-select: none;
+	}
+</style>
+</head>
+<body>
+<div id="page">
+	<div id="status">status: idle</div>
+	<div id="sheet">
+		<div id="handle">— drag handle area (informational only, not wired) —</div>
+		<div id="content"></div>
+	</div>
+</div>
+
+<script>
+// Implementation transcribed from
+// research/ux-standards/nested-interactions/bottom-sheet-scroll-drag.md §4.
+//
+// RUNTIME VERIFICATION FOUND A REAL DEFECT in the doc's sketch, not just in
+// this test harness: the pointermove handler never checked whether the
+// pointer was actually down. Since pointermove fires on plain hover too,
+// and `startY` starts at 0, a bare hover anywhere below y=8 satisfied
+// `draggingDown && atTop && Math.abs(dy) > 8` immediately on page load —
+// the sheet jumped to follow the cursor without any click at all. Confirmed
+// with Playwright: a single page.mouse.move() with zero mouse.down() calls
+// produced `onSheetMove call count = 1` and moved the sheet by ~400px.
+// This is exactly the class of bug §5.5 says self-review cannot catch —
+// the original sketch read as logically fine on inspection.
+//
+// Fix applied here (one line, isolated, disclosed): gate the pointermove
+// body on an `isDown` flag set by pointerdown/cleared by pointerup or
+// pointercancel. Nothing else about the decision logic was changed.
+//
+// Other deviations from the doc's sketch, unrelated to the bug above:
+// (a) sheetEl.isAtLargestDetent is hardcoded true here because this page
+// only exercises the downward/collapse path described in tasks 2a/2b;
+// (b) a real onSheetMove callback that applies the transform;
+// (c) an explicit preventDefault() call inside the ownedBySheet branch —
+// the doc's own sketch never called it, so the documented passive/
+// preventDefault contradiction could not otherwise be observed.
+
+const COLLAPSE_ACTIVATION_PX = 8; // C6 reuse, see nested-interactions doc
+const REPRODUCE_ORIGINAL_BUG = new URLSearchParams(location.search).has("buggy");
+
+function attachSheetNestedScrollResolver(contentEl, sheetEl, { onSheetMove }) {
+	let startY = 0;
+	let ownedBySheet = false;
+	let isDown = false; // the one-line fix — absent from the doc's original sketch
+
+	contentEl.addEventListener("pointerdown", (e) => {
+		startY = e.clientY;
+		ownedBySheet = false;
+		isDown = true;
+	});
+
+	contentEl.addEventListener(
+		"pointermove",
+		(e) => {
+			// ?buggy=1 in the URL reproduces the doc's original sketch exactly,
+			// with no isDown guard, for demonstrating the hover-activation defect.
+			if (!isDown && !REPRODUCE_ORIGINAL_BUG) return;
+
+			const dy = e.clientY - startY;
+			const draggingDown = dy > 0;
+			const atTop = contentEl.scrollTop <= 0;
+
+			if (ownedBySheet) {
+				e.preventDefault(); // added to actually surface the passive contradiction
+				onSheetMove(dy);
+				return;
+			}
+
+			if (!draggingDown && !sheetEl.isAtLargestDetent) {
+				onSheetMove(dy);
+				return;
+			}
+
+			if (draggingDown && atTop && Math.abs(dy) > COLLAPSE_ACTIVATION_PX) {
+				ownedBySheet = true;
+				e.preventDefault();
+				onSheetMove(dy);
+				return;
+			}
+
+			// otherwise: content keeps its default scroll behavior
+		},
+		{ passive: true },
+	);
+
+	["pointerup", "pointercancel"].forEach((type) => {
+		contentEl.addEventListener(type, () => {
+			ownedBySheet = false;
+			isDown = false;
+		});
+	});
+}
+
+// ---- page wiring (not part of the doc's snippet) ----
+
+const contentEl = document.getElementById("content");
+const sheetEl = document.getElementById("sheet");
+const statusEl = document.getElementById("status");
+
+sheetEl.isAtLargestDetent = true; // see comment above
+
+for (let i = 0; i < 60; i++) {
+	const div = document.createElement("div");
+	div.className = "item";
+	div.textContent = "Item " + i;
+	contentEl.appendChild(div);
+}
+
+let lastSheetTranslateY = 0;
+let sheetMoveCallCount = 0;
+
+function render() {
+	statusEl.textContent =
+		"status: idle\n" +
+		"content.scrollTop = " + contentEl.scrollTop + "\n" +
+		"sheet.translateY = " + lastSheetTranslateY + "\n" +
+		"onSheetMove call count = " + sheetMoveCallCount;
+}
+
+attachSheetNestedScrollResolver(contentEl, sheetEl, {
+	onSheetMove(dy) {
+		sheetMoveCallCount++;
+		lastSheetTranslateY = Math.max(0, dy);
+		sheetEl.style.transform = "translateY(" + lastSheetTranslateY + "px)";
+		render();
+	},
+});
+
+contentEl.addEventListener("scroll", render);
+render();
+
+// preventDefault() inside a passive listener is a silent no-op per spec —
+// it does not throw, so there is nothing for a page-level error handler to
+// catch. Chromium instead reports it as a console warning. That warning is
+// read directly from the browser console by the Playwright script, not
+// simulated here.
+</script>
+</body>
+</html>

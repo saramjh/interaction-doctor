@@ -1,0 +1,5 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]: "status: idle dragging(visual)=false transform=(none) counts: onReorderStart=0 onReorderMove=0 onReorderEnd=0 log (cb, ms since this gesture's pointerdown):"
+  - generic [ref=f2e3]:
+    - generic [ref=f2e4]: press-and-hold target (yellow = dragging entered)
+    - generic [ref=f2e5]: sibling (unused)

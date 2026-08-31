@@ -1,0 +1,149 @@
+이 현상이 발생했던 원인은 **마우스나 손가락으로 누르고 있는지 확인하는 조건(드래그 상태 값)이 없었기 때문**입니다.
+
+### 원인 분석
+1. 기존 코드에는 **"지금 요소를 누른 상태인가?"**를 판별하는 변수가 없었습니다.
+2. 이로 인해 항목을 누르지 않은 채 마우스 커서만 화면 위로 지나갈 때도 `pointermove`나 `pointerup` 이벤트가 실행되었습니다.
+3. 누르지 않은 상태에서는 누른 위치(`startX`)가 기본값인 `0`으로 유지되므로, 마우스 커서의 X좌표가 화면 왼쪽에서 조금만 떨어져 있어도 `e.clientX - startX` 계산 값이 삭제 기준인 `80px`을 크게 넘겨버려 **아무것도 누르지 않았는데 항목이 바로 삭제**된 것입니다.
+
+---
+
+### 해결 방법
+* **`isDragging` 변수 추가**: `pointerdown`(누름) 이벤트가 발생했을 때만 드래그 상태를 `true`로 켜고, 마우스를 뗬을 때(`pointerup`) 다시 `false`로 끕니다.
+* **`setPointerCapture` 추가**: 드래그 도중 커서가 요소 밖으로 나가더라도 안정적으로 입력을 추적하도록 개선했습니다.
+* **오른쪽 스와이프 제한 및 복원 애니메이션**: 왼쪽으로 밀 때만 움직이도록 하고, 삭제 기준에 못 미치면 부드럽게 원래 위치로 돌아오도록 수정했습니다.
+
+수정된 전체 파일 내용입니다:
+
+```html
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>오늘 할 일</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.row {
+		position: relative;
+		overflow: hidden;
+		border-radius: 10px;
+		margin-bottom: 8px;
+	}
+	.delete-bg {
+		position: absolute;
+		inset: 0;
+		background: #ff3b30;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 18px;
+		color: #fff;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.item {
+		position: relative;
+		background: #fff;
+		padding: 14px 16px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		touch-action: pan-y;
+		user-select: none;
+	}
+	.item input { width: 18px; height: 18px; }
+	.label { font-size: 15px; }
+</style>
+</head>
+<body>
+<header>오늘 할 일</header>
+<div id="list"></div>
+
+<script>
+// 할 일 항목을 왼쪽으로 밀면 빨간 삭제 배경이 드러나고, 충분히 밀면 삭제된다.
+
+const TODOS = [
+	"우유 사기",
+	"치과 예약",
+	"보고서 초안 검토",
+	"운동 30분",
+	"엄마한테 전화",
+	"세탁물 찾기",
+];
+
+const listEl = document.getElementById("list");
+
+function render() {
+	listEl.innerHTML = "";
+	TODOS.forEach((text, i) => {
+		const row = document.createElement("div");
+		row.className = "row";
+		row.innerHTML =
+			'<div class="delete-bg">삭제</div>' +
+			'<div class="item"><input type="checkbox" /><div class="label">' + text + "</div></div>";
+		listEl.appendChild(row);
+		attachSwipe(row.querySelector(".item"), row, i);
+	});
+}
+
+const SWIPE_DELETE_PX = 80;
+
+// 스와이프 구현: 항목을 눌러서 옆으로 밀면 그만큼 따라 움직이고,
+// 충분히 밀면 삭제된다.
+function attachSwipe(item, row, index) {
+	let startX = 0;
+	let isDragging = false;
+
+	item.addEventListener("pointerdown", (e) => {
+		isDragging = true;
+		startX = e.clientX;
+		item.setPointerCapture(e.pointerId);
+		item.style.transition = "none";
+	});
+
+	item.addEventListener("pointermove", (e) => {
+		if (!isDragging) return;
+		const dx = e.clientX - startX;
+		if (dx < 0) {
+			item.style.transform = "translateX(" + dx + "px)";
+		}
+	});
+
+	const handlePointerEnd = (e) => {
+		if (!isDragging) return;
+		isDragging = false;
+
+		const dx = e.clientX - startX;
+		if (dx < -SWIPE_DELETE_PX) {
+			TODOS.splice(index, 1);
+			render();
+		} else {
+			item.style.transition = "transform 0.2s ease";
+			item.style.transform = "";
+		}
+	};
+
+	item.addEventListener("pointerup", handlePointerEnd);
+	item.addEventListener("pointercancel", handlePointerEnd);
+}
+
+render();
+</script>
+</body>
+</html>
+```

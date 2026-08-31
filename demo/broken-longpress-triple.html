@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playlist</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+  }
+  h1 { font-size: 20px; }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item {
+    background: #1e1e1e;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #555;
+    border-radius: 4px;
+    display: none;
+  }
+  .item.selected .checkbox {
+    background: #5b8cff;
+    border-color: #5b8cff;
+  }
+  .item.selected {
+    background: #252d42;
+    border-color: #5b8cff;
+  }
+  .item.dragging {
+    opacity: 0.5;
+    background: #333;
+  }
+  .context-menu {
+    position: absolute;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 8px 0;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .context-menu-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .context-menu-item:hover {
+    background: #3a3a3a;
+  }
+</style>
+</head>
+<body>
+
+<h1>곡 정보 편집</h1>
+
+<ul class="list" id="list">
+  <li class="item">
+    <span>Track 1: 밤편지</span>
+    <div class="checkbox"></div>
+  </li>
+  <li class="item">
+    <span>Track 2: Dynamite</span>
+    <div class="checkbox"></div>
+  </li>
+  <li class="item">
+    <span>Track 3: Spring Day</span>
+    <div class="checkbox"></div>
+  </li>
+</ul>
+
+<div class="context-menu" id="contextMenu">
+  <div class="context-menu-item">재생목록에서 삭제</div>
+  <div class="context-menu-item">노래 정보 보기</div>
+</div>
+
+<script>
+  const list = document.getElementById('list');
+  const contextMenu = document.getElementById('contextMenu');
+  let activeItem = null;
+  let reorderTimer, selectTimer, menuTimer;
+  let isMultiSelectMode = false;
+
+  list.addEventListener('pointerdown', (e) => {
+    const item = e.target.closest('.item');
+    if (!item) return;
+
+    activeItem = item;
+
+    reorderTimer = setTimeout(() => {
+      activeItem.classList.add('dragging');
+    }, 500);
+
+    selectTimer = setTimeout(() => {
+      isMultiSelectMode = true;
+      document.querySelectorAll('.checkbox').forEach(cb => cb.style.display = 'block');
+      activeItem.classList.toggle('selected');
+    }, 500);
+
+    menuTimer = setTimeout(() => {
+      contextMenu.style.left = `${e.clientX}px`;
+      contextMenu.style.top = `${e.clientY + window.scrollY}px`;
+      contextMenu.style.display = 'block';
+    }, 500);
+  });
+
+  const handlePointerUp = () => {
+    clearTimeout(reorderTimer);
+    clearTimeout(selectTimer);
+    clearTimeout(menuTimer);
+    
+    if (activeItem) {
+      activeItem.classList.remove('dragging');
+      activeItem = null;
+    }
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+  
+  document.addEventListener('click', () => {
+    contextMenu.style.display = 'none';
+  });
+</script>
+</body>
+</html>

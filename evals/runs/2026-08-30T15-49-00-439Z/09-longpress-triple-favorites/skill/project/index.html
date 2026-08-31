@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>즐겨찾는 연락처</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.contact {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		background: #fff;
+		border-radius: 10px;
+		padding: 12px 14px;
+		margin-bottom: 8px;
+		user-select: none;
+		position: relative;
+		touch-action: none; /* 브라우저 기본 터치 스크롤/제스처 충돌 방지 */
+	}
+	.contact.selected { outline: 2px solid #007aff; }
+	.avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #667eea, #764ba2);
+		flex-shrink: 0;
+	}
+	.name { font-size: 15px; font-weight: 600; }
+	#context-menu {
+		position: fixed;
+		background: #2c2c2c;
+		color: #fff;
+		border-radius: 10px;
+		overflow: hidden;
+		display: none;
+		z-index: 100;
+		min-width: 130px;
+	}
+	#context-menu button {
+		display: block;
+		width: 100%;
+		padding: 12px 16px;
+		background: none;
+		border: none;
+		color: inherit;
+		font-size: 14px;
+		text-align: left;
+	}
+</style>
+</head>
+<body>
+<header id="header">즐겨찾는 연락처</header>
+<div id="list"></div>
+<div id="context-menu">
+	<button>전화</button>
+	<button>메시지</button>
+	<button>삭제</button>
+</div>
+
+<script>
+// 즐겨찾는 연락처 롱프레스 3중 분기 레시피 적용:
+//   - 8px 이상 이동: 즉시 재정렬 드래그 모드
+//   - 이동 없이 500ms 유지: 컨텍스트 메뉴 표시
+//   - 이동 없이 1000ms 유지: 다중 선택 모드로 확전
+
+const CONTACTS = ["김민준", "이서연", "박도윤", "최하늘", "정예린"];
+const listEl = document.getElementById("list");
+const headerEl = document.getElementById("header");
+const menuEl = document.getElementById("context-menu");
+
+let selectMode = false;
+const selected = new Set();
+
+const MOVE_THRESHOLD_PX = 8;       // C6 재사용
+const CONTEXT_MENU_DELAY_MS = 500; // C6 실측(Android contextmenu 494–513ms)
+const ESCALATE_DELAY_MS = 1000;    // 설계 판단 (500ms + 500ms 추가 대기)
+
+function updateHeader() {
+	headerEl.textContent = selectMode ? selected.size + "명 선택됨" : "즐겨찾는 연락처";
+}
+
+function render() {
+	listEl.innerHTML = "";
+	CONTACTS.forEach((name, i) => {
+		const row = document.createElement("div");
+		row.className = "contact";
+		row.dataset.index = String(i);
+		row.innerHTML = '<div class="avatar"></div><div class="name">' + name + "</div>";
+		listEl.appendChild(row);
+		attachTripleGesture(row, i);
+	});
+}
+
+function openContextMenu(x, y) {
+	menuEl.style.left = x + "px";
+	menuEl.style.top = y + "px";
+	menuEl.style.display = "block";
+}
+
+function enterSelectMode(row, index) {
+	selectMode = true;
+	selected.add(index);
+	row.classList.add("selected");
+	updateHeader();
+}
+
+function attachTripleGesture(row, index) {
+	let startX = 0;
+	let startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+	let armed = false;
+	let activePointerId = null;
+
+	row.addEventListener("pointerdown", (e) => {
+		// 이미 처리 중인 포인터가 있으면 추가 포인터(멀티 터치) 무시
+		if (activePointerId !== null) return;
+		activePointerId = e.pointerId;
+
+		startX = e.clientX;
+		startY = e.clientY;
+		moved = false;
+		contextMenuFired = false;
+		armed = true;
+
+		contextMenuTimer = setTimeout(() => {
+			if (armed && !moved) {
+				contextMenuFired = true;
+				openContextMenu(e.clientX, e.clientY);
+				
+				escalateTimer = setTimeout(() => {
+					if (armed && !moved) {
+						enterSelectMode(row, index);
+					}
+				}, ESCALATE_DELAY_MS - CONTEXT_MENU_DELAY_MS);
+			}
+		}, CONTEXT_MENU_DELAY_MS);
+	});
+
+	row.addEventListener("pointermove", (e) => {
+		// pointerdown이 없었거나, 현재 활성화된 포인터가 아니면 무시 (호버 버그 방지)
+		if (!armed || e.pointerId !== activePointerId) return;
+		if (moved) return;
+
+		const dx = e.clientX - startX;
+		const dy = e.clientY - startY;
+		if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+			moved = true;
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+			if (!contextMenuFired) {
+				row.style.opacity = "0.6"; // 재정렬 시각 효과
+			}
+		}
+	});
+
+	function release(e) {
+		if (e.pointerId !== activePointerId) return;
+		armed = false;
+		activePointerId = null;
+		clearTimeout(contextMenuTimer);
+		clearTimeout(escalateTimer);
+		row.style.opacity = "";
+	}
+
+	row.addEventListener("pointerup", release);
+	row.addEventListener("pointercancel", release);
+	row.addEventListener("contextmenu", (e) => e.preventDefault()); // 브라우저 기본 롱프레스 메뉴 차단
+}
+
+document.addEventListener("click", (e) => {
+	if (!menuEl.contains(e.target)) menuEl.style.display = "none";
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BottomSheet</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .header-area { padding: 20px; }
+  .sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: #1e1e1e;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid #333;
+    transform: translateY(0);
+    transition: transform 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+  }
+  .sheet.dragging {
+    transition: none;
+  }
+  .drag-header {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    cursor: grab;
+    touch-action: none;
+  }
+  .handle-bar {
+    width: 40px;
+    height: 5px;
+    background: #555;
+    border-radius: 999px;
+    flex: 0 0 auto;
+  }
+  .scroll-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px 20px 40px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .item {
+    padding: 15px;
+    border-bottom: 1px solid #2a2a2a;
+    color: #ddd;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-area">
+  <h1>상세 정보</h1>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="drag-header" id="dragHeader">
+    <div class="handle-bar"></div>
+  </div>
+  <div class="scroll-content" id="scrollContent">
+    <div class="item">📜 List Item 1</div>
+    <div class="item">📜 List Item 2</div>
+    <div class="item">📜 List Item 3</div>
+    <div class="item">📜 List Item 4</div>
+    <div class="item">📜 List Item 5</div>
+    <div class="item">📜 List Item 6</div>
+    <div class="item">📜 List Item 7</div>
+    <div class="item">📜 List Item 8</div>
+    <div class="item">📜 List Item 9</div>
+    <div class="item">📜 List Item 10</div>
+    <div class="item">📜 List Item 11</div>
+    <div class="item">📜 List Item 12</div>
+    <div class="item">📜 List Item 13</div>
+    <div class="item">📜 List Item 14</div>
+    <div class="item">📜 List Item 15</div>
+  </div>
+</div>
+
+<script>
+  const sheet = document.getElementById('sheet');
+  const scrollContent = document.getElementById('scrollContent');
+  const dragHeader = document.getElementById('dragHeader');
+  
+  const COLLAPSE_ACTIVATION_PX = 8;
+  
+  let startY = 0;
+  let currentY = 0;
+  let isDown = false;
+  let ownedBySheet = false;
+  let pointerId = null;
+
+  // 1. DragHeader drag: instant sheet ownership
+  dragHeader.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    isDown = true;
+    ownedBySheet = true;
+    startY = e.clientY;
+    pointerId = e.pointerId;
+    sheet.classList.add('dragging');
+    try {
+      dragHeader.setPointerCapture(pointerId);
+    } catch (err) {
+      console.warn("setPointerCapture failed:", err);
+    }
+  });
+
+  // 2. ScrollContent touch: conditional monitoring
+  scrollContent.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    isDown = true;
+    ownedBySheet = false;
+    startY = e.clientY;
+    pointerId = e.pointerId;
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    if (e.pointerId !== pointerId) return;
+
+    const dy = e.clientY - startY;
+    const draggingDown = dy > 0;
+    const atTop = scrollContent.scrollTop <= 0;
+
+    if (ownedBySheet) {
+      if (dy > 0) {
+        sheet.style.transform = `translateY(${dy}px)`;
+        currentY = dy;
+      }
+      return;
+    }
+
+    // Scroll drag down + at top + exceeds threshold -> transfer ownership
+    if (draggingDown && atTop && dy > COLLAPSE_ACTIVATION_PX) {
+      ownedBySheet = true;
+      sheet.classList.add('dragging');
+      sheet.style.transform = `translateY(${dy}px)`;
+      currentY = dy;
+      try {
+        scrollContent.setPointerCapture(pointerId);
+      } catch (err) {
+        console.warn("setPointerCapture failed:", err);
+      }
+    }
+  });
+
+  const handlePointerUp = (e) => {
+    if (!isDown) return;
+    if (e.pointerId !== pointerId) return;
+
+    if (ownedBySheet) {
+      try {
+        if (dragHeader.hasPointerCapture(pointerId)) {
+          dragHeader.releasePointerCapture(pointerId);
+        }
+        if (scrollContent.hasPointerCapture(pointerId)) {
+          scrollContent.releasePointerCapture(pointerId);
+        }
+      } catch (err) {
+        console.warn("releasePointerCapture failed:", err);
+      }
+    }
+
+    isDown = false;
+    ownedBySheet = false;
+    sheet.classList.remove('dragging');
+
+    if (currentY > window.innerHeight * 0.25) {
+      sheet.style.transform = 'translateY(100%)';
+    } else {
+      sheet.style.transform = 'translateY(0)';
+    }
+    currentY = 0;
+    pointerId = null;
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+
+  // Prevent browser scrolling physically during sheet drag
+  window.addEventListener('touchmove', (e) => {
+    if (isDown && ownedBySheet) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
+</body>
+</html>

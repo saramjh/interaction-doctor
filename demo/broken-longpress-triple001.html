@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Playlist</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .header-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  h1 { 
+    font-size: 20px; 
+    margin: 0;
+  }
+  .edit-btn {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .edit-btn:active {
+    background: #3b3b3b;
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item {
+    background: #1e1e1e;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-touch-callout: none;
+    touch-action: none;
+  }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #555;
+    border-radius: 4px;
+    display: none;
+    flex: 0 0 auto;
+    margin-right: 12px;
+    pointer-events: none;
+  }
+  .item.selected .checkbox {
+    background: #5b8cff;
+    border-color: #5b8cff;
+  }
+  .item.selected {
+    background: #252d42;
+    border-color: #5b8cff;
+  }
+  .item.dragging {
+    opacity: 0.5;
+    background: #333;
+    z-index: 10;
+  }
+  .item-body {
+    flex: 1 1 auto;
+    padding: 10px 0;
+    cursor: pointer;
+  }
+  .item-body span {
+    pointer-events: none; /* Block spans blocking click bubble */
+  }
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+  }
+  .more-btn, .drag-handle {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #888;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .more-btn:active, .drag-handle:active {
+    color: #fff;
+  }
+  
+  /* Multi-select Mode CSS overrides */
+  body.select-mode .checkbox {
+    display: block;
+  }
+  body.select-mode .item-actions {
+    display: none;
+  }
+
+  .context-menu {
+    position: absolute;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 8px 0;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .context-menu-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .context-menu-item:hover {
+    background: #3a3a3a;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-area">
+  <h1>곡 정보 편집</h1>
+  <button class="edit-btn" id="editBtn">편집</button>
+</div>
+
+<ul class="list" id="list">
+  <li class="item">
+    <div class="checkbox"></div>
+    <div class="item-body">
+      <span>Track 1: 밤편지</span>
+    </div>
+    <div class="item-actions">
+      <div class="more-btn">⋮</div>
+      <div class="drag-handle">☰</div>
+    </div>
+  </li>
+  <li class="item">
+    <div class="checkbox"></div>
+    <div class="item-body">
+      <span>Track 2: Dynamite</span>
+    </div>
+    <div class="item-actions">
+      <div class="more-btn">⋮</div>
+      <div class="drag-handle">☰</div>
+    </div>
+  </li>
+  <li class="item">
+    <div class="checkbox"></div>
+    <div class="item-body">
+      <span>Track 3: Spring Day</span>
+    </div>
+    <div class="item-actions">
+      <div class="more-btn">⋮</div>
+      <div class="drag-handle">☰</div>
+    </div>
+  </li>
+</ul>
+
+<div class="context-menu" id="contextMenu">
+  <div class="context-menu-item">재생목록에서 삭제</div>
+  <div class="context-menu-item">노래 정보 보기</div>
+</div>
+
+<script>
+  const list = document.getElementById('list');
+  const contextMenu = document.getElementById('contextMenu');
+  const editBtn = document.getElementById('editBtn');
+
+  const MOVE_THRESHOLD_PX = 8;
+  const LONG_PRESS_DELAY_MS = 500;
+
+  let activeItem = null;
+  let contextMenuItemTarget = null;
+  let startX = 0, startY = 0;
+  let pointerId = null;
+  let isDown = false;
+  let moved = false;
+  let isDragging = false;
+  let isMultiSelectMode = false;
+  let longPressTimer = null;
+
+  // Block native text selection and browser menus
+  window.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  });
+
+  // Action Bar Edit Button click toggle
+  editBtn.addEventListener('click', () => {
+    toggleMultiSelectMode();
+  });
+
+  // Event delegation for pointers
+  list.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+    const item = e.target.closest('.item');
+    if (!item) return;
+
+    const dragHandle = e.target.closest('.drag-handle');
+    const moreBtn = e.target.closest('.more-btn');
+    const itemBody = e.target.closest('.item-body');
+
+    activeItem = item;
+    startX = e.clientX;
+    startY = e.clientY;
+    pointerId = e.pointerId;
+    isDown = true;
+    moved = false;
+
+    clearTimeout(longPressTimer);
+
+    // 1. Drag Handle Touch -> Instant dragging
+    if (dragHandle && !isMultiSelectMode) {
+      isDragging = true;
+      activeItem.classList.add('dragging');
+      try {
+        activeItem.setPointerCapture(pointerId);
+      } catch (err) {
+        console.warn("setPointerCapture failed:", err);
+      }
+      return;
+    }
+
+    // 2. More Button Touch -> Instant context menu trigger
+    if (moreBtn && !isMultiSelectMode) {
+      contextMenuItemTarget = activeItem;
+      contextMenu.style.left = `${e.clientX}px`;
+      contextMenu.style.top = `${e.clientY + window.scrollY}px`;
+      contextMenu.style.display = 'block';
+      isDown = false; // Stop further pointer tracking
+      return;
+    }
+
+    // 3. Item Body Touch
+    if (itemBody) {
+      if (isMultiSelectMode) {
+        // Instant select toggle in multi-select mode
+        return;
+      } else {
+        // Start longpress timer to enter multi-select mode
+        longPressTimer = setTimeout(() => {
+          if (isDown && !moved) {
+            enterMultiSelectMode(activeItem);
+            if (navigator.vibrate) navigator.vibrate(50);
+          }
+        }, LONG_PRESS_DELAY_MS);
+      }
+    }
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown || !activeItem) return;
+    if (e.pointerId !== pointerId) return;
+
+    const dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+
+    if (!moved) {
+      if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+        moved = true;
+        clearTimeout(longPressTimer);
+      }
+    }
+
+    if (!moved) return;
+
+    // Drag item positioning & real-time DOM swapping
+    if (isDragging && activeItem.classList.contains('dragging')) {
+      activeItem.style.transform = `translateY(${dy}px)`;
+
+      const prevTransform = activeItem.style.transform;
+      activeItem.style.transform = '';
+      const activeRect = activeItem.getBoundingClientRect();
+      activeItem.style.transform = prevTransform;
+
+      const activeCenterY = activeRect.top + activeRect.height / 2 + dy;
+      const siblings = [...list.querySelectorAll('.item:not(.dragging)')];
+
+      for (const sibling of siblings) {
+        const siblingRect = sibling.getBoundingClientRect();
+        const siblingCenterY = siblingRect.top + siblingRect.height / 2;
+
+        if (dy > 0 && activeCenterY > siblingCenterY && activeItem.nextElementSibling === sibling) {
+          list.insertBefore(activeItem, sibling.nextElementSibling);
+          const itemGap = siblingRect.height + 12;
+          startY += itemGap;
+          dy = e.clientY - startY;
+          activeItem.style.transform = `translateY(${dy}px)`;
+          break;
+        } else if (dy < 0 && activeCenterY < siblingCenterY && activeItem.previousElementSibling === sibling) {
+          list.insertBefore(activeItem, sibling);
+          const itemGap = siblingRect.height + 12;
+          startY -= itemGap;
+          dy = e.clientY - startY;
+          activeItem.style.transform = `translateY(${dy}px)`;
+          break;
+        }
+      }
+    }
+  });
+
+  const handlePointerUp = (e) => {
+    if (!isDown) return;
+    if (e.pointerId !== pointerId) return;
+
+    clearTimeout(longPressTimer);
+
+    if (activeItem) {
+      if (isDragging && activeItem.classList.contains('dragging')) {
+        try {
+          activeItem.releasePointerCapture(pointerId);
+        } catch (err) {
+          console.warn("releasePointerCapture failed:", err);
+        }
+        activeItem.classList.remove('dragging');
+        activeItem.style.transform = '';
+      } else if (!moved) {
+        // Quick Click/Tap Action
+        if (isMultiSelectMode) {
+          activeItem.classList.toggle('selected');
+        } else if (e.target.closest('.item-body')) {
+          console.log("Tapped item info:", activeItem.querySelector('.item-body span').textContent);
+        }
+      }
+    }
+
+    isDown = false;
+    moved = false;
+    isDragging = false;
+    activeItem = null;
+    pointerId = null;
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+
+  // Close context menu when clicking outside
+  document.addEventListener('pointerdown', (e) => {
+    if (!contextMenu.contains(e.target) && !e.target.closest('.more-btn')) {
+      contextMenu.style.display = 'none';
+    }
+  });
+
+  // Actionable context menu controls
+  const menuItems = contextMenu.querySelectorAll('.context-menu-item');
+  if (menuItems.length >= 2) {
+    // delete
+    menuItems[0].addEventListener('click', () => {
+      if (contextMenuItemTarget) {
+        contextMenuItemTarget.remove();
+        contextMenu.style.display = 'none';
+        contextMenuItemTarget = null;
+      }
+    });
+    // show details
+    menuItems[1].addEventListener('click', () => {
+      if (contextMenuItemTarget) {
+        const title = contextMenuItemTarget.querySelector('.item-body span').textContent;
+        alert(`곡 정보: ${title}`);
+        contextMenu.style.display = 'none';
+        contextMenuItemTarget = null;
+      }
+    });
+  }
+
+  function toggleMultiSelectMode() {
+    isMultiSelectMode = !isMultiSelectMode;
+    document.body.classList.toggle('select-mode', isMultiSelectMode);
+    editBtn.textContent = isMultiSelectMode ? '완료' : '편집';
+    
+    // Clear selection state when exiting
+    if (!isMultiSelectMode) {
+      document.querySelectorAll('.item').forEach(item => {
+        item.classList.remove('selected');
+      });
+    }
+  }
+
+  function enterMultiSelectMode(targetItem) {
+    isMultiSelectMode = true;
+    document.body.classList.add('select-mode');
+    editBtn.textContent = '완료';
+    contextMenu.style.display = 'none';
+    if (targetItem) {
+      targetItem.classList.add('selected');
+    }
+  }
+</script>
+</body>
+</html>

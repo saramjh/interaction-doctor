@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Long-press triple conflict — runtime verification</title>
+<style>
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: system-ui, sans-serif;
+		background: #222;
+		color: #eee;
+	}
+	#status {
+		padding: 8px 10px;
+		font-size: 12px;
+		line-height: 1.5;
+		background: #111;
+		white-space: pre-wrap;
+		min-height: 220px;
+	}
+	#target {
+		margin: 20px;
+		height: 200px;
+		background: #fff;
+		color: #111;
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		user-select: none;
+		touch-action: none;
+	}
+</style>
+</head>
+<body>
+<div id="status">status: idle</div>
+<div id="target">press-and-hold target (no visible UI change on callbacks — read #status / window.__log)</div>
+
+<script>
+// Implementation transcribed from
+// research/ux-standards/nested-interactions/long-press-triple-conflict.md §4.
+//
+// Before writing this page, the §4 code was re-read specifically looking for
+// the class of defect found in bottom-sheet-scroll-drag.md's runtime
+// verification (a recognizer that fires without an actual pointerdown ever
+// having occurred). Two suspects were identified by inspection alone, before
+// any test ran:
+//
+//   Suspect 1 (confirmed by test, same class as the bottom-sheet defect):
+//   `pointermove`'s handler is unconditional — `startX`/`startY`/`moved`/
+//   `contextMenuFired` are shared closure variables that only get reset
+//   inside `pointerdown`. A bare hover with no prior pointerdown computes
+//   dx/dy against the initial values (0, 0), and Math.hypot(clientX,
+//   clientY) exceeds 8px almost anywhere on screen — so a hover alone can
+//   set `moved = true` and invoke `onReorder(e)` with no press at all.
+//
+//   Suspect 2 (reported as an observed finding below in the runtime
+//   verification section, NOT fixed here — it is not required for tasks
+//   a–e, which are all single-pointer): there is no `pointerId` tracking
+//   anywhere. A second `pointerdown` arriving before the first gesture's
+//   `pointerup`/`pointercancel` overwrites the shared `contextMenuTimer`/
+//   `escalateTimer` variables, orphaning the previous gesture's timers —
+//   they keep running and will still fire later, reading whatever the
+//   *current* shared `moved`/`contextMenuFired` state happens to be at
+//   that time, not the state from when they were scheduled.
+//
+// Fix applied here for Suspect 1 (one flag, disclosed, mirrors the
+// `isDown` fix in bottom-sheet-scroll-drag-verify.html): pointermove now
+// checks an `armed` flag that pointerdown sets true and pointerup/
+// pointercancel set false. Nothing else about the decision logic changed.
+// ?buggy=1 in the URL disables this guard to reproduce Suspect 1 exactly
+// as §4 wrote it.
+
+const MOVE_THRESHOLD_PX = 8;       // C6 / research/c10-sources.md
+const CONTEXT_MENU_DELAY_MS = 500; // C6 실측 (Android contextmenu 494–513ms)
+const ESCALATE_DELAY_MS = 1000;    // 🚧 이 프로젝트의 설계 판단, 미검증
+const REPRODUCE_ORIGINAL_BUG = new URLSearchParams(location.search).has("buggy");
+
+window.__log = []; // { cb: 'onReorder'|'onContextMenu'|'onMultiSelect', t: ms since page load }
+window.__gestureStart = null; // performance.now() at the most recent pointerdown
+
+function record(cbName) {
+	const t = performance.now();
+	window.__log.push({ cb: cbName, t, sinceGestureStart: window.__gestureStart == null ? null : t - window.__gestureStart });
+	render();
+}
+
+function attachTripleConflictResolver(el, { onReorder, onContextMenu, onMultiSelect }) {
+	let startX = 0, startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+	let armed = false; // the fix — absent from the doc's original sketch
+
+	el.addEventListener("pointerdown", (e) => {
+		startX = e.clientX;
+		startY = e.clientY;
+		moved = false;
+		contextMenuFired = false;
+		armed = true;
+		window.__gestureStart = performance.now();
+
+		contextMenuTimer = setTimeout(() => {
+			if (!moved) {
+				contextMenuFired = true;
+				onContextMenu(e);
+				escalateTimer = setTimeout(() => {
+					if (!moved) {
+						onMultiSelect(e);
+					}
+				}, ESCALATE_DELAY_MS - CONTEXT_MENU_DELAY_MS);
+			}
+		}, CONTEXT_MENU_DELAY_MS);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (!armed && !REPRODUCE_ORIGINAL_BUG) return; // the fix
+		if (moved) return;
+		const dx = e.clientX - startX;
+		const dy = e.clientY - startY;
+		if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+			moved = true;
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+			if (!contextMenuFired) {
+				onReorder(e);
+			}
+			// contextMenuFired가 이미 true인 상태에서 8px을 넘으면 어떻게
+			// 되어야 하는지는 §4가 답하지 않는다 — 관찰만 한다 (case d)
+		}
+	});
+
+	["pointerup", "pointercancel"].forEach((type) => {
+		el.addEventListener(type, () => {
+			armed = false;
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+		});
+	});
+}
+
+// ---- page wiring (not part of the doc's snippet) ----
+
+const target = document.getElementById("target");
+const statusEl = document.getElementById("status");
+const counts = { onReorder: 0, onContextMenu: 0, onMultiSelect: 0 };
+
+function render() {
+	statusEl.textContent =
+		"status: idle\n" +
+		"counts: onReorder=" + counts.onReorder +
+		" onContextMenu=" + counts.onContextMenu +
+		" onMultiSelect=" + counts.onMultiSelect + "\n" +
+		"log (cb, ms since this gesture's pointerdown):\n" +
+		window.__log.map((e) => "  " + e.cb + " @ " + e.sinceGestureStart?.toFixed(1) + "ms").join("\n");
+}
+
+attachTripleConflictResolver(target, {
+	onReorder(e) { counts.onReorder++; record("onReorder"); },
+	onContextMenu(e) { counts.onContextMenu++; record("onContextMenu"); },
+	onMultiSelect(e) { counts.onMultiSelect++; record("onMultiSelect"); },
+});
+
+// Exposed for Playwright to reset between test cases without reloading
+// the page (reload would also reset the ?buggy=1 flag deliberately, so
+// tests that need the fixed page reuse one load and call this instead).
+window.__resetLog = function () {
+	window.__log.length = 0;
+	counts.onReorder = 0;
+	counts.onContextMenu = 0;
+	counts.onMultiSelect = 0;
+	window.__gestureStart = null;
+	render();
+};
+
+render();
+</script>
+</body>
+</html>

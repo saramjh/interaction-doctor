@@ -1,0 +1,8 @@
+{
+  "name": "interaction-doctor-evals",
+  "private": true,
+  "description": "Playwright 기반 채점 스크립트 (evals/graders/). npm install 후 node graders/<번호>-<이름>.js <baseline|treatment> 로 실행한다.",
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

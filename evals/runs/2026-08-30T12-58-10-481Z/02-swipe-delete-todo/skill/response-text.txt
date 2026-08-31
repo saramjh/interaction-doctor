@@ -1,0 +1,170 @@
+마우스만 위로 지나갔는데도 항목이 스와이프되거나 사라졌던 이유는 코드 내 포인터 이벤트 처리 구조에 **`pointerdown`(클릭/터치 누름) 여부를 확인하는 상태 플래그가 없었기 때문**입니다.
+
+---
+
+### 🔍 원인 분석
+
+1. **`pointerdown` 미확인 문제 (`startX` 0 오작동)**
+   * 마우스를 누르지 않고 화면 위로 움직이기만 해도 브라우저는 `pointermove` 이벤트를 발생시킵니다.
+   * 이때 `pointerdown`을 거치지 않았으므로 `startX` 변수는 초기값인 `0`으로 남아있게 됩니다.
+   * 마우스가 화면 왼쪽(예: X 좌표 50px 이하 영역)으로 지나갈 때 `dx = e.clientX - startX`가 계산되면, 마우스를 누르지도 않았는데 마치 **화면 오른쪽에서 왼쪽으로 80px 이상 크게 누르고 밀었던 것으로 착각**하여 `pointerup`이나 취소 타이밍에 항목이 삭제되는 현상이 발생했습니다.
+
+2. **`pointercancel` 및 포인터 캡처 미처리**
+   * 마우스를 누른 채 드래그하다가 항목 밖으로 마우스가 벗어나거나 스크롤 등으로 제스처가 취소될 때 안전하게 원래 위치로 돌려놓는 처리가 없었습니다.
+
+---
+
+### 🛠️ 해결 방법
+
+* **`isDown` (눌림 상태) 플래그 추가**: `pointerdown`이 실제 발생했을 때만 `pointermove`와 종료 로직이 작동하도록 제어합니다.
+* **`setPointerCapture` 적용**: 드래그 도중 마우스 포인터가 항목 영역 밖으로 나가더라도 포인터 이벤트를 놓치지 않고 끝까지 추적합니다.
+* **`pointercancel` 이벤트 대응**: 제스처가 중단되거나 시스템에 의해 취소된 경우에도 안전하게 상태를 리셋하고 항목을 원위치로 되돌립니다.
+
+---
+
+수정된 전체 `index.html` 코드입니다:
+
+```html
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>오늘 할 일</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.row {
+		position: relative;
+		overflow: hidden;
+		border-radius: 10px;
+		margin-bottom: 8px;
+	}
+	.delete-bg {
+		position: absolute;
+		inset: 0;
+		background: #ff3b30;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 18px;
+		color: #fff;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.item {
+		position: relative;
+		background: #fff;
+		padding: 14px 16px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		touch-action: pan-y;
+		user-select: none;
+		will-change: transform;
+	}
+	.item input { width: 18px; height: 18px; }
+	.label { font-size: 15px; }
+</style>
+</head>
+<body>
+<header>오늘 할 일</header>
+<div id="list"></div>
+
+<script>
+const TODOS = [
+	"우유 사기",
+	"치과 예약",
+	"보고서 초안 검토",
+	"운동 30분",
+	"엄마한테 전화",
+	"세탁물 찾기",
+];
+
+const listEl = document.getElementById("list");
+
+function render() {
+	listEl.innerHTML = "";
+	TODOS.forEach((text, i) => {
+		const row = document.createElement("div");
+		row.className = "row";
+		row.innerHTML =
+			'<div class="delete-bg">삭제</div>' +
+			'<div class="item"><input type="checkbox" /><div class="label">' + text + "</div></div>";
+		listEl.appendChild(row);
+		attachSwipe(row.querySelector(".item"), row, i);
+	});
+}
+
+const SWIPE_DELETE_PX = 80;
+
+function attachSwipe(item, row, index) {
+	let startX = 0;
+	let isDown = false;
+	let activePointerId = null;
+
+	item.addEventListener("pointerdown", (e) => {
+		// 체크박스 클릭 시 스와이프 동작 방지
+		if (e.target.tagName === "INPUT") return;
+
+		isDown = true;
+		activePointerId = e.pointerId;
+		startX = e.clientX;
+		item.style.transition = "none";
+		
+		if (item.setPointerCapture) {
+			item.setPointerCapture(e.pointerId);
+		}
+	});
+
+	item.addEventListener("pointermove", (e) => {
+		// pointerdown 상태가 아니거나 다른 포인터 이벤트인 경우 무시 (호버 방지)
+		if (!isDown || e.pointerId !== activePointerId) return;
+
+		const dx = e.clientX - startX;
+		// 왼쪽 스와이프만 허용
+		if (dx < 0) {
+			item.style.transform = "translateX(" + dx + "px)";
+		}
+	});
+
+	function handleRelease(e) {
+		if (!isDown || e.pointerId !== activePointerId) return;
+		isDown = false;
+		activePointerId = null;
+
+		item.style.transition = "transform 0.2s ease-out";
+		const dx = e.clientX - startX;
+
+		// 왼쪽으로 80px 이상 스와이프한 경우 삭제 확정
+		if (dx < -SWIPE_DELETE_PX) {
+			TODOS.splice(index, 1);
+			render();
+		} else {
+			item.style.transform = "translateX(0px)";
+		}
+	}
+
+	item.addEventListener("pointerup", handleRelease);
+	item.addEventListener("pointercancel", handleRelease);
+}
+
+render();
+</script>
+</body>
+</html>
+```

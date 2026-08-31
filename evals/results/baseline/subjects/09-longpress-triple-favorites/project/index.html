@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>즐겨찾는 연락처</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.contact {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		background: #fff;
+		border-radius: 10px;
+		padding: 12px 14px;
+		margin-bottom: 8px;
+		user-select: none;
+		position: relative;
+	}
+	.contact.selected { outline: 2px solid #007aff; }
+	.avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #667eea, #764ba2);
+		flex-shrink: 0;
+	}
+	.name { font-size: 15px; font-weight: 600; }
+	#context-menu {
+		position: fixed;
+		background: #2c2c2c;
+		color: #fff;
+		border-radius: 10px;
+		overflow: hidden;
+		display: none;
+		z-index: 100;
+		min-width: 130px;
+	}
+	#context-menu button {
+		display: block;
+		width: 100%;
+		padding: 12px 16px;
+		background: none;
+		border: none;
+		color: inherit;
+		font-size: 14px;
+		text-align: left;
+	}
+</style>
+</head>
+<body>
+<header id="header">즐겨찾는 연락처</header>
+<div id="list"></div>
+<div id="context-menu">
+	<button>전화</button>
+	<button>메시지</button>
+	<button>삭제</button>
+</div>
+
+<script>
+// 즐겨찾는 연락처를 길게 누르면:
+//   - 그대로 누르고 있으면(움직이지 않으면) 500ms에 메뉴(전화/메시지/삭제)가 뜬다.
+//   - 메뉴가 뜬 뒤 계속 누르고 있으면 1000ms에 여러 개 고르는 모드로 바뀐다.
+//   - 누른 채로 위아래로 옮기면(8px 이상) 그 자리에서 순서가 바뀐다.
+
+const CONTACTS = ["김민준", "이서연", "박도윤", "최하늘", "정예린"];
+const listEl = document.getElementById("list");
+const headerEl = document.getElementById("header");
+const menuEl = document.getElementById("context-menu");
+
+let selectMode = false;
+const selected = new Set();
+
+function updateHeader() {
+	headerEl.textContent = selectMode ? selected.size + "명 선택됨" : "즐겨찾는 연락처";
+}
+
+function render() {
+	listEl.innerHTML = "";
+	CONTACTS.forEach((name, i) => {
+		const row = document.createElement("div");
+		row.className = "contact";
+		row.dataset.index = String(i);
+		row.innerHTML = '<div class="avatar"></div><div class="name">' + name + "</div>";
+		listEl.appendChild(row);
+		attachTripleGesture(row, i);
+	});
+}
+
+function openContextMenu(x, y) {
+	menuEl.style.left = x + "px";
+	menuEl.style.top = y + "px";
+	menuEl.style.display = "block";
+}
+
+function enterSelectMode(row, index) {
+	selectMode = true;
+	selected.add(index);
+	row.classList.add("selected");
+	updateHeader();
+}
+
+// 글로벌 활성 포인터 트래커
+let activePointerId = null;
+
+// 롱프레스 3중 분기: 이동하면 재정렬, 안 움직이면 500ms에 메뉴,
+// 메뉴 뜨고도 계속 누르고 있으면 1000ms에 다중 선택.
+function attachTripleGesture(row, index) {
+	let startX = 0;
+	let startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+
+	row.addEventListener("pointerdown", (e) => {
+		// 이미 다른 포인터가 활성화되어 있다면 무시 (멀티터치 방어)
+		if (activePointerId !== null) return;
+
+		activePointerId = e.pointerId;
+		try {
+			row.setPointerCapture(e.pointerId);
+		} catch (err) {}
+
+		startX = e.clientX;
+		startY = e.clientY;
+		moved = false;
+		contextMenuFired = false;
+
+		contextMenuTimer = setTimeout(() => {
+			if (!moved) {
+				contextMenuFired = true;
+				openContextMenu(e.clientX, e.clientY);
+				escalateTimer = setTimeout(() => {
+					if (!moved) enterSelectMode(row, index);
+				}, 500);
+			}
+		}, 500);
+	});
+
+	row.addEventListener("pointermove", (e) => {
+		// 현재 활성화된 포인터의 이벤트가 아니면 무시
+		if (e.pointerId !== activePointerId) return;
+		if (moved) return;
+
+		const dx = e.clientX - startX;
+		const dy = e.clientY - startY;
+		if (Math.hypot(dx, dy) > 8) {
+			moved = true;
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+			if (!contextMenuFired) {
+				row.style.opacity = "0.6"; // 재정렬 시작 표시(단순화된 데모)
+			}
+		}
+	});
+
+	const endGesture = (e) => {
+		if (e.pointerId !== activePointerId) return;
+
+		clearTimeout(contextMenuTimer);
+		clearTimeout(escalateTimer);
+		row.style.opacity = "";
+
+		try {
+			row.releasePointerCapture(e.pointerId);
+		} catch (err) {}
+
+		activePointerId = null;
+	};
+
+	row.addEventListener("pointerup", endGesture);
+	row.addEventListener("pointercancel", endGesture);
+}
+
+document.addEventListener("click", (e) => {
+	if (!menuEl.contains(e.target)) menuEl.style.display = "none";
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+다음 호출을 실행합니다: 04-carousel-photos, skill · model=gemini-3.6-flash · systemInstruction 35221자, input(request.txt) 122자 · 예상 비용 추정 ≈ $0.0141 USD(대략치, 출력 2000토큰 가정 — 실제 청구액과 다를 수 있음)
+API 호출 시작 (model=gemini-3.6-flash, systemInstruction 35221자, input(request.txt) 122자)
+성공 — 코드 1522자를 project/index.html로 저장함

@@ -1,0 +1,78 @@
+[
+  {
+    "scenario": "04-carousel-photos",
+    "condition": "noskill",
+    "ok": true,
+    "codeLength": 1714,
+    "warning": null
+  },
+  {
+    "scenario": "04-carousel-photos",
+    "condition": "skill",
+    "ok": true,
+    "codeLength": 1522,
+    "warning": null
+  },
+  {
+    "scenario": "05-multi-select-photos",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "05-multi-select-photos",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "06-context-menu-notes",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "06-context-menu-notes",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "07-tab-swipe-stories",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "07-tab-swipe-stories",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "08-side-drawer-menu",
+    "condition": "noskill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "08-side-drawer-menu",
+    "condition": "skill",
+    "ok": false,
+    "reason": "api_call_failed"
+  },
+  {
+    "scenario": "09-longpress-triple-favorites",
+    "condition": "noskill",
+    "ok": true,
+    "codeLength": 4681,
+    "warning": null
+  },
+  {
+    "scenario": "09-longpress-triple-favorites",
+    "condition": "skill",
+    "ok": true,
+    "codeLength": 4683,
+    "warning": null
+  }
+]

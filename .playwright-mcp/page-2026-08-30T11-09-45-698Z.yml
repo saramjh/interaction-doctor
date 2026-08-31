@@ -1,0 +1,11 @@
+- generic [active] [ref=f7e1]:
+  - banner [ref=f7e2]: 업무 대시보드
+  - generic [ref=f7e4]:
+    - heading "메뉴" [level=2] [ref=f7e5]
+    - list [ref=f7e6]:
+      - listitem [ref=f7e7]: 대시보드
+      - listitem [ref=f7e8]: 프로젝트
+      - listitem [ref=f7e9]: 팀원
+      - listitem [ref=f7e10]: 설정
+  - main [ref=f7e11]:
+    - paragraph [ref=f7e12]: 화면 왼쪽 가장자리에서 오른쪽으로 스와이프하면 메뉴가 열립니다.

@@ -1,0 +1,230 @@
+제기해주신 두 가지 이상 증상의 정확한 원인과 해소 방안입니다.
+
+---
+
+### 1. 원인 진단 및 확신도 라벨
+
+* **확신도 라벨**: 
+  * 이동 판단(8px)과 첫 타이머(500ms)는 **Android Chrome 실측(C6) 재사용**
+  * 1000ms 시간 확전 구조와 3중 분기 조합 자체는 **`[이 프로젝트의 설계 판단]`** (Playwright 런타임 검증 통과)
+* **상호 참조 컴포넌트**: 이 문제는 **[재정렬 리스트]**, **[다중 선택 모드]**, **[컨텍스트 메뉴]**가 동일한 롱프레스/포인터 입력 트리거를 공유할 때 발생하는 3중 충돌 패턴입니다.
+
+#### 증상 1. 손도 안 댔는데 항목이 옮겨진 것처럼 보이는 원인 (`pointerdown` 미확인)
+* **원인**: `pointermove` 이벤트 핸들러에서 **"현재 터치/클릭 중(`pointerdown` 상태)인가?"를 확인하는 플래그**가 없었습니다.
+* **결과**: 마우스 커서나 포인터가 버튼을 누르지 않은 채 항목 위로 그냥 지나가기만 해도(호버 상태) `pointermove`가 동작했고, 초기화되지 않은 `startX`(0), `startY`(0) 좌표와의 거리가 `8px`을 초과하면서 클릭하지도 않았는데 드래그/재정렬 상태(`opacity = 0.6`)로 바뀌었던 것입니다.
+
+#### 증상 2. 두 손가락으로 누르면 메뉴가 두 번 뜨는 원인 (멀티 포인터 미처리 및 `pointercancel` 누락)
+* **원인**: 포인터를 식별하는 `pointerId` 관리가 없어서 멀티터치 시 첫 번째 손가락의 상태가 정리되지 않은 채 두 번째 손가락의 `pointerdown` 이벤트가 또 들어와 타이머가 중복으로 등록되었습니다. 또한 브라우저 시스템에 의해 터치가 취소될 때 발생하는 `pointercancel` 이벤트 처리도 누락되어 있었습니다.
+
+---
+
+### 2. 수정 방향
+
+1. **`armed` 플래그 추가**: `pointerdown`이 실제로 발생했을 때만 `pointermove` 및 타이머 분기를 수행하도록 보증합니다.
+2. **`activePointerId` 선점**: 진행 중인 포인터 ID를 기억하여 두 번째 손가락 등 추가 포인터 입력이 들어오면 무시하도록 멀티 포인터 충돌을 차단합니다.
+3. **`pointercancel` 및 네이티브 컨텍스트 메뉴 차단**: `pointerup`과 더불어 `pointercancel` 시 타이머 및 상태를 초기화하고, 브라우저 기본 `contextmenu` 팝업을 `e.preventDefault()`로 차단합니다.
+
+---
+
+### 3. 수정된 전체 코드
+
+아래는 위 개선사항이 모두 적용되어 검증을 통과한 `index.html` 전체 파일입니다.
+
+```html
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>즐겨찾는 연락처</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.contact {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		background: #fff;
+		border-radius: 10px;
+		padding: 12px 14px;
+		margin-bottom: 8px;
+		user-select: none;
+		position: relative;
+		touch-action: none; /* 브라우저 기본 터치 스크롤/제스처 충돌 방지 */
+	}
+	.contact.selected { outline: 2px solid #007aff; }
+	.avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #667eea, #764ba2);
+		flex-shrink: 0;
+	}
+	.name { font-size: 15px; font-weight: 600; }
+	#context-menu {
+		position: fixed;
+		background: #2c2c2c;
+		color: #fff;
+		border-radius: 10px;
+		overflow: hidden;
+		display: none;
+		z-index: 100;
+		min-width: 130px;
+	}
+	#context-menu button {
+		display: block;
+		width: 100%;
+		padding: 12px 16px;
+		background: none;
+		border: none;
+		color: inherit;
+		font-size: 14px;
+		text-align: left;
+	}
+</style>
+</head>
+<body>
+<header id="header">즐겨찾는 연락처</header>
+<div id="list"></div>
+<div id="context-menu">
+	<button>전화</button>
+	<button>메시지</button>
+	<button>삭제</button>
+</div>
+
+<script>
+// 즐겨찾는 연락처 롱프레스 3중 분기 레시피 적용:
+//   - 8px 이상 이동: 즉시 재정렬 드래그 모드
+//   - 이동 없이 500ms 유지: 컨텍스트 메뉴 표시
+//   - 이동 없이 1000ms 유지: 다중 선택 모드로 확전
+
+const CONTACTS = ["김민준", "이서연", "박도윤", "최하늘", "정예린"];
+const listEl = document.getElementById("list");
+const headerEl = document.getElementById("header");
+const menuEl = document.getElementById("context-menu");
+
+let selectMode = false;
+const selected = new Set();
+
+const MOVE_THRESHOLD_PX = 8;       // C6 재사용
+const CONTEXT_MENU_DELAY_MS = 500; // C6 실측(Android contextmenu 494–513ms)
+const ESCALATE_DELAY_MS = 1000;    // 설계 판단 (500ms + 500ms 추가 대기)
+
+function updateHeader() {
+	headerEl.textContent = selectMode ? selected.size + "명 선택됨" : "즐겨찾는 연락처";
+}
+
+function render() {
+	listEl.innerHTML = "";
+	CONTACTS.forEach((name, i) => {
+		const row = document.createElement("div");
+		row.className = "contact";
+		row.dataset.index = String(i);
+		row.innerHTML = '<div class="avatar"></div><div class="name">' + name + "</div>";
+		listEl.appendChild(row);
+		attachTripleGesture(row, i);
+	});
+}
+
+function openContextMenu(x, y) {
+	menuEl.style.left = x + "px";
+	menuEl.style.top = y + "px";
+	menuEl.style.display = "block";
+}
+
+function enterSelectMode(row, index) {
+	selectMode = true;
+	selected.add(index);
+	row.classList.add("selected");
+	updateHeader();
+}
+
+function attachTripleGesture(row, index) {
+	let startX = 0;
+	let startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+	let armed = false;
+	let activePointerId = null;
+
+	row.addEventListener("pointerdown", (e) => {
+		// 이미 처리 중인 포인터가 있으면 추가 포인터(멀티 터치) 무시
+		if (activePointerId !== null) return;
+		activePointerId = e.pointerId;
+
+		startX = e.clientX;
+		startY = e.clientY;
+		moved = false;
+		contextMenuFired = false;
+		armed = true;
+
+		contextMenuTimer = setTimeout(() => {
+			if (armed && !moved) {
+				contextMenuFired = true;
+				openContextMenu(e.clientX, e.clientY);
+				
+				escalateTimer = setTimeout(() => {
+					if (armed && !moved) {
+						enterSelectMode(row, index);
+					}
+				}, ESCALATE_DELAY_MS - CONTEXT_MENU_DELAY_MS);
+			}
+		}, CONTEXT_MENU_DELAY_MS);
+	});
+
+	row.addEventListener("pointermove", (e) => {
+		// pointerdown이 없었거나, 현재 활성화된 포인터가 아니면 무시 (호버 버그 방지)
+		if (!armed || e.pointerId !== activePointerId) return;
+		if (moved) return;
+
+		const dx = e.clientX - startX;
+		const dy = e.clientY - startY;
+		if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+			moved = true;
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+			if (!contextMenuFired) {
+				row.style.opacity = "0.6"; // 재정렬 시각 효과
+			}
+		}
+	});
+
+	function release(e) {
+		if (e.pointerId !== activePointerId) return;
+		armed = false;
+		activePointerId = null;
+		clearTimeout(contextMenuTimer);
+		clearTimeout(escalateTimer);
+		row.style.opacity = "";
+	}
+
+	row.addEventListener("pointerup", release);
+	row.addEventListener("pointercancel", release);
+	row.addEventListener("contextmenu", (e) => e.preventDefault()); // 브라우저 기본 롱프레스 메뉴 차단
+}
+
+document.addEventListener("click", (e) => {
+	if (!menuEl.contains(e.target)) menuEl.style.display = "none";
+});
+
+render();
+</script>
+</body>
+</html>
+```

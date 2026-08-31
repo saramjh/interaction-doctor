@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Double Tap Test</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+  }
+  h1 { font-size: 20px; }
+  .box {
+    width: 200px;
+    height: 200px;
+    background: #1e1e1e;
+    border: 2px solid #5b8cff;
+    border-radius: 20px;
+    margin: 40px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none; /* iOS Safari 줌 간섭 및 300ms 탭 지연 차단 */
+  }
+</style>
+</head>
+<body>
+
+<h1>더블탭으로 하트 보내기</h1>
+
+<div class="box" id="heartBox">🤍</div>
+
+<script>
+  const box = document.getElementById('heartBox');
+  let isHeart = false;
+  let lastTap = 0;
+
+  // Pointerdown 이벤트를 이용해 모든 플랫폼(마우스/터치)의 커스텀 더블탭 감지 구현
+  box.addEventListener('pointerdown', (e) => {
+    // 멀티터치 방지를 위해 기본 포인터(첫 번째 입력)만 처리
+    if (!e.isPrimary) return;
+
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTap;
+
+    // 300ms 이내에 연속으로 탭이 발생한 경우 더블탭으로 간주
+    if (tapLength < 300 && tapLength > 0) {
+      e.preventDefault(); // 더블탭에 의한 브라우저 기본 줌 또는 드래그 선택 방지
+      isHeart = !isHeart;
+      box.textContent = isHeart ? '💖' : '🤍';
+      if (navigator.vibrate) navigator.vibrate(15);
+      
+      // 더블탭 이후 연속 탭 누적 방지를 위해 lastTap 초기화
+      lastTap = 0;
+      return;
+    }
+
+    lastTap = currentTime;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>업무 앱</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #fff;
+		color: #1c1c1e;
+		overflow: hidden;
+	}
+	header {
+		height: 52px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 16px;
+		font-weight: 700;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#edge-zone {
+		position: fixed;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 20px;
+		z-index: 5;
+	}
+	#drawer {
+		position: fixed;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 260px;
+		background: #1c1c1e;
+		color: #fff;
+		transform: translateX(-100%);
+		transition: transform 0.15s ease-out;
+		z-index: 10;
+		padding: 20px 16px;
+	}
+	#drawer.open { transform: translateX(0); }
+	#drawer h2 { font-size: 15px; margin: 0 0 16px; color: #9a9aa5; }
+	#drawer ul { list-style: none; padding: 0; margin: 0; }
+	#drawer li { padding: 12px 0; border-bottom: 1px solid #2c2c2e; font-size: 14px; }
+	#scrim {
+		position: fixed;
+		inset: 0;
+		background: rgba(0,0,0,0.4);
+		display: none;
+		z-index: 9;
+	}
+	#scrim.show { display: block; }
+	main { padding: 16px; }
+</style>
+</head>
+<body>
+<header>업무 대시보드</header>
+<div id="edge-zone"></div>
+<div id="scrim"></div>
+<div id="drawer">
+	<h2>메뉴</h2>
+	<ul>
+		<li>대시보드</li>
+		<li>프로젝트</li>
+		<li>팀원</li>
+		<li>설정</li>
+	</ul>
+</div>
+<main>
+	<p>화면 왼쪽 가장자리에서 오른쪽으로 스와이프하면 메뉴가 열립니다.</p>
+</main>
+
+<script>
+// 화면 왼쪽 가장자리(20px)에서 오른쪽으로 스와이프하면 메뉴가 열린다.
+// 메뉴를 여는 방법은 이 엣지 스와이프 하나뿐이다.
+
+const edgeZone = document.getElementById("edge-zone");
+const drawer = document.getElementById("drawer");
+const scrim = document.getElementById("scrim");
+
+let startX = 0;
+let tracking = false;
+
+edgeZone.addEventListener("pointerdown", (e) => {
+	startX = e.clientX;
+	tracking = true;
+});
+
+edgeZone.addEventListener("pointermove", (e) => {
+	if (!tracking) return;
+	const dx = e.clientX - startX;
+	if (dx > 40) {
+		drawer.classList.add("open");
+		scrim.classList.add("show");
+	}
+});
+
+edgeZone.addEventListener("pointerup", () => {
+	tracking = false;
+});
+
+scrim.addEventListener("click", () => {
+	drawer.classList.remove("open");
+	scrim.classList.remove("show");
+});
+</script>
+</body>
+</html>
