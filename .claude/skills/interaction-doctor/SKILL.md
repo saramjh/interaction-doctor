@@ -77,3 +77,4 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 * [복합 중첩 상호작용 충돌 해소 헌장](references/recipes.md): 중첩 제스처 권한 승격 및 핸드오프 법칙
 * [플랫폼별 물리 제약 및 선점 방어 헌장](references/platform.md): OS/하드웨어 물리 제약 & 선점 방어 보편 기준
 * [상호작용 결함 증상 역추적 진단서](references/symptoms.md): 사용자 체감 증상 기반 결함 진단 룩업
+* [36대 결함 해결 인과 보증서](references/guarantee-matrix.md): P01~P36 전수 결함과 물리 불변식의 1:1 결정론적 보증 매트릭스
