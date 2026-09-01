@@ -1,15 +1,16 @@
 # interaction-doctor 🩺
 
-[ [English](README.md) ] | [ 한국어 ]
+[ [English](README.md) ] | [ 한국어 ] | [ [라이브 쇼룸 & 24종 진단 랩](https://saramjh.github.io/interaction-doctor/) ]
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tested on](https://img.shields.io/badge/실기기_검증-16대_하드웨어-orange.svg)](#-신뢰의-해자-16대-실기기-하드웨어-실측)
-[![Blind Evaluation](https://img.shields.io/badge/블라인드_평가-3전_3승_전승-success.svg)](#-블라인드-테스트-실증-3전-전승)
-[![Live Showroom](https://img.shields.io/badge/라이브_쇼룸-인터랙티브_체험하기-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white)](showcase/index.html)
+[![Cases Indexed](https://img.shields.io/badge/색인_사례-24개_프로덕션_결함-blue.svg)](#-블라인드-테스트-실증-3전-전승)
+[![Live Showroom](https://img.shields.io/badge/라이브_진단_쇼룸-24종_실전_사례_체험-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white)](https://saramjh.github.io/interaction-doctor/)
 
 > **"다른 스킬은 AI가 UI를 *그리는* 것을 돕습니다. 이건 AI가 만든 UI가 사용자의 손끝에서 *네이티브 앱처럼 작동하도록* 물리 법칙을 주입합니다."**
 
-🎮 **[👉 브라우저에서 직접 만져보는 인터랙티브 벤치마크 & 프롬프트 생성기 (GitHub Pages)](showcase/index.html)** — *기본 AI의 결함과 물리 헌장으로 최적화 개선된 인터랙션을 직접 비교하고 프롬프트 명세를 복사하세요.*
+🎮 **[👉 24종 인터랙션 결함 진단 랩 & SWE 처방전 생성기 (GitHub Pages)](https://saramjh.github.io/interaction-doctor/)**  
+*3차원 다면 색인(UI 요소, 물리 원리, 결함 증상)으로 내 문제를 5초 만에 검색하고, Before vs After 실시간 데모를 체험하며, 검증된 SWE 프롬프트와 코드 레시피를 복사하세요.*
 
 ---
 

@@ -1,16 +1,17 @@
 # interaction-doctor 🩺
 
-[ English ] | [ [한국어](README.ko.md) ] | [ [Showroom (i18n: EN / KO / JA / ZH / ES)](showcase/index.html) ]
+[ English ] | [ [한국어](README.ko.md) ] | [ [Live Showroom & Diagnostic Lab](https://saramjh.github.io/interaction-doctor/) ]
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tested on](https://img.shields.io/badge/Real_Devices-16_Hardware_Tested-orange.svg)](#-ground-truth-16-real-devices-benchmarked)
-[![Blind Evaluation](https://img.shields.io/badge/Blind_Eval-3_Wins_/_0_Losses-success.svg)](#-proven-by-blind-evaluations-3-wins--0-losses)
-[![Live Showroom](https://img.shields.io/badge/Live_Showroom-Try_Interactive_Demo-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white)](showcase/index.html)
+[![Cases Indexed](https://img.shields.io/badge/Production_Cases-24_Indexed-blue.svg)](#-proven-by-blind-evaluations-3-wins--0-losses)
+[![Live Showroom](https://img.shields.io/badge/Live_Showroom-24_Diagnostic_Cases-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white)](https://saramjh.github.io/interaction-doctor/)
 
 > **"Other skills help AI *build* UI. This one gives AI the *physics* to make it feel native."**  
 > While other skills assist AI in drafting UI layouts, `interaction-doctor` injects **immutable touch physics** so that AI-generated web interfaces feel as responsive and buttery-smooth as native mobile apps with **zero jitter**.
 
-🎮 **[👉 Try Interactive Showroom & SWE Prompt Generator (GitHub Pages)](showcase/index.html)** — *Compare baseline AI defects with optimized physics implementations and copy verified prompts.*
+🎮 **[👉 Open Live Interactive Diagnostic Hub & SWE Prescription Lab (GitHub Pages)](https://saramjh.github.io/interaction-doctor/)**  
+*Search 24 production interaction defect cases across 3 dimensions (UI Element, Physics Concept, Defect Class), test live physics demos, and copy verified SWE prompts.*
 
 ---
 
