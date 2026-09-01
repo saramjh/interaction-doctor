@@ -59,6 +59,11 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 1. **식별자 분리 및 유효성 가드 불변식 (Disjoint & Valid Input Guard)**: 다점 기하 연산($\text{dist} = \sqrt{(x_A - x_B)^2 + (y_A - y_B)^2}$)에 전달되는 모든 인자는 반드시 **'서로 다른 고유 식별자($id_A \ne id_B$)'**를 가진 유효한 좌표 객체여야 하며, `undefined`, `null`, 단일 객체 중복 참조로 인한 $NaN$이나 $0$의 수식 유입을 원천 차단해야 한다.
 2. **원자적 추출 및 바운드 안전성 불변식 (Atomic Extraction & Bounds Safety)**: 다점 컨테이너(배열, 맵, 딕셔너리)에서 $N$개의 좌표를 추출할 때는 개별 순차 할당 중 발생하는 누락을 방지하도록 해당 언어/플랫폼 표준에 맞는 가장 안전한 집합 추출 방식(구조 분해, 인덱스 바운드 검사, 튜플 언패킹 등)을 적용한다.
 3. **포인터 수 변경 불변식**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정해야 한다.
+4. **중심점 불변 보존 불변식 (Centroid Invariant Preservation Contract)**:
+   * **수학적 계약**: 단일 포인터(마우스 휠/트랙패드) 또는 2포인터(핀치) 조작 시, 화면 상의 중심 앵커 $C(c_x, c_y)$에 놓인 월드 좌표 $W(w_x, w_y)$는 스케일이 $s_{\text{old}} \to s_{\text{new}}$로 변경된 직후에도 화면 상의 $C(c_x, c_y)$와 $0\text{px}$ 오차로 일치해야 한다.
+     $$w_x = \frac{c_x - \text{pan}_x}{s_{\text{old}}}, \quad w_y = \frac{c_y - \text{pan}_y}{s_{\text{old}}}$$
+     $$\text{pan}_{x,\text{new}} = c_x - w_x \times s_{\text{new}}, \quad \text{pan}_{y,\text{new}} = c_y - w_y \times s_{\text{new}}$$
+   * **좌표계 분리 격리**: 변환 레이어는 반드시 `transform-origin: 0 0`을 고정해야 하며, 기본값(`50% 50%`)과의 불일치로 인한 오프셋 왜곡(Offset Drift)을 원천 금지한다.
 
 ---
 
