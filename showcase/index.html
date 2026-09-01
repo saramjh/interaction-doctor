@@ -1653,139 +1653,176 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
       sandboxStage.innerHTML = '';
 
       if (scenarioKey === 'p03') {
-        // P03: 2D CANVAS CENTROID INVARIANT & WHEEL / BUTTON ZOOM SIMULATOR
+        // P03: MATHEMATICALLY EXACT 2D CANVAS CENTROID INVARIANT & TARGET PIN SIMULATOR
         sandboxStage.innerHTML = `
           <div style="padding: 8px 12px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
-            <span>🎨 2D Canvas Centroid Zoom</span>
-            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Centroid Locked':'Origin Drift Disaster'}</span>
+            <span>🎨 2D Canvas Centroid Zoom (P03)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Centroid Invariant 0px Drift':'(0,0) Origin Drift Disaster'}</span>
           </div>
 
-          <!-- Interactive Action Toolbar for Wheel / Click Zoom -->
-          <div style="padding:6px 12px; background:#090e1a; border-bottom:1px solid #1e293b; display:flex; gap:6px; align-items:center; justify-content:space-between;">
+          <!-- Quick Action Buttons -->
+          <div style="padding:6px 10px; background:#090e1a; border-bottom:1px solid #1e293b; display:flex; gap:6px; align-items:center; justify-content:space-between;">
             <div style="display:flex; gap:4px;">
               <button id="btnZoomIn" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔍 Zoom In (+)</button>
               <button id="btnZoomOut" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔎 Zoom Out (-)</button>
-              <button id="btnRotateCard" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔄 Rotate 45°</button>
             </div>
+            <div style="font-size:10px; color:#94a3b8; font-family:'JetBrains Mono';" id="zoomHud">Scale: 100%</div>
             <button id="btnResetCanvas" style="padding:4px 8px; background:#1e293b; color:#94a3b8; border:1px solid #334155; border-radius:5px; font-size:10px; cursor:pointer;">↺ Reset</button>
           </div>
 
-          <div id="canvasViewport" class="scroll-contained" style="flex:1; position:relative; background:radial-gradient(#334155 1.5px, transparent 1.5px); background-size:18px 18px; overflow:hidden; touch-action:none; display:flex; align-items:center; justify-content:center;">
+          <div id="canvasViewport" class="scroll-contained" style="flex:1; position:relative; overflow:hidden; background:#020617; touch-action:none; cursor:crosshair;">
             
-            <div id="canvasArtboard" style="width:190px; height:190px; background:linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius:18px; box-shadow:0 15px 35px rgba(0,0,0,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; will-change:transform; position:absolute; cursor:grab; border:2px solid rgba(255,255,255,0.2);">
-              <div style="font-size:32px;">🖼️</div>
-              <div style="font-weight:800; font-size:13px; color:#fff;">Mobile App Wireframe</div>
-              <div style="font-size:10px; color:rgba(255,255,255,0.85);">Roll Wheel or Drag Card</div>
-              <div id="artboardZoomLabel" style="font-family:'JetBrains Mono'; font-size:11px; font-weight:800; background:rgba(0,0,0,0.45); padding:2px 8px; border-radius:6px; color:#60a5fa;">Scale: 100% | Rot: 0°</div>
+            <!-- Infinite Pan/Zoom World (transform-origin: 0 0) -->
+            <div id="canvasWorld" style="position:absolute; width:1200px; height:1200px; left:0; top:0; transform-origin:0 0; will-change:transform; background-image:radial-gradient(#334155 1.5px, transparent 1.5px); background-size:22px 22px;">
+              
+              <!-- Artboard Map Canvas -->
+              <div id="canvasArtboard" style="position:absolute; left:440px; top:440px; width:320px; height:320px; background:linear-gradient(135deg, #1e293b, #0f172a); border:2px solid ${mode==='with'?'#10b981':'#3b82f6'}; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.8); display:flex; flex-direction:column; padding:16px; gap:12px;">
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:8px;">
+                  <span style="font-weight:800; font-size:12px; color:#60a5fa;">📍 Gangnam Tech Valley Map</span>
+                  <span style="font-size:10px; background:#0f172a; padding:2px 6px; border-radius:4px; color:#94a3b8; border:1px solid #334155;">Figma Artboard</span>
+                </div>
+
+                <!-- Visual Landmark Target Pin -->
+                <div style="flex:1; background:#090e1a; border-radius:12px; border:1px dashed #334155; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                  
+                  <div id="targetPin" style="display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none;">
+                    <div style="font-size:36px; filter:drop-shadow(0 0 12px #ef4444);">🎯</div>
+                    <div style="background:#ef4444; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; letter-spacing:0.5px;">TARGET PIN</div>
+                  </div>
+
+                  <div style="font-size:10px; color:#cbd5e1; text-align:center; max-width:200px; line-height:1.4;">
+                    👉 Place mouse cursor <strong>directly on the 🎯 Target Pin</strong> and roll mouse wheel!
+                  </div>
+                </div>
+
+                <div style="font-size:9px; color:#64748b; text-align:center;">Drag background to pan canvas freely</div>
+              </div>
             </div>
 
-            <!-- Visual Centroid Crosshair Indicator -->
-            <div id="centroidCrosshair" style="display:none; position:absolute; width:18px; height:18px; border:2px solid #10b981; border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%, -50%); box-shadow:0 0 10px #10b981;"></div>
+            <!-- Centroid Reticle / Crosshair Indicator -->
+            <div id="centroidCrosshair" style="display:none; position:absolute; width:26px; height:26px; border:2px dashed #10b981; border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%, -50%); box-shadow:0 0 14px #10b981;"></div>
 
-            <div id="canvasFlyawayAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:8px 14px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.6); z-index:30; text-align:center;">
-              💥 Disaster: Zoom anchored to (0,0) origin! Card drifted completely out of viewport!
+            <!-- Flyaway Warning Toast -->
+            <div id="canvasFlyawayAlert" style="display:none; position:absolute; bottom:14px; left:14px; right:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.7); z-index:30; text-align:center; line-height:1.4;">
+              💥 <strong>Disaster:</strong> Target 🎯 flew away! Anchored to (0,0) origin without Centroid Invariant compensation!
             </div>
           </div>
         `;
 
         const vp = sandboxStage.querySelector('#canvasViewport');
-        const board = sandboxStage.querySelector('#canvasArtboard');
-        const label = sandboxStage.querySelector('#artboardZoomLabel');
+        const world = sandboxStage.querySelector('#canvasWorld');
+        const hud = sandboxStage.querySelector('#zoomHud');
         const crosshair = sandboxStage.querySelector('#centroidCrosshair');
         const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
         const btnIn = sandboxStage.querySelector('#btnZoomIn');
         const btnOut = sandboxStage.querySelector('#btnZoomOut');
-        const btnRot = sandboxStage.querySelector('#btnRotateCard');
         const btnReset = sandboxStage.querySelector('#btnResetCanvas');
 
-        let scale = 1.0, rotation = 0;
-        let transX = 0, transY = 0;
-        let isPan = false, pStartX = 0, pStartY = 0;
+        // Viewport dimensions
+        const vpRect = vp.getBoundingClientRect();
+        const initWidth = vpRect.width || 380;
+        const initHeight = vpRect.height || 480;
+
+        // Start with artboard centered in viewport
+        let scale = 1.0;
+        let panX = (initWidth - 1200) / 2;
+        let panY = (initHeight - 1200) / 2;
+        const initialPanX = panX;
+        const initialPanY = panY;
+
+        let isPanning = false, pStartX = 0, pStartY = 0;
 
         const updateTransform = () => {
-          board.style.transform = `translate3d(${transX}px, ${transY}px, 0) scale(${scale}) rotate(${rotation}deg)`;
-          label.textContent = `Scale: ${Math.round(scale * 100)}% | Rot: ${rotation}°`;
+          world.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+          hud.textContent = `Scale: ${Math.round(scale * 100)}%`;
         };
+        updateTransform();
 
-        board.addEventListener('pointerdown', (e) => {
-          isPan = true;
-          pStartX = e.clientX - transX;
-          pStartY = e.clientY - transY;
-          board.setPointerCapture(e.pointerId);
+        // Pan handling
+        vp.addEventListener('pointerdown', (e) => {
+          isPanning = true;
+          pStartX = e.clientX - panX;
+          pStartY = e.clientY - panY;
+          vp.setPointerCapture(e.pointerId);
         });
 
-        board.addEventListener('pointermove', (e) => {
-          if (!isPan) return;
-          transX = e.clientX - pStartX;
-          transY = e.clientY - pStartY;
+        vp.addEventListener('pointermove', (e) => {
+          if (!isPanning) return;
+          panX = e.clientX - pStartX;
+          panY = e.clientY - pStartY;
           updateTransform();
         });
 
-        board.addEventListener('pointerup', (e) => {
-          if (!isPan) return;
-          isPan = false;
-          board.releasePointerCapture(e.pointerId);
+        vp.addEventListener('pointerup', (e) => {
+          if (!isPanning) return;
+          isPanning = false;
+          vp.releasePointerCapture(e.pointerId);
         });
 
-        const executeZoom = (deltaFactor, focusX, focusY) => {
+        // MATHEMATICALLY RIGOROUS CENTROID INVARIANT ZOOM
+        const executeZoom = (factor, cursorScreenX, cursorScreenY) => {
           if (mode === 'without') {
-            // Baseline defect: (0,0) anchor causes runaway coordinate drift
-            scale *= deltaFactor;
-            transX -= (deltaFactor > 1 ? 55 : -55);
-            transY -= (deltaFactor > 1 ? 55 : -55);
+            // ❌ Baseline Flaw: Naive scale multiplication with NO pan offset compensation!
+            // Elements are scaled relative to (0, 0) of the world container,
+            // throwing the target point wildly away from cursor!
+            scale = Math.max(0.4, Math.min(3.5, scale * factor));
             updateTransform();
 
-            if (scale > 1.8 || scale < 0.6) {
+            // Detect if target pin drifted away from initial sight
+            if (scale > 1.4 || scale < 0.7) {
               alertBox.style.display = 'block';
-              setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+              setTimeout(() => { alertBox.style.display = 'none'; }, 2800);
             }
           } else {
-            // Optimized: Centroid Invariant Clamping
-            crosshair.style.display = 'block';
-            crosshair.style.left = `${focusX}px`;
-            crosshair.style.top = `${focusY}px`;
+            // 🟢 Optimized: Strict Centroid Invariant (Figma & Google Maps engine)
+            // 1. Calculate the exact world coordinate under the cursor right now:
+            const worldX = (cursorScreenX - panX) / scale;
+            const worldY = (cursorScreenY - panY) / scale;
 
-            const prevScale = scale;
-            scale = Math.max(0.4, Math.min(3.0, scale * deltaFactor));
-            transX = focusX - (focusX - transX) * (scale / prevScale);
-            transY = focusY - (focusY - transY) * (scale / prevScale);
+            // 2. Compute new scale factor
+            const newScale = Math.max(0.4, Math.min(3.5, scale * factor));
+
+            // 3. Invariant Contract: The world coordinate under cursor MUST stay at the exact same screen coordinate!
+            // cursorScreenX = panX_new + worldX * newScale  =>  panX_new = cursorScreenX - worldX * newScale
+            panX = cursorScreenX - worldX * newScale;
+            panY = cursorScreenY - worldY * newScale;
+            scale = newScale;
+
             updateTransform();
 
-            setTimeout(() => { crosshair.style.display = 'none'; }, 800);
+            // Display Green Target Reticle precisely at cursor
+            crosshair.style.display = 'block';
+            crosshair.style.left = `${cursorScreenX}px`;
+            crosshair.style.top = `${cursorScreenY}px`;
+            setTimeout(() => { crosshair.style.display = 'none'; }, 600);
           }
         };
 
         vp.addEventListener('wheel', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          const rect = vp.getBoundingClientRect();
-          const cursorX = e.clientX - rect.left;
-          const cursorY = e.clientY - rect.top;
+          const r = vp.getBoundingClientRect();
+          const cx = e.clientX - r.left;
+          const cy = e.clientY - r.top;
           const factor = e.deltaY < 0 ? 1.15 : 0.85;
-          executeZoom(factor, cursorX, cursorY);
+          executeZoom(factor, cx, cy);
         }, { passive: false });
 
         btnIn.addEventListener('click', () => {
-          const rect = vp.getBoundingClientRect();
-          executeZoom(1.2, rect.width / 2, rect.height / 2);
+          const r = vp.getBoundingClientRect();
+          executeZoom(1.25, r.width / 2, r.height / 2);
         });
 
         btnOut.addEventListener('click', () => {
-          const rect = vp.getBoundingClientRect();
-          executeZoom(0.8, rect.width / 2, rect.height / 2);
-        });
-
-        btnRot.addEventListener('click', () => {
-          rotation = (rotation + 45) % 360;
-          if (mode === 'without') {
-            // Rotation center drift
-            transX += 30; transY -= 30;
-          }
-          updateTransform();
+          const r = vp.getBoundingClientRect();
+          executeZoom(0.8, r.width / 2, r.height / 2);
         });
 
         btnReset.addEventListener('click', () => {
-          scale = 1.0; rotation = 0; transX = 0; transY = 0;
+          scale = 1.0;
+          panX = initialPanX;
+          panY = initialPanY;
           alertBox.style.display = 'none';
           updateTransform();
         });
