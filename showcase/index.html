@@ -1415,34 +1415,41 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 42px;
-      height: 42px;
-      background: radial-gradient(circle, rgba(96, 165, 250, 0.4) 0%, rgba(255, 255, 255, 0.2) 70%);
-      border: 2.5px solid rgba(255, 255, 255, 0.95);
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(255, 255, 255, 0.1) 70%);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
       border-radius: 50%;
       pointer-events: none;
       z-index: 100;
       display: none;
-      box-shadow: 0 0 24px rgba(96, 165, 250, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.5);
       transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
       will-change: transform;
     }
     .ghost-pointer::after {
-      content: '👆';
+      content: '';
       position: absolute;
-      left: 14px;
-      top: 14px;
-      font-size: 22px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.9));
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      left: 50%;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      background: #60a5fa;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px #3b82f6;
+      transition: transform 0.2s ease, background-color 0.2s;
     }
     .ghost-pointer.pressing {
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(37, 99, 235, 0.5) 70%);
-      border-color: #93c5fd;
-      box-shadow: 0 0 32px rgba(59, 130, 246, 1), inset 0 0 16px rgba(255, 255, 255, 0.9);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.7) 0%, rgba(37, 99, 235, 0.4) 70%);
+      border-color: #60a5fa;
+      box-shadow: 0 0 28px rgba(59, 130, 246, 0.9), inset 0 0 12px rgba(255, 255, 255, 0.8);
     }
     .ghost-pointer.pressing::after {
-      transform: scale(0.82);
+      transform: translate(-50%, -50%) scale(1.4);
+      background: #ffffff;
+      box-shadow: 0 0 14px #60a5fa;
     }
 
     /* Silky Hardware Accelerated Transitions for Simulated Components */
@@ -1626,10 +1633,10 @@
         <div class="facet-tabs-row">
           <div class="facet-left">
             <span class="facet-label" id="facetLabel">Dimension:</span>
-            <button class="facet-btn active" data-facet="all" id="btnFacetAll">🌟 All (36)</button>
-            <button class="facet-btn" data-facet="element" id="btnFacetElement">🧩 UI Element</button>
-            <button class="facet-btn" data-facet="concept" id="btnFacetConcept">📐 Physics Concept</button>
-            <button class="facet-btn" data-facet="defect" id="btnFacetDefect">🚨 Defect Class</button>
+            <button class="facet-btn active" data-facet="all" id="btnFacetAll">All (36)</button>
+            <button class="facet-btn" data-facet="element" id="btnFacetElement">UI Element</button>
+            <button class="facet-btn" data-facet="concept" id="btnFacetConcept">Physics Concept</button>
+            <button class="facet-btn" data-facet="defect" id="btnFacetDefect">Defect Class</button>
           </div>
           <div class="case-counter" id="caseCounter">36 Cases Available</div>
         </div>
@@ -1642,7 +1649,8 @@
           <!-- TACTILE INTERACTION CINEMATIC CONTROL BAR -->
           <div class="anim-control-bar">
             <button class="btn-play-anim" id="btnPlayDemo">
-              <span id="playIcon">▶️</span> <span id="playText">Play Defect Demo</span>
+              <span id="playIcon" style="display:inline-flex; align-items:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
+              <span id="playText">Play Defect Demo</span>
             </button>
             <div class="anim-timeline-track">
               <div class="anim-timeline-fill" id="animProgressFill"></div>
@@ -1660,7 +1668,7 @@
           </div>
 
           <div class="mission-banner" id="missionBanner">
-            <strong>👉 <span id="missionHeading">Action Test</span>:</strong> <span id="missionText"></span>
+            <strong><span id="missionHeading" style="background:#1e293b; border:1px solid #334155; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-right:6px;">Action Test</span></strong> <span id="missionText"></span>
           </div>
 
           <!-- ADAPTIVE HARDWARE DEVICE SHELL -->
@@ -2567,8 +2575,8 @@
     // ========================================================
     const animI18n = {
       en: {
-        playBtnWithout: '▶️ Play Defect Demo', playBtnWith: '▶️ Play Physics Demo', stopBtn: '⏹️ Stop Demo', ready: 'Ready',
-        replayingWithout: '🚨 Replaying Defect...', replayingWith: '✨ Replaying Physics...',
+        playBtnWithout: 'Play Defect Demo', playBtnWith: 'Play Physics Demo', stopBtn: 'Stop Demo', ready: 'Ready',
+        replayingWithout: 'Replaying Defect...', replayingWith: 'Replaying Physics...',
         p01: {
           step1: '1. User taps message input bar to type...',
           without: '💥 100vh Defect: Keyboard popped up and occluded input bar!',
@@ -2638,8 +2646,8 @@
         }
       },
       ko: {
-        playBtnWithout: '▶️ 결함 시연 재생', playBtnWith: '▶️ 물리 개선 시연', stopBtn: '⏹️ 시연 중지', ready: '준비 완료',
-        replayingWithout: '🚨 결함 현상 재생 중...', replayingWith: '✨ 물리 개선 작동 중...',
+        playBtnWithout: '결함 시연 재생', playBtnWith: '물리 개선 시연', stopBtn: '시연 중지', ready: '준비 완료',
+        replayingWithout: '결함 현상 재생 중...', replayingWith: '물리 개선 작동 중...',
         p01: {
           step1: '1. 사용자가 메시지를 입력하기 위해 하단 입력창을 탭합니다...',
           without: '💥 100vh 결함: 키보드가 올라오며 입력창을 완전히 가려버렸습니다!',
@@ -2709,8 +2717,8 @@
         }
       },
       ja: {
-        playBtnWithout: '▶️ 欠陥デモ再生', playBtnWith: '▶️ 改善デモ再生', stopBtn: '⏹️ 停止', ready: '準備完了',
-        replayingWithout: '🚨 欠陥を再生中...', replayingWith: '✨ 物理改善を再生中...',
+        playBtnWithout: '欠陥デモ再生', playBtnWith: '改善デモ再生', stopBtn: '停止', ready: '準備完了',
+        replayingWithout: '欠陥を再生中...', replayingWith: '物理改善を再生中...',
         p01: {
           step1: '1. ユーザーが入力欄をタップしてキーボードを呼び出します...',
           without: '💥 100vh欠陥: キーボードに入力欄が完全に隠れてしまいました！',
@@ -2780,8 +2788,8 @@
         }
       },
       zh: {
-        playBtnWithout: '▶️ 播放缺陷演示', playBtnWith: '▶️ 播放优化演示', stopBtn: '⏹️ 停止', ready: '就绪',
-        replayingWithout: '🚨 正在重现缺陷...', replayingWith: '✨ 正在演示物理优化...',
+        playBtnWithout: '播放缺陷演示', playBtnWith: '播放优化演示', stopBtn: '停止', ready: '就绪',
+        replayingWithout: '正在重现缺陷...', replayingWith: '正在演示物理优化...',
         p01: {
           step1: '1. 用户点击底部输入框准备输入...',
           without: '💥 100vh 缺陷: 虚拟键盘弹起完全遮挡住了输入框！',
@@ -2851,8 +2859,8 @@
         }
       },
       es: {
-        playBtnWithout: '▶️ Ver Defecto', playBtnWith: '▶️ Ver Solución', stopBtn: '⏹️ Detener', ready: 'Listo',
-        replayingWithout: '🚨 Reproduciendo Defecto...', replayingWith: '✨ Reproduciendo Física...',
+        playBtnWithout: 'Ver Defecto', playBtnWith: 'Ver Solución', stopBtn: 'Detener', ready: 'Listo',
+        replayingWithout: 'Reproduciendo Defecto...', replayingWith: 'Reproduciendo Física...',
         p01: {
           step1: '1. El usuario toca la barra de entrada para escribir...',
           without: '💥 Defecto 100vh: ¡El teclado ocultó por completo el campo de entrada!',
@@ -2935,15 +2943,18 @@
       return '';
     }
 
+    const SVG_PLAY_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    const SVG_STOP_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
+
     function updateAnimPlayButtonState() {
       const lang = animI18n[currentLang] ? currentLang : 'en';
       const dict = animI18n[lang];
       if (isAnimPlaying) {
-        playIcon.textContent = '⏹️';
+        playIcon.innerHTML = SVG_STOP_ICON;
         playText.textContent = dict.stopBtn;
         animStatusLabel.textContent = currentMode === 'without' ? dict.replayingWithout : dict.replayingWith;
       } else {
-        playIcon.textContent = '▶️';
+        playIcon.innerHTML = SVG_PLAY_ICON;
         playText.textContent = currentMode === 'without' ? dict.playBtnWithout : dict.playBtnWith;
         animStatusLabel.textContent = dict.ready;
       }
@@ -2986,7 +2997,7 @@
       if (!marker) {
         marker = document.createElement('div');
         marker.className = 'fx-collision-marker';
-        marker.innerHTML = '⚠️';
+        marker.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
         sandboxStage.appendChild(marker);
       }
       marker.style.display = 'flex';
@@ -3006,7 +3017,7 @@
       if (!glow) {
         glow = document.createElement('div');
         glow.className = 'fx-satisfaction-glow';
-        glow.innerHTML = '✨';
+        glow.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
         sandboxStage.appendChild(glow);
       }
       glow.style.display = 'flex';
