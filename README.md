@@ -73,9 +73,9 @@ We conducted rigorous blind A/B tests comparing **Base AI (`without_skill`)** ag
 
 | Test Scenario | Interaction Tested | `without_skill` (Base Model) | `with_skill` (Interaction Doctor) |
 |---|---|---|---|
-| **1. Photo Story Editor** | Pinch-Zoom & 2-Finger Rotation | Hardcoded `e.touches[0]` ➔ Axis wildly jumps | **Map-based Multi-Pointer Isolation ➔ Smooth 0ms Transform** 🏆 |
-| **2. Baemin/Toss Sheet** | 20-Item Scroll + 3-Snap Levels | Horizontal chip scrolling drags sheet vertically | **8px Axis Lock + Dynamic Boundary Hand-off** 🏆 |
-| **3. Mobile 1:1 Chat** | Virtual Keyboard + Long-Press | Mobile Enter forces message send; drawer overlaps | **VisualViewport Auto-Resize + 3-Tier Press Feedback** 🏆 |
+| **1. 2D Canvas Editor** (Figma style) | Pinch-Zoom & 2-Finger Rotation | Hardcoded `e.touches[0]` ➔ Center axis wildly jumps | **Map-based Multi-Pointer Isolation ➔ Smooth 0ms Transform** 🏆 |
+| **2. Mobility Bottom Sheet** (Apple Maps / Uber style) | Nested List Scroll + 3-Snap Levels | Horizontal chip swipe drags sheet vertically | **8px Axis Lock + Dynamic Boundary Hand-off** 🏆 |
+| **3. Mobile 1:1 Messenger** (Telegram / Slack style) | Virtual Keyboard + Context Long-Press | Mobile Enter forces message send; keyboard overlap | **VisualViewport Auto-Resize + 3-Tier Press Feedback** 🏆 |
 
 ---
 

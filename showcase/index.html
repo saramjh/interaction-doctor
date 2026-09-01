@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
-  <title>interaction-doctor 🩺 | Interactive Showroom & Prompt Generator</title>
-  <meta name="description" content="Compare baseline AI-generated UI with optimized touch physics, and copy verified SWE prompts." />
+  <title>interaction-doctor 🩺 | Global Interaction Diagnostic & SWE Solution Engine</title>
+  <meta name="description" content="Search gesture defects, test baseline vs optimized physics demos, and get multi-tier SWE prompt prescriptions." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -35,17 +35,17 @@
     }
 
     header {
-      background: rgba(19, 27, 46, 0.85);
+      background: rgba(19, 27, 46, 0.9);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--card-border);
-      padding: 14px 20px;
+      padding: 14px 24px;
       position: sticky;
       top: 0;
       z-index: 50;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
 
     .brand {
@@ -67,15 +67,14 @@
     .header-links {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    /* 5-Language Switcher */
     .lang-select {
       background: #0f172a;
       border: 1px solid #334155;
       color: #f8fafc;
-      padding: 5px 8px;
+      padding: 6px 10px;
       font-size: 0.8rem;
       font-weight: 600;
       border-radius: 8px;
@@ -87,7 +86,7 @@
       background: #1e293b;
       color: #f8fafc;
       border: 1px solid #334155;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -96,18 +95,17 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s;
-      white-space: nowrap;
     }
     .btn-github:hover {
       background: #334155;
       border-color: #64748b;
     }
 
-    /* Hero Banner */
+    /* Hero */
     .hero {
       text-align: center;
-      padding: 36px 16px 20px;
-      max-width: 800px;
+      padding: 40px 20px 24px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
@@ -118,15 +116,15 @@
       background: rgba(59, 130, 246, 0.12);
       border: 1px solid rgba(59, 130, 246, 0.3);
       color: #93c5fd;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 20px;
       font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
 
     .hero h1 {
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       font-weight: 800;
       line-height: 1.25;
       letter-spacing: -1px;
@@ -135,64 +133,100 @@
 
     .hero p {
       color: var(--text-muted);
-      font-size: 1rem;
-      line-height: 1.5;
+      font-size: 1.05rem;
+      line-height: 1.6;
     }
 
-    /* Index Nav Tabs */
-    .index-tabs-wrap {
-      max-width: 1080px;
-      margin: 16px auto 24px;
-      padding: 0 16px;
+    /* Search & Symptom Index */
+    .search-section {
+      max-width: 1140px;
+      margin: 0 auto 24px;
+      padding: 0 20px;
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .search-bar-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px 16px 14px 44px;
+      font-size: 0.95rem;
+      color: #fff;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .symptom-tag-bar {
+      display: flex;
+      gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
+      padding-bottom: 4px;
     }
-    .index-tabs-wrap::-webkit-scrollbar { display: none; }
+    .symptom-tag-bar::-webkit-scrollbar { display: none; }
 
-    .scenario-tab {
+    .tag-btn {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 0.9rem;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       transition: all 0.2s;
     }
-
-    .scenario-tab.active {
+    .tag-btn.active {
       background: #1e293b;
       border-color: var(--primary);
       color: #fff;
-      box-shadow: 0 0 16px var(--primary-glow);
+      box-shadow: 0 0 12px var(--primary-glow);
     }
 
-    /* Main Showroom Grid */
-    .showroom-grid {
-      max-width: 1080px;
-      margin: 0 auto 40px;
-      padding: 0 16px;
+    /* Main Showroom Layout */
+    .showroom-layout {
+      max-width: 1140px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
       display: grid;
       grid-template-columns: 380px 1fr;
-      gap: 28px;
+      gap: 32px;
       align-items: start;
     }
 
-    @media (max-width: 860px) {
-      .showroom-grid {
+    @media (max-width: 900px) {
+      .showroom-layout {
         grid-template-columns: 1fr;
       }
     }
 
-    /* Phone Simulator Frame */
-    .device-container {
+    /* Device Container */
+    .device-area {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -269,29 +303,34 @@
       background: #fff;
     }
 
-    /* Diagnostic Card & Prescription */
-    .diagnostic-panel {
+    /* Diagnostics & Solution Hub */
+    .solution-hub {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
 
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 22px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
     }
 
     .card-title {
       font-size: 1.05rem;
       font-weight: 700;
-      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
     .card-title.danger { color: #f87171; }
     .card-title.success { color: #34d399; }
     .card-title.accent { color: #c084fc; }
@@ -309,47 +348,45 @@
       gap: 6px;
     }
 
-    .physics-metric-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
+    /* Solution Tabs (Prompt vs Code Recipe vs Physics Specs) */
+    .solution-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
     }
 
-    .metric-box {
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .metric-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #60a5fa;
-    }
-
-    .metric-label {
-      font-size: 0.72rem;
+    .sol-tab-btn {
+      background: none;
+      border: none;
       color: var(--text-muted);
-      margin-top: 2px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .sol-tab-btn.active {
+      background: rgba(139, 92, 246, 0.15);
+      color: #c084fc;
     }
 
-    /* Prompt Box */
-    .prompt-box {
+    .solution-content {
       background: #090e1a;
       border: 1px solid #1e293b;
       border-radius: 10px;
-      padding: 14px;
+      padding: 16px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem;
-      line-height: 1.5;
+      line-height: 1.55;
       color: #e2e8f0;
       position: relative;
       white-space: pre-wrap;
       word-break: break-word;
+      max-height: 280px;
+      overflow-y: auto;
     }
 
     .copy-btn {
@@ -371,6 +408,35 @@
     }
     .copy-btn:hover {
       background: #2563eb;
+    }
+
+    /* Physics Metrics */
+    .physics-metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metric-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
 
     /* Toast */
@@ -417,34 +483,37 @@
 
   <main>
     <section class="hero">
-      <div class="hero-badge" id="heroBadge">⚡️ 0ms Touch Physics Engine</div>
-      <h1 id="heroTitle">Interactive Interaction Benchmarks & SWE Prompts</h1>
-      <p id="heroSubtitle">Compare baseline AI code defects with optimized touch physics implementations, and copy verified SWE engineering prompts.</p>
+      <div class="hero-badge" id="heroBadge">⚡️ 0ms Touch Physics & Diagnostic Engine</div>
+      <h1 id="heroTitle">Interaction Defect Diagnostic & Solution Hub</h1>
+      <p id="heroSubtitle">Diagnose common touchscreen interaction defects, test baseline vs optimized physics demos, and copy production-ready SWE engineering solutions.</p>
     </section>
 
-    <!-- Index Tabs -->
-    <div class="index-tabs-wrap">
-      <button class="scenario-tab active" data-scenario="chat" id="tabChat">
-        💬 Mobile Chat (Keyboard & Long-Press)
-      </button>
-      <button class="scenario-tab" data-scenario="bottomsheet" id="tabSheet">
-        📱 Bottom Sheet (Nested Scroll & Snap)
-      </button>
-      <button class="scenario-tab" data-scenario="photo" id="tabPhoto">
-        🤏 Canvas Editor (Pinch-Zoom & Rotation)
-      </button>
-    </div>
+    <!-- Search & Filter Index -->
+    <section class="search-section">
+      <div class="search-bar-wrap">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search interaction defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, dnd conflict)..." />
+      </div>
 
-    <!-- Showroom Stage -->
-    <div class="showroom-grid">
+      <div class="symptom-tag-bar" id="tagBar">
+        <button class="tag-btn active" data-scenario="messenger">📱 #VirtualKeyboard (Chat Messenger)</button>
+        <button class="tag-btn" data-scenario="mapsheet">🗺️ #NestedScroll (Maps & Mobility Sheet)</button>
+        <button class="tag-btn" data-scenario="canvas">🎨 #PinchRotation (Figma/Canvas Editor)</button>
+        <button class="tag-btn" data-scenario="kanban">📋 #KanbanDnD (Trello/Linear Board)</button>
+        <button class="tag-btn" data-scenario="swipe">✉️ #SwipeDismiss (Mail & List Actions)</button>
+      </div>
+    </section>
+
+    <!-- Showroom Layout -->
+    <div class="showroom-layout">
       <!-- Device Area -->
-      <div class="device-container">
+      <div class="device-area">
         <div class="switch-mode-bar">
           <button class="mode-btn without" id="btnModeWithout">
-            ❌ Without Skill (Baseline)
+            ❌ Baseline Code (Defects)
           </button>
           <button class="mode-btn active with" id="btnModeWith">
-            🟢 With Skill (Optimized)
+            🟢 Optimized (Physics Invariants)
           </button>
         </div>
 
@@ -454,28 +523,22 @@
         </div>
       </div>
 
-      <!-- Diagnostic & Prescription Panel -->
-      <div class="diagnostic-panel">
-        <!-- Problem & Diagnosis -->
+      <!-- Solutions Hub -->
+      <div class="solution-hub">
+        <!-- Defect Analysis -->
         <div class="card">
           <div class="card-title danger" id="diagTitle">
-            🚨 Baseline AI Code Defects
+            🚨 Baseline Defect Analysis & Reproduction
           </div>
-          <ul id="diagFlaws">
-            <li>Pressing Enter on mobile forces message dispatch instead of multiline break.</li>
-            <li>Virtual keyboard causes viewport overlap and obscures open sub-drawers.</li>
-            <li>Absence of press-state visual feedback causes interaction ambiguity.</li>
-          </ul>
+          <ul id="diagFlaws"></ul>
         </div>
 
-        <!-- Treatment & Physics Invariants -->
+        <!-- Applied Physics -->
         <div class="card">
           <div class="card-title success" id="treatTitle">
-            🩺 Applied Physics & Architecture Optimization
+            🩺 Applied Physical Laws & Architecture Optimization
           </div>
-          <p id="treatDesc">
-            Integrated <code>visualViewport</code> dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine (350ms compression ➔ haptic ➔ context menu).
-          </p>
+          <p id="treatDesc"></p>
 
           <div class="physics-metric-row">
             <div class="metric-box">
@@ -493,304 +556,885 @@
           </div>
         </div>
 
-        <!-- Prompt Pharmacy -->
+        <!-- Multi-tier Solutions -->
         <div class="card">
-          <div class="card-title accent" id="promptTitle">
-            💊 Production SWE Prompt Specification
+          <div class="card-header">
+            <div class="card-title accent" id="solTitle">
+              💊 Production Solution Prescriptions
+            </div>
+            <div class="solution-tabs">
+              <button class="sol-tab-btn active" data-sol="prompt" id="solTabPrompt">SWE Prompt</button>
+              <button class="sol-tab-btn" data-sol="code" id="solTabCode">Code Recipe</button>
+              <button class="sol-tab-btn" data-sol="physics" id="solTabPhysics">Physics Contract</button>
+            </div>
           </div>
-          <p style="margin-bottom: 10px; font-size: 0.8rem; color: var(--text-muted);" id="promptSub">
-            Engineered prompt for Claude Code, ChatGPT, Cursor, or Gemini:
-          </p>
-          <div class="prompt-box" id="promptText"></div>
-          <button class="copy-btn" id="btnCopyPrompt">
-            📋 <span id="copyBtnText">Copy Prompt</span>
-          </button>
+
+          <div style="position: relative;">
+            <div class="solution-content" id="solutionText"></div>
+            <button class="copy-btn" id="btnCopySol">
+              📋 <span id="copyBtnText">Copy Solution</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </main>
 
-  <div class="toast" id="toast">✅ Prompt specification copied to clipboard!</div>
+  <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    const i18n = {
+    const database = {
       en: {
-        heroBadge: "⚡️ 0ms Touch Physics Engine",
-        heroTitle: "Interactive Interaction Benchmarks & SWE Prompts",
-        heroSubtitle: "Compare baseline AI code defects with optimized touch physics implementations, and copy verified SWE engineering prompts.",
-        modeWithout: "❌ Without Skill (Baseline)",
-        modeWith: "🟢 With Skill (Optimized)",
-        tabChat: "💬 Mobile Chat (Keyboard & Long-Press)",
-        tabSheet: "📱 Bottom Sheet (Nested Scroll & Snap)",
-        tabPhoto: "🤏 Canvas Editor (Pinch-Zoom & Rotation)",
-        diagTitle: "🚨 Baseline AI Code Defects",
-        treatTitle: "🩺 Applied Physics & Architecture Optimization",
+        heroBadge: "⚡️ 0ms Touch Physics & Diagnostic Engine",
+        heroTitle: "Interaction Defect Diagnostic & Solution Hub",
+        heroSubtitle: "Diagnose common touchscreen interaction defects, test baseline vs optimized physics demos, and copy production-ready SWE engineering solutions.",
+        searchPlaceholder: "Search interaction defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, dnd conflict)...",
+        modeWithout: "❌ Baseline Code (Defects)",
+        modeWith: "🟢 Optimized (Physics Invariants)",
+        diagTitle: "🚨 Baseline Defect Analysis & Reproduction",
+        treatTitle: "🩺 Applied Physical Laws & Architecture Optimization",
         metric1: "Viewport Resizing Lag",
         metric2: "Temporal Gate",
         metric3: "Touch Slop Hysteresis",
-        promptTitle: "💊 Production SWE Prompt Specification",
-        promptSub: "Engineered prompt for Claude Code, ChatGPT, Cursor, or Gemini:",
-        copyBtn: "Copy Prompt",
-        toast: "✅ Prompt specification copied to clipboard!",
+        solTitle: "💊 Production Solution Prescriptions",
+        solTabPrompt: "SWE Prompt",
+        solTabCode: "Code Recipe",
+        solTabPhysics: "Physics Contract",
+        copyBtn: "Copy",
+        toast: "✅ Solution copied to clipboard!",
         scenarios: {
-          chat: {
+          messenger: {
+            tag: "📱 #VirtualKeyboard (Chat Messenger)",
+            keywords: "keyboard visualviewport chat input enter longpress press telegram slack whatsapp",
             flaws: [
-              "Pressing Enter on mobile forces message dispatch instead of multiline break.",
-              "Virtual keyboard causes viewport overlap and obscures open sub-drawers.",
-              "Absence of press-state visual feedback causes interaction ambiguity."
+              "Pressing Enter on touch devices dispatches message instead of multiline insertion.",
+              "Virtual on-screen keyboard overlaps textarea and obscures sub-drawers.",
+              "Absence of press-state visual feedback causes long-press interaction ambiguity."
             ],
             treatment: "Integrated `visualViewport` dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine (350ms compression ➔ haptic ➔ context menu).",
-            prompt: `Implement a production mobile 1:1 chat interface.
+            prompt: `Implement a production mobile 1:1 chat interface (Telegram/Slack style).
 Integrate \`interactive-widget=resizes-content\` and \`visualViewport\` resize event listeners to synchronously align container height with the virtual keyboard offset.
 Differentiate input key handling: allow Enter for newline insertion on touch devices while reserving Enter for message dispatch on desktop pointers.
-For context menus, bind a 350ms temporal gate with \`.press-holding\` scale transformation, aborting immediately upon gesture travel exceeding 8px.`
+For context menus, bind a 350ms temporal gate with \`.press-holding\` scale transformation, aborting immediately upon gesture travel exceeding 8px.`,
+            code: `// Virtual Viewport Offset Alignment
+if (window.visualViewport) {
+  const syncHeight = () => {
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
+    if (document.activeElement === messageInput) scrollToBottom(false);
+  };
+  window.visualViewport.addEventListener('resize', syncHeight);
+  window.visualViewport.addEventListener('scroll', syncHeight);
+}
+
+// 350ms Temporal Gate + 8px Slop Hysteresis
+let holdTimer = null, startX = 0, startY = 0;
+bubble.addEventListener('pointerdown', (e) => {
+  startX = e.clientX; startY = e.clientY;
+  bubble.classList.add('press-holding');
+  holdTimer = setTimeout(() => {
+    if (navigator.vibrate) navigator.vibrate(35);
+    openContextMenu(bubble);
+  }, 350);
+});
+bubble.addEventListener('pointermove', (e) => {
+  if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+    clearTimeout(holdTimer);
+    bubble.classList.remove('press-holding');
+  }
+});`,
+            physics: `[Physics Contract: Virtual Keyboard & Long-Press]
+1. Viewport Adaptation: VisualViewport height tracking (0ms lag)
+2. Slop Hysteresis: Radius <= 8px during hold gate
+3. Temporal Promotion: 350ms hold gate with .press-holding scale(0.96)
+4. Key Dispatch: Desktop (Enter = Submit), Mobile (Enter = Linebreak, Button = Submit)`
           },
-          bottomsheet: {
+          mapsheet: {
+            tag: "🗺️ #NestedScroll (Maps & Mobility Sheet)",
+            keywords: "bottomsheet nested scroll modal snap maps uber airbnb gesture conflict",
             flaws: [
-              "Nested list scrolling triggers container drag collapse unintentionally.",
+              "Nested scrollable view scrolling triggers container drag collapse unintentionally.",
               "Horizontal category chip swipes introduce diagonal cross-talk.",
               "Kinetic release velocity is discarded, producing abrupt animation halts."
             ],
             treatment: "Enforced 8px Orthogonal Axis Lock to eliminate directional cross-talk, combined with dynamic boundary hand-off (`scrollTop <= 0`) and 120ms velocity regression queue.",
-            prompt: `Implement a 3-snap level bottom sheet with nested scrollable views.
+            prompt: `Implement a 3-snap level bottom sheet with nested scrollable views (Apple Maps / Uber style).
 Enforce dynamic boundary hand-off: delegate pointer events to sheet displacement strictly when \`scrollTop <= 0\` at pointer down; otherwise preserve internal view scrolling.
 Enforce an 8px Orthogonal Axis Lock during initial displacement to isolate horizontal sub-carousels from vertical sheet transforms.
-On pointer release, compute release velocity across a 120ms trailing window to execute momentum-driven snap convergence.`
+On pointer release, compute release velocity across a 120ms trailing window to execute momentum-driven snap convergence.`,
+            code: `// Dynamic Boundary Hand-off + 8px Axis Lock
+let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
+
+sheet.addEventListener('pointerdown', (e) => {
+  const atTop = nestedScrollEl.scrollTop <= 0;
+  startY = e.clientY; startX = e.clientX;
+  isDraggingSheet = atTop;
+  axisLocked = false;
+});
+
+sheet.addEventListener('pointermove', (e) => {
+  const dx = Math.abs(e.clientX - startX);
+  const dy = Math.abs(e.clientY - startY);
+  if (!axisLocked && (dx > 8 || dy > 8)) {
+    axisLocked = true;
+    if (dx > dy) isDraggingSheet = false; // Lock to horizontal chip scroll
+  }
+  if (isDraggingSheet) {
+    const deltaY = e.clientY - startY;
+    if (deltaY > 0) sheet.style.transform = \`translateY(\${deltaY}px)\`;
+  }
+});`,
+            physics: `[Physics Contract: Bottom Sheet & Scroll Hand-off]
+1. Hand-off Gate: scrollTop <= 0 strictly required at pointerdown
+2. Orthogonal Lock: Delta evaluation over initial 8px (dx vs dy)
+3. Momentum Queue: Trailing 120ms velocity calculation for snap landing
+4. Direct Clamping: transition: none during drag, spring transition on release`
           },
-          photo: {
+          canvas: {
+            tag: "🎨 #PinchRotation (Figma/Canvas Editor)",
+            keywords: "pinch zoom rotate canvas figma instagram transform center multitouch",
             flaws: [
-              "Two-finger rotation leads to transformation center axis drift.",
+              "Two-finger rotation leads to transformation center axis drift and jumping.",
               "Hardcoded legacy \`e.touches[0]\` indexing causes pointer dropped events.",
               "CSS transition latency introduces phase delay relative to physical touch points."
             ],
             treatment: "Maintained active W3C Pointer map (`pointerId`) for isolated multi-touch tracking, dynamically calculating invariant transform centroid with zero-latency CSS variable clamping.",
-            prompt: `Build a 2D canvas editor supporting simultaneous pinch-zoom and rotation.
+            prompt: `Build a 2D canvas editor supporting simultaneous pinch-zoom and rotation (Figma/Canva style).
 Utilize W3C Pointer Events with an active \`pointerId\` Map for discrete pointer tracking. Dynamically preserve the multi-pointer centroid (Center X/Y) across gesture frames to eliminate axis drift.
-Apply zero-latency direct transformation via CSS variables (--scale, --rotate) during active gestures, enabling spring easing only upon pointer release.`
+Apply zero-latency direct transformation via CSS variables (--scale, --rotate) during active gestures, enabling spring easing only upon pointer release.`,
+            code: `// Pointer Map Tracking & Centroid Preservation
+const activePointers = new Map();
+
+canvas.addEventListener('pointerdown', (e) => {
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!activePointers.has(e.pointerId)) return;
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  
+  if (activePointers.size === 2) {
+    const [p1, p2] = Array.from(activePointers.values());
+    const centerX = (p1.x + p2.x) / 2;
+    const centerY = (p1.y + p2.y) / 2;
+    const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI);
+    
+    target.style.transformOrigin = \`\${centerX}px \${centerY}px\`;
+    target.style.setProperty('--scale', dist / initialDist);
+    target.style.setProperty('--rotate', \`\${angle - initialAngle}deg\`);
+  }
+});`,
+            physics: `[Physics Contract: Multi-touch Centroid Invariant]
+1. Pointer Isolation: Explicit Map(pointerId -> {x, y})
+2. Axis Invariant: Centroid ((x1+x2)/2, (y1+y2)/2) set as transformOrigin
+3. Direct Manipulation: 0ms CSS variables without transition latency`
+          },
+          kanban: {
+            tag: "📋 #KanbanDnD (Trello/Linear Board)",
+            keywords: "kanban dnd drag and drop linear trello card reorder touch slop",
+            flaws: [
+              "Touching a card to scroll the board triggers unwanted card drag states.",
+              "Native HTML5 Drag API fails completely on mobile touch screens.",
+              "Multi-pointer touch causes dragged item to glitch between fingers."
+            ],
+            treatment: "Applied W3C Pointer Events with a 350ms Hold-to-Drag temporal gate and 8px touch slop hysteresis, accompanied by hardware-accelerated GPU ghost mirroring.",
+            prompt: `Implement a production Kanban Board with drag-and-drop card reordering (Linear/Trello style).
+Unify desktop mouse and mobile touch under W3C Pointer Events (avoid HTML5 Drag API).
+Enforce a 350ms hold delay before promoting a touch to card dragging, providing a visual \`.press-holding\` state.
+If pointer displacement exceeds 8px before 350ms, abort drag and allow native column scrolling.`,
+            code: `// Hold-to-Drag Promotion & Slop Guard
+let dragTimer = null, isDragging = false;
+card.addEventListener('pointerdown', (e) => {
+  card.setPointerCapture(e.pointerId);
+  card.classList.add('holding');
+  dragTimer = setTimeout(() => {
+    isDragging = true;
+    card.classList.add('dragging-ghost');
+  }, 350);
+});
+card.addEventListener('pointermove', (e) => {
+  if (!isDragging && Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+    clearTimeout(dragTimer);
+    card.classList.remove('holding');
+  }
+});`,
+            physics: `[Physics Contract: Hold-to-Drag Promotion]
+1. Unified Pipeline: W3C Pointer Events only (no HTML5 Drag)
+2. Slop Hysteresis: Radius <= 8px cancels timer and restores scroll
+3. Visual Cue: 350ms compression animation before ghost elevation`
+          },
+          swipe: {
+            tag: "✉️ #SwipeDismiss (Mail & List Actions)",
+            keywords: "swipe dismiss delete list mail ios gmail action reveal",
+            flaws: [
+              "Vertical scrolling accidentally triggers horizontal swipe action reveals.",
+              "Swiping halfway leaves action buttons in an undefined indeterminate state.",
+              "Diagonal gestures cause choppy list stuttering."
+            ],
+            treatment: "Enforced initial 8px Orthogonal Axis Locking to filter vertical scroll from horizontal swipe, backed by a 50% width commit threshold and spring physics snapping.",
+            prompt: `Implement a swipe-to-dismiss list item component (iOS Mail / Gmail style).
+Apply an 8px Orthogonal Axis Lock to prevent diagonal gestures from conflicting with vertical list scrolling.
+Establish a 50% item-width threshold: if swipe distance exceeds 50% or release velocity exceeds 0.5px/ms, execute dismiss animation; otherwise snap back smoothly.`,
+            code: `// Orthogonal Lock + 50% Dismiss Threshold
+row.addEventListener('pointermove', (e) => {
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
+  if (!locked && Math.hypot(dx, dy) > 8) {
+    locked = true;
+    isHorizontalSwipe = Math.abs(dx) > Math.abs(dy);
+  }
+  if (isHorizontalSwipe) {
+    row.style.transform = \`translateX(\${dx}px)\`;
+  }
+});`,
+            physics: `[Physics Contract: Swipe Actions]
+1. Axis Lock: 8px initial vector threshold
+2. Commit Gate: Threshold at 50% width or velocity > 0.5px/ms
+3. Kinetic Release: 120ms trailing window regression`
           }
         }
       },
       ko: {
-        heroBadge: "⚡️ 0ms 터치 물리 엔진",
-        heroTitle: "상호작용 벤치마크 및 SWE 프롬프트 생성기",
-        heroSubtitle: "기본 AI 코드의 결함과 물리 헌장이 적용된 최적화 코드를 실시간 비교하고, 검증된 소프트웨어 엔지니어링 프롬프트를 복사하세요.",
-        modeWithout: "❌ Without Skill (기본 결함)",
-        modeWith: "🟢 With Skill (최적화 개선)",
-        tabChat: "💬 1:1 모바일 채팅 (가상 키보드 & 롱프레스)",
-        tabSheet: "📱 바텀시트 (중첩 스크롤 & 3단 스냅)",
-        tabPhoto: "🤏 캔버스 에디터 (핀치 줌 & 2핑거 회전)",
-        diagTitle: "🚨 기본 AI 코드의 결함 분석",
+        heroBadge: "⚡️ 0ms 터치 물리 & 상호작용 진단 엔진",
+        heroTitle: "상호작용 결함 진단 및 SWE 솔루션 허브",
+        heroSubtitle: "터치스크린 결함 증상을 색인하고, 기본 코드와 최적화 물리 코드를 비교 체험하며, 검증된 SWE 엔지니어링 솔루션을 처방받으세요.",
+        searchPlaceholder: "상호작용 결함 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 칸반 드래그)...",
+        modeWithout: "❌ 기본 AI 코드 (결함 발생)",
+        modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
+        diagTitle: "🚨 기본 AI 결함 분석 및 재현 원인",
         treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선",
         metric1: "뷰포트 리사이징 랙",
         metric2: "시간 승격 게이트",
         metric3: "터치 슬롭 유예",
-        promptTitle: "💊 프로덕션 SWE 엔지니어링 프롬프트",
-        promptSub: "Claude Code, ChatGPT, Cursor, Gemini에 바로 붙여넣는 프롬프트:",
-        copyBtn: "프롬프트 복사",
-        toast: "✅ 엔지니어링 프롬프트가 클립보드에 복사되었습니다!",
+        solTitle: "💊 프로덕션 솔루션 처방전",
+        solTabPrompt: "SWE 프롬프트",
+        solTabCode: "코드 레시피",
+        solTabPhysics: "물리 계약 명세",
+        copyBtn: "복사",
+        toast: "✅ 솔루션이 클립보드에 복사되었습니다!",
         scenarios: {
-          chat: {
+          messenger: {
+            tag: "📱 #VirtualKeyboard (글로벌 메신저)",
+            keywords: "가상키보드 뷰포트 채팅 입력창 엔터 롱프레스 텔레그램 슬랙 왓츠앱",
             flaws: [
-              "모바일 터치 환경에서 엔터 입력 시 줄바꿈이 안 되고 메시지가 강제 전송됨.",
+              "모바일 터치 환경에서 Enter 입력 시 줄바꿈이 안 되고 메시지가 강제 전송됨.",
               "가상 키보드 활성화 시 입력창이 가려지고 하위 서랍장과 뷰포트가 충돌함.",
               "롱프레스 대기 중 시각적 피드백이 누락되어 인터랙션 모호성 발생."
             ],
             treatment: "`visualViewport` 리사이즈 이벤트 동기화와 W3C Pointer Events 단일 파이프라인을 적용하여, 키보드 높이 실시간 보정 및 3단계 롱프레스 상태 머신(350ms 압축 ➔ 햅틱 ➔ 메뉴)을 최적화했습니다.",
-            prompt: `모바일 1:1 채팅 인터페이스를 구현해줘.
+            prompt: `글로벌 메신저 스타일(Telegram/Slack) 모바일 1:1 채팅 인터페이스를 구현해줘.
 가상 키보드 오프셋 대응을 위해 \`interactive-widget=resizes-content\` 및 \`visualViewport\` 리사이즈 이벤트를 연동하여 컨테이너 높이를 0ms로 동기화해줘.
 입력키 핸들링을 분기하여 모바일 터치 기기에서는 Enter를 줄바꿈으로 처리하고, 데스크톱 포인터에서만 메시지를 즉시 발송하도록 구현해줘.
-컨텍스트 메뉴는 350ms 시간 게이트와 \`.press-holding\` 스케일 변환을 적용하고, 8px 초과 이동 시 즉시 타이머를 해제해줘.`
+컨텍스트 메뉴는 350ms 시간 게이트와 \`.press-holding\` 스케일 변환을 적용하고, 8px 초과 이동 시 즉시 타이머를 해제해줘.`,
+            code: `// VisualViewport 동적 동기화
+if (window.visualViewport) {
+  const syncHeight = () => {
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
+    if (document.activeElement === messageInput) scrollToBottom(false);
+  };
+  window.visualViewport.addEventListener('resize', syncHeight);
+  window.visualViewport.addEventListener('scroll', syncHeight);
+}
+
+// 350ms 시간 게이트 + 8px 슬롭 가드
+let holdTimer = null, startX = 0, startY = 0;
+bubble.addEventListener('pointerdown', (e) => {
+  startX = e.clientX; startY = e.clientY;
+  bubble.classList.add('press-holding');
+  holdTimer = setTimeout(() => {
+    if (navigator.vibrate) navigator.vibrate(35);
+    openContextMenu(bubble);
+  }, 350);
+});
+bubble.addEventListener('pointermove', (e) => {
+  if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+    clearTimeout(holdTimer);
+    bubble.classList.remove('press-holding');
+  }
+});`,
+            physics: `[물리 계약 명세: 가상 키보드 & 롱프레스]
+1. 뷰포트 적응: VisualViewport 높이 실시간 추종 (0ms 랙)
+2. 슬롭 유예: 대기 중 이동 거리 <= 8px 유지
+3. 시간 승격: 350ms 누름 게이트 + .press-holding 스케일 피드백
+4. 키 디스패치: 데스크톱(Enter = 전송), 모바일(Enter = 줄바꿈, 버튼 = 전송)`
           },
-          bottomsheet: {
+          mapsheet: {
+            tag: "🗺️ #NestedScroll (지도 & 모빌리티 시트)",
+            keywords: "바텀시트 중첩스크롤 모달 스냅 지도 우버 에어비앤비 제스처충돌",
             flaws: [
               "중첩 리스트 스크롤 시 컨테이너 드래그가 동시 발생하여 시트가 접혀버림.",
               "가로 칩 스와이프 시 대각선 벡터 간섭으로 세로 스크롤 오작동.",
               "포인터 해제 시 관성 속도(Momentum)가 무시되어 애니메이션이 뚝 끊김."
             ],
             treatment: "8px 직교 축 잠금(Orthogonal Axis Lock)으로 방향성 간섭을 차단하고, `scrollTop <= 0` 동적 경계 핸드오프와 120ms 속도 회귀 큐를 적용했습니다.",
-            prompt: `중첩 스크롤 뷰를 포함하는 3단계 스냅 바텀시트를 구현해줘.
+            prompt: `중첩 스크롤 뷰를 포함하는 3단계 스냅 바텀시트(Apple Maps / Uber 스타일)를 구현해줘.
 동적 경계 핸드오프를 적용하여 터치 시작 시 \`scrollTop <= 0\`일 때만 바텀시트 변위로 위임하고, 그 외에는 내부 뷰 스크롤을 유지해줘.
 초기 변위 8px 동안 직교 축 잠금을 적용하여 가로 서브 카테고리와 세로 시트 변위 간섭을 100% 분리해줘.
-포인터 릴리즈 시점에는 직전 120ms 윈도우의 속도를 계산하여 자연스러운 관성 스냅 애니메이션을 수행해줘.`
+포인터 릴리즈 시점에는 직전 120ms 윈도우의 속도를 계산하여 자연스러운 관성 스냅 애니메이션을 수행해줘.`,
+            code: `// 동적 경계 핸드오프 + 8px 직교 축 잠금
+let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
+
+sheet.addEventListener('pointerdown', (e) => {
+  const atTop = nestedScrollEl.scrollTop <= 0;
+  startY = e.clientY; startX = e.clientX;
+  isDraggingSheet = atTop;
+  axisLocked = false;
+});
+
+sheet.addEventListener('pointermove', (e) => {
+  const dx = Math.abs(e.clientX - startX);
+  const dy = Math.abs(e.clientY - startY);
+  if (!axisLocked && (dx > 8 || dy > 8)) {
+    axisLocked = true;
+    if (dx > dy) isDraggingSheet = false; // 가로 칩 스크롤로 고정
+  }
+  if (isDraggingSheet) {
+    const deltaY = e.clientY - startY;
+    if (deltaY > 0) sheet.style.transform = \`translateY(\${deltaY}px)\`;
+  }
+});`,
+            physics: `[물리 계약 명세: 바텀시트 & 스크롤 핸드오프]
+1. 핸드오프 게이트: pointerdown 시점 scrollTop <= 0 필수 확인
+2. 직교 축 잠금: 초기 8px 이동 동안 dx vs dy 비교 후 단일 축 고정
+3. 모멘텀 큐: 릴리즈 직전 120ms 속도 기반 스냅 착지
+4. 직접 조작: 드래그 중 transition: none, 릴리즈 시 스프링 적용`
           },
-          photo: {
+          canvas: {
+            tag: "🎨 #PinchRotation (피그마/캔버스 에디터)",
+            keywords: "핀치줌 회전 캔버스 피그마 2핑거 멀티터치 중심점",
             flaws: [
               "2손가락 회전 시 변환 중심점(Center X/Y)이 요동쳐 축이 튕겨나감.",
               "레거시 \`e.touches[0]\` 인덱싱으로 멀티포인터 이벤트 유실 발생.",
               "CSS transition 지연으로 인해 물리 터치 좌표 대비 프레임 레이턴시 발생."
             ],
             treatment: "W3C Pointer Events의 `pointerId` 맵으로 멀티터치를 격리하고, 변환 중심점을 보존하며 CSS 변수를 활용한 0ms 실시간 추종을 적용했습니다.",
-            prompt: `핀치 줌과 2손가락 회전을 지원하는 2D 캔버스 에디터를 구현해줘.
+            prompt: `핀치 줌과 2손가락 회전을 지원하는 2D 캔버스 에디터(Figma/Canva 스타일)를 구현해줘.
 W3C Pointer Events와 활성 \`pointerId\` Map을 사용하여 포인터를 독립 추적하고, 멀티터치 중심점(Center X/Y)을 실시간 보존하여 회전 축이 튀지 않도록 해줘.
-제스처 진행 중에는 CSS 변수(--scale, --rotate)로 0ms 직접 조작을 수행하고, 포인터 릴리즈 시점에만 스프링 완화를 적용해줘.`
+제스처 진행 중에는 CSS 변수(--scale, --rotate)로 0ms 직접 조작을 수행하고, 포인터 릴리즈 시점에만 스프링 완화를 적용해줘.`,
+            code: `// 멀티포인터 맵 격리 및 중심점 불변 유지
+const activePointers = new Map();
+
+canvas.addEventListener('pointerdown', (e) => {
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!activePointers.has(e.pointerId)) return;
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  
+  if (activePointers.size === 2) {
+    const [p1, p2] = Array.from(activePointers.values());
+    const centerX = (p1.x + p2.x) / 2;
+    const centerY = (p1.y + p2.y) / 2;
+    const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI);
+    
+    target.style.transformOrigin = \`\${centerX}px \${centerY}px\`;
+    target.style.setProperty('--scale', dist / initialDist);
+    target.style.setProperty('--rotate', \`\${angle - initialAngle}deg\`);
+  }
+});`,
+            physics: `[물리 계약 명세: 멀티터치 중심점 불변식]
+1. 포인터 격리: Map(pointerId -> {x, y}) 독립 추적
+2. 중심축 보존: 제스처 프레임마다 ((x1+x2)/2, (y1+y2)/2)를 transformOrigin으로 갱신
+3. 0ms 직접 조작: transition 없는 CSS 변수 실시간 바인딩`
+          },
+          kanban: {
+            tag: "📋 #KanbanDnD (트렐로/리니어 칸반)",
+            keywords: "칸반 드래그앤드롭 리니어 트렐로 카드재정렬 터치슬롭",
+            flaws: [
+              "보드를 스크롤하려는데 카드가 드래그 상태로 진입하여 스크롤 먹통.",
+              "HTML5 Drag API 사용으로 모바일 터치스크린에서 전면 작동 불가.",
+              "멀티터치 터치 시 드래그 잔상이 화면에 남아있는 버그 발생."
+            ],
+            treatment: "W3C Pointer Events 기반 350ms Hold-to-Drag 시간 게이트와 8px 터치 슬롭 유예를 적용하여 보드 스크롤과 카드 재정렬을 완벽히 분리했습니다.",
+            prompt: `드래그 앤 드롭 카드 재정렬을 지원하는 프로덕션 칸반 보드(Linear/Trello 스타일)를 구현해줘.
+HTML5 Drag API를 배제하고 W3C Pointer Events로 데스크톱/모바일을 통합해줘.
+터치 후 350ms 동안 누르고 있을 때만 드래그 모드로 승격하고 \`.press-holding\` 시각 피드백을 줘.
+350ms 도달 전 8px 초과 이동 시 드래그 타이머를 취소하고 컬럼 스크롤을 유지해줘.`,
+            code: `// Hold-to-Drag 승격 및 8px 슬롭 가드
+let dragTimer = null, isDragging = false;
+card.addEventListener('pointerdown', (e) => {
+  card.setPointerCapture(e.pointerId);
+  card.classList.add('holding');
+  dragTimer = setTimeout(() => {
+    isDragging = true;
+    card.classList.add('dragging-ghost');
+  }, 350);
+});
+card.addEventListener('pointermove', (e) => {
+  if (!isDragging && Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+    clearTimeout(dragTimer);
+    card.classList.remove('holding');
+  }
+});`,
+            physics: `[물리 계약 명세: Hold-to-Drag 승격]
+1. 단일 파이프라인: W3C Pointer Events 전면 통합
+2. 슬롭 가드: 8px 초과 시 즉시 타이머 해제 및 스크롤 허용
+3. 시각 피드백: 350ms 누름 압축 후 고스트 엘리베이션`
+          },
+          swipe: {
+            tag: "✉️ #SwipeDismiss (메일/목록 액션)",
+            keywords: "스와이프 삭제 메일 리스트 액션 제스처",
+            flaws: [
+              "세로 목록을 스크롤하려는데 가로 스와이프 액션 버튼이 덜컥 열림.",
+              "애매하게 스와이프했을 때 중간 위치에 멈춰버리는 레이아웃 깨짐.",
+              "대각선 제스처 시 화면이 덜컹거리며 버벅임."
+            ],
+            treatment: "초기 8px 직교 축 잠금으로 가로/세로 간섭을 차단하고, 50% 폭 커밋 임계값과 스프링 스냅을 적용했습니다.",
+            prompt: `스와이프 액션 목록 컴포넌트(iOS Mail / Gmail 스타일)를 구현해줘.
+8px 직교 축 잠금을 적용하여 대각선 제스처가 세로 목록 스크롤과 충돌하지 않도록 차단해줘.
+50% 폭 임계값을 설정하여 50% 이상 스와이프하거나 방출 속도가 0.5px/ms 이상일 때만 삭제 애니메이션을 수행하고, 그 외에는 부드럽게 원래 위치로 스냅 복귀시켜줘.`,
+            code: `// 8px 직교 축 잠금 + 50% 커밋 임계값
+row.addEventListener('pointermove', (e) => {
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
+  if (!locked && Math.hypot(dx, dy) > 8) {
+    locked = true;
+    isHorizontalSwipe = Math.abs(dx) > Math.abs(dy);
+  }
+  if (isHorizontalSwipe) {
+    row.style.transform = \`translateX(\${dx}px)\`;
+  }
+});`,
+            physics: `[물리 계약 명세: 스와이프 액션]
+1. 축 잠금: 최초 8px 벡터 분기 (가로 vs 세로)
+2. 커밋 게이트: 폭 50% 또는 속도 > 0.5px/ms
+3. 모멘텀 방출: 120ms 윈도우 속도 연동`
           }
         }
       },
       ja: {
-        heroBadge: "⚡️ 0ms タッチ物理エンジン",
-        heroTitle: "インタラクティブベンチマーク & SWE プロンプト",
-        heroSubtitle: "ベースラインAIコードの欠陥と最適化されたタッチ物理実装を比較し、検証済みのSWEプロンプトをコピーできます。",
-        modeWithout: "❌ Without Skill (ベースライン欠陥)",
-        modeWith: "🟢 With Skill (最適化改善)",
-        tabChat: "💬 チャット (仮想キーボード & 長押し)",
-        tabSheet: "📱 ボトムシート (入れ子スクロール & スナップ)",
-        tabPhoto: "🤏 2Dキャンバス (ピンチズーム & 回転)",
-        diagTitle: "🚨 ベースラインAIコードの欠陥分析",
+        heroBadge: "⚡️ 0ms タッチ物理 & インタラクション診断エンジン",
+        heroTitle: "インタラクション欠陥診断 & SWEソリューションハブ",
+        heroSubtitle: "タッチスクリーンの欠陥症状をインデックス化し、ベースラインコードと最適化された物理コードを比較体験し、検証済みのSWEプロンプト仕様を取得できます。",
+        searchPlaceholder: "欠陥を検索（例：仮想キーボード、ボトムシート競合、ピンチ中心軸ブレ、カンバンドラッグ）...",
+        modeWithout: "❌ ベースラインAI（欠陥発生）",
+        modeWith: "🟢 最適化改善（物理法則適用）",
+        diagTitle: "🚨 ベースライン欠陥分析と再現原因",
         treatTitle: "🩺 適用された物理法則とアーキテクチャ最適化",
         metric1: "ビューポート遅延",
         metric2: "時間昇格ゲート",
         metric3: "タッチスロップ許容値",
-        promptTitle: "💊 プロダクション SWE プロンプト仕様",
-        promptSub: "Claude Code、ChatGPT、Cursor、Gemini用プロンプト:",
-        copyBtn: "プロンプトをコピー",
-        toast: "✅ プロンプト仕様をクリップボードにコピーしました！",
+        solTitle: "💊 プロダクション ソリューション処方箋",
+        solTabPrompt: "SWE プロンプト",
+        solTabCode: "コードレシピ",
+        solTabPhysics: "物理契約仕様",
+        copyBtn: "コピー",
+        toast: "✅ ソリューションをコピーしました！",
         scenarios: {
-          chat: {
+          messenger: {
+            tag: "📱 #VirtualKeyboard (グローバルメッセンジャー)",
+            keywords: "キーボード ビューポート チャット 入力欄 長押し テレグラム スラック 歓談",
             flaws: [
-              "モバイル環境でEnterを押すと改行されずメッセージが強制送信される。",
+              "モバイル端末でEnterを押すと改行されずメッセージが強制送信される。",
               "仮想キーボードが入力欄を覆い、ドロワーと競合してレイアウトが崩れる。",
               "長押し待機中の視覚フィードバックがなく、操作の不確実性が生じる。"
             ],
             treatment: "`visualViewport`リサイズ同期とW3C Pointer Eventsパイプラインを統合し、0msキーボード追従と確定的な3段階長押しステートマシン（350ms圧縮 ➔ 触覚 ➔ メニュー）を実装しました。",
-            prompt: `モバイル向け1:1チャットインターフェースを実装してください。
+            prompt: `グローバルメッセンジャー（Telegram/Slack風）のモバイル1:1チャット画面を実装してください。
 仮想キーボード対応として\`interactive-widget=resizes-content\`および\`visualViewport\`リサイズリスナーを連携し、高さを0msで同期してください。
 入力キーを分岐し、タッチ端末ではEnterを改行とし、デスクトップのみEnterで即時送信してください。
-長押しメニューは350msの時間ゲートと\`.press-holding\`変形を適用し、8px以上の移動で即時キャンセルしてください。`
+長押しメニューは350msの時間ゲートと\`.press-holding\`変形を適用し、8px以上の移動で即時キャンセルしてください。`,
+            code: `// VisualViewport同期
+if (window.visualViewport) {
+  const syncHeight = () => {
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
+    if (document.activeElement === messageInput) scrollToBottom(false);
+  };
+  window.visualViewport.addEventListener('resize', syncHeight);
+  window.visualViewport.addEventListener('scroll', syncHeight);
+}`,
+            physics: `[物理契約仕様: 仮想キーボード & 長押し]
+1. ビューポート適応: VisualViewport同期（0ms遅延）
+2. スロップ許容: 待機中の移動距離 <= 8px
+3. 時間昇格: 350msホールドゲート + .press-holding縮小アニメーション`
           },
-          bottomsheet: {
+          mapsheet: {
+            tag: "🗺️ #NestedScroll (マップ & モビリティシート)",
+            keywords: "ボトムシート 入れ子スクロール マップ モビリティ Uber AppleMaps",
             flaws: [
               "入れ子リストのスクロール時にシート全体が意図せず閉じられる。",
               "横方向のチップスワイプ時に斜めベクトルが干渉する。",
               "指を離した瞬間に慣性速度（Momentum）が破棄され、アニメーションが停止する。"
             ],
             treatment: "8px直交軸ロック（Orthogonal Axis Lock）で干渉を排除し、`scrollTop <= 0`動的境界ハンドオフと120ms速度回帰キューを適用しました。",
-            prompt: `入れ子スクロールを含む3段階スナップボトムシートを実装してください。
+            prompt: `入れ子スクロールを含む3段階スナップボトムシート（Apple Maps / Uber風）を実装してください。
 動的境界ハンドオフを適用し、タッチ開始時に\`scrollTop <= 0\`の場合のみシートドラッグに委譲し、それ以外は内部スクロールを維持してください。
 初期移動8pxの間、直交軸ロックを適用して横チップと縦シートの干渉を分離してください。
-リリース時は直前120msの速度を計算し、滑らかな慣性スナップを実行してください。`
+リリース時は直前120msの速度を計算し、滑らかな慣性スナップを実行してください。`,
+            code: `// 動的境界ハンドオフ + 8px直交軸ロック
+let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
+sheet.addEventListener('pointerdown', (e) => {
+  isDraggingSheet = nestedScrollEl.scrollTop <= 0;
+  startY = e.clientY; startX = e.clientX;
+  axisLocked = false;
+});`,
+            physics: `[物理契約仕様: ボトムシート & スクロールハンドオフ]
+1. ハンドオフ条件: pointerdown時にscrollTop <= 0
+2. 軸ロック: 初期8px移動でdx vs dyを判定
+3. 慣性キュー: 直前120ms速度によるスナップ`
           },
-          photo: {
+          canvas: {
+            tag: "🎨 #PinchRotation (Figma/キャンバスエディタ)",
+            keywords: "ピンチズーム 回転 キャンバス Figma マルチタッチ 中心軸",
             flaws: [
               "2本指回転時に中心軸（Center X/Y）がブレて画像が飛ぶ。",
               "古い\`e.touches[0]\`指定によりマルチポインタのイベントが欠落する。",
               "CSS transitionの遅延により指の動きに追従しない。"
             ],
             treatment: "W3C Pointer Eventsの`pointerId`マップでマルチタッチを分離し、中心点を保持しながらCSS変数による0ms直接操作を適用しました。",
-            prompt: `ピンチズームと2本指回転をサポートする2Dキャンバスエディタを実装してください。
+            prompt: `ピンチズームと2本指回転をサポートする2Dキャンバスエディタ（Figma/Canva風）を実装してください。
 W3C Pointer Eventsとアクティブな\`pointerId\` Mapを使用してポインタを個別に追跡し、中心点（Center X/Y）を維持して回転軸のブレを防いでください。
-操作中はCSS変数（--scale, --rotate）で0ms追従し、リリース時のみスプリングアニメーションを適用してください。`
+操作中はCSS変数（--scale, --rotate）で0ms追従し、リリース時のみスプリングアニメーションを適用してください。`,
+            code: `// マルチポインタ分離と中心点保持
+const activePointers = new Map();
+canvas.addEventListener('pointerdown', (e) => {
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+});`,
+            physics: `[物理契約仕様: マルチタッチ中心点不変式]
+1. ポインタ分離: Map(pointerId -> {x, y})
+2. 中心軸保持: フレーム毎に重心をtransformOriginに設定
+3. 0ms直接操作: transitionのないCSS変数更新`
+          },
+          kanban: {
+            tag: "📋 #KanbanDnD (Trello/Linearボード)",
+            keywords: "カンバン ドラッグアンドドロップ Linear Trello タスク管理",
+            flaws: [
+              "ボードをスクロールしようとするとカードがドラッグ状態に入りスクロール停止。",
+              "HTML5 Drag APIの利用によりモバイル端末で全滅。",
+              "マルチタッチ時にドラッグ残像が残る不具合。"
+            ],
+            treatment: "W3C Pointer Eventsベースの350ms Hold-to-Drag時間ゲートと8pxタッチスロップを適用し、スクロールとドラッグを完全に分離しました。",
+            prompt: `カードのドラッグ＆ドロップ並べ替えをサポートするカンバンボード（Linear/Trello風）を実装してください。
+HTML5 Drag APIを排除し、W3C Pointer EventsでPCとモバイルを統合してください。
+タッチ後350ms間長押しした場合のみドラッグモードに昇格し、\`.press-holding\`視覚フィードバックを与えてください。
+350ms未満で8px以上移動した場合はドラッグをキャンセルしてスクロールを維持してください。`,
+            code: `// Hold-to-Drag昇格とスロップガード
+let dragTimer = null, isDragging = false;
+card.addEventListener('pointerdown', (e) => {
+  dragTimer = setTimeout(() => { isDragging = true; }, 350);
+});`,
+            physics: `[物理契約仕様: Hold-to-Drag昇格]
+1. 統合パイプライン: W3C Pointer Eventsのみ
+2. スロップガード: 8px超過でタイマー解除
+3. 視覚フィードバック: 350ms圧縮アニメーション`
+          },
+          swipe: {
+            tag: "✉️ #SwipeDismiss (メール/リストアクション)",
+            keywords: "スワイプ 削除 メール リスト Gmail iOS",
+            flaws: [
+              "縦スクロール時に横スワイプアクションが意図せず開いてしまう。",
+              "中途半端なスワイプで位置が固定されるレイアウト崩れ。",
+              "斜め操作時の画面のガタつき。"
+            ],
+            treatment: "初期8px直交軸ロックで干渉を防止し、50%幅のコミット閾値とスプリングスナップを適用しました。",
+            prompt: `スワイプアクションリスト（iOS Mail / Gmail風）を実装してください。
+8px直交軸ロックを適用し、斜め操作が縦スクロールと競合しないようにしてください。
+50%幅の閾値を設定し、50%以上スワイプまたは速度0.5px/ms以上の場合のみ削除し、それ以外は元位置にスナップ復帰させてください。`,
+            code: `// 8px軸ロック + 50%閾値
+row.addEventListener('pointermove', (e) => {
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  if (!locked && Math.hypot(dx, dy) > 8) {
+    locked = true;
+    isHorizontal = Math.abs(dx) > Math.abs(dy);
+  }
+});`,
+            physics: `[物理契約仕様: スワイプアクション]
+1. 軸ロック: 初期8px判定
+2. コミット閾値: 幅50%または速度 > 0.5px/ms
+3. 慣性リリース: 120ms速度連動`
           }
         }
       },
       zh: {
-        heroBadge: "⚡️ 0ms 触控物理引擎",
-        heroTitle: "交互基准测试与 SWE 提示词生成器",
-        heroSubtitle: "对比基线 AI 代码缺陷与优化触控物理实现，获取经过验证的生产级软件工程提示词。",
-        modeWithout: "❌ Without Skill (基线缺陷)",
-        modeWith: "🟢 With Skill (优化改进)",
-        tabChat: "💬 移动端聊天 (虚拟键盘与长按)",
-        tabSheet: "📱 抽屉组件 (嵌套滚动与吸附)",
-        tabPhoto: "🤏 画布编辑器 (双指缩放与旋转)",
-        diagTitle: "🚨 基线 AI 代码缺陷分析",
+        heroBadge: "⚡️ 0ms 触控物理与交互诊断引擎",
+        heroTitle: "交互缺陷诊断与 SWE 解决方案中心",
+        heroSubtitle: "索引触控屏幕缺陷症状，对比基线代码与优化物理代码，获取生产级软件工程提示词规范与代码配方。",
+        searchPlaceholder: "搜索交互缺陷（如：虚拟键盘遮挡、抽屉滚动冲突、双指旋转漂移、看板拖拽）...",
+        modeWithout: "❌ 基线 AI 代码 (缺陷发生)",
+        modeWith: "🟢 物理优化改进 (物理定律应用)",
+        diagTitle: "🚨 基线缺陷分析与复现原因",
         treatTitle: "🩺 应用物理定律与架构优化",
         metric1: "视口调整延迟",
         metric2: "时间判定门槛",
         metric3: "触控死区裕度",
-        promptTitle: "💊 生产级 SWE 提示词规范",
-        promptSub: "适用于 Claude Code、ChatGPT、Cursor、Gemini 的提示词：",
-        copyBtn: "复制提示词",
-        toast: "✅ 提示词规范已复制到剪贴板！",
+        solTitle: "💊 生产级解决方案处方",
+        solTabPrompt: "SWE 提示词",
+        solTabCode: "代码配方",
+        solTabPhysics: "物理契约规范",
+        copyBtn: "复制",
+        toast: "✅ 解决方案已复制到剪贴板！",
         scenarios: {
-          chat: {
+          messenger: {
+            tag: "📱 #VirtualKeyboard (全球即时通讯)",
+            keywords: "虚拟键盘 视口 聊天 输入框 回车 长按 Telegram Slack WhatsApp",
             flaws: [
               "移动端按下回车键直接发送消息而非换行。",
               "虚拟键盘弹出时遮挡输入框并与表情抽屉冲突。",
               "长按等待期间缺乏视觉反馈导致交互模糊。"
             ],
             treatment: "集成 `visualViewport` 动态尺寸监听器与 W3C Pointer Events 统一管道，实现 0ms 键盘偏移对齐与确定性三段式长按状态机（350ms 压缩 ➔ 触感 ➔ 菜单）。",
-            prompt: `实现生产级移动端 1:1 聊天界面。
+            prompt: `实现生产级全球即时通讯（Telegram/Slack 风格）移动端 1:1 聊天界面。
 结合 \`interactive-widget=resizes-content\` 和 \`visualViewport\` 调整事件，实现容器高度与键盘偏移的 0ms 同步。
 区分按键逻辑：在触控设备上回车为换行，仅在桌面指针下回车直接发送消息。
-长按菜单绑定 350ms 时间门槛与 \`.press-holding\` 缩放反馈，手势移动超过 8px 时立即取消。`
+长按菜单绑定 350ms 时间门槛与 \`.press-holding\` 缩放反馈，手势移动超过 8px 时立即取消。`,
+            code: `// VisualViewport 动态同步
+if (window.visualViewport) {
+  const syncHeight = () => {
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
+    if (document.activeElement === messageInput) scrollToBottom(false);
+  };
+  window.visualViewport.addEventListener('resize', syncHeight);
+  window.visualViewport.addEventListener('scroll', syncHeight);
+}`,
+            physics: `[物理契约规范: 虚拟键盘与长按]
+1. 视口适配: VisualViewport 高度实时追踪 (0ms 延迟)
+2. 死区裕度: 移动距离 <= 8px 维持判定
+3. 时间门槛: 350ms 按压门槛 + .press-holding 视觉反馈`
           },
-          bottomsheet: {
+          mapsheet: {
+            tag: "🗺️ #NestedScroll (地图与出行抽屉)",
+            keywords: "底部抽屉 嵌套滚动 模态 吸附 AppleMaps Uber 导航",
             flaws: [
               "嵌套列表滚动意外触发抽屉拖拽收起。",
               "水平分类滑动引入对角线矢量干扰。",
               "释放指针时惯性速度丢失导致动画骤停。"
             ],
             treatment: "执行 8px 正交轴锁定以消除交叉干扰，结合动态边界接管（`scrollTop <= 0`）与 120ms 速度回归队列。",
-            prompt: `实现包含嵌套滚动视图的三段吸附底部抽屉组件。
+            prompt: `实现包含嵌套滚动视图的三段吸附底部抽屉组件（Apple Maps / Uber 风格）。
 应用动态边界接管：仅在指针按下时 \`scrollTop <= 0\` 才将手势委托给抽屉位移，否则保持内部列表滚动。
 在初始 8px 位移期间执行正交轴锁定，隔离水平分类与垂直抽屉手势。
-释放时基于最后 120ms 窗口计算释放速度，执行平滑的惯性吸附。`
+释放时基于最后 120ms 窗口计算释放速度，执行平滑的惯性吸附。`,
+            code: `// 动态边界接管 + 8px 正交轴锁定
+let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
+sheet.addEventListener('pointerdown', (e) => {
+  isDraggingSheet = nestedScrollEl.scrollTop <= 0;
+  startY = e.clientY; startX = e.clientX;
+  axisLocked = false;
+});`,
+            physics: `[物理契约规范: 抽屉与滚动接管]
+1. 接管门槛: pointerdown 时 scrollTop <= 0
+2. 轴锁定: 初始 8px 位移判断 dx vs dy
+3. 惯性队列: 最后 120ms 速度计算`
           },
-          photo: {
+          canvas: {
+            tag: "🎨 #PinchRotation (Figma/画布编辑器)",
+            keywords: "双指缩放 旋转 画布 Figma 多触点 中心点",
             flaws: [
               "双指旋转导致变换中心轴漂移跳跃。",
               "硬编码遗留 \`e.touches[0]\` 导致多触点事件丢失。",
               "CSS transition 延迟导致画面无法实时跟手。"
             ],
             treatment: "维护 W3C Pointer Events 的 `pointerId` 映射进行隔离追踪，动态保持中心点并通过 CSS 变量实现 0ms 直接操作。",
-            prompt: `构建支持双指缩放和旋转的 2D 画布编辑器。
+            prompt: `构建支持双指缩放和旋转的 2D 画布编辑器（Figma/Canva 风格）。
 使用 W3C Pointer Events 和活动的 \`pointerId\` Map 进行独立指针追踪。在手势帧中动态保持质心（Center X/Y）以消除轴心漂移。
-在手势期间通过 CSS 变量（--scale, --rotate）实现 0ms 实时跟随，仅在释放时启用弹性缓动。`
+在手势期间通过 CSS 变量（--scale, --rotate）实现 0ms 实时跟随，仅在释放时启用弹性缓动。`,
+            code: `// 多触点隔离与中心点保持
+const activePointers = new Map();
+canvas.addEventListener('pointerdown', (e) => {
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+});`,
+            physics: `[物理契约规范: 双指中心点不变量]
+1. 指针隔离: Map(pointerId -> {x, y})
+2. 轴心保持: 每帧将重心设置为 transformOrigin
+3. 0ms 直接操作: 无延迟 CSS 变量更新`
+          },
+          kanban: {
+            tag: "📋 #KanbanDnD (Trello/Linear看板)",
+            keywords: "看板 拖拽 Linear Trello 任务卡片 触控",
+            flaws: [
+              "滚动看板列表时意外触发卡片拖拽导致滚动卡死。",
+              "HTML5 Drag API 在移动端设备完全失效。",
+              "多点触控时卡片残像漂移。"
+            ],
+            treatment: "基于 W3C Pointer Events 实现 350ms Hold-to-Drag 时间门槛与 8px 触控死区裕度，完美解耦滚动与拖拽。",
+            prompt: `实现支持卡片拖放重排的生产级看板（Linear/Trello 风格）。
+避免使用 HTML5 Drag API，统一采用 W3C Pointer Events 实现全平台兼容。
+仅在长按 350ms 后晋升为拖拽模式并提供 \`.press-holding\` 视觉反馈。
+350ms 内位移超过 8px 则取消拖拽并恢复原生滚动。`,
+            code: `// Hold-to-Drag 晋升与死区防护
+let dragTimer = null, isDragging = false;
+card.addEventListener('pointerdown', (e) => {
+  dragTimer = setTimeout(() => { isDragging = true; }, 350);
+});`,
+            physics: `[物理契约规范: Hold-to-Drag 晋升]
+1. 统一管道: 仅使用 W3C Pointer Events
+2. 死区防护: 位移 > 8px 立即解除定时器
+3. 视觉反馈: 350ms 压缩动画`
+          },
+          swipe: {
+            tag: "✉️ #SwipeDismiss (邮件/列表滑动操作)",
+            keywords: "滑动删除 邮件 列表动作 iOS Gmail",
+            flaws: [
+              "垂直滚动列表时意外拉出水平滑动菜单。",
+              "滑到一半松手时停留在未定义位置破坏布局。",
+              "斜向滑动导致列表剧烈抖动。"
+            ],
+            treatment: "初始 8px 正交轴锁定消除对角线干扰，结合 50% 宽度提交阈值与弹性吸附。",
+            prompt: `实现滑动操作列表项组件（iOS Mail / Gmail 风格）。
+应用 8px 正交轴锁定防止斜向手势与垂直列表滚动冲突。
+设置 50% 宽度阈值：滑动超过 50% 或释放速度超过 0.5px/ms 时执行删除，否则平滑吸附回原位。`,
+            code: `// 8px 正交轴锁定 + 50% 阈值
+row.addEventListener('pointermove', (e) => {
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  if (!locked && Math.hypot(dx, dy) > 8) {
+    locked = true;
+    isHorizontal = Math.abs(dx) > Math.abs(dy);
+  }
+});`,
+            physics: `[物理契约规范: 滑动操作]
+1. 轴锁定: 初始 8px 判定
+2. 提交门槛: 宽度 50% 或速度 > 0.5px/ms
+3. 动量释放: 120ms 速度回归`
           }
         }
       },
       es: {
-        heroBadge: "⚡️ Motor de Física Táctil de 0ms",
-        heroTitle: "Benchmarks Interactivos y Prompts de SWE",
-        heroSubtitle: "Compare defectos de IA base con implementaciones optimizadas de física táctil y copie especificaciones de ingeniería SWE verificadas.",
-        modeWithout: "❌ Without Skill (Defectos Base)",
-        modeWith: "🟢 With Skill (Optimizado)",
-        tabChat: "💬 Chat Móvil (Teclado y Pulsación Larga)",
-        tabSheet: "📱 Bottom Sheet (Scroll Anidado y Snap)",
-        tabPhoto: "🤏 Editor de Canvas (Pinch-Zoom y Rotación)",
-        diagTitle: "🚨 Análisis de Defectos de IA Base",
+        heroBadge: "⚡️ Motor de Física Táctil y Diagnóstico de 0ms",
+        heroTitle: "Diagnóstico de Defectos y Centro de Soluciones SWE",
+        heroSubtitle: "Indexe defectos táctiles comunes, compare código base vs física optimizada y copie especificaciones de ingeniería SWE listas para producción.",
+        searchPlaceholder: "Buscar defecto (ej: teclado virtual, colapso de bottomsheet, eje de rotación, conflicto kanban)...",
+        modeWithout: "❌ Código Base (Defectos)",
+        modeWith: "🟢 Optimizado (Física Aplicada)",
+        diagTitle: "🚨 Análisis de Defectos Base y Reproducción",
         treatTitle: "🩺 Física Aplicada y Optimización de Arquitectura",
         metric1: "Latencia de Viewport",
         metric2: "Puerta Temporal",
         metric3: "Tolerancia Touch Slop",
-        promptTitle: "💊 Especificación de Prompt SWE de Producción",
-        promptSub: "Prompt para Claude Code, ChatGPT, Cursor o Gemini:",
-        copyBtn: "Copiar Prompt",
-        toast: "✅ ¡Especificación de prompt copiada al portapapeles!",
+        solTitle: "💊 Prescripción de Soluciones de Producción",
+        solTabPrompt: "Prompt SWE",
+        solTabCode: "Receta de Código",
+        solTabPhysics: "Contrato Físico",
+        copyBtn: "Copiar",
+        toast: "✅ ¡Solución copiada al portapapeles!",
         scenarios: {
-          chat: {
+          messenger: {
+            tag: "📱 #VirtualKeyboard (Mensajería Global)",
+            keywords: "teclado virtual chat input enter pulsacion larga telegram slack whatsapp",
             flaws: [
               "Pulsar Enter en móvil envía el mensaje en lugar de salto de línea.",
               "El teclado virtual oculta el input y entra en conflicto con cajones abiertos.",
               "La falta de retroalimentación visual durante la pulsación genera ambigüedad."
             ],
             treatment: "Integración de listeners de `visualViewport` con el pipeline unificado de W3C Pointer Events para sincronización de teclado a 0ms y máquina de estados de pulsación larga en 3 fases (350ms compresión ➔ háptico ➔ menú).",
-            prompt: `Implemente una interfaz de chat 1:1 móvil de producción.
+            prompt: `Implemente una interfaz de chat 1:1 móvil de producción (estilo Telegram/Slack).
 Integre \`interactive-widget=resizes-content\` y listeners de \`visualViewport\` para alinear la altura del contenedor con el teclado a 0ms.
 Diferencie la tecla Enter: salto de línea en móviles y envío inmediato solo en escritorio.
-Para pulsación larga, establezca una puerta de 350ms con animación \`.press-holding\`, cancelando si el movimiento supera 8px.`
+Para pulsación larga, establezca una puerta de 350ms con animación \`.press-holding\`, cancelando si el movimiento supera 8px.`,
+            code: `// Sincronización dinámica de VisualViewport
+if (window.visualViewport) {
+  const syncHeight = () => {
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
+    if (document.activeElement === messageInput) scrollToBottom(false);
+  };
+  window.visualViewport.addEventListener('resize', syncHeight);
+  window.visualViewport.addEventListener('scroll', syncHeight);
+}`,
+            physics: `[Contrato Físico: Teclado Virtual y Pulsación Larga]
+1. Adaptación de Viewport: Seguimiento de VisualViewport (0ms latencia)
+2. Tolerancia Slop: Desplazamiento <= 8px durante la espera
+3. Puerta Temporal: 350ms con animación .press-holding`
           },
-          bottomsheet: {
+          mapsheet: {
+            tag: "🗺️ #NestedScroll (Bottom Sheet de Mapas)",
+            keywords: "bottomsheet scroll anidado modal snap mapas uber airbnb",
             flaws: [
               "El desplazamiento de la lista anidada colapsa el sheet accidentalmente.",
               "El swipe horizontal de categorías introduce interferencia diagonal.",
               "La velocidad cinética se descarta al soltar, frenando en seco."
             ],
             treatment: "Bloqueo de Eje Ortogonal de 8px para eliminar interferencias, combinado con traspaso de límite dinámico (`scrollTop <= 0`) y cola de regresión de 120ms.",
-            prompt: `Implemente un bottom sheet de 3 niveles con listas anidadas.
+            prompt: `Implemente un bottom sheet de 3 niveles con listas anidadas (estilo Apple Maps / Uber).
 Aplique traspaso de límite dinámico: delegue el arrastre al sheet estrictamente cuando \`scrollTop <= 0\` al iniciar; de lo contrario mantenga el scroll interno.
 Aplique bloqueo de eje ortogonal de 8px para aislar chips horizontales del movimiento vertical.
-Al soltar, calcule la velocidad de los últimos 120ms para ejecutar una animación de inercia suave.`
+Al soltar, calcule la velocidad de los últimos 120ms para ejecutar una animación de inercia suave.`,
+            code: `// Traspaso de límite dinámico + Bloqueo de eje de 8px
+let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
+sheet.addEventListener('pointerdown', (e) => {
+  isDraggingSheet = nestedScrollEl.scrollTop <= 0;
+  startY = e.clientY; startX = e.clientX;
+  axisLocked = false;
+});`,
+            physics: `[Contrato Físico: Bottom Sheet y Scroll]
+1. Condición de traspaso: scrollTop <= 0 al presionar
+2. Bloqueo de eje: Evaluación de dx vs dy en los primeros 8px
+3. Inercia: Regresión de velocidad de los últimos 120ms`
           },
-          photo: {
+          canvas: {
+            tag: "🎨 #PinchRotation (Editor de Lienzo Figma)",
+            keywords: "pinch zoom rotacion lienzo figma canva multitouch",
             flaws: [
               "La rotación con dos dedos desvía el eje central de transformación.",
               "El uso de \`e.touches[0]\` provoca pérdida de eventos multitáctiles.",
               "La latencia de CSS transition impide que la imagen siga el dedo en tiempo real."
             ],
             treatment: "Mantenimiento de mapa de `pointerId` de W3C Pointer Events para rastreo aislado, conservando el centroide con variables CSS de 0ms.",
-            prompt: `Construya un editor 2D con soporte para pinch-zoom y rotación de 2 dedos.
+            prompt: `Construya un editor 2D con soporte para pinch-zoom y rotación de 2 dedos (estilo Figma/Canva).
 Utilice W3C Pointer Events con un mapa de \`pointerId\` activo. Mantenga dinámicamente el centroide (Center X/Y) para evitar desviaciones del eje.
-Aplique manipulación directa a 0ms con variables CSS (--scale, --rotate) y active la amortiguación solo al soltar.`
+Aplique manipulación directa a 0ms con variables CSS (--scale, --rotate) y active la amortiguación solo al soltar.`,
+            code: `// Aislamiento multitáctil y centroide invariable
+const activePointers = new Map();
+canvas.addEventListener('pointerdown', (e) => {
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+});`,
+            physics: `[Contrato Físico: Invariante del Centroide]
+1. Aislamiento: Map(pointerId -> {x, y})
+2. Eje central: transformOrigin actualizado en cada frame
+3. Manipulación directa: Variables CSS a 0ms`
+          },
+          kanban: {
+            tag: "📋 #KanbanDnD (Tablero Kanban Linear)",
+            keywords: "kanban dnd drag and drop linear trello tarjetas",
+            flaws: [
+              "Intentar hacer scroll en el tablero activa el arrastre de tarjetas bloqueando la pantalla.",
+              "La API HTML5 Drag falla por completo en dispositivos móviles.",
+              "Eventos multitáctiles dejan elementos fantasma congelados."
+            ],
+            treatment: "Aplicación de puerta temporal de 350ms Hold-to-Drag y tolerancia de 8px con W3C Pointer Events, desacoplando el scroll del arrastre.",
+            prompt: `Implemente un tablero Kanban con reordenamiento de tarjetas (estilo Linear/Trello).
+Evite la API HTML5 Drag y utilice W3C Pointer Events para compatibilidad universal.
+Promueva al modo de arrastre solo tras mantener pulsado 350ms con animación \`.press-holding\`.
+Cancele el temporizador y permita el scroll normal si el movimiento supera 8px antes de los 350ms.`,
+            code: `// Promoción Hold-to-Drag y tolerancia
+let dragTimer = null, isDragging = false;
+card.addEventListener('pointerdown', (e) => {
+  dragTimer = setTimeout(() => { isDragging = true; }, 350);
+});`,
+            physics: `[Contrato Físico: Promoción Hold-to-Drag]
+1. Pipeline unificado: Solo W3C Pointer Events
+2. Protección de slop: Desplazamiento > 8px cancela el arrastre
+3. Retroalimentación visual: 350ms de compresión`
+          },
+          swipe: {
+            tag: "✉️ #SwipeDismiss (Acciones de Lista Mail)",
+            keywords: "swipe eliminar mail lista gmail ios",
+            flaws: [
+              "El desplazamiento vertical activa accidentalmente las acciones de swipe horizontal.",
+              "Soltar a mitad de camino deja el elemento en una posición rota indeterminada.",
+              "Los gestos diagonales provocan tirones y saltos."
+            ],
+            treatment: "Bloqueo ortogonal inicial de 8px para filtrar el scroll vertical del swipe, respaldado por un umbral del 50% de ancho y retroceso elástico.",
+            prompt: `Implemente un componente de lista con swipe-to-dismiss (estilo iOS Mail / Gmail).
+Aplique bloqueo ortogonal de 8px para evitar que los gestos diagonales colisionen con el scroll vertical.
+Establezca un umbral del 50% del ancho: si el swipe supera el 50% o la velocidad supera 0.5px/ms ejecute el borrado, de lo contrario regrese elásticamente.`,
+            code: `// Bloqueo ortogonal de 8px + Umbral del 50%
+row.addEventListener('pointermove', (e) => {
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  if (!locked && Math.hypot(dx, dy) > 8) {
+    locked = true;
+    isHorizontal = Math.abs(dx) > Math.abs(dy);
+  }
+});`,
+            physics: `[Contrato Físico: Acciones de Swipe]
+1. Bloqueo de eje: Vector inicial de 8px
+2. Umbral de commit: 50% de ancho o velocidad > 0.5px/ms
+3. Liberación cinética: Regresión de 120ms`
           }
         }
       }
@@ -804,16 +1448,16 @@ Aplique manipulación directa a 0ms con variables CSS (--scale, --rotate) y acti
     else if (userLang.startsWith('zh')) currentLang = 'zh';
     else if (userLang.startsWith('es')) currentLang = 'es';
 
-    let currentScenario = 'chat';
+    let currentScenario = 'messenger';
     let currentMode = 'with';
+    let currentSolTab = 'prompt';
 
     const langSelect = document.getElementById('langSelect');
+    const searchInput = document.getElementById('searchInput');
+    const tagBar = document.getElementById('tagBar');
     const heroBadge = document.getElementById('heroBadge');
     const heroTitle = document.getElementById('heroTitle');
     const heroSubtitle = document.getElementById('heroSubtitle');
-    const tabChat = document.getElementById('tabChat');
-    const tabSheet = document.getElementById('tabSheet');
-    const tabPhoto = document.getElementById('tabPhoto');
     const btnModeWith = document.getElementById('btnModeWith');
     const btnModeWithout = document.getElementById('btnModeWithout');
     const previewFrame = document.getElementById('previewFrame');
@@ -824,60 +1468,87 @@ Aplique manipulación directa a 0ms con variables CSS (--scale, --rotate) y acti
     const metricLabel1 = document.getElementById('metricLabel1');
     const metricLabel2 = document.getElementById('metricLabel2');
     const metricLabel3 = document.getElementById('metricLabel3');
-    const promptTitle = document.getElementById('promptTitle');
-    const promptSub = document.getElementById('promptSub');
-    const promptText = document.getElementById('promptText');
+    const solTitle = document.getElementById('solTitle');
+    const solTabPrompt = document.getElementById('solTabPrompt');
+    const solTabCode = document.getElementById('solTabCode');
+    const solTabPhysics = document.getElementById('solTabPhysics');
+    const solutionText = document.getElementById('solutionText');
     const copyBtnText = document.getElementById('copyBtnText');
-    const btnCopyPrompt = document.getElementById('btnCopyPrompt');
+    const btnCopySol = document.getElementById('btnCopySol');
     const toast = document.getElementById('toast');
 
+    function renderTags() {
+      const db = database[currentLang] || database.en;
+      tagBar.innerHTML = '';
+      Object.keys(db.scenarios).forEach(key => {
+        const sc = db.scenarios[key];
+        const btn = document.createElement('button');
+        btn.className = `tag-btn ${key === currentScenario ? 'active' : ''}`;
+        btn.dataset.scenario = key;
+        btn.textContent = sc.tag;
+        btn.addEventListener('click', () => {
+          currentScenario = key;
+          document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderScenario();
+        });
+        tagBar.appendChild(btn);
+      });
+    }
+
     function renderLanguage() {
-      const t = i18n[currentLang] || i18n.en;
+      const t = database[currentLang] || database.en;
       langSelect.value = currentLang;
       heroBadge.textContent = t.heroBadge;
       heroTitle.textContent = t.heroTitle;
       heroSubtitle.textContent = t.heroSubtitle;
+      searchInput.placeholder = t.searchPlaceholder;
       btnModeWithout.textContent = t.modeWithout;
       btnModeWith.textContent = t.modeWith;
-      tabChat.textContent = t.tabChat;
-      tabSheet.textContent = t.tabSheet;
-      tabPhoto.textContent = t.tabPhoto;
       diagTitle.textContent = t.diagTitle;
       treatTitle.textContent = t.treatTitle;
       metricLabel1.textContent = t.metric1;
       metricLabel2.textContent = t.metric2;
       metricLabel3.textContent = t.metric3;
-      promptTitle.textContent = t.promptTitle;
-      promptSub.textContent = t.promptSub;
+      solTitle.textContent = t.solTitle;
+      solTabPrompt.textContent = t.solTabPrompt;
+      solTabCode.textContent = t.solTabCode;
+      solTabPhysics.textContent = t.solTabPhysics;
       copyBtnText.textContent = t.copyBtn;
 
+      renderTags();
       renderScenario();
     }
 
     function renderScenario() {
-      const t = i18n[currentLang] || i18n.en;
-      const sc = t.scenarios[currentScenario];
+      const db = database[currentLang] || database.en;
+      const sc = db.scenarios[currentScenario] || db.scenarios.messenger;
+      
       diagFlaws.innerHTML = sc.flaws.map(f => `<li>${f}</li>`).join('');
       treatDesc.textContent = sc.treatment;
-      promptText.textContent = sc.prompt;
+
+      renderSolutionContent();
 
       const urlWith = "03-mobile-chat/index.html";
       const urlWithout = "../demo/without_skill/index.html";
       previewFrame.src = currentMode === 'with' ? urlWith : urlWithout;
     }
 
+    function renderSolutionContent() {
+      const db = database[currentLang] || database.en;
+      const sc = db.scenarios[currentScenario] || db.scenarios.messenger;
+      if (currentSolTab === 'prompt') {
+        solutionText.textContent = sc.prompt;
+      } else if (currentSolTab === 'code') {
+        solutionText.textContent = sc.code;
+      } else {
+        solutionText.textContent = sc.physics;
+      }
+    }
+
     langSelect.addEventListener('change', (e) => {
       currentLang = e.target.value;
       renderLanguage();
-    });
-
-    document.querySelectorAll('.scenario-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.scenario-tab').forEach(b => b.classList.remove('active'));
-        tab.classList.add('active');
-        currentScenario = tab.dataset.scenario;
-        renderScenario();
-      });
     });
 
     btnModeWith.addEventListener('click', () => {
@@ -894,9 +1565,43 @@ Aplique manipulación directa a 0ms con variables CSS (--scale, --rotate) y acti
       renderScenario();
     });
 
-    btnCopyPrompt.addEventListener('click', () => {
-      const t = i18n[currentLang] || i18n.en;
-      navigator.clipboard.writeText(promptText.textContent.trim()).then(() => {
+    document.querySelectorAll('.sol-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sol-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSolTab = btn.dataset.sol;
+        renderSolutionContent();
+      });
+    });
+
+    // Search filter
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const db = database[currentLang] || database.en;
+      let matched = false;
+      document.querySelectorAll('.tag-btn').forEach(btn => {
+        const scKey = btn.dataset.scenario;
+        const sc = db.scenarios[scKey];
+        const text = `${sc.tag} ${sc.keywords} ${sc.flaws.join(' ')}`.toLowerCase();
+        if (!q || text.includes(q)) {
+          btn.style.display = 'flex';
+          if (!matched) {
+            currentScenario = scKey;
+            matched = true;
+          }
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+      document.querySelectorAll('.tag-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.scenario === currentScenario);
+      });
+      renderScenario();
+    });
+
+    btnCopySol.addEventListener('click', () => {
+      const t = database[currentLang] || database.en;
+      navigator.clipboard.writeText(solutionText.textContent.trim()).then(() => {
         toast.textContent = t.toast;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2200);
