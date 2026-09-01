@@ -58,6 +58,10 @@
       gap: 16px;
     }
 
+    .header-top-row {
+      display: contents;
+    }
+
     .brand {
       display: flex;
       align-items: center;
@@ -946,37 +950,321 @@
       z-index: 200;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
+  
+    /* ========================================================
+       MOBILE-FIRST OMNI-PLATFORM RESPONSIVE & TOUCH PHYSICS OVERHAUL
+       Applying interaction-doctor Platform Invariants directly to the showcase site!
+       ======================================================== */
+
+    /* Global Touch Manipulation & Safe-Area Defaults */
+    html {
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
+    }
+
+    body {
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* All Interactive Buttons: 44px Minimum Touch Target & 0ms Visual Scale Feedback */
+    button, .service-tab-btn, .facet-btn, .sim-toggle-btn, .tag-btn, .sol-tab-btn, .btn-github, select {
+      touch-action: manipulation !important;
+      -webkit-touch-callout: none !important;
+      user-select: none;
+    }
+
+    button:active, .service-tab-btn:active, .facet-btn:active, .sim-toggle-btn:active, .tag-btn:active, .sol-tab-btn:active, .btn-github:active {
+      transform: scale(0.96) !important;
+      transition: transform 0.06s cubic-bezier(0, 0, 0.2, 1) !important;
+    }
+
+    /* Custom Horizontal Scrollbar for Mobile Tag Carousel */
+    .symptom-tag-grid::-webkit-scrollbar, .facet-tabs-row::-webkit-scrollbar {
+      display: none;
+    }
+    .symptom-tag-grid, .facet-tabs-row {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Mobile & Tablet Breakpoint (<= 768px) */
+    @media (max-width: 768px) {
+      header {
+        padding: 8px 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .brand {
+        font-size: 1.05rem;
+      }
+
+      .header-right {
+        gap: 8px;
+      }
+
+      .lang-select {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+      }
+
+      .btn-github {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+      }
+
+      .service-nav {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 3px;
+        background: #090e1a;
+        border-radius: 10px;
+      }
+
+      .service-tab-btn {
+        justify-content: center;
+        padding: 9px 8px;
+        font-size: 0.8rem;
+        min-height: 40px;
+      }
+
+      .diag-wrapper {
+        padding: 12px 12px 60px;
+        gap: 12px;
+      }
+
+      .search-panel {
+        padding: 12px;
+        gap: 10px;
+        border-radius: 12px;
+      }
+
+      .search-input {
+        padding: 10px 14px 10px 38px;
+        font-size: 0.88rem;
+      }
+
+      .search-icon {
+        left: 12px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .facet-tabs-row {
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        padding-bottom: 6px;
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+
+      .facet-left {
+        flex-wrap: nowrap;
+        gap: 6px;
+      }
+
+      .facet-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        min-height: 34px;
+      }
+
+      .case-counter {
+        display: none; /* Conserve vertical space on mobile */
+      }
+
+      /* Transform 36 Tag Cloud into a Smooth Swipeable Mobile Carousel */
+      .symptom-tag-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        max-height: none;
+        gap: 6px;
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+
+      .tag-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 7px 12px;
+        font-size: 0.75rem;
+        min-height: 36px;
+      }
+
+      .workstation-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .simulator-box {
+        padding: 12px;
+        border-radius: 14px;
+        gap: 10px;
+      }
+
+      .sim-toggle-bar {
+        padding: 3px;
+      }
+
+      .sim-toggle-btn {
+        padding: 10px 8px;
+        font-size: 0.82rem;
+        min-height: 42px;
+      }
+
+      .mission-banner {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+      }
+
+      /* NATIVE MOBILE SHELL (Kill bulky 8px desktop bezel & fake notch on mobile!) */
+      .phone-mockup {
+        height: 500px;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      }
+
+      .phone-status-bar {
+        display: none; /* Hide fake status bar on real phones */
+      }
+
+      .phone-home-indicator {
+        display: none; /* Hide fake home bar on real phones */
+      }
+
+      .card {
+        padding: 14px;
+        border-radius: 12px;
+      }
+
+      .card-title {
+        font-size: 0.92rem;
+      }
+
+      .card p, .card li {
+        font-size: 0.82rem;
+        line-height: 1.55;
+      }
+
+      .solution-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .sol-tab-btn {
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        min-height: 36px;
+      }
+
+      .solution-code-box {
+        font-size: 0.75rem;
+        padding: 12px;
+        max-height: 220px;
+      }
+
+      .copy-btn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+      }
+
+      /* Presentation & Marketing View Mobile Styles */
+      .pres-wrapper {
+        padding: 20px 14px 60px;
+        gap: 32px;
+      }
+
+      .pres-hero h1 {
+        font-size: 1.85rem;
+        letter-spacing: -0.8px;
+      }
+
+      .pres-hero p {
+        font-size: 0.92rem;
+      }
+
+      .hero-battle-container {
+        padding: 16px;
+        border-radius: 16px;
+        gap: 16px;
+      }
+
+      .battle-title {
+        font-size: 1.05rem;
+      }
+
+      .battle-arena {
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .install-flow-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .flow-card {
+        padding: 18px;
+      }
+    }
+
   </style>
 </head>
 <body>
 
   <header>
-    <a href="#" class="brand">
-      🩺 <span>interaction-doctor</span>
-    </a>
+    <div class="header-top-row">
+      <a href="#" class="brand">
+        🩺 <span>interaction-doctor</span>
+      </a>
+
+      <div class="header-right">
+        <select class="lang-select" id="langSelect" aria-label="Language Select">
+          <option value="en">🇺🇸 EN</option>
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="ja">🇯🇵 日本語</option>
+          <option value="zh">🇨🇳 中文</option>
+          <option value="es">🇪🇸 ES</option>
+        </select>
+        <a href="https://github.com/saramjh/interaction-doctor" target="_blank" class="btn-github">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
 
     <nav class="service-nav">
       <button class="service-tab-btn active" id="tabNavDiag" data-view="diagView">
-        🩺 <span id="navTextDiag">Diagnostic & Solution Lab</span>
+        🩺 <span id="navTextDiag">Diagnostic Lab</span>
       </button>
       <button class="service-tab-btn" id="tabNavPres" data-view="presView">
-        🚀 <span id="navTextPres">Beginner Skill Setup Guide</span>
+        🚀 <span id="navTextPres">Setup Guide</span>
       </button>
     </nav>
-
-    <div class="header-right">
-      <select class="lang-select" id="langSelect" aria-label="Language Select">
-        <option value="en">🇺🇸 English</option>
-        <option value="ko">🇰🇷 한국어</option>
-        <option value="ja">🇯🇵 日本語</option>
-        <option value="zh">🇨🇳 简体中文</option>
-        <option value="es">🇪🇸 Español</option>
-      </select>
-      <a href="https://github.com/saramjh/interaction-doctor" target="_blank" class="btn-github">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
-    </div>
   </header>
 
   <!-- ================= DIAGNOSTIC HUB VIEW ================= -->
