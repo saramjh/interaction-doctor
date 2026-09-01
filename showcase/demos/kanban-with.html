@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kanban Board (With Skill - Optimized)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .header { padding: 12px 16px; background: #1e293b; border-bottom: 1px solid #334155; font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; }
+    .board-container { flex: 1; overflow-x: auto; display: flex; gap: 14px; padding: 16px; touch-action: pan-x pan-y; }
+    .column { width: 260px; background: #1e293b; border-radius: 12px; padding: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+    .col-title { font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+    .card-list { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
+    
+    .card {
+      background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px;
+      font-size: 13px; font-weight: 600; cursor: grab; user-select: none;
+      touch-action: pan-y;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card.holding { transform: scale(0.96); opacity: 0.8; border-color: #3b82f6; }
+    .card.dragging { opacity: 0.4; border: 1px dashed #60a5fa; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span>📋 Linear / Trello Kanban Board</span>
+    <span style="color: #10b981;">✅ 350ms Hold-to-Drag Gate</span>
+  </div>
+  <div class="board-container">
+    <div class="column">
+      <div class="col-title">In Progress (3)</div>
+      <div class="card-list" id="list1">
+        <div class="card">🚀 Implement 8px Axis Lock</div>
+        <div class="card">📱 VisualViewport Keyboard Sync</div>
+        <div class="card">✨ 0ms GPU Transform Clamping</div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="col-title">Done (2)</div>
+      <div class="card-list" id="list2">
+        <div class="card">🔬 16 Hardware Devices Tested</div>
+        <div class="card">🩺 SWE Prompt Generator Spec</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let dragTimer = null, isDragging = false, startX = 0, startY = 0, activeCard = null;
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('pointerdown', (e) => {
+        activeCard = card;
+        startX = e.clientX; startY = e.clientY;
+        card.classList.add('holding');
+
+        dragTimer = setTimeout(() => {
+          isDragging = true;
+          card.classList.remove('holding');
+          card.classList.add('dragging');
+          if (navigator.vibrate) navigator.vibrate(40);
+        }, 350);
+      });
+
+      card.addEventListener('pointermove', (e) => {
+        if (!isDragging && Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+          clearTimeout(dragTimer);
+          card.classList.remove('holding');
+        }
+      });
+
+      const end = () => {
+        clearTimeout(dragTimer);
+        card.classList.remove('holding', 'dragging');
+        isDragging = false;
+      };
+      card.addEventListener('pointerup', end);
+      card.addEventListener('pointercancel', end);
+    });
+  </script>
+</body>
+</html>

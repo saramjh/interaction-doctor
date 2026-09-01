@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bottom Sheet (With Skill - Optimized)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .map-bg { flex: 1; background: radial-gradient(circle at 50% 40%, #1e293b, #090d16); display: flex; align-items: center; justify-content: center; flex-direction: column; color: #64748b; font-weight: 700; gap: 8px; }
+    .map-pin { font-size: 32px; animation: bounce 1s infinite alternate; }
+    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+
+    .bottom-sheet {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 85vh; background: #ffffff; color: #1e293b;
+      border-top-left-radius: 20px; border-top-right-radius: 20px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column;
+      transform: translateY(calc(85vh - 180px)); /* Mid snap */
+      touch-action: none;
+      will-change: transform;
+    }
+    .sheet-handle-bar { padding: 12px; display: flex; justify-content: center; cursor: grab; }
+    .sheet-handle { width: 36px; height: 5px; background: #cbd5e1; border-radius: 3px; }
+    .sheet-header { padding: 0 18px 12px; border-bottom: 1px solid #f1f5f9; }
+    .sheet-title { font-size: 18px; font-weight: 800; }
+    .sheet-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+    .category-chips { display: flex; gap: 8px; padding: 12px 18px; overflow-x: auto; scrollbar-width: none; touch-action: pan-x; }
+    .category-chips::-webkit-scrollbar { display: none; }
+    .chip { background: #f1f5f9; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #334155; white-space: nowrap; }
+    .chip.active { background: #3b82f6; color: #fff; }
+
+    .scroll-content { flex: 1; overflow-y: auto; padding: 0 18px 18px; overscroll-behavior-y: contain; }
+    .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f8fafc; }
+    .menu-name { font-weight: 700; font-size: 14px; }
+    .menu-price { font-weight: 600; color: #3b82f6; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="map-bg">
+    <div class="map-pin">📍</div>
+    <div>Apple Maps / Uber Style Mobility</div>
+    <div style="font-size: 11px; color: #10b981;">✅ 8px Axis Lock & Dynamic Scroll Hand-off</div>
+  </div>
+
+  <div class="bottom-sheet" id="sheet">
+    <div class="sheet-handle-bar" id="handleBar"><div class="sheet-handle"></div></div>
+    <div class="sheet-header">
+      <div class="sheet-title">Nearby Places & Restaurants</div>
+      <div class="sheet-sub">24 places open now</div>
+    </div>
+    <div class="category-chips">
+      <div class="chip active">All (24)</div>
+      <div class="chip">☕️ Cafes</div>
+      <div class="chip">🍕 Pizza & Italian</div>
+      <div class="chip">🍣 Japanese Sushi</div>
+      <div class="chip">🍔 Burgers</div>
+      <div class="chip">🥗 Vegan & Healthy</div>
+    </div>
+    <div class="scroll-content" id="scrollList">
+      <!-- 20 items -->
+      <div class="menu-item"><span class="menu-name">1. Blue Bottle Coffee Roasters</span><span class="menu-price">0.2 mi</span></div>
+      <div class="menu-item"><span class="menu-name">2. Tartine Bakery San Francisco</span><span class="menu-price">0.4 mi</span></div>
+      <div class="menu-item"><span class="menu-name">3. Super Duper Burgers</span><span class="menu-price">0.5 mi</span></div>
+      <div class="menu-item"><span class="menu-name">4. Marufuku Ramen House</span><span class="menu-price">0.6 mi</span></div>
+      <div class="menu-item"><span class="menu-name">5. Sweetgreen Salad & Bowls</span><span class="menu-price">0.8 mi</span></div>
+      <div class="menu-item"><span class="menu-name">6. Shake Shack Downtown</span><span class="menu-price">0.9 mi</span></div>
+      <div class="menu-item"><span class="menu-name">7. Philz Coffee Mint Mojito</span><span class="menu-price">1.1 mi</span></div>
+      <div class="menu-item"><span class="menu-name">8. Sushirrito Fusion Rolls</span><span class="menu-price">1.2 mi</span></div>
+      <div class="menu-item"><span class="menu-name">9. In-N-Out Burger</span><span class="menu-price">1.4 mi</span></div>
+      <div class="menu-item"><span class="menu-name">10. Chipotle Mexican Grill</span><span class="menu-price">1.5 mi</span></div>
+      <div class="menu-item"><span class="menu-name">11. Whole Foods Market Deli</span><span class="menu-price">1.7 mi</span></div>
+      <div class="menu-item"><span class="menu-name">12. Joe & The Juice</span><span class="menu-price">1.8 mi</span></div>
+    </div>
+  </div>
+
+  <script>
+    const sheet = document.getElementById('sheet');
+    const scrollList = document.getElementById('scrollList');
+    const handleBar = document.getElementById('handleBar');
+
+    const totalHeight = window.innerHeight * 0.85;
+    const snaps = [0, totalHeight - 320, totalHeight - 120]; // Full, Mid, Collapsed
+    let currentY = snaps[1];
+    let startY = 0, startX = 0, startSheetY = 0;
+    let isDragging = false, isHandOff = false, axisLocked = false;
+    let velocityQueue = [];
+
+    function setSheetY(y, animated = false) {
+      currentY = Math.max(0, Math.min(y, snaps[2]));
+      sheet.style.transition = animated ? 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+      sheet.style.transform = `translateY(${currentY}px)`;
+    }
+
+    function onPointerDown(e) {
+      startY = e.clientY;
+      startX = e.clientX;
+      startSheetY = currentY;
+      isDragging = false;
+      axisLocked = false;
+      isHandOff = (e.target === handleBar || handleBar.contains(e.target)) || (scrollList.scrollTop <= 0 && currentY > 0);
+      velocityQueue = [{ y: e.clientY, time: performance.now() }];
+    }
+
+    function onPointerMove(e) {
+      const dy = e.clientY - startY;
+      const dx = e.clientX - startX;
+
+      if (!axisLocked && Math.hypot(dx, dy) > 8) {
+        axisLocked = true;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          isHandOff = false; // Horizontal chips lock
+          return;
+        }
+      }
+
+      if (isHandOff || (scrollList.scrollTop <= 0 && dy > 0)) {
+        isDragging = true;
+        setSheetY(startSheetY + dy, false);
+        velocityQueue.push({ y: e.clientY, time: performance.now() });
+        if (velocityQueue.length > 5) velocityQueue.shift();
+      }
+    }
+
+    function onPointerUp(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      const now = performance.now();
+      const recent = velocityQueue.filter(p => now - p.time <= 120);
+      let v = 0;
+      if (recent.length >= 2) {
+        const p1 = recent[0], p2 = recent[recent.length - 1];
+        v = (p2.y - p1.y) / (p2.time - p1.time);
+      }
+
+      let targetSnap = snaps[1];
+      if (v > 0.4) targetSnap = snaps[2];
+      else if (v < -0.4) targetSnap = snaps[0];
+      else {
+        targetSnap = snaps.reduce((prev, curr) => Math.abs(curr - currentY) < Math.abs(prev - currentY) ? curr : prev);
+      }
+      setSheetY(targetSnap, true);
+    }
+
+    sheet.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    setSheetY(currentY, false);
+  </script>
+</body>
+</html>

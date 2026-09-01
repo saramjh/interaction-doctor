@@ -1520,6 +1520,14 @@ row.addEventListener('pointermove', (e) => {
       renderScenario();
     }
 
+    const demoUrls = {
+      messenger: { with: "demos/messenger-with.html", without: "demos/messenger-without.html" },
+      mapsheet: { with: "demos/bottomsheet-with.html", without: "demos/bottomsheet-without.html" },
+      canvas: { with: "demos/canvas-with.html", without: "demos/canvas-without.html" },
+      kanban: { with: "demos/kanban-with.html", without: "demos/kanban-without.html" },
+      swipe: { with: "demos/swipe-with.html", without: "demos/swipe-without.html" }
+    };
+
     function renderScenario() {
       const db = database[currentLang] || database.en;
       const sc = db.scenarios[currentScenario] || db.scenarios.messenger;
@@ -1529,9 +1537,8 @@ row.addEventListener('pointermove', (e) => {
 
       renderSolutionContent();
 
-      const urlWith = "03-mobile-chat/index.html";
-      const urlWithout = "../demo/without_skill/index.html";
-      previewFrame.src = currentMode === 'with' ? urlWith : urlWithout;
+      const urls = demoUrls[currentScenario] || demoUrls.messenger;
+      previewFrame.src = currentMode === 'with' ? urls.with : urls.without;
     }
 
     function renderSolutionContent() {

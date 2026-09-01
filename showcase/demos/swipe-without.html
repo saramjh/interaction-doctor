@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Swipe to Dismiss (Without Skill - Baseline Defects)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .header { padding: 12px 16px; background: #1e293b; border-bottom: 1px solid #334155; font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; }
+    .mail-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .mail-item-wrap { position: relative; overflow: hidden; background: #ef4444; border-bottom: 1px solid #1e293b; }
+    .delete-action { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 800; color: #fff; }
+    .mail-item {
+      background: #0f172a; padding: 16px; display: flex; flex-direction: column; gap: 4px;
+      position: relative; z-index: 2;
+    }
+    .mail-sender { font-size: 14px; font-weight: 800; color: #ef4444; }
+    .mail-subject { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span>✉️ Baseline AI Swipe</span>
+    <span style="color: #ef4444;">❌ No Axis Lock (Scroll Jitter)</span>
+  </div>
+  <div class="mail-list">
+    <div class="mail-item-wrap">
+      <div class="delete-action">🗑️ DELETE</div>
+      <div class="mail-item">
+        <div class="mail-sender">💥 Try scrolling vertically</div>
+        <div class="mail-subject">Accidentally reveals swipe button and jitters!</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.mail-item').forEach(row => {
+      let startX = 0;
+      // Common AI Bug: No axis lock check -> vertical scroll triggers horizontal shift
+      row.addEventListener('touchmove', (e) => {
+        const dx = e.touches[0].clientX - startX;
+        if (dx < 0) row.style.transform = `translateX(${dx}px)`;
+      });
+      row.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
+    });
+  </script>
+</body>
+</html>

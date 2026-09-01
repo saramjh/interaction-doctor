@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bottom Sheet (Without Skill - Baseline Defects)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .map-bg { flex: 1; background: radial-gradient(circle at 50% 40%, #1e293b, #090d16); display: flex; align-items: center; justify-content: center; flex-direction: column; color: #ef4444; font-weight: 700; gap: 8px; }
+    .map-pin { font-size: 32px; }
+
+    .bottom-sheet {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 85vh; background: #ffffff; color: #1e293b;
+      border-top-left-radius: 20px; border-top-right-radius: 20px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column;
+      transform: translateY(300px);
+      transition: transform 0.2s ease;
+    }
+    .sheet-handle-bar { padding: 12px; display: flex; justify-content: center; cursor: grab; }
+    .sheet-handle { width: 36px; height: 5px; background: #cbd5e1; border-radius: 3px; }
+    .sheet-header { padding: 0 18px 12px; border-bottom: 1px solid #f1f5f9; }
+    .sheet-title { font-size: 18px; font-weight: 800; }
+    .sheet-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+    .category-chips { display: flex; gap: 8px; padding: 12px 18px; overflow-x: auto; }
+    .chip { background: #f1f5f9; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #334155; white-space: nowrap; }
+    .chip.active { background: #ef4444; color: #fff; }
+
+    .scroll-content { flex: 1; overflow-y: auto; padding: 0 18px 18px; }
+    .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f8fafc; }
+    .menu-name { font-weight: 700; font-size: 14px; }
+    .menu-price { font-weight: 600; color: #ef4444; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="map-bg">
+    <div class="map-pin">💥</div>
+    <div>Baseline AI (Common Defects)</div>
+    <div style="font-size: 11px; color: #f87171;">❌ Try scrolling list: sheet accidentally closes!</div>
+  </div>
+
+  <div class="bottom-sheet" id="sheet">
+    <div class="sheet-handle-bar"><div class="sheet-handle"></div></div>
+    <div class="sheet-header">
+      <div class="sheet-title">Nearby Places & Restaurants</div>
+      <div class="sheet-sub">24 places open now</div>
+    </div>
+    <div class="category-chips">
+      <div class="chip active">All (24)</div>
+      <div class="chip">☕️ Cafes</div>
+      <div class="chip">🍕 Pizza & Italian</div>
+      <div class="chip">🍣 Japanese Sushi</div>
+      <div class="chip">🍔 Burgers</div>
+    </div>
+    <div class="scroll-content" id="scrollList">
+      <div class="menu-item"><span class="menu-name">1. Blue Bottle Coffee Roasters</span><span class="menu-price">0.2 mi</span></div>
+      <div class="menu-item"><span class="menu-name">2. Tartine Bakery San Francisco</span><span class="menu-price">0.4 mi</span></div>
+      <div class="menu-item"><span class="menu-name">3. Super Duper Burgers</span><span class="menu-price">0.5 mi</span></div>
+      <div class="menu-item"><span class="menu-name">4. Marufuku Ramen House</span><span class="menu-price">0.6 mi</span></div>
+      <div class="menu-item"><span class="menu-name">5. Sweetgreen Salad & Bowls</span><span class="menu-price">0.8 mi</span></div>
+      <div class="menu-item"><span class="menu-name">6. Shake Shack Downtown</span><span class="menu-price">0.9 mi</span></div>
+      <div class="menu-item"><span class="menu-name">7. Philz Coffee Mint Mojito</span><span class="menu-price">1.1 mi</span></div>
+    </div>
+  </div>
+
+  <script>
+    const sheet = document.getElementById('sheet');
+    let startY = 0;
+    let currentY = 300;
+
+    // Common AI Bug: Binding touch directly on container causes scroll-vs-drag conflict
+    sheet.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+    });
+
+    sheet.addEventListener('touchmove', (e) => {
+      const dy = e.touches[0].clientY - startY;
+      // Bug 1: No axis lock -> diagonal gestures shake sheet
+      // Bug 2: No scrollTop check -> scrolling list pulls sheet down!
+      if (dy > 0) {
+        currentY = Math.min(500, 300 + dy);
+        sheet.style.transform = `translateY(${currentY}px)`;
+      }
+    });
+
+    sheet.addEventListener('touchend', () => {
+      if (currentY > 380) sheet.style.transform = 'translateY(520px)'; // Collapsed
+      else sheet.style.transform = 'translateY(300px)'; // Mid
+    });
+  </script>
+</body>
+</html>

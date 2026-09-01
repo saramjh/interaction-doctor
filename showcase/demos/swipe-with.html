@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Swipe to Dismiss (With Skill - Optimized)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .header { padding: 12px 16px; background: #1e293b; border-bottom: 1px solid #334155; font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; }
+    .mail-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .mail-item-wrap { position: relative; overflow: hidden; background: #ef4444; border-bottom: 1px solid #1e293b; }
+    .delete-action { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 800; color: #fff; }
+    .mail-item {
+      background: #0f172a; padding: 16px; display: flex; flex-direction: column; gap: 4px;
+      touch-action: pan-y; will-change: transform; position: relative; z-index: 2;
+    }
+    .mail-sender { font-size: 14px; font-weight: 800; color: #60a5fa; }
+    .mail-subject { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span>✉️ iOS Mail / Gmail Swipe Action</span>
+    <span style="color: #10b981;">✅ 8px Axis Lock</span>
+  </div>
+  <div class="mail-list">
+    <div class="mail-item-wrap">
+      <div class="delete-action">🗑️ DELETE</div>
+      <div class="mail-item">
+        <div class="mail-sender">GitHub Security Alert</div>
+        <div class="mail-subject">Swipe left to dismiss this notification</div>
+      </div>
+    </div>
+    <div class="mail-item-wrap">
+      <div class="delete-action">🗑️ DELETE</div>
+      <div class="mail-item">
+        <div class="mail-sender">Linear App Sync</div>
+        <div class="mail-subject">Swipe left to archive task</div>
+      </div>
+    </div>
+    <div class="mail-item-wrap">
+      <div class="delete-action">🗑️ DELETE</div>
+      <div class="mail-item">
+        <div class="mail-sender">Stripe Payments</div>
+        <div class="mail-subject">New subscriber checkout completed</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.mail-item').forEach(row => {
+      let startX = 0, startY = 0, dx = 0, locked = false, isHorizontal = false;
+
+      row.addEventListener('pointerdown', (e) => {
+        startX = e.clientX; startY = e.clientY;
+        locked = false; isHorizontal = false;
+        row.style.transition = 'none';
+      });
+
+      row.addEventListener('pointermove', (e) => {
+        const currentDx = e.clientX - startX;
+        const currentDy = e.clientY - startY;
+
+        if (!locked && Math.hypot(currentDx, currentDy) > 8) {
+          locked = true;
+          isHorizontal = Math.abs(currentDx) > Math.abs(currentDy);
+        }
+
+        if (isHorizontal && currentDx < 0) {
+          dx = currentDx;
+          row.style.transform = `translateX(${dx}px)`;
+        }
+      });
+
+      const end = () => {
+        if (!isHorizontal) return;
+        row.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s';
+        if (dx < -120) {
+          row.style.transform = 'translateX(-100%)';
+          row.parentElement.style.height = '0px';
+          row.parentElement.style.transition = 'height 0.25s ease';
+        } else {
+          row.style.transform = 'translateX(0px)';
+        }
+        dx = 0; isHorizontal = false;
+      };
+      row.addEventListener('pointerup', end);
+      row.addEventListener('pointercancel', end);
+    });
+  </script>
+</body>
+</html>
