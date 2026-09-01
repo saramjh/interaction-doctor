@@ -1382,7 +1382,7 @@
     }
 
     // ========================================================
-    // RIGOROUS PHYSICAL INTERACTIVE SANDBOX ENGINE (ZERO JITTER)
+    // PHYSICAL INTERACTIVE SANDBOX ENGINE WITH INTENSE VISUAL CONSEQUENCES
     // ========================================================
     function renderSandbox(scenarioKey, mode) {
       sandboxStage.innerHTML = '';
@@ -1393,22 +1393,45 @@
             <span>🔘 Floating Action Button (FAB)</span>
             <span style="color: ${mode === 'with' ? '#10b981' : '#ef4444'}; font-family:'JetBrains Mono',monospace;">${mode === 'with' ? '8px Slop Active' : 'No Slop Guard'}</span>
           </div>
-          <div style="flex:1; padding: 16px; display:flex; flex-direction:column; gap:10px; overflow-y:auto;">
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #1</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #2</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #3</div>
-            <div id="fabResult" style="padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; display:none;"></div>
+          <div style="flex:1; padding: 16px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; position:relative;">
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 <strong>Document Note #1</strong><br>Meeting with Product Design team at 2PM</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 <strong>Document Note #2</strong><br>Touch physics contract audit and 8px slop verification</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 <strong>Document Note #3</strong><br>Review feedback on mobile bottomsheet nested scroll</div>
+            
+            <!-- Real Fullscreen Popup Modal on Accidental Click -->
+            <div id="fabActionModal" style="display:none; position:absolute; inset:10px; background:#0f172a; border:2px solid #ef4444; border-radius:14px; padding:16px; flex-direction:column; gap:10px; z-index:20; box-shadow:0 10px 30px rgba(0,0,0,0.8);">
+              <div style="font-weight:800; font-size:14px; color:#f87171; display:flex; justify-content:space-between; align-items:center;">
+                <span>🚨 [New Note Editor Dialog]</span>
+                <button id="btnCloseFabModal" style="background:#334155; border:none; color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Close</button>
+              </div>
+              <p style="font-size:11px; color:#cbd5e1; line-height:1.4;">
+                <strong style="color:#ef4444;">💥 Bug Happened!</strong> You just wanted to move the FAB button out of the way, but because there was no 8px slop guard, the browser falsely fired <code>onClick</code> upon drag release and opened this intrusive modal!
+              </p>
+              <textarea placeholder="Write note..." style="flex:1; background:#090e1a; border:1px solid #334155; border-radius:6px; color:#fff; padding:8px; font-size:11px; resize:none;"></textarea>
+            </div>
+
+            <div id="fabSuccessToast" style="display:none; padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; background:rgba(16, 185, 129, 0.2); border:1px solid #10b981; color:#34d399;">
+              ✨ 8px Slop Guard: Dragged cleanly without triggering the annoying popup modal!
+            </div>
           </div>
+
           <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.5); cursor:grab; touch-action:none; z-index:10; will-change:transform;">
             +
           </div>
         `;
 
         const fab = sandboxStage.querySelector('#fabBtn');
-        const res = sandboxStage.querySelector('#fabResult');
+        const modal = sandboxStage.querySelector('#fabActionModal');
+        const toastEl = sandboxStage.querySelector('#fabSuccessToast');
+        const btnClose = sandboxStage.querySelector('#btnCloseFabModal');
+
         let startX = 0, startY = 0;
         let curX = 0, curY = 0;
         let isDragging = false, moved = false;
+
+        btnClose.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
 
         fab.addEventListener('pointerdown', (e) => {
           startX = e.clientX;
@@ -1416,7 +1439,8 @@
           isDragging = true;
           moved = false;
           fab.setPointerCapture(e.pointerId);
-          res.style.display = 'none';
+          modal.style.display = 'none';
+          toastEl.style.display = 'none';
         });
 
         fab.addEventListener('pointermove', (e) => {
@@ -1425,13 +1449,11 @@
           const dy = e.clientY - startY;
 
           if (mode === 'with') {
-            // 8px Touch Slop Radial Gate
             if (Math.hypot(dx, dy) > 8) {
               moved = true;
               fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`;
             }
           } else {
-            // Naive 0px drag: any subpixel movement immediately displaces
             moved = true;
             fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`;
           }
@@ -1445,47 +1467,46 @@
           const dx = e.clientX - startX;
           const dy = e.clientY - startY;
 
-          res.style.display = 'block';
           if (mode === 'without') {
             curX += dx;
             curY += dy;
-            res.style.background = 'rgba(239, 68, 68, 0.2)';
-            res.style.border = '1px solid #ef4444';
-            res.style.color = '#f87171';
-            res.textContent = '💥 Bug: Accidental Click Action Triggered on Drag Release!';
+            // Bug: Drag release always triggers onClick modal
+            modal.style.display = 'flex';
           } else {
             if (moved) {
               curX += dx;
               curY += dy;
-              res.style.background = 'rgba(16, 185, 129, 0.2)';
-              res.style.border = '1px solid #10b981';
-              res.style.color = '#34d399';
-              res.textContent = '✨ 8px Slop Invariant: Repositioned cleanly without accidental click!';
+              toastEl.style.display = 'block';
             } else {
-              res.style.background = 'rgba(59, 130, 246, 0.2)';
-              res.style.border = '1px solid #3b82f6';
-              res.style.color = '#60a5fa';
-              res.textContent = '✅ Intentional Tap: New Item Created!';
+              modal.style.display = 'flex';
+              modal.querySelector('strong').style.color = '#34d399';
+              modal.querySelector('strong').textContent = '✅ Intentional Tap:';
+              modal.querySelector('p').innerHTML = 'You deliberately tapped the FAB within 8px slop, so the Note Editor opened intentionally!';
             }
           }
         });
       } else if (scenarioKey === 'p09') {
         sandboxStage.innerHTML = `
-          <div style="flex:1; padding:20px; display:flex; align-items:center; justify-content:center; position:relative; background:#000;">
+          <div style="flex:1; padding:20px; display:flex; align-items:center; justify-content:center; position:relative; background:#090e1a;">
             <div id="backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px;">
               <div id="modalBox" style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:18px; width:100%; max-width:280px; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
                 <div style="font-size:14px; font-weight:800; margin-bottom:8px;">Edit User Profile</div>
-                <div style="background:#0f172a; border:1px solid #334155; border-radius:6px; padding:8px; font-size:12px; color:#cbd5e1; user-select:text;">
-                  Drag or highlight this text across the modal boundary...
+                <div style="font-size:11px; color:#94a3b8; margin-bottom:6px;">Try highlighting/selecting this token string:</div>
+                <div id="selectableText" style="background:#0f172a; border:1px solid #334155; border-radius:6px; padding:8px; font-size:12px; color:#60a5fa; user-select:text; -webkit-user-select:text; font-family:'JetBrains Mono',monospace; cursor:text;">
+                  sk_live_94810a7b_secret_key_prod
                 </div>
-                <div style="margin-top:12px; display:flex; justify-content:flex-end; gap:8px;">
+                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:10px; color:#94a3b8;">Drag selection across boundary</span>
                   <button style="padding:6px 12px; border-radius:6px; font-size:12px; background:#3b82f6; border:none; color:#fff;">Save</button>
                 </div>
               </div>
             </div>
-            <div id="modalClosedNotice" style="display:none; text-align:center; font-size:13px; font-weight:700; color:#ef4444;">
-              💥 Modal Accidentally Closed by Text Drag Leak!
-              <div style="margin-top:8px;"><button id="btnReopen" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#334155; color:#fff; border:none; cursor:pointer;">Reopen Modal</button></div>
+            <div id="modalClosedNotice" style="display:none; text-align:center; font-size:13px; font-weight:700; color:#ef4444; padding:20px; background:#1e293b; border:1px solid #ef4444; border-radius:12px;">
+              💥 [DISASTER] Modal Abruptly Closed & Form Input Lost!
+              <p style="font-size:11px; font-weight:400; color:#cbd5e1; margin-top:6px;">
+                You were selecting text, and as your mouse crossed the dialog border, releasing pointer on the backdrop caused naive <code>onClick</code> to kill the modal!
+              </p>
+              <div style="margin-top:12px;"><button id="btnReopen" style="padding:6px 14px; border-radius:6px; font-size:12px; background:#3b82f6; color:#fff; border:none; cursor:pointer;">Reopen Form</button></div>
             </div>
           </div>
         `;
@@ -1508,8 +1529,9 @@
             if (downTarget === backdrop && e.target === backdrop) {
               backdrop.style.display = 'none';
               notice.style.display = 'block';
+              notice.style.borderColor = '#10b981';
               notice.style.color = '#10b981';
-              notice.innerHTML = '✅ Dual Target Gate: Modal Closed Intentionally by Direct Backdrop Click!<div style="margin-top:8px;"><button id="btnReopen" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#334155; color:#fff; border:none; cursor:pointer;">Reopen Modal</button></div>';
+              notice.innerHTML = '✅ Dual Target Gate: Modal Closed Intentionally by Direct Backdrop Click!<div style="margin-top:12px;"><button id="btnReopen" style="padding:6px 14px; border-radius:6px; font-size:12px; background:#3b82f6; color:#fff; border:none; cursor:pointer;">Reopen Form</button></div>';
             }
           }
         });
@@ -1526,74 +1548,138 @@
             <span>🗺️ Mobility Bottom Sheet</span>
             <span style="color:${mode==='with'?'#10b981':'#ef4444'}">${mode==='with'?'Bound Hand-off OK':'Scroll Jitter Bug'}</span>
           </div>
-          <div style="flex:1; background:radial-gradient(#1e293b 1px, transparent 1px); background-size:16px 16px; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:12px;">
-            Map Viewport Background
+          <div style="flex:1; background:radial-gradient(#1e293b 1px, transparent 1px); background-size:16px 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b; font-size:12px; position:relative; overflow:hidden;">
+            <span>Map Viewport (San Francisco)</span>
+            <div id="sheetCollapsedAlert" style="display:none; position:absolute; top:20px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:8px 14px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+              💥 Sheet Accidentally Collapsed while scrolling list!
+            </div>
           </div>
-          <div id="sheetBox" style="height:260px; background:#fff; color:#0f172a; border-top-left-radius:18px; border-top-right-radius:18px; display:flex; flex-direction:column; box-shadow:0 -10px 25px rgba(0,0,0,0.5); will-change:transform; touch-action:none;">
-            <div style="padding:8px; display:flex; justify-content:center;"><div style="width:36px; height:4px; background:#cbd5e1; border-radius:2px;"></div></div>
-            <div style="padding:0 14px 8px; font-weight:800; font-size:14px;">Nearby Places (24)</div>
+          <div id="sheetBox" style="height:260px; background:#fff; color:#0f172a; border-top-left-radius:18px; border-top-right-radius:18px; display:flex; flex-direction:column; box-shadow:0 -10px 25px rgba(0,0,0,0.5); will-change:transform; touch-action:none; transition:transform 0.2s;">
+            <div id="sheetHandle" style="padding:8px; display:flex; justify-content:center; cursor:grab;"><div style="width:36px; height:4px; background:#cbd5e1; border-radius:2px;"></div></div>
+            <div style="padding:0 14px 8px; font-weight:800; font-size:14px; display:flex; justify-content:space-between;">
+              <span>Nearby Places (24)</span>
+              <span style="font-size:11px; color:#64748b;">Scroll list below ↓</span>
+            </div>
             <div id="sheetList" style="flex:1; overflow-y:auto; padding:0 14px 14px; font-size:12px; display:flex; flex-direction:column; gap:8px; touch-action:pan-y;">
-              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">1. Blue Bottle Coffee</div>
-              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">2. Tartine Bakery</div>
-              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">3. Super Duper Burgers</div>
-              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">4. Shake Shack</div>
-              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">5. Sweetgreen</div>
-              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">6. Philz Coffee</div>
+              <div style="padding:10px; background:#f1f5f9; border-radius:6px; font-weight:600;">1. Blue Bottle Coffee (4.8 ★)</div>
+              <div style="padding:10px; background:#f1f5f9; border-radius:6px; font-weight:600;">2. Tartine Bakery (4.9 ★)</div>
+              <div style="padding:10px; background:#f1f5f9; border-radius:6px; font-weight:600;">3. Super Duper Burgers (4.7 ★)</div>
+              <div style="padding:10px; background:#f1f5f9; border-radius:6px; font-weight:600;">4. Shake Shack (4.5 ★)</div>
+              <div style="padding:10px; background:#f1f5f9; border-radius:6px; font-weight:600;">5. Sweetgreen (4.6 ★)</div>
+              <div style="padding:10px; background:#f1f5f9; border-radius:6px; font-weight:600;">6. Philz Coffee (4.8 ★)</div>
             </div>
           </div>
         `;
+
+        const sheet = sandboxStage.querySelector('#sheetBox');
+        const list = sandboxStage.querySelector('#sheetList');
+        const alertBox = sandboxStage.querySelector('#sheetCollapsedAlert');
+
+        list.addEventListener('scroll', () => {
+          if (mode === 'without') {
+            // In baseline, scrolling the list erroneously triggers sheet collapse
+            sheet.style.transform = 'translateY(180px)';
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+              sheet.style.transform = 'none';
+              alertBox.style.display = 'none';
+            }, 2500);
+          }
+        });
       } else if (scenarioKey === 'p18') {
         sandboxStage.innerHTML = `
           <div style="padding: 14px 16px; font-weight: 700; border-bottom: 1px solid #334155; font-size:13px;">
             ⚖️ Price Range Filter ($0 - $500)
           </div>
           <div style="flex:1; padding: 30px 20px; display:flex; flex-direction:column; gap:20px;">
-            <div id="priceLabel" style="font-size:14px; font-weight:800; color:#60a5fa; text-align:center;">$0 — $500</div>
+            <div id="priceLabel" style="font-size:16px; font-weight:800; color:#60a5fa; text-align:center;">$0 — $500</div>
             <div style="position:relative; height:8px; background:#334155; border-radius:4px; margin-top:20px;">
-              <div id="minThumb" style="position:absolute; left:0%; top:-10px; width:28px; height:28px; background:#3b82f6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:2; touch-action:none;"></div>
-              <div id="maxThumb" style="position:absolute; left:80%; top:-10px; width:28px; height:28px; background:#8b5cf6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:1; touch-action:none;"></div>
+              <div id="minThumb" style="position:absolute; left:0%; top:-10px; width:28px; height:28px; background:#3b82f6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:1; touch-action:none; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#fff;">Min</div>
+              <div id="maxThumb" style="position:absolute; left:80%; top:-10px; width:28px; height:28px; background:#8b5cf6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:2; touch-action:none; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#fff;">Max</div>
             </div>
-            <div id="sliderResult" style="padding:10px; background:#1e293b; border-radius:8px; font-size:11px; color:#cbd5e1; line-height:1.4;">
-              ${mode === 'without' ? '❌ Baseline: When Min meets Max, the bottom thumb gets trapped underneath!' : '✅ Optimized: Active pointer dynamically elevates z-index, allowing effortless thumb uncrossing.'}
+            <div id="sliderResult" style="padding:12px; background:#1e293b; border-radius:8px; font-size:11px; color:#cbd5e1; line-height:1.5;">
+              ${mode === 'without' ? '❌ <strong>Baseline Defect</strong>: Drag Min all the way to 80% to meet Max. The bottom Min thumb becomes permanently unclickable and locked under Max!' : '✅ <strong>Optimized Physics</strong>: Active pointer dynamically elevates z-index (z:10), allowing Min and Max thumbs to effortlessly cross and uncross without getting trapped!'}
             </div>
           </div>
         `;
         const minT = sandboxStage.querySelector('#minThumb');
         const maxT = sandboxStage.querySelector('#maxThumb');
-        if (mode === 'with') {
-          minT.addEventListener('pointerdown', () => { minT.style.zIndex = '10'; maxT.style.zIndex = '1'; });
-          maxT.addEventListener('pointerdown', () => { maxT.style.zIndex = '10'; minT.style.zIndex = '1'; });
-        }
+        const label = sandboxStage.querySelector('#priceLabel');
+
+        const setupThumb = (thumb, isMin) => {
+          let sX = 0, pL = isMin ? 0 : 80;
+          thumb.addEventListener('pointerdown', (e) => {
+            sX = e.clientX;
+            thumb.setPointerCapture(e.pointerId);
+            if (mode === 'with') {
+              thumb.style.zIndex = '10';
+              (isMin ? maxT : minT).style.zIndex = '1';
+            }
+          });
+          thumb.addEventListener('pointermove', (e) => {
+            if (!thumb.hasPointerCapture(e.pointerId)) return;
+            const dx = e.clientX - sX;
+            let n = pL + (dx / 2.5);
+            n = Math.max(0, Math.min(90, n));
+            thumb.style.left = `${n}%`;
+            label.textContent = isMin ? `$${Math.round(n * 5)} — $500` : `$0 — $${Math.round(n * 5)}`;
+          });
+          thumb.addEventListener('pointerup', (e) => {
+            if (!thumb.hasPointerCapture(e.pointerId)) return;
+            thumb.releasePointerCapture(e.pointerId);
+            pL = parseFloat(thumb.style.left) || pL;
+          });
+        };
+        setupThumb(minT, true);
+        setupThumb(maxT, false);
       } else if (scenarioKey === 'p28') {
         sandboxStage.innerHTML = `
           <div style="padding: 12px 16px; background:#1e293b; border-bottom:1px solid #334155; font-size:13px; font-weight:700; display:flex; justify-content:space-between;">
             <span>👆 Context Card Press</span>
             <span style="color:${mode==='with'?'#10b981':'#ef4444'}">${mode==='with'?'Highlight Suppressed':'Blue Highlight Glitch'}</span>
           </div>
-          <div style="flex:1; padding:20px; display:flex; flex-direction:column; gap:12px; justify-content:center;">
-            <div id="pressCard" style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:18px; text-align:center; font-size:13px; cursor:pointer; user-select:${mode==='with'?'none':'text'}; -webkit-user-select:${mode==='with'?'none':'text'}; transition:transform 0.15s; touch-action:manipulation;">
-              📱 Long-Press this card for 350ms
+          <div style="flex:1; padding:20px; display:flex; flex-direction:column; gap:12px; justify-content:center; position:relative;">
+            <div id="pressCard" style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:20px; text-align:center; font-size:13px; cursor:pointer; user-select:${mode==='with'?'none':'text'}; -webkit-user-select:${mode==='with'?'none':'text'}; transition:transform 0.15s; touch-action:manipulation;">
+              📱 Long-Press this message for 350ms
+              <div style="font-size:11px; color:#94a3b8; margin-top:4px;">"Hey, can you review the pull request?"</div>
             </div>
-            <div id="cardStatus" style="text-align:center; font-size:12px; font-weight:700; color:#60a5fa; display:none;"></div>
+            
+            <div id="fakeBlueHighlight" style="display:none; position:absolute; top:45%; left:30px; right:30px; background:rgba(59, 130, 246, 0.4); border:1px solid #3b82f6; border-radius:4px; padding:4px; font-size:11px; color:#fff; text-align:center; pointer-events:none;">
+              [OS Native Blue Text Selection Active: Copy | Select All | Share]
+            </div>
+
+            <div id="cardStatus" style="text-align:center; font-size:12px; font-weight:700; color:#60a5fa; display:none; padding:10px; background:#0f172a; border-radius:8px;"></div>
           </div>
         `;
         const card = sandboxStage.querySelector('#pressCard');
         const st = sandboxStage.querySelector('#cardStatus');
+        const blueH = sandboxStage.querySelector('#fakeBlueHighlight');
         let t = null, startX=0, startY=0;
+
         card.addEventListener('pointerdown', (e) => {
           startX = e.clientX; startY = e.clientY;
           card.style.transform = 'scale(0.96)';
           t = setTimeout(() => {
             st.style.display = 'block';
-            st.textContent = mode === 'with' ? '✨ Context Action Triggered with Zero Blue Text Artifacts!' : '💥 Bug: OS Blue Text Selection Block Triggered Simultaneously!';
+            if (mode === 'without') {
+              blueH.style.display = 'block';
+              st.style.color = '#f87171';
+              st.innerHTML = '💥 <strong>Glitch!</strong> Native blue text selection callout collided with your custom long-press context menu!';
+            } else {
+              blueH.style.display = 'none';
+              st.style.color = '#34d399';
+              st.innerHTML = '✨ <strong>Clean Haptic Context!</strong> 0ms scale compression without ugly blue selection highlights!';
+            }
           }, 350);
         });
+
         card.addEventListener('pointermove', (e) => {
           if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
             clearTimeout(t);
             card.style.transform = 'none';
           }
         });
+
         const end = () => { card.style.transform = 'none'; clearTimeout(t); };
         card.addEventListener('pointerup', end);
         card.addEventListener('pointercancel', end);
