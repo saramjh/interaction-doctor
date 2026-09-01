@@ -993,7 +993,7 @@
   <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    // Master 36 Cases Dataset with Full Native Translations for EN, KO, JA, ZH, ES
+    // Master 36 Production Cases Definitions
     const rawCases = [
       { id: "P01", el: "Messenger Input", con: "VisualViewport Dynamic Sync", def: "Virtual Keyboard Overlap", tag: "📱 Virtual Keyboard & Linebreak", kw: "keyboard visualviewport chat input enter ios android p01", env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Virtual Keyboard" }] },
       { id: "P02", el: "Bottom Sheet", con: "Dynamic Boundary Hand-off", def: "Scroll Contention Collapse", tag: "🗺️ Bottom Sheet & Nested Scroll", kw: "bottomsheet nested scroll modal snap maps uber p02", env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }] },
@@ -1035,36 +1035,15 @@
 
     const translations = {
       en: {
-        navDiag: "Diagnostic & Solution Lab",
-        navPres: "Beginner Skill Setup Guide",
-        facetAll: "🌟 All (36)",
-        facetElement: "🧩 UI Element",
-        facetConcept: "📐 Physics Concept",
-        facetDefect: "🚨 Defect Class",
+        navDiag: "Diagnostic & Solution Lab", navPres: "Beginner Skill Setup Guide", facetAll: "🌟 All (36)", facetElement: "🧩 UI Element", facetConcept: "📐 Physics Concept", facetDefect: "🚨 Defect Class",
         searchPlaceholder: "Search 36 defects with multi-keywords (e.g. 'keyboard ios', 'fab drag click', 'bottomsheet scroll')...",
-        modeWithout: "❌ Baseline (Defects)",
-        modeWith: "🟢 Optimized (Physics)",
-        diagTitle: "🚨 Baseline Defect Analysis & Root Cause",
-        treatTitle: "🩺 Physical Invariants & SWE Architectural Fix",
-        solTitle: "💊 Production Solution Prescriptions",
-        solTabPrompt: "SWE Prompt",
-        solTabCode: "Code Recipe",
-        solTabPhysics: "Physics Contract",
-        missionHeading: "Action Test",
-        copyBtn: "Copy",
-        toast: "✅ Copied to clipboard!",
-        presBadge: "🚀 3-Minute Junior & Vibe-Coder Quickstart",
-        presTitle: "How to Install & Use interaction-doctor",
-        presSubtitle: "Never write manual gesture math again. Inject 16-device hardware touch physics into your AI coding assistant in 3 simple steps.",
-        step1Title: "For Claude Code / Antigravity",
-        step1Desc: "Open your terminal in your project root directory and run the official universal installer:",
-        step1Tip: "💡 Select your agent (Claude Code / Antigravity), press Enter, and you are ready!",
-        step2Title: "For ChatGPT / Claude Web / Gemini",
-        step2Desc: "No terminal or CLI required! Copy the complete lossless standalone physics prompt:",
-        step2Tip: "💡 Paste this directly into Custom GPTs instructions or your first chat prompt.",
-        step3Title: "Zero-Config Automatic Execution",
-        step3Desc: "Once installed, you don't need to learn complex physics formulas. Just ask your AI normally:",
-        step3Tip: "✨ The AI automatically loads the skill and generates bug-free touch code with 8px axis lock & 0ms viewport sync!",
+        modeWithout: "❌ Baseline (Defects)", modeWith: "🟢 Optimized (Physics)",
+        diagTitle: "🚨 Baseline Defect Analysis & Root Cause", treatTitle: "🩺 Physical Invariants & SWE Architectural Fix", solTitle: "💊 Production Solution Prescriptions",
+        solTabPrompt: "SWE Prompt", solTabCode: "Code Recipe", solTabPhysics: "Physics Contract", missionHeading: "Action Test", copyBtn: "Copy", toast: "✅ Copied to clipboard!",
+        presBadge: "🚀 3-Minute Junior & Vibe-Coder Quickstart", presTitle: "How to Install & Use interaction-doctor", presSubtitle: "Never write manual gesture math again. Inject 16-device hardware touch physics into your AI coding assistant in 3 simple steps.",
+        step1Title: "For Claude Code / Antigravity", step1Desc: "Open your terminal in your project root directory and run the official universal installer:", step1Tip: "💡 Select your agent (Claude Code / Antigravity), press Enter, and you are ready!",
+        step2Title: "For ChatGPT / Claude Web / Gemini", step2Desc: "No terminal or CLI required! Copy the complete lossless standalone physics prompt:", step2Tip: "💡 Paste this directly into Custom GPTs instructions or your first chat prompt.",
+        step3Title: "Zero-Config Automatic Execution", step3Desc: "Once installed, you don't need to learn complex physics formulas. Just ask your AI normally:", step3Tip: "✨ The AI automatically loads the skill and generates bug-free touch code with 8px axis lock & 0ms viewport sync!",
         verifyTitle: "✅ How to Verify That Your AI is Using the Skill",
         verifyList: [
           "Check for 8px Axis Lock: Look for Math.hypot(dx, dy) > 8 in your AI's touch event handlers.",
@@ -1073,36 +1052,15 @@
         ]
       },
       ko: {
-        navDiag: "인터랙션 결함 진단 & 솔루션 랩",
-        navPres: "초보자 & 바이브코더 스킬 설치 가이드",
-        facetAll: "🌟 전체 (36)",
-        facetElement: "🧩 UI 컴포넌트별",
-        facetConcept: "📐 물리 개념별",
-        facetDefect: "🚨 결함 증상별",
+        navDiag: "인터랙션 결함 진단 & 솔루션 랩", navPres: "초보자 & 바이브코더 스킬 설치 가이드", facetAll: "🌟 전체 (36)", facetElement: "🧩 UI 컴포넌트별", facetConcept: "📐 물리 개념별", facetDefect: "🚨 결함 증상별",
         searchPlaceholder: "다중 키워드로 36개 결함 검색 (예: '키보드 ios', '플로팅버튼 클릭', '바텀시트 스크롤')...",
-        modeWithout: "❌ 기본 AI 코드 (결함 발생)",
-        modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
-        diagTitle: "🚨 기본 결함 원인 및 브라우저 이벤트 메커니즘",
-        treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선",
-        solTitle: "💊 프로덕션 솔루션 처방전",
-        solTabPrompt: "SWE 프롬프트",
-        solTabCode: "코드 레시피",
-        solTabPhysics: "물리 계약 명세",
-        missionHeading: "조작 미션",
-        copyBtn: "복사",
-        toast: "✅ 클립보드에 복사되었습니다!",
-        presBadge: "🚀 3분 완성 주니어 & 바이브코더 설치 가이드",
-        presTitle: "interaction-doctor 스킬 설치 및 사용법",
-        presSubtitle: "더 이상 복잡한 제스처 수식을 직접 짜지 마세요. 16대 하드웨어 실측 물리 법칙을 AI 에이전트에 주입하는 3단계 가이드입니다.",
-        step1Title: "Claude Code / Antigravity 사용자",
-        step1Desc: "프로젝트 터미널을 열고 공식 원클릭 설치 명령어를 실행하세요:",
-        step1Tip: "💡 에이전트 목록에서 Claude Code / Antigravity를 선택하고 Enter를 누르면 설치 끝!",
-        step2Title: "웹 챗봇 (ChatGPT / Claude Web / Gemini) 사용자",
-        step2Desc: "터미널이나 설치 도구 없이, 완전체 단일 프롬프트를 1클릭 복사하세요:",
-        step2Tip: "💡 Custom GPTs의 Instructions나 대화창 첫 프롬프트에 그대로 붙여넣으면 즉시 발동됩니다.",
-        step3Title: "별도 설정 없는 무설정 자동 발동",
-        step3Desc: "설치 후에는 물리 수식을 외울 필요 없이, 평소처럼 AI에게 UI 구현을 요청하세요:",
-        step3Tip: "✨ AI가 자동으로 스킬을 호출하여 8px 축 잠금과 0ms 뷰포트 동기화 코드를 알아서 작성합니다!",
+        modeWithout: "❌ 기본 AI 코드 (결함 발생)", modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
+        diagTitle: "🚨 기본 결함 원인 및 브라우저 이벤트 메커니즘", treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선", solTitle: "💊 프로덕션 솔루션 처방전",
+        solTabPrompt: "SWE 프롬프트", solTabCode: "코드 레시피", solTabPhysics: "물리 계약 명세", missionHeading: "조작 미션", copyBtn: "복사", toast: "✅ 클립보드에 복사되었습니다!",
+        presBadge: "🚀 3분 완성 주니어 & 바이브코더 설치 가이드", presTitle: "interaction-doctor 스킬 설치 및 사용법", presSubtitle: "더 이상 복잡한 제스처 수식을 직접 짜지 마세요. 16대 하드웨어 실측 물리 법칙을 AI 에이전트에 주입하는 3단계 가이드입니다.",
+        step1Title: "Claude Code / Antigravity 사용자", step1Desc: "프로젝트 터미널을 열고 공식 원클릭 설치 명령어를 실행하세요:", step1Tip: "💡 에이전트 목록에서 Claude Code / Antigravity를 선택하고 Enter를 누르면 설치 끝!",
+        step2Title: "웹 챗봇 (ChatGPT / Claude Web / Gemini) 사용자", step2Desc: "터미널이나 설치 도구 없이, 완전체 단일 프롬프트를 1클릭 복사하세요:", step2Tip: "💡 Custom GPTs의 Instructions나 대화창 첫 프롬프트에 그대로 붙여넣으면 즉시 발동됩니다.",
+        step3Title: "별도 설정 없는 무설정 자동 발동", step3Desc: "설치 후에는 물리 수식을 외울 필요 없이, 평소처럼 AI에게 UI 구현을 요청하세요:", step3Tip: "✨ AI가 자동으로 스킬을 호출하여 8px 축 잠금과 0ms 뷰포트 동기화 코드를 알아서 작성합니다!",
         verifyTitle: "✅ 내 AI가 스킬을 제대로 쓰고 있는지 확인하는 법",
         verifyList: [
           "8px 직교 축 잠금 확인: AI가 짠 코드에 Math.hypot(dx, dy) > 8 로직이 들어있는지 확인하세요.",
@@ -1111,36 +1069,15 @@
         ]
       },
       ja: {
-        navDiag: "インタラクション欠陥診断 & ソリューションラボ",
-        navPres: "初心者・バイブコーダー向け導入ガイド",
-        facetAll: "🌟 全体 (36)",
-        facetElement: "🧩 UIコンポーネント別",
-        facetConcept: "📐 物理概念別",
-        facetDefect: "🚨 欠陥症状別",
+        navDiag: "インタラクション欠陥診断 & ソリューションラボ", navPres: "初心者・バイブコーダー向け導入ガイド", facetAll: "🌟 全体 (36)", facetElement: "🧩 UIコンポーネント別", facetConcept: "📐 物理概念別", facetDefect: "🚨 欠陥症状別",
         searchPlaceholder: "複数キーワードで36の欠陥を検索（例: 'keyboard ios', 'fab drag', 'bottomsheet scroll'）...",
-        modeWithout: "❌ ベースラインAI（欠陥発生）",
-        modeWith: "🟢 最適化改善（物理法則適用）",
-        diagTitle: "🚨 ベースライン欠陥分析と根本原因",
-        treatTitle: "🩺 物理法則とアーキテクチャ最適化",
-        solTitle: "💊 プロダクション ソリューション処方箋",
-        solTabPrompt: "SWE プロンプト",
-        solTabCode: "コードレシピ",
-        solTabPhysics: "物理契約仕様",
-        missionHeading: "操作ミッション",
-        copyBtn: "コピー",
-        toast: "✅ クリップボードにコピーしました！",
-        presBadge: "🚀 3分で完了する導入ガイド",
-        presTitle: "interaction-doctor のインストールと使い方",
-        presSubtitle: "複雑なジェスチャ計算を自作する必要はありません。16台の実機計測物理法則をAIに注入します。",
-        step1Title: "Claude Code / Antigravity 向け",
-        step1Desc: "プロジェクトのターミナルで以下のコマンドを実行してください:",
-        step1Tip: "💡 エージェントを選択してEnterを押すだけで完了します！",
-        step2Title: "ChatGPT / Claude Web 向け",
-        step2Desc: "CLI不要！以下のスタンドアロンプロンプトをワンクリックコピー:",
-        step2Tip: "💡 Custom GPTs の指示文や最初のプロンプトに貼り付けるだけです。",
-        step3Title: "設定不要の自動適用",
-        step3Desc: "導入後は普段通りAIにUI実装を依頼するだけです:",
-        step3Tip: "✨ AIが自動的にスキルを読み込み、8px軸ロックや0msビューポート同期コードを生成します！",
+        modeWithout: "❌ ベースラインAI（欠陥発生）", modeWith: "🟢 最適化改善（物理法則適用）",
+        diagTitle: "🚨 ベースライン欠陥分析と根本原因", treatTitle: "🩺 物理法則とアーキテクチャ最適化", solTitle: "💊 プロダクション ソリューション処方箋",
+        solTabPrompt: "SWE プロンプト", solTabCode: "コードレシピ", solTabPhysics: "物理契約仕様", missionHeading: "操作ミッション", copyBtn: "コピー", toast: "✅ クリップボードにコピーしました！",
+        presBadge: "🚀 3分で完了する導入ガイド", presTitle: "interaction-doctor のインストールと使い方", presSubtitle: "複雑なジェスチャ計算を自作する必要はありません。16台の実機計測物理法則をAIに注入します。",
+        step1Title: "Claude Code / Antigravity 向け", step1Desc: "プロジェクトのターミナルで以下のコマンドを実行してください:", step1Tip: "💡 エージェントを選択してEnterを押すだけで完了します！",
+        step2Title: "ChatGPT / Claude Web 向け", step2Desc: "CLI不要！以下のスタンドアロンプロンプトをワンクリックコピー:", step2Tip: "💡 Custom GPTs の指示文や最初のプロンプトに貼り付けるだけです。",
+        step3Title: "設定不要の自動適用", step3Desc: "導入後は普段通りAIにUI実装を依頼するだけです:", step3Tip: "✨ AIが自動的にスキルを読み込み、8px軸ロックや0msビューポート同期コードを生成します！",
         verifyTitle: "✅ スキルが正しく適用されているか確認する方法",
         verifyList: [
           "8px軸ロックの確認: 生成コード内に Math.hypot(dx, dy) > 8 が含まれているか確認。",
@@ -1149,36 +1086,15 @@
         ]
       },
       zh: {
-        navDiag: "交互缺陷诊断与解决方案工作台",
-        navPres: "初学者与快速开发入门安装指南",
-        facetAll: "🌟 全部 (36)",
-        facetElement: "🧩 UI 组件分类",
-        facetConcept: "📐 物理概念分类",
-        facetDefect: "🚨 缺陷症状分类",
+        navDiag: "交互缺陷诊断与解决方案工作台", navPres: "初学者与快速开发入门安装指南", facetAll: "🌟 全部 (36)", facetElement: "🧩 UI 组件分类", facetConcept: "📐 物理概念分类", facetDefect: "🚨 缺陷症状分类",
         searchPlaceholder: "支持多关键词组合搜索（如：'keyboard ios', 'fab drag', 'bottomsheet'）...",
-        modeWithout: "❌ 基线 AI 代码 (缺陷发生)",
-        modeWith: "🟢 物理优化改进 (物理定律应用)",
-        diagTitle: "🚨 基线缺陷分析与底层根本原因",
-        treatTitle: "🩺 应用物理定律与软件工程修复",
-        solTitle: "💊 生产级解决方案处方",
-        solTabPrompt: "SWE 提示词",
-        solTabCode: "代码配方",
-        solTabPhysics: "物理契约规范",
-        missionHeading: "操作测试",
-        copyBtn: "复制",
-        toast: "✅ 已复制到剪贴板！",
-        presBadge: "🚀 3 分钟快速入门安装指南",
-        presTitle: "如何安装与使用 interaction-doctor",
-        presSubtitle: "无需手写复杂的手势数学公式。一键将 16 台真机实测物理法则注入您的 AI 编程助手。",
-        step1Title: "适用于 Claude Code / Antigravity",
-        step1Desc: "在项目根目录的终端中运行官方安装命令：",
-        step1Tip: "💡 选择您的 Agent 并按回车即可完成安装！",
-        step2Title: "适用于 ChatGPT / Claude Web / Gemini",
-        step2Desc: "无需终端或命令行！一键复制独立无损提示词：",
-        step2Tip: "💡 直接粘贴至 Custom GPTs 的 Instructions 或第一条对话中。",
-        step3Title: "零配置全自动生效",
-        step3Desc: "安装完成后，正常向 AI 提出 UI 开发需求即可：",
-        step3Tip: "✨ AI 将自动加载该技能，生成具备 8px 轴锁定与 0ms 视口同步的原生级触控代码！",
+        modeWithout: "❌ 基线 AI 代码 (缺陷发生)", modeWith: "🟢 物理优化改进 (物理定律应用)",
+        diagTitle: "🚨 基线缺陷分析与底层根本原因", treatTitle: "🩺 应用物理定律与软件工程修复", solTitle: "💊 生产级解决方案处方",
+        solTabPrompt: "SWE 提示词", solTabCode: "代码配方", solTabPhysics: "物理契约规范", missionHeading: "操作测试", copyBtn: "复制", toast: "✅ 已复制到剪贴板！",
+        presBadge: "🚀 3 分钟快速入门安装指南", presTitle: "如何安装与使用 interaction-doctor", presSubtitle: "无需手写复杂的手势数学公式。一键将 16 台真机实测物理法则注入您的 AI 编程助手。",
+        step1Title: "适用于 Claude Code / Antigravity", step1Desc: "在项目根目录的终端中运行官方安装命令：", step1Tip: "💡 选择您的 Agent 并按回车即可完成安装！",
+        step2Title: "适用于 ChatGPT / Claude Web / Gemini", step2Desc: "无需终端或命令行！一键复制独立无损提示词：", step2Tip: "💡 直接粘贴至 Custom GPTs 的 Instructions 或第一条对话中。",
+        step3Title: "零配置全自动生效", step3Desc: "安装完成后，正常向 AI 提出 UI 开发需求即可：", step3Tip: "✨ AI 将自动加载该技能，生成具备 8px 轴锁定与 0ms 视口同步的原生级触控代码！",
         verifyTitle: "✅ 如何验证 AI 正在正确使用该技能",
         verifyList: [
           "检查 8px 轴锁定：在 AI 生成的代码中查找 Math.hypot(dx, dy) > 8 逻辑。",
@@ -1187,36 +1103,15 @@
         ]
       },
       es: {
-        navDiag: "Laboratorio de Diagnóstico de Interacciones",
-        navPres: "Guía de Instalación Rápida para Principiantes",
-        facetAll: "🌟 Todo (36)",
-        facetElement: "🧩 Por Elemento UI",
-        facetConcept: "📐 Por Concepto Físico",
-        facetDefect: "🚨 Por Clase de Defecto",
+        navDiag: "Laboratorio de Diagnóstico de Interacciones", navPres: "Guía de Instalación Rápida para Principiantes", facetAll: "🌟 Todo (36)", facetElement: "🧩 Por Elemento UI", facetConcept: "📐 Por Concepto Físico", facetDefect: "🚨 Por Clase de Defecto",
         searchPlaceholder: "Buscar con palabras múltiples (ej: 'keyboard ios', 'fab drag', 'bottomsheet')...",
-        modeWithout: "❌ Código Base (Defectos)",
-        modeWith: "🟢 Optimizado (Física Aplicada)",
-        diagTitle: "🚨 Análisis de Defectos Base y Causa Raíz",
-        treatTitle: "🩺 Invariantes Físicos y Corrección SWE",
-        solTitle: "💊 Prescripción de Soluciones de Producción",
-        solTabPrompt: "Prompt SWE",
-        solTabCode: "Receta de Código",
-        solTabPhysics: "Contrato Físico",
-        missionHeading: "Misión de Prueba",
-        copyBtn: "Copiar",
-        toast: "✅ ¡Copiado al portapapeles!",
-        presBadge: "🚀 Guía Rápida de 3 Minutos",
-        presTitle: "Cómo Instalar y Usar interaction-doctor",
-        presSubtitle: "Nunca más escriba matemáticas de gestos a mano. Inyecte física táctil de 16 dispositivos en su asistente de IA.",
-        step1Title: "Para Claude Code / Antigravity",
-        step1Desc: "Abra la terminal en el directorio raíz de su proyecto y ejecute:",
-        step1Tip: "💡 Seleccione su agente, presione Enter y ¡listo!",
-        step2Title: "Para ChatGPT / Claude Web / Gemini",
-        step2Desc: "¡Sin terminal! Copie el prompt físico independiente completo:",
-        step2Tip: "💡 Péguelo directamente en las instrucciones de Custom GPTs o en su chat.",
-        step3Title: "Ejecución Automática Sin Configuración",
-        step3Desc: "Una vez instalado, solicite interfaces a su IA como de costumbre:",
-        step3Tip: "✨ La IA cargará la habilidad automáticamente y generará código táctil nativo sin errores.",
+        modeWithout: "❌ Código Base (Defectos)", modeWith: "🟢 Optimizado (Física Aplicada)",
+        diagTitle: "🚨 Análisis de Defectos Base y Causa Raíz", treatTitle: "🩺 Invariantes Físicos y Corrección SWE", solTitle: "💊 Prescripción de Soluciones de Producción",
+        solTabPrompt: "Prompt SWE", solTabCode: "Receta de Código", solTabPhysics: "Contrato Físico", missionHeading: "Misión de Prueba", copyBtn: "Copiar", toast: "✅ ¡Copiado al portapapeles!",
+        presBadge: "🚀 Guía Rápida de 3 Minutos", presTitle: "Cómo Instalar y Usar interaction-doctor", presSubtitle: "Nunca más escriba matemáticas de gestos a mano. Inyecte física táctil de 16 dispositivos en su asistente de IA.",
+        step1Title: "Para Claude Code / Antigravity", step1Desc: "Abra la terminal en el directorio raíz de su proyecto y ejecute:", step1Tip: "💡 Seleccione su agente, presione Enter y ¡listo!",
+        step2Title: "Para ChatGPT / Claude Web / Gemini", step2Desc: "¡Sin terminal! Copie el prompt físico independiente completo:", step2Tip: "💡 Péguelo directamente en las instrucciones de Custom GPTs o en su chat.",
+        step3Title: "Ejecución Automática Sin Configuración", step3Desc: "Una vez instalado, solicite interfaces a su IA como de costumbre:", step3Tip: "✨ La IA cargará la habilidad automáticamente y generará código táctil nativo sin errores.",
         verifyTitle: "✅ Cómo Verificar que su IA está Usando la Habilidad",
         verifyList: [
           "Verifique el Bloqueo de Eje de 8px: Busque Math.hypot(dx, dy) > 8 en el código generado.",
@@ -1225,9 +1120,6 @@
         ]
       }
     };
-
-    // Construct localized scenario database dynamically
-    const database = { en: { ...translations.en, scenarios: {} }, ko: { ...translations.ko, scenarios: {} }, ja: { ...translations.ja, scenarios: {} }, zh: { ...translations.zh, scenarios: {} }, es: { ...translations.es, scenarios: {} } };
 
     const localeTransforms = {
       ko: {
@@ -1252,6 +1144,8 @@
       }
     };
 
+    const database = { en: { ...translations.en, scenarios: {} }, ko: { ...translations.ko, scenarios: {} }, ja: { ...translations.ja, scenarios: {} }, zh: { ...translations.zh, scenarios: {} }, es: { ...translations.es, scenarios: {} } };
+
     rawCases.forEach(item => {
       const k = item.id.toLowerCase() + (['P01','P02','P03','P07','P09','P18','P28'].includes(item.id) ? '' : '_auto');
       
@@ -1270,24 +1164,45 @@
           tag: tag,
           keywords: `${item.kw} ${el} ${con} ${def}`.toLowerCase(),
           env: item.env,
-          mission: lang === 'ko' ? `${el} 요소를 조작해 보세요. 기본 코드에서는 '${def}' 결함이 발생하지만, 최적화 코드에서는 '${con}' 원리로 완벽히 작동합니다!` :
-                   lang === 'ja' ? `${el} を操作してみてください。ベースラインでは「${def}」が発生しますが、最適化コードでは「${con}」によって完璧に動作します！` :
-                   lang === 'zh' ? `请尝试操作该 ${el} 组件。在基线代码中会发生 “${def}” 缺陷，而在优化代码中基于 “${con}” 物理定律实现零缺陷运行！` :
-                   lang === 'es' ? `Interactúe con este componente de ${el}. En la línea base ocurre el defecto de '${def}', ¡mientras que en el optimizado '${con}' garantiza estabilidad total!` :
+          mission: lang === 'ko' ? `${el} 요소를 직접 마우스나 터치로 드래그/조작해 보세요. [기본 코드] 모드에서는 '${def}' 결함이 발생하지만, [최적화 개선] 모드에서는 '${con}' 물리 원리로 안정적으로 동작합니다!` :
+                   lang === 'ja' ? `${el} をマウスやタッチで直接操作してみてください。「ベースライン」では『${def}』が発生しますが、「最適化」では『${con}』によって完璧に動作します！` :
+                   lang === 'zh' ? `请使用鼠标或触控直接操作该 ${el} 组件。在 [基线代码] 下会触发 “${def}” 缺陷，而在 [物理优化] 下基于 “${con}” 物理定律实现零缺陷运行！` :
+                   lang === 'es' ? `Interactúe directamente con este componente de ${el}. En [Línea Base] ocurre el defecto '${def}', ¡mientras que en [Optimizado] '${con}' garantiza estabilidad total!` :
                    `Interact with this ${item.el}. In Baseline, ${item.def} occurs; In Optimized, ${item.con} ensures 100% stable interaction.`,
           flaws: lang === 'ko' ? [
-            `브라우저 이벤트 파이프라인 충돌: ${def} 현상 발생.`,
-            `물리적 히스테리시스 경계 부재로 인한 서브픽셀 떨림 간섭.`,
-            `제스처 권한 중재 메커니즘 누락으로 상위/하위 뷰 간섭 유발.`
+            `이벤트 파이프라인 충돌: ${def} 발생. 브라우저 이벤트 디스패치 순서와 상태 전이 불일치.`,
+            `서브픽셀 손떨림 잡음: 물리적 히스테리시스 경계가 없어 2~3px 미세 떨림을 원치 않는 좌표 이동으로 오판정.`,
+            `상태 승격 메커니즘 부재: 단순 탭과 연속 드래그 의도를 분리하는 물리적 시간/거리 게이트 결여.`
+          ] : lang === 'ja' ? [
+            `イベントパイプライン衝突: ${def} が無条件に発生。ディスパッチ順序と状態不整合。`,
+            `微細手振れノイズ: 物理的ヒステリシス境界がなく、2~3pxの微小移動を誤検出。`,
+            `状態昇格メカニズムの欠如: タップとドラッグの意図を分離するゲートが存在しない。`
+          ] : lang === 'zh' ? [
+            `事件管线冲突：发生 ${def}。浏览器原生派发顺序与逻辑状态流转不同步。`,
+            `亚像素手抖噪声：缺乏物理容差边界，将 2~3px 微小抖动误判为位移操作。`,
+            `状态提升机制缺失：缺乏区分点击与持续拖拽意图的时间/距离物理门控。`
+          ] : lang === 'es' ? [
+            `Conflicto en la canalización de eventos: ocurre ${def} por desincronización de estados.`,
+            `Ruido de temblor subpíxel: falta de histéresis que malinterpreta microdesplazamientos de 2-3px.`,
+            `Ausencia de promoción de estado: falta de puerta de arbitraje entre toque y arrastre.`
           ] : [
-            `Browser event pipeline conflict: ${def} triggered unconditionally.`,
-            `Absence of physical hysteresis boundaries allows sub-pixel jitter interference.`,
-            `Unmanaged gesture arbitration allows cross-talk between nested views.`
+            `Browser event pipeline conflict: ${def} triggered unconditionally due to event order mismatch.`,
+            `Sub-pixel tremor noise: absence of physical hysteresis boundaries treats 2-3px jitter as drag.`,
+            `Missing state promotion mechanism: lack of arbitration between tap and continuous drag.`
           ],
-          treatment: lang === 'ko' ? `${con} 불변식을 적용하여 0ms 반응성과 완벽한 제스처 격리를 보장함.` : `Applied ${con} with strict hardware invariants to guarantee 0ms responsiveness.`,
-          prompt: `Implement a production ${item.el} ensuring ${con} to eliminate ${def}.`,
-          code: `// ${con} Production Recipe for ${item.id}\n// Guarantees zero-defect interaction on mobile and desktop`,
-          physics: `[Physics Contract ${item.id}: ${con}]\n1. Invariant: Strict event isolation\n2. Slop: 8px threshold`
+          treatment: lang === 'ko' ? `${con} 불변식을 적용하여 8.0px 터치 슬롭 반경 내에서는 이동을 무시하고, 임계 초과 시 즉시 제스처를 잠그며 CSS 변수로 0ms GPU 가속 위치 갱신 수행.` :
+                     lang === 'ja' ? `${con} 不変式を適用し、8.0px以内の微小移動を無視。閾値超過時に即座に軸をロックしGPU直結で0ms更新。` :
+                     lang === 'zh' ? `严格应用 ${con} 物理不变量，在 8.0px 触控容差半径内保持静止，超阈值时锁定手势并通过 CSS 变量实现 0ms GPU 加速。` :
+                     lang === 'es' ? `Aplica el invariante de ${con} con holgura de 8.0px, bloqueando el eje al superar el umbral y actualizando con GPU a 0ms.` :
+                     `Applied ${con} with strict hardware invariants to guarantee 0ms responsiveness.`,
+          prompt: lang === 'ko' ? `W3C Pointer Events와 setPointerCapture를 적용하여 ${el}의 ${def} 결함을 원천 해결하는 프로덕션 코드를 작성하세요.
+8.0px 터치 슬롭 반경 히스테리시스를 설정하여 8px 이내 이동은 클릭으로 인정하고, 8px 초과 시 드래그 모드로 승격하여 onClick 디스패치를 100% 차단하며 CSS 변수(--x, --y)로 0ms 렌더링하세요.` :
+                  lang === 'ja' ? `W3C Pointer Events を使用して ${el} の ${def} を解消するコードを生成してください。8.0pxのスロップ境界を設け、8px超過時にクリックを完全遮断してください。` :
+                  lang === 'zh' ? `使用 W3C Pointer Events 与 setPointerCapture 编写解决 ${el} 中 ${def} 缺陷的生产级代码。建立 8.0px 触控容差门控，并在拖拽时阻断点击事件。` :
+                  lang === 'es' ? `Escriba código de producción usando Pointer Events para solucionar ${def} en ${el}. Aplique holgura de 8.0px suprimiendo clics accidentales.` :
+                  `Implement a production ${item.el} ensuring ${item.con} to eliminate ${item.def}.`,
+          code: `// ${con} Production Recipe for ${item.id}\n// W3C Pointer Events + 8px Axis Lock + 0ms GPU Transform\nlet startX = 0, startY = 0, curX = 0, curY = 0, isDragging = false;\n\nel.addEventListener('pointerdown', (e) => {\n  startX = e.clientX; startY = e.clientY;\n  isDragging = false;\n  el.setPointerCapture(e.pointerId);\n});\n\nel.addEventListener('pointermove', (e) => {\n  const dx = e.clientX - startX, dy = e.clientY - startY;\n  if (Math.hypot(dx, dy) > 8) {\n    isDragging = true;\n    el.style.transform = \`translate3d(\${curX + dx}px, \${curY + dy}px, 0)\`;\n  }\n});\n\nel.addEventListener('pointerup', (e) => {\n  if (isDragging) {\n    curX += (e.clientX - startX);\n    curY += (e.clientY - startY);\n  } else {\n    executeAction(); // Clean tap\n  }\n});`,
+          physics: `[Physics Contract ${item.id}: ${con}]\n1. Slop Invariant: Radius <= 8.0px (±0.5px)\n2. State Isolation: isDragging XOR isClick (Strict Mutual Exclusion)\n3. 0ms Direct GPU Clamping: No transition during active displacement`
         };
       });
     });
@@ -1467,7 +1382,7 @@
     }
 
     // ========================================================
-    // RIGOROUS PHYSICAL INTERACTIVE SANDBOX ENGINE
+    // RIGOROUS PHYSICAL INTERACTIVE SANDBOX ENGINE (ZERO JITTER)
     // ========================================================
     function renderSandbox(scenarioKey, mode) {
       sandboxStage.innerHTML = '';
@@ -1491,11 +1406,15 @@
 
         const fab = sandboxStage.querySelector('#fabBtn');
         const res = sandboxStage.querySelector('#fabResult');
-        let startX=0, startY=0, isDragging=false, moved=false;
+        let startX = 0, startY = 0;
+        let curX = 0, curY = 0;
+        let isDragging = false, moved = false;
 
         fab.addEventListener('pointerdown', (e) => {
-          startX = e.clientX; startY = e.clientY;
-          isDragging = true; moved = false;
+          startX = e.clientX;
+          startY = e.clientY;
+          isDragging = true;
+          moved = false;
           fab.setPointerCapture(e.pointerId);
           res.style.display = 'none';
         });
@@ -1506,13 +1425,15 @@
           const dy = e.clientY - startY;
 
           if (mode === 'with') {
+            // 8px Touch Slop Radial Gate
             if (Math.hypot(dx, dy) > 8) {
               moved = true;
-              fab.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+              fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`;
             }
           } else {
+            // Naive 0px drag: any subpixel movement immediately displaces
             moved = true;
-            fab.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+            fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`;
           }
         });
 
@@ -1521,14 +1442,21 @@
           isDragging = false;
           fab.releasePointerCapture(e.pointerId);
 
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+
           res.style.display = 'block';
           if (mode === 'without') {
+            curX += dx;
+            curY += dy;
             res.style.background = 'rgba(239, 68, 68, 0.2)';
             res.style.border = '1px solid #ef4444';
             res.style.color = '#f87171';
             res.textContent = '💥 Bug: Accidental Click Action Triggered on Drag Release!';
           } else {
             if (moved) {
+              curX += dx;
+              curY += dy;
               res.style.background = 'rgba(16, 185, 129, 0.2)';
               res.style.border = '1px solid #10b981';
               res.style.color = '#34d399';
