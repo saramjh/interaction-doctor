@@ -2513,12 +2513,31 @@
     let currentAnimTimeline = null;
     let isAnimPlaying = false;
 
+    // ========================================================
+    // PRECISE TACTILE COORDINATES & DUAL-POINTER ENGINE
+    // Anchors directly to real DOM elements with sub-pixel fidelity
+    // ========================================================
+
     function getGhostPointer() {
       return sandboxStage.querySelector('#ghostPointer') || document.getElementById('ghostPointer');
     }
 
-    function getDemoHudToast() {
-      return sandboxStage.querySelector('#demoHudToast') || document.getElementById('demoHudToast');
+    function getGhostPointerB() {
+      return sandboxStage.querySelector('#ghostPointerB');
+    }
+
+    function getTargetCenter(selectorOrEl, fallbackX, fallbackY) {
+      const el = typeof selectorOrEl === 'string' ? sandboxStage.querySelector(selectorOrEl) : selectorOrEl;
+      if (!el) return { x: fallbackX, y: fallbackY, el: null };
+      const sRect = sandboxStage.getBoundingClientRect();
+      const eRect = el.getBoundingClientRect();
+      if (eRect.width === 0 && eRect.height === 0) return { x: fallbackX, y: fallbackY, el: el };
+      return {
+        x: (eRect.left - sRect.left) + eRect.width / 2,
+        y: (eRect.top - sRect.top) + eRect.height / 2,
+        el: el,
+        rect: eRect
+      };
     }
 
     function showGhostFinger(x, y, isPressing = false) {
@@ -2530,9 +2549,8 @@
         sandboxStage.appendChild(gp);
       }
       gp.style.display = 'block';
-      // Silky 60fps GPU Translate
       const scale = isPressing ? 'scale(0.82)' : 'scale(1)';
-      gp.style.transform = `translate3d(${Math.round(x - 21)}px, ${Math.round(y - 21)}px, 0) ${scale}`;
+      gp.style.transform = `translate3d(${Math.round(x - 18)}px, ${Math.round(y - 18)}px, 0) ${scale}`;
       if (isPressing) gp.classList.add('pressing');
       else gp.classList.remove('pressing');
     }
@@ -2540,6 +2558,44 @@
     function hideGhostFinger() {
       const gp = getGhostPointer();
       if (gp) gp.style.display = 'none';
+      const gpB = getGhostPointerB();
+      if (gpB) gpB.style.display = 'none';
+    }
+
+    function showDualPinchGesture(cx, cy, spreadPx, isPressing = true) {
+      let gpA = getGhostPointer();
+      let gpB = getGhostPointerB();
+      if (!gpA) {
+        gpA = document.createElement('div');
+        gpA.id = 'ghostPointer';
+        gpA.className = 'ghost-pointer';
+        sandboxStage.appendChild(gpA);
+      }
+      if (!gpB) {
+        gpB = document.createElement('div');
+        gpB.id = 'ghostPointerB';
+        gpB.className = 'ghost-pointer';
+        sandboxStage.appendChild(gpB);
+      }
+      gpA.style.display = 'block';
+      gpB.style.display = 'block';
+
+      const ax = cx - spreadPx;
+      const ay = cy - spreadPx * 0.7;
+      const bx = cx + spreadPx;
+      const by = cy + spreadPx * 0.7;
+
+      const scale = isPressing ? 'scale(0.85)' : 'scale(1)';
+      gpA.style.transform = `translate3d(${Math.round(ax - 18)}px, ${Math.round(ay - 18)}px, 0) ${scale}`;
+      gpB.style.transform = `translate3d(${Math.round(bx - 18)}px, ${Math.round(by - 18)}px, 0) ${scale}`;
+
+      if (isPressing) {
+        gpA.classList.add('pressing');
+        gpB.classList.add('pressing');
+      } else {
+        gpA.classList.remove('pressing');
+        gpB.classList.remove('pressing');
+      }
     }
 
     function showHudSubtitle(text, type = 'info') {
@@ -2904,19 +2960,19 @@
     function playScenarioAnimation(scenarioKey, mode) {
       stopAnimatedDemo();
       isAnimPlaying = true;
-      btnPlayDemo.classList.add('playing');
+      if (btnPlayDemo) btnPlayDemo.classList.add('playing');
       updateAnimPlayButtonState();
 
       const timers = [];
       currentAnimTimeline = timers;
 
       const startTime = Date.now();
-      const duration = 3600;
+      const duration = 3800;
       const progressInterval = setInterval(() => {
         if (!isAnimPlaying) { clearInterval(progressInterval); return; }
         const elapsed = Date.now() - startTime;
         const pct = Math.min(100, Math.round((elapsed / duration) * 100));
-        animProgressFill.style.width = `${pct}%`;
+        if (animProgressFill) animProgressFill.style.width = `${pct}%`;
         if (pct >= 100) clearInterval(progressInterval);
       }, 40);
       timers.push(progressInterval);
@@ -2924,429 +2980,635 @@
       const stageRect = sandboxStage.getBoundingClientRect();
       const cx = stageRect.width / 2 || 180;
       const cy = stageRect.height / 2 || 240;
-      const sc = scenarioKey.toLowerCase();
+      const sc = (scenarioKey || '').toLowerCase();
 
-      // Show Intent & First Step
       showHudSubtitle(getAnimText(sc, 'step1', mode), 'info');
 
-      // Dispatch 36 Individual Scenario Sequences
+      // Dispatch Genuine Coordinate-Anchored Sequences
       switch (sc) {
-        case 'p01': { // Messenger Keyboard
-          showGhostFinger(cx, cy + 180, false);
-          showIntentPill(cx, cy + 180, '💬 Tap to Type');
+        // ==========================================
+        // P01: MOBILE MESSENGER & VIRTUAL KEYBOARD
+        // ==========================================
+        case 'p01': {
+          const inputEl = sandboxStage.querySelector('#mobileChatInput');
+          const kb = sandboxStage.querySelector('#simKeyboard');
+          const bar = sandboxStage.querySelector('#chatInputBar');
+          const t = getTargetCenter(inputEl, cx, stageRect.height - 30);
+
+          // 1. Move finger directly to the real chat input bar
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '💬 Tap Chat Input');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 180, true);
-            const kb = sandboxStage.querySelector('#simKeyboard');
-            const bar = sandboxStage.querySelector('#chatInputBar');
+            // 2. Tap down on the actual input element
+            showGhostFinger(t.x, t.y, true);
             if (kb) kb.classList.add('open');
+
             if (mode === 'without') {
+              // Without: 100vh Defect - input bar trapped underneath the rising keyboard!
               if (bar) bar.style.bottom = '0px';
-              triggerCollisionFriction(cx, cy + 180, bar);
+              // Show collision friction right where input bar got crushed
+              triggerCollisionFriction(t.x, t.y, bar);
               showHudSubtitle(getAnimText('p01', 'without', mode), 'danger');
             } else {
+              // With: VisualViewport 0ms GPU Lift - input bar lifted 220px on top of keyboard!
               if (bar) bar.style.bottom = '220px';
-              triggerSatisfactionGlow(cx, cy - 20, bar);
+              // Move finger along with the lifted bar
+              showGhostFinger(t.x, t.y - 220, true);
+              triggerSatisfactionGlow(t.x, t.y - 220, bar);
               showHudSubtitle(getAnimText('p01', 'with', mode), 'success');
             }
           }, 900));
           break;
         }
 
-        case 'p02': { // Bottom Sheet
+        // ==========================================
+        // P02: BOTTOM SHEET NESTED SCROLL
+        // ==========================================
+        case 'p02': {
           const sheet = sandboxStage.querySelector('#sheetBox');
           const list = sandboxStage.querySelector('#sheetList');
-          showGhostFinger(cx, cy + 100, false);
-          showIntentPill(cx, cy + 100, '📜 Scroll List ↓');
-          timers.push(setTimeout(() => showGhostFinger(cx, cy + 100, true), 700));
+          const firstItem = sandboxStage.querySelector('#sheetList > div') || list;
+          const t = getTargetCenter(firstItem, cx, stageRect.height - 120);
+
+          // 1. Finger lands on real list item inside sheet
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '📜 Scroll List Items ↓');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 220, true);
+            showGhostFinger(t.x, t.y, true);
+          }, 600));
+
+          timers.push(setTimeout(() => {
+            // 2. Drag downwards 100px
+            showGhostFinger(t.x, t.y + 100, true);
+
             if (mode === 'without') {
+              // Without: Sheet collapses downwards instead of list scrolling!
               if (sheet) sheet.style.transform = 'translate3d(0, 180px, 0)';
-              triggerCollisionFriction(cx, cy + 100, sheet);
+              triggerCollisionFriction(t.x, t.y + 60, sheet);
               showHudSubtitle(getAnimText('p02', 'without', mode), 'danger');
             } else {
-              if (list) list.scrollTop = 80;
-              triggerSatisfactionGlow(cx, cy + 100, list);
+              // With: Sheet stays pinned at top, list scrolls cleanly!
+              if (list) list.scrollTop = 90;
+              triggerSatisfactionGlow(t.x, t.y + 40, list);
               showHudSubtitle(getAnimText('p02', 'with', mode), 'success');
             }
-          }, 1300));
+          }, 1200));
           break;
         }
 
-        case 'p03': { // 2D Canvas Centroid
+        // ==========================================
+        // P03: 2D CANVAS PINCH-TO-ZOOM (CENTROID INVARIANT)
+        // ==========================================
+        case 'p03': {
+          const pinEl = sandboxStage.querySelector('#targetPin');
           const world = sandboxStage.querySelector('#canvasWorld');
-          showGhostFinger(cx + 40, cy + 40, false);
-          showIntentPill(cx + 40, cy + 40, '🔍 Zoom at 🎯 Pin');
+          const t = getTargetCenter(pinEl, cx, cy);
+
+          // 1. Two fingers land EXACTLY on the 🎯 Target Pin!
+          showDualPinchGesture(t.x, t.y, 25, false);
+          showIntentPill(t.x, t.y - 45, '🔍 Pinch-to-Zoom on 🎯 Pin');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 40, cy + 40, true);
+            // Press down on target pin
+            showDualPinchGesture(t.x, t.y, 25, true);
+          }, 600));
+
+          timers.push(setTimeout(() => {
+            // 2. Fingers spread out wide (Pinch Out Gesture: 25px -> 85px)
+            showDualPinchGesture(t.x, t.y, 85, true);
+
             if (mode === 'without') {
-              if (world) world.style.transform = 'translate3d(-200px, -200px, 0) scale(2.2)';
-              triggerCollisionFriction(cx + 40, cy + 40, world);
+              // Without: Anchored to (0,0) - Target Pin flies away out of sight!
+              if (world) world.style.transform = 'translate3d(-240px, -240px, 0) scale(2.4)';
+              triggerCollisionFriction(t.x, t.y, world);
               showHudSubtitle(getAnimText('p03', 'without', mode), 'danger');
             } else {
-              if (world) world.style.transform = `translate3d(${-cx}px, ${-cy}px, 0) scale(2.0)`;
-              triggerSatisfactionGlow(cx + 40, cy + 40, world);
+              // With: Centroid Invariant - Target Pin stays magnetically pinned under fingers!
+              if (world) world.style.transform = `translate3d(${-cx * 0.9}px, ${-cy * 0.9}px, 0) scale(2.0)`;
+              triggerSatisfactionGlow(t.x, t.y, pinEl || world);
               showHudSubtitle(getAnimText('p03', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1200));
           break;
         }
 
-        case 'p04': { // Kanban Reorder
+        // ==========================================
+        // P04: KANBAN BOARD DND VS SCROLL
+        // ==========================================
+        case 'p04': {
           const card = sandboxStage.querySelector('.kanban-card');
-          showGhostFinger(cx, cy - 40, false);
-          showIntentPill(cx, cy - 40, '↕️ Scroll Board');
+          const t = getTargetCenter(card, cx, cy - 30);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '↕️ Scroll Kanban Column');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 60, true);
+            showGhostFinger(t.x, t.y, true);
+          }, 600));
+
+          timers.push(setTimeout(() => {
+            showGhostFinger(t.x, t.y - 60, true);
             if (mode === 'without') {
+              // Card grabbed immediately without delay!
               if (card) { card.style.transform = 'scale(1.08) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
-              triggerCollisionFriction(cx, cy, card);
+              triggerCollisionFriction(t.x, t.y, card);
               showHudSubtitle(getAnimText('p04', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy + 60, sandboxStage);
+              // 350ms gate preserves vertical scroll cleanly!
+              triggerSatisfactionGlow(t.x, t.y - 60, sandboxStage);
               showHudSubtitle(getAnimText('p04', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1100));
           break;
         }
 
-        case 'p05': { // Mail Swipe
-          const row = sandboxStage.querySelector('.mail-content');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '↘️ Diagonal Scroll');
+        // ==========================================
+        // P05: MAIL SWIPE VS DIAGONAL SCROLL
+        // ==========================================
+        case 'p05': {
+          const row = sandboxStage.querySelector('.mail-content') || sandboxStage.querySelector('.mail-item');
+          const t = getTargetCenter(row, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '↘️ Diagonal Browse Gesture');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 90, cy + 60, true);
+            showGhostFinger(t.x - 70, t.y + 60, true);
             if (mode === 'without') {
-              if (row) row.style.transform = 'translate3d(-130px, 0, 0)';
-              triggerCollisionFriction(cx - 50, cy, row);
+              // Diagonal motion leaked into swipe-to-delete!
+              if (row) row.style.transform = 'translate3d(-140px, 0, 0)';
+              triggerCollisionFriction(t.x - 40, t.y, row);
               showHudSubtitle(getAnimText('p05', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy + 30, row);
+              // 8px axis lock preserved vertical scroll!
+              triggerSatisfactionGlow(t.x, t.y + 40, row);
               showHudSubtitle(getAnimText('p05', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1200));
           break;
         }
 
-        case 'p06': { // Pull-to-Refresh
-          const ptrHeader = sandboxStage.querySelector('#ptrHeader') || sandboxStage.firstElementChild;
-          showGhostFinger(cx, cy - 80, false);
-          showIntentPill(cx, cy - 80, '👇 Pull Down to Refresh');
+        // ==========================================
+        // P06: PULL TO REFRESH DAMPING
+        // ==========================================
+        case 'p06': {
+          const ptr = sandboxStage.querySelector('#ptrHeader') || sandboxStage.firstElementChild;
+          const t = getTargetCenter(ptr, cx, 80);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '👇 Pull Down to Refresh');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 80, true);
+            showGhostFinger(t.x, t.y + 110, true);
             if (mode === 'without') {
-              if (ptrHeader) ptrHeader.style.transform = 'translate3d(0, 100px, 0)';
-              triggerCollisionFriction(cx, cy, ptrHeader);
+              if (ptr) ptr.style.transform = 'translate3d(0, 110px, 0)';
+              triggerCollisionFriction(t.x, t.y + 60, ptr);
               showHudSubtitle(getAnimText('p06', 'without', mode), 'danger');
             } else {
-              if (ptrHeader) ptrHeader.style.transform = 'translate3d(0, 48px, 0)';
-              triggerSatisfactionGlow(cx, cy - 40, ptrHeader);
+              if (ptr) ptr.style.transform = 'translate3d(0, 48px, 0)';
+              triggerSatisfactionGlow(t.x, t.y + 48, ptr);
               showHudSubtitle(getAnimText('p06', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1200));
           break;
         }
 
-        case 'p07': { // FAB Button
+        // ==========================================
+        // P07: FLOATING FAB BUTTON DRAG VS CLICK
+        // ==========================================
+        case 'p07': {
           const fab = sandboxStage.querySelector('#fabBtn') || sandboxStage.querySelector('button');
-          showGhostFinger(cx + 80, cy + 160, false);
-          showIntentPill(cx + 80, cy + 160, '🔘 Drag FAB');
-          timers.push(setTimeout(() => showGhostFinger(cx + 80, cy + 160, true), 600));
+          const t = getTargetCenter(fab, stageRect.width - 50, stageRect.height - 70);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x - 40, t.y - 30, '🔘 Drag FAB Reposition');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
-            if (fab) fab.style.transform = 'translate3d(-80px, -140px, 0)';
+            showGhostFinger(t.x - 90, t.y - 120, true);
+            if (fab) fab.style.transform = 'translate3d(-90px, -120px, 0)';
           }, 1200));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, false);
+            showGhostFinger(t.x - 90, t.y - 120, false);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, fab);
+              // False click fires modal!
+              triggerCollisionFriction(t.x - 90, t.y - 120, fab);
               showHudSubtitle(getAnimText('p07', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, fab);
+              // 8px slop guard: no false click!
+              triggerSatisfactionGlow(t.x - 90, t.y - 120, fab);
               showHudSubtitle(getAnimText('p07', 'with', mode), 'success');
             }
-          }, 2000));
+          }, 1900));
           break;
         }
 
-        case 'p08': { // Infinite Feed Prepend Jump
+        // ==========================================
+        // P08: INFINITE FEED PREPEND SCROLL JUMP
+        // ==========================================
+        case 'p08': {
           const btn = sandboxStage.querySelector('#btnPrependOlder') || sandboxStage.querySelector('button');
-          showGhostFinger(cx, cy - 140, false);
-          showIntentPill(cx, cy - 140, '📜 Prepend Messages');
+          const t = getTargetCenter(btn, cx, 60);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '📜 Prepend 5 Older Messages');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy - 140, true);
+            showGhostFinger(t.x, t.y, true);
             if (btn) btn.click();
+
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy - 140, sandboxStage);
+              triggerCollisionFriction(t.x, t.y, sandboxStage);
               showHudSubtitle(getAnimText('p08', 'without', mode), 'danger');
             } else {
               triggerSatisfactionGlow(cx, cy, sandboxStage);
               showHudSubtitle(getAnimText('p08', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 900));
           break;
         }
 
-        case 'p09': { // Modal Backdrop Leak
+        // ==========================================
+        // P09: MODAL BACKDROP DRAG LEAK
+        // ==========================================
+        case 'p09': {
+          const modalText = sandboxStage.querySelector('#demoModalText') || sandboxStage.querySelector('p');
           const backdrop = sandboxStage.querySelector('#demoModalBackdrop') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '📝 Select Text & Release');
+          const t = getTargetCenter(modalText, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '📝 Select Text & Drag to Backdrop');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 100, cy + 100, true);
-            if (mode === 'without') {
-              if (backdrop) backdrop.style.display = 'none';
-              triggerCollisionFriction(cx + 100, cy + 100, sandboxStage);
-              showHudSubtitle(getAnimText('p09', 'without', mode), 'danger');
-            } else {
-              triggerSatisfactionGlow(cx, cy, sandboxStage);
-              showHudSubtitle(getAnimText('p09', 'with', mode), 'success');
-            }
+            showGhostFinger(t.x + 90, t.y + 90, true);
+            timers.push(setTimeout(() => {
+              showGhostFinger(t.x + 90, t.y + 90, false);
+              if (mode === 'without') {
+                if (backdrop) backdrop.style.display = 'none';
+                triggerCollisionFriction(t.x + 90, t.y + 90, sandboxStage);
+                showHudSubtitle(getAnimText('p09', 'without', mode), 'danger');
+              } else {
+                triggerSatisfactionGlow(t.x, t.y, sandboxStage);
+                showHudSubtitle(getAnimText('p09', 'with', mode), 'success');
+              }
+            }, 300));
           }, 1200));
           break;
         }
 
-        case 'p10': { // Nested Horizontal Tabs
+        // ==========================================
+        // P10: NESTED HORIZONTAL TABS VS VIEWPAGER
+        // ==========================================
+        case 'p10': {
           const tabTrack = sandboxStage.querySelector('.tab-track') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '↔️ Swipe Tab Strip');
+          const t = getTargetCenter(tabTrack, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '↔️ Swipe Tab Strip');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 80, cy, true);
+            showGhostFinger(t.x - 80, t.y, true);
             if (mode === 'without') {
-              if (tabTrack) tabTrack.style.transform = 'translate3d(-120px, 0, 0)';
-              triggerCollisionFriction(cx - 40, cy, tabTrack);
+              if (tabTrack) tabTrack.style.transform = 'translate3d(-110px, 0, 0)';
+              triggerCollisionFriction(t.x - 40, t.y, tabTrack);
               showHudSubtitle(getAnimText('p10', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx - 40, cy, tabTrack);
+              triggerSatisfactionGlow(t.x - 40, t.y, tabTrack);
               showHudSubtitle(getAnimText('p10', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p11': { // Textarea Auto-grow Jump
+        // ==========================================
+        // P11: TEXTAREA AUTO-GROWTH VIEWPORT SHIFT
+        // ==========================================
+        case 'p11': {
           const ta = sandboxStage.querySelector('textarea');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '⌨️ Type 4 Lines');
+          const t = getTargetCenter(ta, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '⌨️ Type 4 Lines Rapidly');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
-            if (ta) { ta.value = "Line 1\nLine 2\nLine 3\nLine 4"; ta.style.height = "120px"; }
+            showGhostFinger(t.x, t.y, true);
+            if (ta) { ta.value = "Line 1: Spec\nLine 2: Review\nLine 3: Invariant\nLine 4: Verified"; ta.style.height = "120px"; }
+
             if (mode === 'without') {
               sandboxStage.scrollTop = 120;
-              triggerCollisionFriction(cx, cy, ta);
+              triggerCollisionFriction(t.x, t.y, ta);
               showHudSubtitle(getAnimText('p11', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, ta);
+              triggerSatisfactionGlow(t.x, t.y, ta);
               showHudSubtitle(getAnimText('p11', 'with', mode), 'success');
             }
           }, 1000));
           break;
         }
 
-        case 'p12': { // Tooltip Sticky Hover
+        // ==========================================
+        // P12: MOBILE STICKY TOOLTIP
+        // ==========================================
+        case 'p12': {
           const icon = sandboxStage.querySelector('.tooltip-trigger') || sandboxStage.querySelector('button');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '💡 Tap Help Icon');
+          const t = getTargetCenter(icon, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '💡 Tap Help Icon');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
+            showGhostFinger(t.x, t.y, true);
             timers.push(setTimeout(() => {
-              showGhostFinger(cx + 80, cy + 80, false); // Tap away
+              // Tap away in blank area
+              showGhostFinger(t.x + 80, t.y + 80, true);
               if (mode === 'without') {
-                triggerCollisionFriction(cx, cy, icon);
+                triggerCollisionFriction(t.x, t.y, icon);
                 showHudSubtitle(getAnimText('p12', 'without', mode), 'danger');
               } else {
-                triggerSatisfactionGlow(cx + 80, cy + 80, sandboxStage);
+                triggerSatisfactionGlow(t.x + 80, t.y + 80, sandboxStage);
                 showHudSubtitle(getAnimText('p12', 'with', mode), 'success');
               }
-            }, 800));
+            }, 700));
           }, 700));
           break;
         }
 
-        case 'p13': { // Video Scrubber Track Slip
+        // ==========================================
+        // P13: VIDEO SCRUBBER TRACK SLIP
+        // ==========================================
+        case 'p13': {
           const thumb = sandboxStage.querySelector('#scrubThumb') || sandboxStage.querySelector('.thumb');
-          showGhostFinger(cx - 60, cy, false);
-          showIntentPill(cx - 60, cy, '🎬 Scrub Timeline');
-          timers.push(setTimeout(() => showGhostFinger(cx - 60, cy, true), 600));
+          const t = getTargetCenter(thumb, cx - 60, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '🎬 Scrub Video Timeline');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 60, cy - 60, true); // Finger slips upwards
+            // Finger slips upwards 60px outside the track!
+            showGhostFinger(t.x + 80, t.y - 60, true);
+
             if (mode === 'without') {
-              triggerCollisionFriction(cx + 60, cy - 60, thumb);
+              triggerCollisionFriction(t.x + 80, t.y - 60, thumb);
               showHudSubtitle(getAnimText('p13', 'without', mode), 'danger');
             } else {
               if (thumb) thumb.style.left = '75%';
-              triggerSatisfactionGlow(cx + 60, cy, thumb);
+              triggerSatisfactionGlow(t.x + 80, t.y, thumb);
               showHudSubtitle(getAnimText('p13', 'with', mode), 'success');
             }
           }, 1400));
           break;
         }
 
-        case 'p14': { // Image Cropper Corner Hit
+        // ==========================================
+        // P14: IMAGE CROPPER CORNER HIT TARGET
+        // ==========================================
+        case 'p14': {
           const handle = sandboxStage.querySelector('.crop-handle') || sandboxStage.querySelector('div');
-          showGhostFinger(cx + 70, cy + 70, false);
-          showIntentPill(cx + 70, cy + 70, '✂️ Grab 12px Handle');
+          const t = getTargetCenter(handle, cx + 60, cy + 60);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '✂️ Touch 12px Corner Handle');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 70, cy + 70, true);
+            showGhostFinger(t.x, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx + 70, cy + 70, handle);
+              triggerCollisionFriction(t.x, t.y, handle);
               showHudSubtitle(getAnimText('p14', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx + 70, cy + 70, handle);
+              triggerSatisfactionGlow(t.x, t.y, handle);
               showHudSubtitle(getAnimText('p14', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 900));
           break;
         }
 
-        case 'p15': { // Trackpad Pinch
+        // ==========================================
+        // P15: TRACKPAD PINCH VS WINDOW ZOOM
+        // ==========================================
+        case 'p15': {
           const card = sandboxStage.querySelector('#trackpadCard') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '💻 2-Finger Pinch');
+          const t = getTargetCenter(card, cx, cy);
+
+          showDualPinchGesture(t.x, t.y, 25, false);
+          showIntentPill(t.x, t.y - 45, '💻 macOS Trackpad 2-Finger Pinch');
+
+          timers.push(setTimeout(() => showDualPinchGesture(t.x, t.y, 25, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
+            showDualPinchGesture(t.x, t.y, 75, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, card);
+              triggerCollisionFriction(t.x, t.y, card);
               showHudSubtitle(getAnimText('p15', 'without', mode), 'danger');
             } else {
               if (card) card.style.transform = 'scale(1.35)';
-              triggerSatisfactionGlow(cx, cy, card);
+              triggerSatisfactionGlow(t.x, t.y, card);
               showHudSubtitle(getAnimText('p15', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1100));
           break;
         }
 
-        case 'p16': { // Fling Stop Tap
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '🛑 Tap to Stop Fling');
+        // ==========================================
+        // P16: FLING STOP TAP VS ACCIDENTAL CLICK
+        // ==========================================
+        case 'p16': {
+          const item = sandboxStage.querySelector('li') || sandboxStage.querySelector('div');
+          const t = getTargetCenter(item, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '🛑 Tap to Stop Rapid Fling');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
+            showGhostFinger(t.x, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, sandboxStage);
+              triggerCollisionFriction(t.x, t.y, item);
               showHudSubtitle(getAnimText('p16', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, sandboxStage);
+              triggerSatisfactionGlow(t.x, t.y, item);
               showHudSubtitle(getAnimText('p16', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 900));
           break;
         }
 
-        case 'p17': { // 2D Color Spectrum
+        // ==========================================
+        // P17: 2D COLOR SPECTRUM CLAMP
+        // ==========================================
+        case 'p17': {
           const thumb = sandboxStage.querySelector('.color-thumb') || sandboxStage.querySelector('div');
-          showGhostFinger(cx - 40, cy - 40, false);
-          showIntentPill(cx - 40, cy - 40, '🎨 Drag Spectrum 2D');
+          const t = getTargetCenter(thumb, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '🎨 Drag 2D Color Spectrum');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 40, cy + 40, true);
+            showGhostFinger(t.x + 50, t.y + 50, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx + 40, cy + 40, thumb);
+              triggerCollisionFriction(t.x + 50, t.y + 50, thumb);
               showHudSubtitle(getAnimText('p17', 'without', mode), 'danger');
             } else {
-              if (thumb) thumb.style.transform = 'translate3d(60px, 60px, 0)';
-              triggerSatisfactionGlow(cx + 40, cy + 40, thumb);
+              if (thumb) thumb.style.transform = 'translate3d(50px, 50px, 0)';
+              triggerSatisfactionGlow(t.x + 50, t.y + 50, thumb);
               showHudSubtitle(getAnimText('p17', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p18': { // Price Dual Slider
+        // ==========================================
+        // P18: PRICE DUAL SLIDER OVERLAP LOCK
+        // ==========================================
+        case 'p18': {
           const thumbMin = sandboxStage.querySelector('#thumbMin') || sandboxStage.querySelector('.thumb-min');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '⚖️ Drag Overlapping Thumb');
+          const t = getTargetCenter(thumbMin, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '⚖️ Drag Overlapping Thumb');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 60, cy, true);
+            showGhostFinger(t.x - 60, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, thumbMin);
+              triggerCollisionFriction(t.x, t.y, thumbMin);
               showHudSubtitle(getAnimText('p18', 'without', mode), 'danger');
             } else {
               if (thumbMin) { thumbMin.style.zIndex = '10'; thumbMin.style.transform = 'translate3d(-60px, 0, 0)'; }
-              triggerSatisfactionGlow(cx - 60, cy, thumbMin);
+              triggerSatisfactionGlow(t.x - 60, t.y, thumbMin);
               showHudSubtitle(getAnimText('p18', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p19': { // Data Table Column Divider
+        // ==========================================
+        // P19: TABLE COLUMN DIVIDER RESIZE
+        // ==========================================
+        case 'p19': {
           const divider = sandboxStage.querySelector('.col-divider') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy - 80, false);
-          showIntentPill(cx, cy - 80, '📊 Drag Column Divider');
+          const t = getTargetCenter(divider, cx + 40, cy - 40);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '📊 Drag Column Divider');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 50, cy - 80, true);
+            showGhostFinger(t.x + 50, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx + 50, cy - 80, divider);
+              triggerCollisionFriction(t.x + 50, t.y, divider);
               showHudSubtitle(getAnimText('p19', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx + 50, cy - 80, divider);
+              triggerSatisfactionGlow(t.x + 50, t.y, divider);
               showHudSubtitle(getAnimText('p19', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p20': { // Accordion Jump
-          const accBtn = sandboxStage.querySelector('.accordion-trigger') || sandboxStage.querySelector('button');
-          showGhostFinger(cx, cy - 50, false);
-          showIntentPill(cx, cy - 50, '📂 Collapse Accordion');
+        // ==========================================
+        // P20: ACCORDION COLLAPSE JUMP
+        // ==========================================
+        case 'p20': {
+          const acc = sandboxStage.querySelector('.accordion-trigger') || sandboxStage.querySelector('button');
+          const t = getTargetCenter(acc, cx, cy - 40);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '📂 Collapse Accordion');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy - 50, true);
+            showGhostFinger(t.x, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, sandboxStage);
+              triggerCollisionFriction(t.x, t.y, sandboxStage);
               showHudSubtitle(getAnimText('p20', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy - 50, accBtn);
+              triggerSatisfactionGlow(t.x, t.y, acc);
               showHudSubtitle(getAnimText('p20', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 900));
           break;
         }
 
-        case 'p21': { // Tap Delay
+        // ==========================================
+        // P21: 300MS TAP DELAY
+        // ==========================================
+        case 'p21': {
           const btn = sandboxStage.querySelector('button');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '⚡️ Tap Checkout Button');
+          const t = getTargetCenter(btn, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '⚡️ Tap Action Button');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
+            showGhostFinger(t.x, t.y, true);
             if (mode === 'without') {
               timers.push(setTimeout(() => {
-                triggerCollisionFriction(cx, cy, btn);
+                triggerCollisionFriction(t.x, t.y, btn);
                 showHudSubtitle(getAnimText('p21', 'without', mode), 'danger');
               }, 300));
             } else {
-              triggerSatisfactionGlow(cx, cy, btn);
+              triggerSatisfactionGlow(t.x, t.y, btn);
               showHudSubtitle(getAnimText('p21', 'with', mode), 'success');
             }
           }, 800));
           break;
         }
 
-        case 'p22': { // False Long-Press
+        // ==========================================
+        // P22: QUICK TAP VS LONG PRESS
+        // ==========================================
+        case 'p22': {
           const item = sandboxStage.querySelector('.context-item') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '👆 Quick 100ms Tap');
+          const t = getTargetCenter(item, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '👆 Quick 100ms Tap');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
-            timers.push(setTimeout(() => showGhostFinger(cx, cy, false), 120));
+            showGhostFinger(t.x, t.y, true);
+            timers.push(setTimeout(() => showGhostFinger(t.x, t.y, false), 120));
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, item);
+              triggerCollisionFriction(t.x, t.y, item);
               showHudSubtitle(getAnimText('p22', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, item);
+              triggerSatisfactionGlow(t.x, t.y, item);
               showHudSubtitle(getAnimText('p22', 'with', mode), 'success');
             }
           }, 800));
           break;
         }
 
-        case 'p23': { // OS Back Deadzone
+        // ==========================================
+        // P23: EDGE SWIPE VS OS BACK
+        // ==========================================
+        case 'p23': {
           const drawer = sandboxStage.querySelector('#drawerPanel') || sandboxStage.querySelector('div');
-          showGhostFinger(cx - 150, cy, false);
-          showIntentPill(cx - 150, cy, '📲 Edge Swipe at 10px');
+
+          showGhostFinger(10, cy, false);
+          showIntentPill(15, cy - 30, '📲 Edge Swipe at 10px');
+
+          timers.push(setTimeout(() => showGhostFinger(10, cy, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 60, cy, true);
+            showGhostFinger(80, cy, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx - 60, cy, drawer);
+              triggerCollisionFriction(80, cy, drawer);
               showHudSubtitle(getAnimText('p23', 'without', mode), 'danger');
             } else {
               if (drawer) drawer.style.transform = 'translate3d(0, 0, 0)';
@@ -3357,214 +3619,299 @@
           break;
         }
 
-        case 'p24': { // Selection Box vs Pan
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '🔲 Drag Selection Box');
+        // ==========================================
+        // P24: CANVAS BOX SELECT VS PAN
+        // ==========================================
+        case 'p24': {
+          showGhostFinger(cx - 50, cy - 50, false);
+          showIntentPill(cx - 50, cy - 80, '🔲 Drag Selection Rectangle');
+
+          timers.push(setTimeout(() => showGhostFinger(cx - 50, cy - 50, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 80, cy + 80, true);
+            showGhostFinger(cx + 50, cy + 50, true);
             if (mode === 'without') {
               triggerCollisionFriction(cx, cy, sandboxStage);
               showHudSubtitle(getAnimText('p24', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx + 40, cy + 40, sandboxStage);
+              triggerSatisfactionGlow(cx, cy, sandboxStage);
               showHudSubtitle(getAnimText('p24', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1100));
           break;
         }
 
-        case 'p25': { // Audio Thumb Target
+        // ==========================================
+        // P25: AUDIO VOLUME 12PX THUMB TARGET
+        // ==========================================
+        case 'p25': {
           const thumb = sandboxStage.querySelector('.slider-thumb') || sandboxStage.querySelector('div');
-          showGhostFinger(cx + 40, cy, false);
-          showIntentPill(cx + 40, cy, '🎚️ Tap 12px Thumb');
+          const t = getTargetCenter(thumb, cx + 40, cy);
+
+          showGhostFinger(t.x + 8, t.y - 8, false);
+          showIntentPill(t.x, t.y - 30, '🎚️ Touch Narrow 12px Thumb');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 40, cy, true);
+            showGhostFinger(t.x + 8, t.y - 8, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx + 40, cy, thumb);
+              triggerCollisionFriction(t.x + 8, t.y - 8, thumb);
               showHudSubtitle(getAnimText('p25', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx + 40, cy, thumb);
+              triggerSatisfactionGlow(t.x, t.y, thumb);
               showHudSubtitle(getAnimText('p25', 'with', mode), 'success');
             }
           }, 900));
           break;
         }
 
-        case 'p26': { // Textarea Cursor Auto-scroll
+        // ==========================================
+        // P26: TEXTAREA CARET AUTO-SCROLL
+        // ==========================================
+        case 'p26': {
           const ta = sandboxStage.querySelector('textarea');
-          showGhostFinger(cx, cy + 80, false);
-          showIntentPill(cx, cy + 80, '🔍 Caret at Bottom');
+          const t = getTargetCenter(ta, cx, cy);
+
+          showGhostFinger(t.x, t.y + 30, false);
+          showIntentPill(t.x, t.y, '🔍 Typing at Caret');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 80, true);
+            showGhostFinger(t.x, t.y + 30, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy + 80, ta);
+              triggerCollisionFriction(t.x, t.y + 30, ta);
               showHudSubtitle(getAnimText('p26', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, ta);
+              triggerSatisfactionGlow(t.x, t.y + 30, ta);
               showHudSubtitle(getAnimText('p26', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 900));
           break;
         }
 
-        case 'p27': { // Sticky Column Jitter
+        // ==========================================
+        // P27: STICKY COLUMN JITTER
+        // ==========================================
+        case 'p27': {
           const col = sandboxStage.querySelector('.sticky-column') || sandboxStage.querySelector('th');
+          const t = getTargetCenter(col, 60, cy);
+
           showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '📐 Scroll Table Horizontally');
+          showIntentPill(cx, cy - 30, '📐 Scroll Wide Table');
+
+          timers.push(setTimeout(() => showGhostFinger(cx, cy, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 80, cy, true);
+            showGhostFinger(cx - 90, cy, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx - 80, cy, col);
+              triggerCollisionFriction(t.x, cy, col);
               showHudSubtitle(getAnimText('p27', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx - 80, cy, col);
+              triggerSatisfactionGlow(t.x, cy, col);
               showHudSubtitle(getAnimText('p27', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1100));
           break;
         }
 
-        case 'p28': { // User-select Suppression
+        // ==========================================
+        // P28: USER SELECT SUPPRESSION
+        // ==========================================
+        case 'p28': {
           const card = sandboxStage.querySelector('.draggable-card') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '👆 Hold Interactive Card');
+          const t = getTargetCenter(card, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '👆 Long Press Card');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy, true);
+            showGhostFinger(t.x, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, card);
+              triggerCollisionFriction(t.x, t.y, card);
               showHudSubtitle(getAnimText('p28', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, card);
+              triggerSatisfactionGlow(t.x, t.y, card);
               showHudSubtitle(getAnimText('p28', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 900));
           break;
         }
 
-        case 'p29': { // Drag auto-scroll runway
+        // ==========================================
+        // P29: DND AUTO-SCROLL CLAMPING
+        // ==========================================
+        case 'p29': {
           const item = sandboxStage.querySelector('.dnd-item') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy + 40, false);
-          showIntentPill(cx, cy + 40, '🚀 Drag to Boundary');
+          const t = getTargetCenter(item, cx, cy - 40);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '🚀 Drag to Screen Boundary');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 180, true);
+            showGhostFinger(cx, stageRect.height - 20, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy + 180, item);
+              triggerCollisionFriction(cx, stageRect.height - 20, item);
               showHudSubtitle(getAnimText('p29', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy + 180, item);
+              triggerSatisfactionGlow(cx, stageRect.height - 20, item);
               showHudSubtitle(getAnimText('p29', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p30': { // Multi-touch Zoom Inertia
+        // ==========================================
+        // P30: PINCH ZOOM FLYAWAY INERTIA
+        // ==========================================
+        case 'p30': {
           const img = sandboxStage.querySelector('img') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '🖼️ Release Fast Pinch');
+          const t = getTargetCenter(img, cx, cy);
+
+          showDualPinchGesture(t.x, t.y, 25, false);
+          showIntentPill(t.x, t.y - 45, '🖼️ Fast Pinch & Release');
+
+          timers.push(setTimeout(() => showDualPinchGesture(t.x, t.y, 75, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx + 80, cy - 80, true);
+            hideGhostFinger();
             if (mode === 'without') {
-              if (img) img.style.transform = 'translate3d(300px, -300px, 0) scale(1.8)';
-              triggerCollisionFriction(cx + 80, cy - 80, img);
+              if (img) img.style.transform = 'translate3d(240px, -240px, 0) scale(2.0)';
+              triggerCollisionFriction(t.x + 80, t.y - 80, img);
               showHudSubtitle(getAnimText('p30', 'without', mode), 'danger');
             } else {
               if (img) img.style.transform = 'translate3d(0, 0, 0) scale(1.4)';
-              triggerSatisfactionGlow(cx, cy, img);
+              triggerSatisfactionGlow(t.x, t.y, img);
               showHudSubtitle(getAnimText('p30', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p31': { // Double-Tap Zoom Lock
+        // ==========================================
+        // P31: DOUBLE TAP ZOOM LOCK
+        // ==========================================
+        case 'p31': {
           const btn = sandboxStage.querySelector('#heartBtn') || sandboxStage.querySelector('button');
           const container = sandboxStage.querySelector('#doubleTapContainer') || sandboxStage;
-          showGhostFinger(cx, cy - 20, false);
-          showIntentPill(cx, cy - 20, '❤️ Rapid Double-Tap');
-          timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 600));
-          timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, false); }, 750));
-          timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 900));
+          const t = getTargetCenter(btn, cx, cy - 20);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '❤️ Rapid Double-Tap');
+
+          // Double tap sequence directly on the heart button!
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, false), 750));
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 900));
+
           timers.push(setTimeout(() => {
             if (mode === 'without') {
-              if (container) container.style.transform = 'scale(2.0)';
-              triggerCollisionFriction(cx, cy, container);
+              if (container) container.style.transform = 'scale(2.2)';
+              triggerCollisionFriction(t.x, t.y, container);
               showHudSubtitle(getAnimText('p31', 'without', mode), 'danger');
             } else {
-              if (btn) btn.style.transform = 'scale(1.3)';
-              setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 200);
-              triggerSatisfactionGlow(cx, cy - 20, btn);
+              if (btn) {
+                btn.style.transform = 'scale(1.35)';
+                setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
+              }
+              triggerSatisfactionGlow(t.x, t.y, btn);
               showHudSubtitle(getAnimText('p31', 'with', mode), 'success');
             }
           }, 1100));
           break;
         }
 
-        case 'p32': { // Passive Listener Memory
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '🔄 Pan Canvas Repeatedly');
+        // ==========================================
+        // P32: PASSIVE LISTENER MEMORY LEAK
+        // ==========================================
+        case 'p32': {
+          showGhostFinger(cx - 30, cy, false);
+          showIntentPill(cx - 30, cy - 30, '🔄 Repeated Canvas Pan');
+
+          timers.push(setTimeout(() => showGhostFinger(cx - 30, cy, true), 600));
+
           timers.push(setTimeout(() => {
             showGhostFinger(cx + 40, cy - 40, true);
             if (mode === 'without') {
               triggerCollisionFriction(cx, cy, sandboxStage);
               showHudSubtitle(getAnimText('p32', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx + 40, cy - 40, sandboxStage);
+              triggerSatisfactionGlow(cx, cy, sandboxStage);
               showHudSubtitle(getAnimText('p32', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1100));
           break;
         }
 
-        case 'p33': { // Sheet Dual Threshold
+        // ==========================================
+        // P33: SHEET DUAL THRESHOLD DISMISS
+        // ==========================================
+        case 'p33': {
           const sheet = sandboxStage.querySelector('.sheet-container') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '🤏 10px Micro-Flick');
+          const t = getTargetCenter(sheet, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '🤏 10px Micro-Flick');
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx, cy + 15, true);
-            timers.push(setTimeout(() => showGhostFinger(cx, cy + 15, false), 150));
+            showGhostFinger(t.x, t.y + 12, true);
+            timers.push(setTimeout(() => showGhostFinger(t.x, t.y + 12, false), 150));
+
             if (mode === 'without') {
-              if (sheet) sheet.style.transform = 'translate3d(0, 300px, 0)';
-              triggerCollisionFriction(cx, cy + 15, sheet);
+              if (sheet) sheet.style.transform = 'translate3d(0, 260px, 0)';
+              triggerCollisionFriction(t.x, t.y + 12, sheet);
               showHudSubtitle(getAnimText('p33', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, sheet);
+              triggerSatisfactionGlow(t.x, t.y, sheet);
               showHudSubtitle(getAnimText('p33', 'with', mode), 'success');
             }
           }, 900));
           break;
         }
 
-        case 'p34': { // Header Deadband
+        // ==========================================
+        // P34: STICKY HEADER DEADBAND
+        // ==========================================
+        case 'p34': {
           const header = sandboxStage.querySelector('.sticky-header') || sandboxStage.querySelector('div');
+          const t = getTargetCenter(header, cx, 40);
+
           showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '↕️ 1px Micro-Scroll');
+          showIntentPill(cx, cy - 30, '↕️ 1px Micro-Scroll Jitter');
+
           timers.push(setTimeout(() => {
             showGhostFinger(cx, cy + 2, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx, cy, header);
+              triggerCollisionFriction(t.x, t.y, header);
               showHudSubtitle(getAnimText('p34', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx, cy, header);
+              triggerSatisfactionGlow(t.x, t.y, header);
               showHudSubtitle(getAnimText('p34', 'with', mode), 'success');
             }
           }, 900));
           break;
         }
 
-        case 'p35': { // Commit Hysteresis 50%
+        // ==========================================
+        // P35: SWIPE MENU 50% SNAP HYSTERESIS
+        // ==========================================
+        case 'p35': {
           const row = sandboxStage.querySelector('.swipe-row') || sandboxStage.querySelector('div');
-          showGhostFinger(cx, cy, false);
-          showIntentPill(cx, cy, '↔️ Swipe 20% & Release');
+          const t = getTargetCenter(row, cx, cy);
+
+          showGhostFinger(t.x, t.y, false);
+          showIntentPill(t.x, t.y - 30, '↔️ Swipe 20% & Release');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 30, cy, true); // 20% swipe
+            showGhostFinger(t.x - 30, t.y, true); // 20% swipe
             timers.push(setTimeout(() => {
-              showGhostFinger(cx - 30, cy, false); // release
+              showGhostFinger(t.x - 30, t.y, false); // release
               if (mode === 'without') {
-                triggerCollisionFriction(cx - 30, cy, row);
+                triggerCollisionFriction(t.x - 30, t.y, row);
                 showHudSubtitle(getAnimText('p35', 'without', mode), 'danger');
               } else {
-                triggerSatisfactionGlow(cx, cy, row);
+                triggerSatisfactionGlow(t.x, t.y, row);
                 showHudSubtitle(getAnimText('p35', 'with', mode), 'success');
               }
             }, 300));
@@ -3572,28 +3919,36 @@
           break;
         }
 
-        case 'p36': { // Overscroll Containment
+        // ==========================================
+        // P36: CAROUSEL OVERSCROLL CONTAINMENT
+        // ==========================================
+        case 'p36': {
           const swiper = sandboxStage.querySelector('.carousel-container') || sandboxStage.querySelector('div');
-          showGhostFinger(cx + 80, cy, false);
-          showIntentPill(cx + 80, cy, '➡️ Swipe Past End');
+          const t = getTargetCenter(swiper, cx, cy);
+
+          showGhostFinger(t.x + 80, t.y, false);
+          showIntentPill(t.x + 80, t.y - 30, '➡️ Swipe Past End of Slides');
+
+          timers.push(setTimeout(() => showGhostFinger(t.x + 80, t.y, true), 600));
+
           timers.push(setTimeout(() => {
-            showGhostFinger(cx - 100, cy, true);
+            showGhostFinger(t.x - 90, t.y, true);
             if (mode === 'without') {
-              triggerCollisionFriction(cx - 100, cy, swiper);
+              triggerCollisionFriction(t.x - 90, t.y, swiper);
               showHudSubtitle(getAnimText('p36', 'without', mode), 'danger');
             } else {
-              triggerSatisfactionGlow(cx - 100, cy, swiper);
+              triggerSatisfactionGlow(t.x - 90, t.y, swiper);
               showHudSubtitle(getAnimText('p36', 'with', mode), 'success');
             }
-          }, 1000));
+          }, 1100));
           break;
         }
       }
 
-      // Finish sequence after 3.6s
+      // Finish sequence
       timers.push(setTimeout(() => {
         stopAnimatedDemo();
-      }, 3600));
+      }, 3800));
     }
 
     btnPlayDemo.addEventListener('click', () => {
