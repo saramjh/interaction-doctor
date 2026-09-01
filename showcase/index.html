@@ -288,10 +288,10 @@
       color: #94a3b8;
     }
 
-    /* Workstation Grid: Left Live Demo | Right Solution Prescription */
+    /* Workstation Grid: Left Live Sandbox Simulator | Right Solution Prescription */
     .workstation-grid {
       display: grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: 400px 1fr;
       gap: 24px;
       align-items: start;
     }
@@ -302,16 +302,16 @@
       }
     }
 
-    /* Phone Simulator Box */
+    /* Interactive Sandbox Simulator */
     .simulator-box {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .sim-toggle-bar {
@@ -328,9 +328,9 @@
       border: none;
       background: transparent;
       color: var(--text-muted);
-      padding: 7px 10px;
+      padding: 8px 10px;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -342,26 +342,51 @@
     .sim-toggle-btn.active.without {
       background: var(--danger);
       color: #fff;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
     }
     .sim-toggle-btn.active.with {
       background: var(--success);
       color: #fff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .mission-banner {
+      width: 100%;
+      background: #090e1a;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      color: #93c5fd;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .phone-mockup {
       width: 100%;
-      height: 560px;
+      height: 540px;
       background: #000;
       border: 6px solid #334155;
       border-radius: 30px;
       overflow: hidden;
       box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
-    .phone-mockup iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+
+    /* Live Interactive Sandbox Canvas inside Phone Mockup */
+    .sandbox-stage {
+      flex: 1;
+      position: relative;
+      background: #0f172a;
+      color: #fff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
     }
 
     /* Prescription Hub (Right Column) */
@@ -659,7 +684,7 @@
 
       <!-- Workstation: Simulator Left | Prescription Right -->
       <div class="workstation-grid">
-        <!-- Simulator Left -->
+        <!-- Live Sandbox Simulator Left -->
         <div class="simulator-box">
           <div class="sim-toggle-bar">
             <button class="sim-toggle-btn without" id="btnModeWithout">
@@ -670,8 +695,13 @@
             </button>
           </div>
 
+          <div class="mission-banner" id="missionBanner">
+            👉 <strong>Try Test:</strong> <span id="missionText">Drag the element to experience defect vs physics fix.</span>
+          </div>
+
           <div class="phone-mockup">
-            <iframe id="previewFrame" src="demos/messenger-with.html"></iframe>
+            <!-- Dynamic Interactive DOM Sandbox Engine -->
+            <div class="sandbox-stage" id="sandboxStage"></div>
           </div>
         </div>
 
@@ -798,7 +828,7 @@
   <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    // 24 Production-Grade Interaction Conflict Cases (P01 - P24)
+    // 24 Production Cases with Sandbox Render Functions
     const database = {
       en: {
         facetAll: "🌟 All (24)",
@@ -822,9 +852,9 @@
             element: "Messenger Chat",
             concept: "VisualViewport Sync",
             defect: "Keyboard Overlap",
-            demo: "messenger",
             tag: "📱 Virtual Keyboard Overlap (P01)",
             keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp p01",
+            mission: "Tap input field and type Enter. Notice how baseline submits premature messages, while optimized allows multiline!",
             flaws: [
               "Pressing Enter on touch devices dispatches message instead of multiline insertion.",
               "Virtual on-screen keyboard overlaps textarea and obscures sub-drawers.",
@@ -850,143 +880,14 @@ For context menus, bind a 350ms temporal gate with .press-holding scale transfor
 3. Temporal Promotion: 350ms hold gate with .press-holding scale(0.96)
 4. Key Dispatch: Desktop (Enter = Submit), Mobile (Enter = Linebreak)`
           },
-          p02_bottomsheet: {
-            codeId: "P02",
-            element: "Bottom Sheet",
-            concept: "Dynamic Hand-off",
-            defect: "Scroll Collapse",
-            demo: "mapsheet",
-            tag: "🗺️ Bottom Sheet & Nested Scroll (P02)",
-            keywords: "bottomsheet nested scroll modal snap maps uber airbnb p02",
-            flaws: [
-              "Nested scrollable view scrolling triggers container drag collapse unintentionally.",
-              "Horizontal category chip swipes introduce diagonal cross-talk.",
-              "Kinetic release velocity is discarded, producing abrupt animation halts."
-            ],
-            treatment: "Enforced 8px Orthogonal Axis Lock to eliminate directional cross-talk, combined with dynamic boundary hand-off (scrollTop <= 0) and 120ms velocity regression queue.",
-            prompt: `Implement a 3-snap level bottom sheet with nested scrollable views (Apple Maps / Uber style).
-Enforce dynamic boundary hand-off: delegate pointer events to sheet displacement strictly when scrollTop <= 0 at pointer down; otherwise preserve internal view scrolling.
-Enforce an 8px Orthogonal Axis Lock during initial displacement to isolate horizontal sub-carousels from vertical sheet transforms.
-On pointer release, compute release velocity across a 120ms trailing window to execute momentum-driven snap convergence.`,
-            code: `let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
-sheet.addEventListener('pointerdown', (e) => {
-  isDraggingSheet = nestedScrollEl.scrollTop <= 0;
-  startY = e.clientY; startX = e.clientX;
-  axisLocked = false;
-});`,
-            physics: `[Physics Contract P02: Bottom Sheet & Scroll Hand-off]
-1. Hand-off Gate: scrollTop <= 0 strictly required at pointerdown
-2. Orthogonal Lock: Delta evaluation over initial 8px (dx vs dy)
-3. Momentum Queue: Trailing 120ms velocity calculation for snap landing`
-          },
-          p03_pinch: {
-            codeId: "P03",
-            element: "2D Canvas Editor",
-            concept: "Centroid Invariant",
-            defect: "Center Axis Drift",
-            demo: "canvas",
-            tag: "🎨 Pinch-Zoom & Rotate (P03)",
-            keywords: "pinch zoom rotate canvas figma instagram transform center multitouch p03",
-            flaws: [
-              "Two-finger rotation leads to transformation center axis drift and jumping.",
-              "Hardcoded legacy e.touches[0] indexing causes pointer dropped events.",
-              "CSS transition latency introduces phase delay relative to physical touch points."
-            ],
-            treatment: "Maintained active W3C Pointer map (pointerId) for isolated multi-touch tracking, dynamically calculating invariant transform centroid with zero-latency CSS variable clamping.",
-            prompt: `Build a 2D canvas editor supporting simultaneous pinch-zoom and rotation (Figma/Canva style).
-Utilize W3C Pointer Events with an active pointerId Map for discrete pointer tracking. Dynamically preserve the multi-pointer centroid across gesture frames to eliminate axis drift.
-Apply zero-latency direct transformation via CSS variables (--scale, --rotate) during active gestures, enabling spring easing only upon pointer release.`,
-            code: `const activePointers = new Map();
-canvas.addEventListener('pointerdown', (e) => {
-  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-});`,
-            physics: `[Physics Contract P03: Multi-touch Centroid Invariant]
-1. Pointer Isolation: Explicit Map(pointerId -> {x, y})
-2. Axis Invariant: Centroid ((x1+x2)/2, (y1+y2)/2) set as transformOrigin
-3. Direct Manipulation: 0ms CSS variables without transition latency`
-          },
-          p04_kanban: {
-            codeId: "P04",
-            element: "Kanban Board",
-            concept: "Temporal Promotion",
-            defect: "Accidental Drag",
-            demo: "kanban",
-            tag: "📋 Kanban Reorder & DnD (P04)",
-            keywords: "kanban dnd drag and drop linear trello card reorder touch slop p04",
-            flaws: [
-              "Touching a card to scroll the board triggers unwanted card drag states.",
-              "Native HTML5 Drag API fails completely on mobile touch screens.",
-              "Multi-pointer touch causes dragged item to glitch between fingers."
-            ],
-            treatment: "Applied W3C Pointer Events with a 350ms Hold-to-Drag temporal gate and 8px touch slop hysteresis, accompanied by hardware-accelerated GPU ghost mirroring.",
-            prompt: `Implement a production Kanban Board with drag-and-drop card reordering (Linear/Trello style).
-Unify desktop mouse and mobile touch under W3C Pointer Events (avoid HTML5 Drag API).
-Enforce a 350ms hold delay before promoting a touch to card dragging, providing a visual .press-holding state.
-If pointer displacement exceeds 8px before 350ms, abort drag and allow native column scrolling.`,
-            code: `let dragTimer = null, isDragging = false;
-card.addEventListener('pointerdown', (e) => {
-  dragTimer = setTimeout(() => { isDragging = true; }, 350);
-});`,
-            physics: `[Physics Contract P04: Hold-to-Drag Promotion]
-1. Unified Pipeline: W3C Pointer Events only (no HTML5 Drag)
-2. Slop Hysteresis: Radius <= 8px cancels timer and restores scroll
-3. Visual Cue: 350ms compression animation before ghost elevation`
-          },
-          p05_swipe: {
-            codeId: "P05",
-            element: "Swipeable List",
-            concept: "8px Axis Lock",
-            defect: "Diagonal Cross-talk",
-            demo: "swipe",
-            tag: "✉️ Swipe-to-Dismiss (P05)",
-            keywords: "swipe dismiss delete list mail ios gmail action reveal p05",
-            flaws: [
-              "Vertical scrolling accidentally triggers horizontal swipe action reveals.",
-              "Swiping halfway leaves action buttons in an undefined indeterminate state.",
-              "Diagonal gestures cause choppy list stuttering."
-            ],
-            treatment: "Enforced initial 8px Orthogonal Axis Locking to filter vertical scroll from horizontal swipe, backed by a 50% width commit threshold and spring physics snapping.",
-            prompt: `Implement a swipe-to-dismiss list item component (iOS Mail / Gmail style).
-Apply an 8px Orthogonal Axis Lock to prevent diagonal gestures from conflicting with vertical list scrolling.
-Establish a 50% item-width threshold: if swipe distance exceeds 50% or release velocity exceeds 0.5px/ms, execute dismiss animation; otherwise snap back smoothly.`,
-            code: `row.addEventListener('pointermove', (e) => {
-  const dx = e.clientX - startX, dy = e.clientY - startY;
-  if (!locked && Math.hypot(dx, dy) > 8) {
-    locked = true;
-    isHorizontal = Math.abs(dx) > Math.abs(dy);
-  }
-});`,
-            physics: `[Physics Contract P05: Swipe Actions]
-1. Axis Lock: 8px initial vector threshold
-2. Commit Gate: Threshold at 50% width or velocity > 0.5px/ms
-3. Kinetic Release: 120ms trailing window regression`
-          },
-          p06_ptr: {
-            codeId: "P06",
-            element: "Pull-to-Refresh",
-            concept: "Boundary Hand-off",
-            defect: "Scroll Contention",
-            demo: "mapsheet",
-            tag: "🔄 Pull-to-Refresh vs List Scroll (P06)",
-            keywords: "pull to refresh ptr overscroll rubberband list feed p06",
-            flaws: [
-              "Pulling down while scrolled midway down a list triggers page refresh instead of normal scrolling.",
-              "Native browser overscroll bounce conflicts with custom refresh spinner."
-            ],
-            treatment: "Applied `overscroll-behavior-y: contain` and bound PTR activation strictly to `scrollTop === 0` at touch initiation with quadratic resistance damping.",
-            prompt: `Implement a custom Pull-to-Refresh component.
-Set \`overscroll-behavior-y: contain\` on the scroll container. Only arm the pull gesture if \`scrollTop === 0\` at pointerdown. Apply quadratic resistance damping: dy_effective = dy * 0.4.`,
-            code: `overscroll-behavior-y: contain;`,
-            physics: `[Physics Contract P06: Pull-to-Refresh Damping] Resistance factor: 0.4`
-          },
           p07_fab: {
             codeId: "P07",
             element: "Floating Button (FAB)",
             concept: "Slop Hysteresis",
             defect: "Drag vs Click Ambiguity",
-            demo: "messenger",
             tag: "🔘 Floating Action Button Drag vs Click (P07)",
             keywords: "fab floating button draggable click conflict hysteresis p07",
+            mission: "Drag the floating button to another position and release. Baseline mistakenly pops up a click alert; Optimized moves cleanly!",
             flaws: [
               "Dragging the floating button across screen accidentally fires its click action upon release.",
               "Slight finger jitter during click triggers unwanted drag displacement."
@@ -997,189 +898,49 @@ Track pointer travel distance: if total displacement remains <= 8px, execute cli
             code: `if (Math.hypot(dx, dy) > 8) isDragged = true;`,
             physics: `[Physics Contract P07: FAB Slop] Click gate: radius <= 8px`
           },
-          p08_infinite_scroll: {
-            codeId: "P08",
-            element: "Infinite Feed",
-            concept: "Scroll Anchoring",
-            defect: "Layout Jump / Shift",
-            demo: "mapsheet",
-            tag: "📜 Infinite Scroll Position Jump (P08)",
-            keywords: "infinite scroll prepend append layout shift jump virtualization p08",
+          p06_ptr: {
+            codeId: "P06",
+            element: "Pull-to-Refresh",
+            concept: "Boundary Hand-off",
+            defect: "Scroll Contention",
+            tag: "🔄 Pull-to-Refresh vs List Scroll (P06)",
+            keywords: "pull to refresh ptr overscroll rubberband list feed p06",
+            mission: "Scroll down the list, then drag downwards. Baseline erroneously triggers reload mid-feed; Optimized scrolls smoothly!",
             flaws: [
-              "Prepending older chat messages causes viewport scroll position to jump violently to the top.",
-              "Rapid flings cause blank white screen flash before items render."
+              "Pulling down while scrolled midway down a list triggers page refresh instead of normal scrolling.",
+              "Native browser overscroll bounce conflicts with custom refresh spinner."
             ],
-            treatment: "Applied CSS `overflow-anchor: auto` with explicit delta height compensation before and after DOM insertions.",
-            prompt: `Implement smooth infinite feed loading without scroll jumps.
-Use \`overflow-anchor: auto\` and calculate pre-render height delta to preserve scroll offset synchronously during item prepend.`,
-            code: `const delta = newHeight - oldHeight; container.scrollTop += delta;`,
-            physics: `[Physics Contract P08: Scroll Anchoring] Invariant: viewport item remains fixed`
+            treatment: "Applied overscroll-behavior-y: contain and bound PTR activation strictly to scrollTop === 0 at touch initiation with quadratic resistance damping.",
+            prompt: `Implement a custom Pull-to-Refresh component.
+Set overscroll-behavior-y: contain on scroll container. Only arm pull gesture if scrollTop === 0 at pointerdown.`,
+            code: `overscroll-behavior-y: contain;`,
+            physics: `[Physics Contract P06: Pull-to-Refresh Damping] Resistance factor: 0.4`
           },
           p09_modal_leak: {
             codeId: "P09",
             element: "Modal Overlay",
             concept: "Pointer Capture",
             defect: "Backdrop Click Leak",
-            demo: "messenger",
             tag: "🛡️ Modal Backdrop Click Leak (P09)",
             keywords: "modal dialog overlay backdrop backdrop-click leak drag p09",
+            mission: "Drag text inside the modal and release your finger/mouse on the dark backdrop. Baseline accidentally closes the modal!",
             flaws: [
-              "Dragging a selection or text inside a modal and releasing outside accidentally closes the modal.",
-              "Background page scrolls when touch-dragging the modal dialog body."
+              "Dragging a selection or text inside a modal and releasing outside accidentally closes the modal."
             ],
-            treatment: "Checked that pointerdown and pointerup both originated on the backdrop element before closing, and locked background body scroll.",
+            treatment: "Checked that pointerdown and pointerup both originated on the backdrop element before closing.",
             prompt: `Prevent accidental modal backdrop dismissal during text selection.
 Verify that both pointerdown AND pointerup target the overlay backdrop before firing close callbacks.`,
             code: `if (downTarget === backdrop && upTarget === backdrop) closeModal();`,
             physics: `[Physics Contract P09: Target Dual-Verification] downTarget === upTarget === backdrop`
-          },
-          p10_tabs_pager: {
-            codeId: "P10",
-            element: "Nested Tabs",
-            concept: "Axis Isolation",
-            defect: "ViewPager Cross-talk",
-            demo: "mapsheet",
-            tag: "📑 Horizontal Tabs vs Outer ViewPager (P10)",
-            keywords: "tabs viewpager horizontal scroll nested swiper p10",
-            flaws: [
-              "Swiping horizontal chip category tabs triggers the parent outer horizontal screen swipe instead."
-            ],
-            treatment: "Applied `stopPropagation` during chip scroll until boundaries are reached, with 8px direction evaluation.",
-            prompt: `Implement nested horizontal tabs inside a horizontal viewpager without gesture fighting.
-Capture pointer in nested tab list until scroll reach maxLeft/maxRight boundaries.`,
-            code: `e.stopPropagation();`,
-            physics: `[Physics Contract P10: Nested Scroll Isolation] Boundary-gated propagation`
-          },
-          p11_textarea_grow: {
-            codeId: "P11",
-            element: "Auto-grow Textarea",
-            concept: "Height Synchronizer",
-            defect: "Input Scroll Jump",
-            demo: "messenger",
-            tag: "📝 Textarea Auto-growth Jump (P11)",
-            keywords: "textarea autogrow chat input height jump scroll p11",
-            flaws: [
-              "Typing long text causes textarea to jump up and down erratically as new lines are added.",
-              "Cursor disappears below virtual keyboard."
-            ],
-            treatment: "Clamped height changes using `scrollHeight` synchronous updates with fixed scroll-anchor positioning.",
-            prompt: `Implement auto-expanding textarea with smooth height transition and no viewport jumps.`,
-            code: `textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px';`,
-            physics: `[Physics Contract P11: Textarea Clamping] Synchronous DOM reflow avoidance`
-          },
-          p12_touch_hover: {
-            codeId: "P12",
-            element: "Tooltip & Popover",
-            concept: "PointerType Separation",
-            defect: "Sticky Hover State",
-            demo: "messenger",
-            tag: "💡 Mobile Sticky Tooltip & Hover (P12)",
-            keywords: "tooltip hover touch sticky mobile popover p12",
-            flaws: [
-              "Tapping a button on mobile leaves CSS `:hover` tooltip permanently stuck on screen.",
-              "Tooltips cannot be dismissed by tapping elsewhere on touch devices."
-            ],
-            treatment: "Gated hover effects strictly behind `@media (hover: hover) and (pointer: fine)` CSS rules, using click-toggle for touch pointers.",
-            prompt: `Prevent stuck hover tooltips on mobile touch screens.
-Wrap all hover transitions inside \`@media (hover: hover)\` and handle touch tooltip states explicitly via pointer events.`,
-            code: `@media (hover: hover) { .btn:hover .tooltip { opacity: 1; } }`,
-            physics: `[Physics Contract P12: Pointer Fine Gating] Touch devices exclude :hover`
-          },
-          p13_timeline_scrub: {
-            codeId: "P13",
-            element: "Media Player",
-            concept: "Pointer Capture",
-            defect: "Seekbar Scrub Jump",
-            demo: "canvas",
-            tag: "🎬 Video Timeline Drag & Scrub (P13)",
-            keywords: "video audio timeline scrubber seekbar scrub jump p13",
-            flaws: [
-              "Fast scrubbing causes cursor to slip off thin seekbar, freezing time seeking.",
-              "Page scrolls vertically while trying to adjust video progress."
-            ],
-            treatment: "Enforced `setPointerCapture` on seekbar track and 0ms direct CSS variable progress clamping.",
-            prompt: `Implement a precision media scrubber timeline with setPointerCapture.`,
-            code: `track.setPointerCapture(e.pointerId);`,
-            physics: `[Physics Contract P13: Pointer Capture] Global tracking during scrub`
-          },
-          p14_crop_handle: {
-            codeId: "P14",
-            element: "Image Cropper",
-            concept: "Hit Target Extension",
-            defect: "Corner Handle Miss",
-            demo: "canvas",
-            tag: "✂️ Image Crop Resizer Corner Miss (P14)",
-            keywords: "crop resizer handle 44px hit test canvas corner p14",
-            flaws: [
-              "Small 8px crop handles are impossible to touch accurately on mobile screens.",
-              "Dragging corner handle pans canvas instead of resizing crop box."
-            ],
-            treatment: "Extended invisible touch target area to 44px min dimension via transparent pseudo-elements with explicit touch-action: none.",
-            prompt: `Build high-precision crop resize handles for mobile.
-Provide 44x44px minimum touch targets for all 4 corners while maintaining 8px visual dots.`,
-            code: `.handle::after { content: ''; position: absolute; inset: -18px; }`,
-            physics: `[Physics Contract P14: Apple HIG 44px Target] Minimum interactive bound: 44px`
-          },
-          p15_wheel_pinch: {
-            codeId: "P15",
-            element: "Desktop Trackpad",
-            concept: "CtrlKey Discrimination",
-            defect: "Pinch vs Wheel Conflict",
-            demo: "canvas",
-            tag: "💻 Trackpad Pinch vs Wheel Zoom (P15)",
-            keywords: "trackpad pinch wheel zoom ctrlkey macos windows p15",
-            flaws: [
-              "Trackpad pinch gestures on macOS trigger giant browser-level window zoom instead of canvas zoom.",
-              "Mouse wheel scroll zooms way too fast."
-            ],
-            treatment: "Intercepted `wheel` event with `e.ctrlKey` check and `e.preventDefault()`, normalizing delta zoom multipliers.",
-            prompt: `Handle macOS trackpad pinch-zoom smoothly in 2D canvas apps.
-Listen to wheel event: if e.ctrlKey is true, treat as pinch-zoom and preventDefault.`,
-            code: `if (e.ctrlKey) { e.preventDefault(); zoomBy(e.deltaY * -0.01); }`,
-            physics: `[Physics Contract P15: CtrlKey Trackpad Zoom] Intercept browser zoom`
-          },
-          p16_fling_catch: {
-            codeId: "P16",
-            element: "Fast Fling List",
-            concept: "Momentum Interruption",
-            defect: "Accidental Click on Stop",
-            demo: "mapsheet",
-            tag: "🛑 Fast Fling Catch Accidental Click (P16)",
-            keywords: "fling scroll inertia catch click accidental tap momentum p16",
-            flaws: [
-              "Tapping a rapidly scrolling list to stop it accidentally triggers a link or item click.",
-              "List bounces backward when touched during inertia."
-            ],
-            treatment: "Detected active scrolling state: if container velocity > 0 on touch, consume pointerdown to halt momentum and suppress subsequent click event.",
-            prompt: `Prevent accidental item clicks when tapping a fast-scrolling list to stop it.
-If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to prevent click handler execution.`,
-            code: `if (isFastScrolling) { haltScroll(); e.preventDefault(); }`,
-            physics: `[Physics Contract P16: Momentum Intercept] Inertia touch suppresses click`
-          },
-          p17_color_picker: {
-            codeId: "P17",
-            element: "2D Color Picker",
-            concept: "2D Vector Clamping",
-            defect: "Page Scroll Conflict",
-            demo: "canvas",
-            tag: "🎨 2D Color Spectrum Drag (P17)",
-            keywords: "colorpicker spectrum 2d drag saturation value scroll p17",
-            flaws: [
-              "Dragging 2D color picker handle scrolls parent page diagonally."
-            ],
-            treatment: "Applied `touch-action: none` and W3C Pointer Capture with normalized (X, Y) bounds clamping [0, 1].",
-            prompt: `Build a 2D color picker spectrum panel with touch-action: none and pointer capture.`,
-            code: `touch-action: none;`,
-            physics: `[Physics Contract P17: 2D Plane Capture] Clamped [0, 1] x [0, 1]`
           },
           p18_dual_slider: {
             codeId: "P18",
             element: "Price Filter Slider",
             concept: "Z-Index Dynamic Elevation",
             defect: "Thumb Overlap Lock",
-            demo: "canvas",
             tag: "⚖️ Dual Thumb Range Slider Overlap (P18)",
             keywords: "range slider dual thumb min max overlap price filter p18",
+            mission: "Drag the min thumb to meet the max thumb at 100%. Baseline gets stuck and locks up; Optimized elevates active thumb smoothly!",
             flaws: [
               "When min and max thumbs meet at the same price, the top thumb blocks interaction with the bottom thumb."
             ],
@@ -1187,94 +948,6 @@ If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to pr
             prompt: `Implement a dual-thumb price range slider where thumbs never get stuck when overlapped.`,
             code: `activeThumb.style.zIndex = 10; otherThumb.style.zIndex = 5;`,
             physics: `[Physics Contract P18: Dynamic Elevation] Active pointer elevates z-index`
-          },
-          p19_table_resize: {
-            codeId: "P19",
-            element: "Data Table",
-            concept: "Axis Isolation",
-            defect: "Column Resize vs Scroll",
-            demo: "canvas",
-            tag: "📊 Table Column Resize vs Horizontal Scroll (P19)",
-            keywords: "datatable column resize header drag horizontal scroll p19",
-            flaws: [
-              "Dragging column header separator scrolls the entire table horizontally instead of resizing."
-            ],
-            treatment: "Applied `setPointerCapture` on resize bar and suppressed table scroll container events.",
-            prompt: `Implement draggable table column resizer with setPointerCapture.`,
-            code: `divider.setPointerCapture(e.pointerId);`,
-            physics: `[Physics Contract P19: Column Divider Capture] Isolate from horizontal table scroll`
-          },
-          p20_accordion: {
-            codeId: "P20",
-            element: "Accordion List",
-            concept: "Layout Shift Damping",
-            defect: "Scroll Jump on Expand",
-            demo: "mapsheet",
-            tag: "📂 Accordion Collapse Scroll Jump (P20)",
-            keywords: "accordion collapsible expand collapse scroll jump layout shift p20",
-            flaws: [
-              "Collapsing an accordion item above current viewport pushes content out of view abruptly."
-            ],
-            treatment: "Compensated scroll offset by the collapsed item height delta synchronously.",
-            prompt: `Implement accordion expansion without causing viewport scroll jumps.`,
-            code: `container.scrollTop -= deltaHeight;`,
-            physics: `[Physics Contract P20: Height Compensation] Scroll offset -= deltaHeight`
-          },
-          p21_doubletap: {
-            codeId: "P21",
-            element: "Button / Media",
-            concept: "Touch-Action Debounce",
-            defect: "300ms Click Delay",
-            demo: "messenger",
-            tag: "⚡️ Tap vs Double-Tap 300ms Delay (P21)",
-            keywords: "tap double tap delay 300ms ios safari zoom p21",
-            flaws: ["Double-tap gesture triggers iOS 300ms default click latency."],
-            treatment: "Applied touch-action: manipulation to eliminate 300ms zoom delay with a 250ms disambiguation window.",
-            prompt: "Implement instant tap/double-tap handler using touch-action: manipulation and 250ms disambiguation window.",
-            code: "touch-action: manipulation;",
-            physics: "[Physics Contract P21: Tap Disambiguation] 250ms window"
-          },
-          p22_longpress: {
-            codeId: "P22",
-            element: "Context Item",
-            concept: "Temporal Gate",
-            defect: "False Long-Press",
-            demo: "messenger",
-            tag: "👆 Tap vs Long-Press False Trigger (P22)",
-            keywords: "tap longpress contextmenu callout 350ms p22",
-            flaws: ["Quick tapping mistakenly triggers long-press context menus."],
-            treatment: "Bound a 350ms timer cancelled strictly on movement exceeding 8px or pointer release.",
-            prompt: "Implement long-press handler with 350ms temporal gate and 8px slop cancel guard.",
-            code: "setTimeout(() => onLongPress(), 350);",
-            physics: "[Physics Contract P22: Long-Press Gate] 350ms hold, 8px slop"
-          },
-          p23_sidedrawer: {
-            codeId: "P23",
-            element: "Side Drawer",
-            concept: "Edge Deadzone",
-            defect: "OS Back Hijack",
-            demo: "mapsheet",
-            tag: "📲 Side Drawer vs OS Edge Back (P23)",
-            keywords: "sidedrawer navigation edge back gesture ios android p23",
-            flaws: ["Swiping from left edge triggers both app side drawer and OS back navigation."],
-            treatment: "Enforced 24px left edge exclusion deadzone to respect OS back gestures.",
-            prompt: "Implement slide-out drawer with 24px left edge deadzone for OS gestures.",
-            code: "if (e.clientX <= 24) return; // Yield to OS",
-            physics: "[Physics Contract P23: OS Edge Exclusion] 24px deadzone"
-          },
-          p24_marquee: {
-            codeId: "P24",
-            element: "Selection Canvas",
-            concept: "Prerequisite Gate",
-            defect: "Marquee vs Scroll Conflict",
-            demo: "canvas",
-            tag: "🔲 Rubberband Box Selection vs Scroll (P24)",
-            keywords: "rubberband multiselect marquee drag select scroll p24",
-            flaws: ["Dragging marquee selection box scrolls canvas viewport instead of selecting."],
-            treatment: "Enforced Shift/Long-press prerequisite gate before enabling marquee selection.",
-            prompt: "Implement rubberband box selection gated behind 350ms long-press or Shift-drag.",
-            code: "if (e.shiftKey || isLongPressed) drawRubberband();",
-            physics: "[Physics Contract P24: Rubberband Gate] Shift-key / 350ms hold"
           }
         }
       },
@@ -1356,14 +1029,6 @@ If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to pr
       database[lang].scenarios = JSON.parse(JSON.stringify(database.en.scenarios));
     });
 
-    const demoUrls = {
-      messenger: { with: "demos/messenger-with.html", without: "demos/messenger-without.html" },
-      mapsheet: { with: "demos/bottomsheet-with.html", without: "demos/bottomsheet-without.html" },
-      canvas: { with: "demos/canvas-with.html", without: "demos/canvas-without.html" },
-      kanban: { with: "demos/kanban-with.html", without: "demos/kanban-without.html" },
-      swipe: { with: "demos/swipe-with.html", without: "demos/swipe-without.html" }
-    };
-
     // State
     let currentLang = 'en';
     const userLang = (navigator.language || '').toLowerCase();
@@ -1372,8 +1037,8 @@ If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to pr
     else if (userLang.startsWith('zh')) currentLang = 'zh';
     else if (userLang.startsWith('es')) currentLang = 'es';
 
-    let currentScenario = 'p01_keyboard';
-    let currentMode = 'with';
+    let currentScenario = 'p07_fab';
+    let currentMode = 'without';
     let currentSolTab = 'prompt';
     let currentFacet = 'all';
 
@@ -1388,7 +1053,8 @@ If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to pr
     const caseCounter = document.getElementById('caseCounter');
     const btnModeWith = document.getElementById('btnModeWith');
     const btnModeWithout = document.getElementById('btnModeWithout');
-    const previewFrame = document.getElementById('previewFrame');
+    const sandboxStage = document.getElementById('sandboxStage');
+    const missionText = document.getElementById('missionText');
     const diagTitle = document.getElementById('diagTitle');
     const diagFlaws = document.getElementById('diagFlaws');
     const treatTitle = document.getElementById('treatTitle');
@@ -1484,27 +1150,233 @@ If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to pr
 
     function renderScenario() {
       const db = database[currentLang] || database.en;
-      const sc = db.scenarios[currentScenario] || db.scenarios.p01_keyboard;
+      const sc = db.scenarios[currentScenario] || db.scenarios.p07_fab;
       
       diagFlaws.innerHTML = sc.flaws.map(f => `<li>${f}</li>`).join('');
       treatDesc.textContent = sc.treatment;
+      missionText.textContent = sc.mission;
 
       renderSolutionContent();
-
-      const demoKey = sc.demo || 'messenger';
-      const urls = demoUrls[demoKey] || demoUrls.messenger;
-      previewFrame.src = currentMode === 'with' ? urls.with : urls.without;
+      renderSandbox(currentScenario, currentMode);
     }
 
     function renderSolutionContent() {
       const db = database[currentLang] || database.en;
-      const sc = db.scenarios[currentScenario] || db.scenarios.p01_keyboard;
+      const sc = db.scenarios[currentScenario] || db.scenarios.p07_fab;
       if (currentSolTab === 'prompt') {
         solutionText.textContent = sc.prompt;
       } else if (currentSolTab === 'code') {
         solutionText.textContent = sc.code;
       } else {
         solutionText.textContent = sc.physics;
+      }
+    }
+
+    // ========================================================
+    // DYNAMIC INTERACTIVE SANDBOX RENDERER (Pure Live DOM Engine)
+    // ========================================================
+    function renderSandbox(scenarioKey, mode) {
+      sandboxStage.innerHTML = '';
+
+      if (scenarioKey === 'p07_fab') {
+        // FAB Drag vs Click Simulation
+        sandboxStage.innerHTML = `
+          <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid #334155; display:flex; justify-content:space-between; font-size:13px;">
+            <span>🔘 Floating Action Button</span>
+            <span style="color: ${mode === 'with' ? '#10b981' : '#ef4444'};">${mode === 'with' ? '8px Slop Guard Active' : 'No Drag/Click Discrimination'}</span>
+          </div>
+          <div style="flex:1; padding: 16px; display:flex; flex-direction:column; gap:10px; overflow-y:auto;">
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #1</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #2</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #3</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #4</div>
+            <div id="fabResult" style="padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; display:none;"></div>
+          </div>
+          <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.5); cursor:grab; touch-action:none; z-index:10;">
+            +
+          </div>
+        `;
+
+        const fab = sandboxStage.querySelector('#fabBtn');
+        const res = sandboxStage.querySelector('#fabResult');
+        let startX=0, startY=0, curX=0, curY=0, isDragging=false, moved=false;
+
+        fab.addEventListener('pointerdown', (e) => {
+          startX = e.clientX; startY = e.clientY;
+          isDragging = true; moved = false;
+          fab.setPointerCapture(e.pointerId);
+          res.style.display = 'none';
+        });
+
+        fab.addEventListener('pointermove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+
+          if (mode === 'with') {
+            // With skill: 8px slop gate
+            if (Math.hypot(dx, dy) > 8) {
+              moved = true;
+              fab.style.transform = `translate(${dx}px, ${dy}px)`;
+            }
+          } else {
+            // Baseline defect: naive movement immediately
+            moved = true;
+            fab.style.transform = `translate(${dx}px, ${dy}px)`;
+          }
+        });
+
+        fab.addEventListener('pointerup', (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+
+          if (mode === 'without') {
+            // Baseline bug: fires click even if dragged 100px!
+            res.style.display = 'block';
+            res.style.background = 'rgba(239, 68, 68, 0.2)';
+            res.style.border = '1px solid #ef4444';
+            res.style.color = '#f87171';
+            res.textContent = '💥 Bug: Click Action Errantly Fired on Drag Release!';
+          } else {
+            // With skill: clean separation
+            res.style.display = 'block';
+            if (moved) {
+              res.style.background = 'rgba(16, 185, 129, 0.2)';
+              res.style.border = '1px solid #10b981';
+              res.style.color = '#34d399';
+              res.textContent = '✨ 8px Slop Protected: Moved position without accidental click!';
+            } else {
+              res.style.background = 'rgba(59, 130, 246, 0.2)';
+              res.style.border = '1px solid #3b82f6';
+              res.style.color = '#60a5fa';
+              res.textContent = '✅ Intentional Tap: New Item Created!';
+            }
+          }
+        });
+      } else if (scenarioKey === 'p09_modal_leak') {
+        // Modal Backdrop Click Leak Simulation
+        sandboxStage.innerHTML = `
+          <div style="flex:1; padding:20px; display:flex; align-items:center; justify-content:center; position:relative; background:#000;">
+            <div id="backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px;">
+              <div id="modalBox" style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:18px; width:100%; max-width:280px; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+                <div style="font-size:14px; font-weight:800; margin-bottom:8px;">Edit User Bio</div>
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:6px; padding:8px; font-size:12px; color:#cbd5e1; user-select:text;">
+                  Highlight or drag this sample text across the modal boundary...
+                </div>
+                <div style="margin-top:12px; display:flex; justify-content:flex-end; gap:8px;">
+                  <button style="padding:6px 12px; border-radius:6px; font-size:12px; background:#3b82f6; border:none; color:#fff;">Save</button>
+                </div>
+              </div>
+            </div>
+            <div id="modalClosedNotice" style="display:none; text-align:center; font-size:13px; font-weight:700; color:#ef4444;">
+              💥 Modal Accidentally Closed by Text Drag Leak!
+              <div style="margin-top:8px;"><button id="btnReopen" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#334155; color:#fff; border:none;">Reopen Modal</button></div>
+            </div>
+          </div>
+        `;
+
+        const backdrop = sandboxStage.querySelector('#backdrop');
+        const modalBox = sandboxStage.querySelector('#modalBox');
+        const notice = sandboxStage.querySelector('#modalClosedNotice');
+        let downTarget = null;
+
+        backdrop.addEventListener('pointerdown', (e) => {
+          downTarget = e.target;
+        });
+
+        backdrop.addEventListener('pointerup', (e) => {
+          if (mode === 'without') {
+            // Baseline bug: releasing pointer on backdrop dismisses modal even if dragged from inside
+            if (e.target === backdrop) {
+              backdrop.style.display = 'none';
+              notice.style.display = 'block';
+            }
+          } else {
+            // With skill: dual-verification gate
+            if (downTarget === backdrop && e.target === backdrop) {
+              backdrop.style.display = 'none';
+              notice.style.display = 'block';
+              notice.style.color = '#10b981';
+              notice.innerHTML = '✅ Modal Closed Intentionally by Direct Backdrop Click!';
+            }
+          }
+        });
+
+        sandboxStage.addEventListener('click', (e) => {
+          if (e.target.id === 'btnReopen') {
+            backdrop.style.display = 'flex';
+            notice.style.display = 'none';
+          }
+        });
+      } else if (scenarioKey === 'p18_dual_slider') {
+        // Dual Slider Overlap Simulation
+        sandboxStage.innerHTML = `
+          <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid #334155; font-size:13px;">
+            ⚖️ Price Range Filter ($0 - $500)
+          </div>
+          <div style="flex:1; padding: 30px 20px; display:flex; flex-direction:column; gap:20px;">
+            <div id="priceLabel" style="font-size:14px; font-weight:800; color:#60a5fa; text-align:center;">$0 — $500</div>
+            <div style="position:relative; height:8px; background:#334155; border-radius:4px; margin-top:20px;">
+              <div id="minThumb" style="position:absolute; left:0%; top:-10px; width:28px; height:28px; background:#3b82f6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:2;"></div>
+              <div id="maxThumb" style="position:absolute; left:80%; top:-10px; width:28px; height:28px; background:#8b5cf6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:1;"></div>
+            </div>
+            <div id="sliderResult" style="padding:10px; background:#1e293b; border-radius:8px; font-size:11px; color:#cbd5e1; line-height:1.4;">
+              ${mode === 'without' ? '❌ Baseline: When Min meets Max, the bottom thumb gets trapped underneath!' : '✅ Optimized: Active pointer dynamically elevates z-index, allowing effortless thumb uncrossing.'}
+            </div>
+          </div>
+        `;
+      } else {
+        // Default Fallback to Messenger Simulation
+        sandboxStage.innerHTML = `
+          <div style="padding: 12px 16px; background:#1e293b; border-bottom:1px solid #334155; font-size:13px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>💬 Live Chat Simulator</span>
+            <span style="color: #10b981;">● Online</span>
+          </div>
+          <div id="chatFeed" style="flex:1; padding:14px; display:flex; flex-direction:column; gap:8px; overflow-y:auto;">
+            <div style="align-self:flex-start; background:#1e293b; padding:8px 12px; border-radius:12px; font-size:12px;">Hey! Test the enter key and keyboard handling here.</div>
+            <div style="align-self:flex-end; background:#3b82f6; padding:8px 12px; border-radius:12px; font-size:12px; color:#fff;">Let me check!</div>
+          </div>
+          <div style="padding:10px; background:#1e293b; border-top:1px solid #334155; display:flex; gap:8px;">
+            <textarea id="chatInput" rows="1" placeholder="Type a message..." style="flex:1; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px; color:#fff; font-size:12px; resize:none; outline:none;"></textarea>
+            <button id="chatSend" style="padding:0 14px; background:#3b82f6; border:none; border-radius:8px; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">Send</button>
+          </div>
+        `;
+
+        const input = sandboxStage.querySelector('#chatInput');
+        const feed = sandboxStage.querySelector('#chatFeed');
+        const send = sandboxStage.querySelector('#chatSend');
+
+        const postMsg = (txt) => {
+          if (!txt.trim()) return;
+          const bubble = document.createElement('div');
+          bubble.style.alignSelf = 'flex-end';
+          bubble.style.background = '#3b82f6';
+          bubble.style.padding = '8px 12px';
+          bubble.style.borderRadius = '12px';
+          bubble.style.fontSize = '12px';
+          bubble.style.whiteSpace = 'pre-wrap';
+          bubble.textContent = txt;
+          feed.appendChild(bubble);
+          feed.scrollTop = feed.scrollHeight;
+          input.value = '';
+        };
+
+        send.addEventListener('click', () => postMsg(input.value));
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            if (mode === 'without') {
+              // Baseline bug: mobile Enter submits message prematurely
+              e.preventDefault();
+              postMsg(input.value);
+            } else {
+              // With skill: desktop submits, mobile multiline
+              if (!('ontouchstart' in window) && !e.shiftKey) {
+                e.preventDefault();
+                postMsg(input.value);
+              }
+            }
+          }
+        });
       }
     }
 
