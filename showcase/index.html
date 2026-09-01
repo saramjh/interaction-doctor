@@ -1413,31 +1413,42 @@
     /* Virtual Touch Finger (Ghost Pointer) */
     .ghost-pointer {
       position: absolute;
-      width: 38px;
-      height: 38px;
-      background: rgba(255, 255, 255, 0.35);
-      border: 2px solid rgba(255, 255, 255, 0.9);
+      top: 0;
+      left: 0;
+      width: 42px;
+      height: 42px;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.4) 0%, rgba(255, 255, 255, 0.2) 70%);
+      border: 2.5px solid rgba(255, 255, 255, 0.95);
       border-radius: 50%;
       pointer-events: none;
       z-index: 100;
       display: none;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.4);
-      transition: transform 0.05s ease, opacity 0.2s ease;
+      box-shadow: 0 0 24px rgba(96, 165, 250, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.6);
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+      will-change: transform;
     }
     .ghost-pointer::after {
       content: '👆';
       position: absolute;
-      left: 12px;
-      top: 12px;
-      font-size: 20px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+      left: 14px;
+      top: 14px;
+      font-size: 22px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.9));
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .ghost-pointer.pressing {
-      background: rgba(59, 130, 246, 0.6);
-      border-color: #60a5fa;
-      transform: translate(-50%, -50%) scale(0.85);
-      box-shadow: 0 0 24px rgba(59, 130, 246, 0.9);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(37, 99, 235, 0.5) 70%);
+      border-color: #93c5fd;
+      box-shadow: 0 0 32px rgba(59, 130, 246, 1), inset 0 0 16px rgba(255, 255, 255, 0.9);
+    }
+    .ghost-pointer.pressing::after {
+      transform: scale(0.82);
+    }
+
+    /* Silky Hardware Accelerated Transitions for Simulated Components */
+    #canvasWorld, #sheetBox, .kanban-card, .mail-content, #fabBtn, #chatInputBar, #drawerPanel, #trackpadCard, #doubleTapContainer {
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      will-change: transform;
     }
 
     /* Animated Subtitle Toast (HUD inside stage) */
@@ -2349,6 +2360,7 @@
       document.getElementById('benchDesc').textContent = t.benchDesc;
 
       renderTags();
+      updateAnimPlayButtonState();
       renderScenario();
     }
 
@@ -2484,8 +2496,9 @@
         sandboxStage.appendChild(gp);
       }
       gp.style.display = 'block';
-      gp.style.left = `${x}px`;
-      gp.style.top = `${y}px`;
+      // Silky 60fps GPU Translate
+      const scale = isPressing ? 'scale(0.82)' : 'scale(1)';
+      gp.style.transform = `translate3d(${Math.round(x - 21)}px, ${Math.round(y - 21)}px, 0) ${scale}`;
       if (isPressing) gp.classList.add('pressing');
       else gp.classList.remove('pressing');
     }
@@ -2522,6 +2535,394 @@
       if (toast) toast.style.display = 'none';
     }
 
+    
+    // ========================================================
+    // 5-LANGUAGE LOCALIZED ANIMATION HUD SUBTITLES & SCRIPTS
+    // ========================================================
+    const animI18n = {
+      en: {
+        playBtnWithout: '▶️ Play Defect Demo', playBtnWith: '▶️ Play Physics Demo', stopBtn: '⏹️ Stop Demo', ready: 'Ready',
+        replayingWithout: '🚨 Replaying Defect...', replayingWith: '✨ Replaying Physics...',
+        p01: {
+          step1: '1. User taps message input bar to type...',
+          without: '💥 100vh Defect: Keyboard popped up and occluded input bar!',
+          with: '✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!',
+          imeWithout: '💥 IME Defect: Enter key accidentally sent an incomplete draft!',
+          imeWith: '✨ IME Guard: Enter inserted a smooth linebreak without premature send!'
+        },
+        p02: {
+          step1: '1. User swipes down inside the place list to scroll...',
+          without: '💥 Contention Defect: Bottom Sheet accidentally collapsed while scrolling list!',
+          with: '✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!'
+        },
+        p03: {
+          step1: '1. User places cursor on Target 🎯 Pin and zooms in...',
+          without: '💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!',
+          with: '✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!'
+        },
+        p04: {
+          step1: '1. User tries to scroll the kanban board vertically...',
+          without: '💥 Immediate Drag: Card grabbed instantly during scroll, breaking column order!',
+          with: '✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!'
+        },
+        p05: {
+          step1: '1. User scrolls diagonally across the email inbox...',
+          without: '💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!',
+          with: '✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!'
+        },
+        p07: {
+          step1: '1. User drags the floating FAB button to a new corner...',
+          without: '💥 False Click: Released drag falsely popped up New Note Editor modal!',
+          with: '✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal popup!'
+        },
+        p08: {
+          step1: '1. User taps "Load Older Messages" to prepend content...',
+          without: '💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!',
+          with: '✨ Scroll Anchoring: Eye-level reading position frozen with 0px drift!'
+        },
+        p09: {
+          step1: '1. User drags text inside modal and releases on backdrop...',
+          without: '💥 Backdrop Drag Leak: Releasing text selection outside closed modal!',
+          with: '✨ Dual Target Guard: Text selected safely, modal remains open!'
+        },
+        p13: {
+          step1: '1. User drags scrubber thumb, then finger slips 50px upwards...',
+          without: '💥 Pointer Slip: Seeking halted prematurely because finger left track!',
+          with: '✨ Pointer Capture: Seeking continues continuously even outside track bounds!'
+        },
+        p15: {
+          step1: '1. User pinches with 2 fingers on macOS trackpad...',
+          without: '💥 Window Zoom Disaster: Whole browser window zoomed! Web page broken!',
+          with: '✨ CtrlKey Isolated: Canvas layer zoomed smoothly without window zoom!'
+        },
+        p23: {
+          step1: '1. User swipes from the left edge (10px) to open drawer...',
+          without: '💥 OS Back Hijack: Browser back gesture hijacked! App closed!',
+          with: '✨ 20px Edge Deadzone: Drawer opened safely without OS back collision!'
+        },
+        p31: {
+          step1: '1. User rapidly double-taps heart button to like post...',
+          without: '💥 Double-Tap Zoom Disaster: Browser forced 300% page zoom!',
+          with: '✨ Double-Tap Zoom Lock: Like triggered cleanly without page zoom explosion!'
+        },
+        generic: {
+          step1: '1. Simulating physical touch interaction...',
+          without: '💥 Baseline Defect: Unmanaged touch caused gesture contention & jitter!',
+          with: '✨ Physics Passed: 0ms GPU tracking without dropped frames or contention!'
+        }
+      },
+      ko: {
+        playBtnWithout: '▶️ 결함 시연 재생', playBtnWith: '▶️ 물리 개선 시연', stopBtn: '⏹️ 시연 중지', ready: '준비 완료',
+        replayingWithout: '🚨 결함 현상 재생 중...', replayingWith: '✨ 물리 개선 작동 중...',
+        p01: {
+          step1: '1. 사용자가 메시지를 입력하기 위해 하단 입력창을 탭합니다...',
+          without: '💥 100vh 결함: 키보드가 올라오며 입력창을 완전히 가려버렸습니다!',
+          with: '✨ 0ms VisualViewport 동기화: 입력창이 키보드 위로 0ms 즉각 솟아오릅니다!',
+          imeWithout: '💥 IME 조합 결함: 엔터 키 입력 시 한글 조합 중 미완성 조기 전송 발생!',
+          imeWith: '✨ IME 보호: 조합 중 엔터는 줄바꿈으로 처리되어 조기 전송이 방지됩니다!'
+        },
+        p02: {
+          step1: '1. 사용자가 목록을 스크롤하기 위해 아래로 스와이프합니다...',
+          without: '💥 중첩 스크롤 붕괴: 리스트 스크롤 대신 바텀시트 전체가 푹 꺼져 닫혀버렸습니다!',
+          with: '✨ 경계 핸드오프: 바텀시트는 고정되고 내부 리스트만 안전하게 스크롤됩니다!'
+        },
+        p03: {
+          step1: '1. 사용자가 🎯 타겟 핀에 커서를 두고 캔버스를 확대합니다...',
+          without: '💥 원점 이탈: 기준점이 (0,0)에 묶여 타겟 핀이 화면 밖으로 날아갔습니다!',
+          with: '✨ 중심점 불변: 타겟 핀이 커서 밑에 0.000px 오차로 완벽 고정됩니다!'
+        },
+        p04: {
+          step1: '1. 사용자가 칸반 보드를 세로로 스크롤하려고 손을 댑니다...',
+          without: '💥 즉각 드래그 결함: 스크롤 도중 카드가 덜컥 잡혀 순서가 뒤틀렸습니다!',
+          with: '✨ 350ms 시간 게이트: 일반 스크롤은 자유롭고, 350ms 누르고 있을 때만 카드가 들립니다!'
+        },
+        p05: {
+          step1: '1. 사용자가 메일 목록을 대각선으로 훑으며 스크롤합니다...',
+          without: '💥 축 충돌 누수: 대각선 스크롤 중 스와이프가 오발동되어 메일이 삭제되었습니다!',
+          with: '✨ 8px 직교 축 잠금: 수평 스와이프가 잠기고 수직 스크롤로 안전하게 고정됩니다!'
+        },
+        p07: {
+          step1: '1. 사용자가 플로팅 FAB 버튼을 잡고 원하는 위치로 이동합니다...',
+          without: '💥 오클릭 발생: 드래그 후 손을 놓자마자 새 글 작성 모달이 팝업되었습니다!',
+          with: '✨ 8px 슬롭 보호: 오클릭 모달 없이 FAB 위치만 깔끔하게 이동되었습니다!'
+        },
+        p08: {
+          step1: '1. 사용자가 "이전 메시지 5개 불러오기"를 누릅니다...',
+          without: '💥 스크롤 점프: 스크롤이 맨 위로 튀어 읽고 있던 위치를 놓쳤습니다!',
+          with: '✨ 스크롤 앵커링: 높이 차분이 자동 보정되어 읽던 글이 화면에 그대로 멈춰있습니다!'
+        },
+        p09: {
+          step1: '1. 사용자가 모달 안 텍스트를 드래그하다 백드롭 위에서 손을 놓습니다...',
+          without: '💥 백드롭 누수: 마우스를 뗀 순간 모달 전체가 닫혀버렸습니다!',
+          with: '✨ 듀얼 타겟 검증: 텍스트 선택이 유지되며 모달이 안전하게 닫히지 않습니다!'
+        },
+        p13: {
+          step1: '1. 비디오 타임라인을 잡고 드래그하던 중 손가락이 트랙 밖으로 빗나갑니다...',
+          without: '💥 포인터 이탈: 트랙을 벗어나자마자 탐색이 뚝 멈춰버렸습니다!',
+          with: '✨ 포인터 캡처: 손가락이 화면 어디로 가든 타임라인이 연속 추종합니다!'
+        },
+        p15: {
+          step1: '1. 사용자가 macOS 트랙패드에서 두 손가락으로 핀치 줌을 시도합니다...',
+          without: '💥 브라우저 창 줌 폭주: 웹 브라우저 전체 창이 300% 돋보기처럼 확대되었습니다!',
+          with: '✨ CtrlKey 식별: 브라우저 창 확대 없이 캔버스 레이어만 매끄럽게 줌됩니다!'
+        },
+        p23: {
+          step1: '1. 사용자가 화면 왼쪽 끝 10px에서 오른쪽으로 쓸어넘깁니다...',
+          without: '💥 OS 뒤로가기 탈취: 브라우저 뒤로가기 제스처가 발동되어 화면이 꺼졌습니다!',
+          with: '✨ 20px 엣지 데드존: OS 뒤로가기 충돌 없이 드로어 메뉴만 얌전하게 열립니다!'
+        },
+        p31: {
+          step1: '1. 사용자가 좋아요를 누르기 위해 하트 버튼을 빠르게 연타합니다...',
+          without: '💥 더블탭 줌 폭주: 브라우저가 더블탭으로 오인하여 화면이 300% 확대되었습니다!',
+          with: '✨ 더블탭 줌 락: 화면 확대 없이 하트 애니메이션만 기분 좋게 통통 튑니다!'
+        },
+        generic: {
+          step1: '1. 터치 물리 인터랙션을 시뮬레이션합니다...',
+          without: '💥 기본 결함: 관리되지 않은 터치로 인해 제스처 충돌과 지터가 발생합니다!',
+          with: '✨ 물리 검증 통과: 0ms GPU 트래킹으로 프레임 드롭 없이 안정적으로 동작합니다!'
+        }
+      },
+      ja: {
+        playBtnWithout: '▶️ 欠陥デモ再生', playBtnWith: '▶️ 改善デモ再生', stopBtn: '⏹️ 停止', ready: '準備完了',
+        replayingWithout: '🚨 欠陥を再生中...', replayingWith: '✨ 物理改善を再生中...',
+        p01: {
+          step1: '1. ユーザーが入力欄をタップしてキーボードを呼び出します...',
+          without: '💥 100vh欠陥: キーボードに入力欄が完全に隠れてしまいました！',
+          with: '✨ 0ms VisualViewport同期: 入力欄がキーボード上に即座に追従します！',
+          imeWithout: '💥 IME変換欠陥: 日本語入力中のEnterで誤送信が発生しました！',
+          imeWith: '✨ IMEガード: 確定Enterによる誤送信を防止し、安全に改行します！'
+        },
+        p02: {
+          step1: '1. リストをスクロールしようと下にスワイプします...',
+          without: '💥 ネストスクロール崩壊: リストではなくシート全体が崩落して閉じました！',
+          with: '✨ 境界ハンドオフ: シートは固定され、内部リストのみ安全にスクロール！'
+        },
+        p03: {
+          step1: '1. ターゲットピンにカーソルを合わせてピンチズームします...',
+          without: '💥 原点ドリフト: (0,0)基準のため、ターゲットが画面外に吹き飛びました！',
+          with: '✨ 重心点不変: ターゲットピンがカーソル直下に0.000px誤差で吸着します！'
+        },
+        p04: {
+          step1: '1. カンバンボードを縦スクロールしようと指を動かします...',
+          without: '💥 即時ドラッグ暴発: スクロール中にカードが掴まれ順序が破壊されました！',
+          with: '✨ 350ms時間ゲート: 通常スクロールは自由。350ms長押し時のみカード浮上！'
+        },
+        p05: {
+          step1: '1. メール一覧を斜め方向にスワイプします...',
+          without: '💥 軸衝突リーク: 斜め移動でスワイプが誤爆しメールが勝手に削除されました！',
+          with: '✨ 8px軸ロック: 水平スワイプがロックされ、垂直スクロールに安全固定！'
+        },
+        p07: {
+          step1: '1. フローティングFABボタンを掴んで位置を移動させます...',
+          without: '💥 誤クリック暴発: 移動後に指を離した瞬間、編集画面が誤爆表示されました！',
+          with: '✨ 8pxスロップ保護: 誤クリックなくFABの位置のみ綺麗に移動完了！'
+        },
+        p08: {
+          step1: '1. 「過去のメッセージを読み込む」を押します...',
+          without: '💥 スクロールジャンプ: スクロールが先頭に跳ねて閲覧位置を見失いました！',
+          with: '✨ スクロールアンカー: 高さ差分が補正され、視線位置が0pxで固定されます！'
+        },
+        p09: {
+          step1: '1. モーダル内のテキストを選択し、背景部分で指を離します...',
+          without: '💥 背景リーク: 外で離したためモーダルが勝手に閉じてしまいました！',
+          with: '✨ デュアルターゲット検証: 選択を維持し、モーダルは開いたまま安全！'
+        },
+        p13: {
+          step1: '1. シークバーをドラッグ中、指がトラックの外へ外れます...',
+          without: '💥 ポインター脱落: トラックを外れた瞬間にシークが止まってしまいました！',
+          with: '✨ ポインターキャプチャ: 画面のどこに指が動いても途切れず追従！'
+        },
+        p15: {
+          step1: '1. macOSトラックパッドでピンチズームします...',
+          without: '💥 ブラウザ画面全体ズーム: Webページ全体が300%巨大化して崩壊！',
+          with: '✨ CtrlKey識別: 画面全体を崩さずキャンバスのみ滑らかにズーム！'
+        },
+        p23: {
+          step1: '1. 画面左端10pxから右へスワイプします...',
+          without: '💥 OS戻る誤爆: ブラウザの戻るジェスチャが暴発してアプリが終了！',
+          with: '✨ 20pxエッジデッドゾーン: OSジェスチャを回避しドロワーのみ安全に開きます！'
+        },
+        p31: {
+          step1: '1. いいねを押すためにハートボタンを連打します...',
+          without: '💥 ダブルタップズーム爆発: ダブルタップと誤認され画面が300%拡大暴走！',
+          with: '✨ ダブルタップロック: 画面拡大せずハートのみ気持ちよく弾みます！'
+        },
+        generic: {
+          step1: '1. タッチ操作をシミュレーションします...',
+          without: '💥 基準欠陥: 未制御のタッチによりジェスチャ衝突とジッターが発生！',
+          with: '✨ 物理検証クリア: 0ms GPU追従によりフレーム低下なく安定動作！'
+        }
+      },
+      zh: {
+        playBtnWithout: '▶️ 播放缺陷演示', playBtnWith: '▶️ 播放优化演示', stopBtn: '⏹️ 停止', ready: '就绪',
+        replayingWithout: '🚨 正在重现缺陷...', replayingWith: '✨ 正在演示物理优化...',
+        p01: {
+          step1: '1. 用户点击底部输入框准备输入...',
+          without: '💥 100vh 缺陷: 虚拟键盘弹起完全遮挡住了输入框！',
+          with: '✨ 0ms VisualViewport 同步: 输入框紧贴键盘实时吸顶！',
+          imeWithout: '💥 IME 缺陷: 回车换行时误发未完成的半成品草稿！',
+          imeWith: '✨ IME 保护: 输入中回车正确识别为换行，避免误发！'
+        },
+        p02: {
+          step1: '1. 用户在列表区域向下滑动浏览...',
+          without: '💥 嵌套滚动冲突: 列表未滚动，整个底部抽屉意外塌陷关闭！',
+          with: '✨ 边界动态交接: 抽屉牢固保持，内部列表流畅安全滚动！'
+        },
+        p03: {
+          step1: '1. 用户将光标对准目标 🎯 大头针进行双指缩放...',
+          without: '💥 原点漂移: 锚定于(0,0)，目标 🎯 被抛出视野之外！',
+          with: '✨ 质心不变性: 目标 🎯 以 0.000px 误差磁吸于光标正下方！'
+        },
+        p04: {
+          step1: '1. 用户试图上下滚动看板列表...',
+          without: '💥 瞬间拖拽缺陷: 滚动中卡片被意外抓起，破坏列表顺序！',
+          with: '✨ 350ms 时间阈值: 普通滚动畅行无阻，长按 350ms 方可抓取卡片！'
+        },
+        p05: {
+          step1: '1. 用户斜向滑动邮件列表...',
+          without: '💥 轴向冲突泄露: 斜向手势误触发滑动删除，邮件被误删！',
+          with: '✨ 8px 正交轴锁定: 水平滑动被锁定，保持垂直滚动平稳！'
+        },
+        p07: {
+          step1: '1. 用户将悬浮 FAB 按钮拖至新位置...',
+          without: '💥 误触发点击: 松手后意外弹出了新建笔记编辑器模态框！',
+          with: '✨ 8px 容差滞后: 纯净拖拽到位，绝不误触弹窗！'
+        },
+        p08: {
+          step1: '1. 用户点击“加载更早的历史消息”...',
+          without: '💥 滚动跳动: 视口猛烈跳至顶部 0，丢失了阅读位置！',
+          with: '✨ 滚动位置锚定: 自动补偿高度差，阅读视线 0px 纹丝不动！'
+        },
+        p09: {
+          step1: '1. 用户拖拽选中文本并在遮罩层上松开...',
+          without: '💥 遮罩泄露: 在外部松开导致整个对话框意外关闭！',
+          with: '✨ 双目标验证: 选区保留，对话框安全维持开启！'
+        },
+        p13: {
+          step1: '1. 拖动视频进度条时，手指滑出轨道上方 50px...',
+          without: '💥 指针滑脱: 手指一旦离开轨道，进度搜索立即中断卡死！',
+          with: '✨ 指针捕获 (Pointer Capture): 无论手指移至何处均持续流畅拖拽！'
+        },
+        p15: {
+          step1: '1. 用户在 macOS 触控板上双指缩放...',
+          without: '💥 浏览器全局缩放灾难: 整个网页被强制放大 300% 破损！',
+          with: '✨ CtrlKey 隔离: 页面保持稳定，仅画布图层流畅缩放！'
+        },
+        p23: {
+          step1: '1. 用户从屏幕左边缘 10px 处向右轻扫...',
+          without: '💥 系统返回劫持: 触发了浏览器返回手势，应用意外关闭！',
+          with: '✨ 20px 边缘避让盲区: 完美避让系统手势，抽屉安全滑出！'
+        },
+        p31: {
+          step1: '1. 用户快速双击爱心按钮进行点赞...',
+          without: '💥 双击缩放灾难: 浏览器误判为双击，页面异常膨胀 300%！',
+          with: '✨ 双击缩放锁定: 页面尺寸牢固，爱心按钮欢快弹动！'
+        },
+        generic: {
+          step1: '1. 模拟触控物理交互...',
+          without: '💥 基线缺陷: 未管理的触控导致手势冲突与剧烈抖动！',
+          with: '✨ 物理验证通过: 0ms GPU 实时跟踪，无掉帧或手势冲突！'
+        }
+      },
+      es: {
+        playBtnWithout: '▶️ Ver Defecto', playBtnWith: '▶️ Ver Solución', stopBtn: '⏹️ Detener', ready: 'Listo',
+        replayingWithout: '🚨 Reproduciendo Defecto...', replayingWith: '✨ Reproduciendo Física...',
+        p01: {
+          step1: '1. El usuario toca la barra de entrada para escribir...',
+          without: '💥 Defecto 100vh: ¡El teclado ocultó por completo el campo de entrada!',
+          with: '✨ Sync 0ms VisualViewport: ¡La barra de entrada sube limpiamente!',
+          imeWithout: '💥 Defecto IME: ¡Enter envió por error un borrador incompleto!',
+          imeWith: '✨ Protección IME: ¡Enter inserta salto de línea seguro!'
+        },
+        p02: {
+          step1: '1. El usuario desliza hacia abajo en la lista para desplazarse...',
+          without: '💥 Colapso: ¡La hoja inferior colapsó al desplazarse!',
+          with: '✨ Traspaso Dinámico: ¡La hoja permanece fija y la lista fluye!'
+        },
+        p03: {
+          step1: '1. El usuario coloca el cursor en el pin objetivo 🎯 y hace zoom...',
+          without: '💥 Deriva de Origen: ¡Anclado a (0,0), el pin 🎯 salió volando!',
+          with: '✨ Centroide Invariante: ¡El pin 🎯 se fija al cursor con 0.000px de error!'
+        },
+        p04: {
+          step1: '1. El usuario intenta desplazarse verticalmente en el tablero...',
+          without: '💥 Arrastre Inmediato: ¡La tarjeta se agarró rompiendo el orden!',
+          with: '✨ Puerta Temporal 350ms: ¡Desplazamiento libre, arrastre solo tras 350ms!'
+        },
+        p05: {
+          step1: '1. El usuario se desplaza en diagonal por la bandeja...',
+          without: '💥 Fuga Diagonal: ¡El gesto diagonal eliminó el correo por error!',
+          with: '✨ Bloqueo de Eje 8px: ¡Deslizamiento bloqueado, scroll preservado!'
+        },
+        p07: {
+          step1: '1. El usuario arrastra el botón flotante FAB...',
+          without: '💥 Clic Falso: ¡Al soltar el arrastre se abrió el modal no deseado!',
+          with: '✨ Guardia 8px: ¡Arrastre limpio sin falsos clics!'
+        },
+        p08: {
+          step1: '1. El usuario pulsa "Cargar mensajes anteriores"...',
+          without: '💥 Salto de Scroll: ¡El scroll saltó arriba perdiendo la posición!',
+          with: '✨ Anclaje de Scroll: ¡Posición de lectura fija con 0px de deriva!'
+        },
+        p09: {
+          step1: '1. El usuario arrastra texto y suelta sobre el fondo...',
+          without: '💥 Cierre Accidental: ¡Soltar fuera cerró el modal involuntariamente!',
+          with: '✨ Doble Objetivo: ¡Selección segura y modal preservado!'
+        },
+        p13: {
+          step1: '1. El dedo se desliza 50px fuera de la barra de progreso...',
+          without: '💥 Pérdida de Puntero: ¡La búsqueda se detuvo al salir de la barra!',
+          with: '✨ Captura de Puntero: ¡Búsqueda continua en toda la pantalla!'
+        },
+        p15: {
+          step1: '1. El usuario pellizca con 2 dedos en el trackpad de macOS...',
+          without: '💥 Desastre de Zoom: ¡Toda la ventana del navegador se amplió al 300%!',
+          with: '✨ CtrlKey Aislado: ¡Zoom limpio en el lienzo sin alterar la ventana!'
+        },
+        p23: {
+          step1: '1. El usuario desliza desde el borde izquierdo (10px)...',
+          without: '💥 Secuestro de Retroceso: ¡El gesto cerró la aplicación!',
+          with: '✨ Zona Muerta de 20px: ¡El cajón se abre sin conflicto del sistema!'
+        },
+        p31: {
+          step1: '1. El usuario pulsa rápidamente el botón de corazón...',
+          without: '💥 Zoom Forzado: ¡El navegador forzó un zoom del 300%!',
+          with: '✨ Bloqueo de Doble Toque: ¡Like limpio sin zoom no deseado!'
+        },
+        generic: {
+          step1: '1. Simulando interacción física táctil...',
+          without: '💥 Defecto Base: ¡Conflicto de gestos y vibraciones no controladas!',
+          with: '✨ Física Verificada: ¡Rastreo GPU de 0ms sin caídas de cuadros!'
+        }
+      }
+    };
+
+    function getAnimText(scenarioKey, stage, mode = 'without') {
+      const lang = animI18n[currentLang] ? currentLang : 'en';
+      const dict = animI18n[lang];
+      const scKey = scenarioKey.toLowerCase();
+      const scObj = dict[scKey] || dict.generic;
+
+      if (stage === 'step1') return scObj.step1;
+      if (stage === 'result') return mode === 'with' ? scObj.with : scObj.without;
+      if (stage === 'ime') return mode === 'with' ? scObj.imeWith : scObj.imeWithout;
+      return '';
+    }
+
+    function updateAnimPlayButtonState() {
+      const lang = animI18n[currentLang] ? currentLang : 'en';
+      const dict = animI18n[lang];
+      if (isAnimPlaying) {
+        playIcon.textContent = '⏹️';
+        playText.textContent = dict.stopBtn;
+        animStatusLabel.textContent = currentMode === 'without' ? dict.replayingWithout : dict.replayingWith;
+      } else {
+        playIcon.textContent = '▶️';
+        playText.textContent = currentMode === 'without' ? dict.playBtnWithout : dict.playBtnWith;
+        animStatusLabel.textContent = dict.ready;
+      }
+    }
+
     function stopAnimatedDemo() {
       if (currentAnimTimeline) {
         currentAnimTimeline.forEach(t => clearTimeout(t));
@@ -2529,10 +2930,8 @@
       }
       isAnimPlaying = false;
       btnPlayDemo.classList.remove('playing');
-      playIcon.textContent = '▶️';
-      playText.textContent = currentMode === 'without' ? 'Play Defect Demo' : 'Play Physics Demo';
+      updateAnimPlayButtonState();
       animProgressFill.style.width = '0%';
-      animStatusLabel.textContent = 'Ready';
       hideGhostFinger();
       hideHudSubtitle();
     }
@@ -2541,9 +2940,7 @@
       stopAnimatedDemo();
       isAnimPlaying = true;
       btnPlayDemo.classList.add('playing');
-      playIcon.textContent = '⏹️';
-      playText.textContent = 'Stop Demo';
-      animStatusLabel.textContent = mode === 'without' ? '🚨 Replaying Defect...' : '✨ Replaying Physics...';
+      updateAnimPlayButtonState();
 
       const timers = [];
       currentAnimTimeline = timers;
@@ -2567,7 +2964,7 @@
       // --- P01 ANIMATION ---
       if (scenarioKey === 'p01') {
         showGhostFinger(cx, cy + 180, false);
-        showHudSubtitle('1. User taps message input bar to type...', 'info');
+        showHudSubtitle(getAnimText('p01', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx, cy + 180, true);
@@ -2579,21 +2976,21 @@
           if (kb) kb.classList.add('open');
 
           if (mode === 'without') {
-            if (bar) bar.style.bottom = '0px'; // Stays hidden behind 220px keyboard!
-            showHudSubtitle('💥 100vh Defect: Keyboard popped up and completely hid the input bar!', 'danger');
+            if (bar) bar.style.bottom = '0px';
+            showHudSubtitle(getAnimText('p01', 'result', mode), 'danger');
             if (alertBox) alertBox.style.display = 'block';
           } else {
-            if (bar) bar.style.bottom = '220px'; // 0ms GPU Lift!
-            showHudSubtitle('✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!', 'success');
+            if (bar) bar.style.bottom = '220px';
+            showHudSubtitle(getAnimText('p01', 'result', mode), 'success');
           }
-        }, 800));
+        }, 900));
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx + 80, cy + 220, true); // Tap Enter
+          showGhostFinger(cx + 80, cy + 220, true);
           if (mode === 'without') {
-            showHudSubtitle('💥 IME Defect: Enter key accidentally sent an incomplete draft!', 'danger');
+            showHudSubtitle(getAnimText('p01', 'ime', mode), 'danger');
           } else {
-            showHudSubtitle('✨ IME Guard: Enter inserted a smooth linebreak without premature send!', 'success');
+            showHudSubtitle(getAnimText('p01', 'ime', mode), 'success');
           }
         }, 2200));
 
@@ -2603,24 +3000,24 @@
         const alertBox = sandboxStage.querySelector('#sheetCollapsedAlert');
         const list = sandboxStage.querySelector('#sheetList');
 
-        showGhostFinger(cx, cy + 120, false);
-        showHudSubtitle('1. User swipes down inside the place list to scroll...', 'info');
+        showGhostFinger(cx, cy + 100, false);
+        showHudSubtitle(getAnimText('p02', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 120, true);
-        }, 600));
+          showGhostFinger(cx, cy + 100, true);
+        }, 700));
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 200, true);
+          showGhostFinger(cx, cy + 220, true);
           if (mode === 'without') {
-            if (sheet) sheet.style.transform = 'translateY(180px)';
+            if (sheet) sheet.style.transform = 'translate3d(0, 180px, 0)';
             if (alertBox) alertBox.style.display = 'block';
-            showHudSubtitle('💥 Contention Defect: Bottom Sheet accidentally collapsed while scrolling list!', 'danger');
+            showHudSubtitle(getAnimText('p02', 'result', mode), 'danger');
           } else {
-            if (list) list.scrollTop = 60;
-            showHudSubtitle('✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!', 'success');
+            if (list) list.scrollTop = 80;
+            showHudSubtitle(getAnimText('p02', 'result', mode), 'success');
           }
-        }, 1200));
+        }, 1300));
 
       // --- P03 ANIMATION ---
       } else if (scenarioKey === 'p03') {
@@ -2629,7 +3026,7 @@
         const hud = sandboxStage.querySelector('#zoomHud');
 
         showGhostFinger(cx + 40, cy + 40, false);
-        showHudSubtitle('1. User places cursor on Target 🎯 Pin and zooms in...', 'info');
+        showHudSubtitle(getAnimText('p03', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx + 40, cy + 40, true);
@@ -2637,11 +3034,11 @@
             if (world) world.style.transform = 'translate3d(-200px, -200px, 0) scale(2.2)';
             if (alertBox) alertBox.style.display = 'block';
             if (hud) hud.textContent = 'Scale: 220%';
-            showHudSubtitle('💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!', 'danger');
+            showHudSubtitle(getAnimText('p03', 'result', mode), 'danger');
           } else {
             if (world) world.style.transform = `translate3d(${-cx}px, ${-cy}px, 0) scale(2.0)`;
             if (hud) hud.textContent = 'Scale: 200%';
-            showHudSubtitle('✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!', 'success');
+            showHudSubtitle(getAnimText('p03', 'result', mode), 'success');
           }
         }, 1000));
 
@@ -2652,16 +3049,16 @@
         const kSuccess = sandboxStage.querySelector('#kanbanSuccessAlert');
 
         showGhostFinger(cx, cy - 40, false);
-        showHudSubtitle('1. User tries to scroll the kanban board vertically...', 'info');
+        showHudSubtitle(getAnimText('p04', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 40, true);
+          showGhostFinger(cx, cy + 60, true);
           if (mode === 'without') {
-            if (card) { card.style.transform = 'scale(1.06) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
+            if (card) { card.style.transform = 'scale(1.08) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
             if (kDisaster) kDisaster.style.display = 'block';
-            showHudSubtitle('💥 Immediate Drag: Card grabbed instantly without delay, breaking the column!', 'danger');
+            showHudSubtitle(getAnimText('p04', 'result', mode), 'danger');
           } else {
-            showHudSubtitle('✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!', 'success');
+            showHudSubtitle(getAnimText('p04', 'result', mode), 'success');
             if (kSuccess) kSuccess.style.display = 'block';
           }
         }, 1000));
@@ -2672,16 +3069,16 @@
         const alertEl = sandboxStage.querySelector('#swipeAlertBox');
 
         showGhostFinger(cx, cy, false);
-        showHudSubtitle('1. User scrolls diagonally across the email inbox...', 'info');
+        showHudSubtitle(getAnimText('p05', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx - 80, cy + 60, true); // Diagonal drag
+          showGhostFinger(cx - 90, cy + 60, true);
           if (mode === 'without') {
-            if (row) row.style.transform = 'translateX(-120px)';
+            if (row) row.style.transform = 'translate3d(-130px, 0, 0)';
             if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle('💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!', 'danger');
+            showHudSubtitle(getAnimText('p05', 'result', mode), 'danger');
           } else {
-            showHudSubtitle('✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!', 'success');
+            showHudSubtitle(getAnimText('p05', 'result', mode), 'success');
           }
         }, 1000));
 
@@ -2692,7 +3089,7 @@
         const toastEl = sandboxStage.querySelector('#fabSuccessToast');
 
         showGhostFinger(cx + 80, cy + 180, false);
-        showHudSubtitle('1. User drags the floating FAB button to a new corner...', 'info');
+        showHudSubtitle(getAnimText('p07', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx + 80, cy + 180, true);
@@ -2701,36 +3098,30 @@
         timers.push(setTimeout(() => {
           showGhostFinger(cx, cy, true);
           if (fab) fab.style.transform = 'translate3d(-80px, -140px, 0)';
-        }, 1200));
+        }, 1300));
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy, false); // Release drag
+          showGhostFinger(cx, cy, false);
           if (mode === 'without') {
             if (modal) modal.style.display = 'flex';
-            showHudSubtitle('💥 False Click: Released drag falsely popped up New Note Editor modal!', 'danger');
+            showHudSubtitle(getAnimText('p07', 'result', mode), 'danger');
           } else {
             if (toastEl) toastEl.style.display = 'block';
-            showHudSubtitle('✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal popup!', 'success');
+            showHudSubtitle(getAnimText('p07', 'result', mode), 'success');
           }
-        }, 2000));
+        }, 2100));
 
       // --- P08 ANIMATION ---
       } else if (scenarioKey === 'p08') {
-        const feed = sandboxStage.querySelector('#prependFeed');
         const btn = sandboxStage.querySelector('#btnPrependOlder');
-        const alertEl = sandboxStage.querySelector('#prependAlert');
 
         showGhostFinger(cx, cy - 140, false);
-        showHudSubtitle('1. User taps "Load Older Messages" to prepend content...', 'info');
+        showHudSubtitle(getAnimText('p08', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx, cy - 140, true);
           if (btn) btn.click();
-          if (mode === 'without') {
-            showHudSubtitle('💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!', 'danger');
-          } else {
-            showHudSubtitle('✨ Scroll Anchoring: Eye-level reading position frozen with 0px drift!', 'success');
-          }
+          showHudSubtitle(getAnimText('p08', 'result', mode), mode === 'without' ? 'danger' : 'success');
         }, 1000));
 
       // --- P09 ANIMATION ---
@@ -2739,16 +3130,16 @@
         const alertEl = sandboxStage.querySelector('#modalLeakAlert');
 
         showGhostFinger(cx, cy, false);
-        showHudSubtitle('1. User drags text inside modal and releases on backdrop...', 'info');
+        showHudSubtitle(getAnimText('p09', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx + 100, cy + 100, true); // Released on backdrop
+          showGhostFinger(cx + 100, cy + 100, true);
           if (mode === 'without') {
             if (backdrop) backdrop.style.display = 'none';
             if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle('💥 Backdrop Drag Leak: Releasing text selection outside closed modal!', 'danger');
+            showHudSubtitle(getAnimText('p09', 'result', mode), 'danger');
           } else {
-            showHudSubtitle('✨ Dual Target Guard: Text selected safely, modal remains open!', 'success');
+            showHudSubtitle(getAnimText('p09', 'result', mode), 'success');
           }
         }, 1200));
 
@@ -2759,21 +3150,21 @@
         const alertEl = sandboxStage.querySelector('#scrubAlert');
 
         showGhostFinger(cx - 50, cy + 20, false);
-        showHudSubtitle('1. User drags scrubber thumb, then finger slips 50px upwards...', 'info');
+        showHudSubtitle(getAnimText('p13', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx - 50, cy + 20, true);
         }, 600));
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx + 60, cy - 60, true); // Slipped outside
+          showGhostFinger(cx + 60, cy - 60, true);
           if (mode === 'without') {
             if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle('💥 Pointer Slip: Seeking halted prematurely because finger left track!', 'danger');
+            showHudSubtitle(getAnimText('p13', 'result', mode), 'danger');
           } else {
             if (prog) prog.style.width = '75%';
             if (thumb) thumb.style.left = 'calc(75% - 10px)';
-            showHudSubtitle('✨ Pointer Capture: Seeking continues continuously even outside track bounds!', 'success');
+            showHudSubtitle(getAnimText('p13', 'result', mode), 'success');
           }
         }, 1400));
 
@@ -2783,16 +3174,16 @@
         const alertEl = sandboxStage.querySelector('#trackpadAlert');
 
         showGhostFinger(cx, cy, false);
-        showHudSubtitle('1. User pinches with 2 fingers on macOS trackpad...', 'info');
+        showHudSubtitle(getAnimText('p15', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx, cy, true);
           if (mode === 'without') {
             if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle('💥 Window Zoom Disaster: Whole browser window zoomed! Web page broken!', 'danger');
+            showHudSubtitle(getAnimText('p15', 'result', mode), 'danger');
           } else {
             if (card) card.style.transform = 'scale(1.4)';
-            showHudSubtitle('✨ CtrlKey Isolated: Canvas layer zoomed smoothly without window zoom!', 'success');
+            showHudSubtitle(getAnimText('p15', 'result', mode), 'success');
           }
         }, 1000));
 
@@ -2802,16 +3193,16 @@
         const drawer = sandboxStage.querySelector('#drawerPanel');
 
         showGhostFinger(cx - 150, cy, false);
-        showHudSubtitle('1. User swipes from the left edge (10px) to open drawer...', 'info');
+        showHudSubtitle(getAnimText('p23', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx - 70, cy, true);
+          showGhostFinger(cx - 60, cy, true);
           if (mode === 'without') {
             if (osBack) osBack.style.display = 'flex';
-            showHudSubtitle('💥 OS Back Hijack: Browser back gesture hijacked! App closed!', 'danger');
+            showHudSubtitle(getAnimText('p23', 'result', mode), 'danger');
           } else {
-            if (drawer) drawer.style.transform = 'translateX(0)';
-            showHudSubtitle('✨ 20px Edge Deadzone: Drawer opened safely without OS back collision!', 'success');
+            if (drawer) drawer.style.transform = 'translate3d(0, 0, 0)';
+            showHudSubtitle(getAnimText('p23', 'result', mode), 'success');
           }
         }, 1200));
 
@@ -2822,7 +3213,7 @@
         const dtAlert = sandboxStage.querySelector('#doubleTapAlert');
 
         showGhostFinger(cx, cy - 20, false);
-        showHudSubtitle('1. User rapidly double-taps heart button to like post...', 'info');
+        showHudSubtitle(getAnimText('p31', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 600));
         timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, false); }, 750));
@@ -2832,34 +3223,30 @@
           if (mode === 'without') {
             if (container) container.style.transform = 'scale(2.2)';
             if (dtAlert) dtAlert.style.display = 'block';
-            showHudSubtitle('💥 Double-Tap Zoom Disaster: Browser forced 300% page zoom!', 'danger');
+            showHudSubtitle(getAnimText('p31', 'result', mode), 'danger');
           } else {
             if (btn) btn.style.transform = 'scale(1.3)';
             setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 200);
-            showHudSubtitle('✨ Double-Tap Zoom Lock: Like triggered cleanly without page zoom explosion!', 'success');
+            showHudSubtitle(getAnimText('p31', 'result', mode), 'success');
           }
         }, 1100));
 
-      // --- GENERAL SCENARIO ANIMATION FALLBACK ---
+      // --- GENERIC SCENARIO ANIMATION ---
       } else {
         showGhostFinger(cx, cy, false);
-        showHudSubtitle(`1. Simulating physical touch interaction for ${scenarioKey.toUpperCase()}...`, 'info');
+        showHudSubtitle(getAnimText(scenarioKey, 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx, cy, true);
         }, 600));
 
         timers.push(setTimeout(() => {
-          showGhostFinger(cx + 40, cy + 40, true);
-          if (mode === 'without') {
-            showHudSubtitle('💥 Baseline Defect: Unmanaged touch caused gesture contention & coordinate jitter!', 'danger');
-          } else {
-            showHudSubtitle('✨ Physics Passed: 0ms GPU tracking without dropped frames or contention!', 'success');
-          }
+          showGhostFinger(cx + 50, cy + 50, true);
+          showHudSubtitle(getAnimText(scenarioKey, 'result', mode), mode === 'without' ? 'danger' : 'success');
         }, 1400));
       }
 
-      // Finish sequence after 3.5s
+      // Finish sequence after 3.6s
       timers.push(setTimeout(() => {
         stopAnimatedDemo();
       }, 3600));
