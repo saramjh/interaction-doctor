@@ -56,9 +56,12 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ```
 
 ### 🔒 반드시 유지해야 할 불변식 (Invariants)
-1. **식별자 분리 및 유효성 가드 불변식 (Disjoint & Valid Input Guard)**: 다점 기하 연산($\text{dist} = \sqrt{(x_A - x_B)^2 + (y_A - y_B)^2}$)에 전달되는 모든 인자는 반드시 **'서로 다른 고유 식별자($id_A \ne id_B$)'**를 가진 유효한 좌표 객체여야 하며, `undefined`, `null`, 단일 객체 중복 참조로 인한 $NaN$이나 $0$의 수식 유입을 원천 차단해야 한다.
-2. **원자적 추출 및 바운드 안전성 불변식 (Atomic Extraction & Bounds Safety)**: 다점 컨테이너(배열, 맵, 딕셔너리)에서 $N$개의 좌표를 추출할 때는 개별 순차 할당 중 발생하는 누락을 방지하도록 해당 언어/플랫폼 표준에 맞는 가장 안전한 집합 추출 방식(구조 분해, 인덱스 바운드 검사, 튜플 언패킹 등)을 적용한다.
-3. **포인터 수 변경 불변식**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정해야 한다.
+1. **3단계 순서쌍 분해 불변식 (3-Step Tuple Decomposition Invariant)**:
+   * **원칙**: 다점 기하 연산($\text{dist} = \sqrt{(p_2.x - p_1.x)^2 + (p_2.y - p_1.y)^2}$)을 수행할 때는 컬렉션 식별자나 배열 인덱스를 수식 내부에 직접 혼용하는 것을 엄격히 금지한다. 반드시 아래 3단계를 순차 준수해야 한다:
+     1. `[단계 1: 차수 가드 (Arity Guard)]`: 포인터 컬렉션 크기 $\ge 2$ 유효성을 선언적으로 검증.
+     2. `[단계 2: 독립 튜플 언패킹 (Tuple Unpacking)]`: 컬렉션에서 계산 대상이 되는 두 점을 독립적인 단일 변수 `(p1, p2)`로 완전히 분해(Unpack).
+     3. `[단계 3: 순수 점 기하 유도 (Primitive Geometry)]`: 분해된 순수 점 객체 `p1`, `p2`의 원시 좌표(`x`, `y`)만으로 거리 $d(p_1, p_2)$와 중심점 $C(p_1, p_2)$를 유도하여 `NaN`/인덱스 탈락을 $0\%$로 원천 차단.
+2. **포인터 수 변경 불변식 (N <-> M Anchor Re-sync)**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정하여 화면 튐(Jump Glitch)을 방어해야 한다.
 4. **중심점 불변 보존 불변식 (Centroid Invariant Preservation Contract)**:
    * **수학적 계약**: 단일 포인터(마우스 휠/트랙패드) 또는 2포인터(핀치) 조작 시, 화면 상의 중심 앵커 $C(c_x, c_y)$에 놓인 월드 좌표 $W(w_x, w_y)$는 스케일이 $s_{\text{old}} \to s_{\text{new}}$로 변경된 직후에도 화면 상의 $C(c_x, c_y)$와 $0\text{px}$ 오차로 일치해야 한다.
      $$w_x = \frac{c_x - \text{pan}_x}{s_{\text{old}}}, \quad w_y = \frac{c_y - \text{pan}_y}{s_{\text{old}}}$$

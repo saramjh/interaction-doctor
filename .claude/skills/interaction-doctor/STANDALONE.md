@@ -24,7 +24,7 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 * **목적**: 사용자가 내린 조작 명령이 브라우저/OS의 기본 제스처나 인접 UI의 간섭을 받지 않고 100% 온전히 시스템에 전달되어야 한다.
 * **4대 입력 양식 전수 클러스터링**:
   1. **연속적 공간 변위 입력 (Continuous Spatial Modality)**: 1D 선형 축 이동(슬라이더/스크러버/스크롤), 2D 평면 벡터 이동(패닝/DnD/스와이프) $\to$ *초기 슬롭(8px) 내 의도 확정 및 직교 축 간섭 격리*
-  2. **다점 기하 변환 입력 (Multi-Point Geometric Modality)**: 거리 비례 스케일링(핀치 줌), 각도 비례 회전(다이얼/로테이션) $\to$ *포인터 간 독립 식별자 분리 및 중심점(Centroid) 불변 유지*
+  2. **다점 기하 변환 입력 (Multi-Point Geometric Modality)**: 거리 비례 스케일링(핀치 줌), 각도 비례 회전(다이얼/로테이션) $\to$ *포인터별 독립 식별자 분리, 3단계 순서쌍 분해 헌장([차수 가드] $\to$ [단일 점 p1, p2 언패킹] $\to$ [순수 점 간 거리 d(p1, p2) 유도]) 준수로 NaN/인덱스 누락 원천 차단 및 중심점(Centroid) 불변 유지*
   3. **시간 누적 및 압력 임계 입력 (Temporal & Pressure Modality)**: 시간 유지(롱프레스/홀드), 연속 반복 탭(더블탭) $\to$ *생리적 손떨림 보존 및 시간 임계(350ms) 도달 시 상위 스크롤러 권한 즉시 박탈*
   4. **이산적 상태 트리거 입력 (Discrete Event Modality)**: 순간 접촉(단일 탭/클릭/토글/단축키) $\to$ *최소 44dp 물리 히트박스 보장 및 중복 실행 멱등성 락*
 
@@ -91,14 +91,14 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ### 4단계: CoT 하드 스탑 자가 검증 선언 (Self-Correction Reflection)
 * **[강제 규칙]** 에이전트는 최종 코드를 출력하기 직전, 내부 사고(CoT)에서 다음 3가지 물리 검증을 거쳐 **`[UX 자가 검증 판정]`** 블록을 반드시 명시해야 한다:
-  1. `[신체 감각 수식 추적]`: 사용자 손가락 A($x_1$)와 손가락 B($x_2$)의 실제 물리 좌표가 수식에 독립 바인딩되었는가? (인덱스 누락, 0 나누기, NaN 0% 확인)
+  1. `[다점 순서쌍 분해 수식 추적]`: 다점 연산 시 컬렉션 인덱스 직접 수식 혼용을 배제하고 `[가드 -> (p1, p2) 언패킹 -> 순수 점 연산]` 3단계 헌장을 준수했는가? (`pts[1]` 누락, `pts.x` 오타, 0 나누기, NaN 0% 확인)
   2. `[0ms 물리 반응성 대조]`: 조작 중(Dragging/Pinching) 화면이 손끝에 0ms로 밀착되는가? (불필요한 CSS transition/이징 지연 0건 확인)
   3. `[경계/플랫폼 간섭 방어]`: 롱프레스 시 손떨림(5px) 보존 및 승격 즉시 상위 스크롤러 탈취 차단이 보장되는가?
 
 ```markdown
 <!-- 코드 출력 직전 강제 실행되는 CoT 선언 블록 -->
 [UX 자가 검증 판정]
-• 다점 물리 식별자 분리: PASS (손가락 A/B 좌표 독립 연산 및 NaN 0% 확인)
+• 다점 순서쌍 분해(Unpacking) 및 식별자 격리: PASS (3단계 튜플 언패킹 준수 및 NaN 0% 확인)
 • 0ms 실시간 밀착 반응성: PASS (조작 중 지연 0건, rAF 중복 폭주 방어 확인)
 • 시스템 간섭 및 경계 방어: PASS (스크롤러 탈취 차단 및 5px 슬롭, Safe-Area 보존 확인)
 ```
@@ -118,6 +118,8 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 ---
 
 # [참조 헌장 1] 보편적 UX 상호작용 계약 헌장 (Universal UX Interaction Contract)
+
+# 보편적 UX 상호작용 계약 헌장 (Universal UX Interaction Contract)
 
 ## 0. 핵심 철학: 국제 표준 기반 환경 분석과 3대 절대 목적
 
@@ -143,6 +145,7 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
   2. **다점 기하 변환 입력 (Multi-Point Geometric Modality)**:
      * *표본*: 거리 비례 스케일링(2손가락 핀치 줌), 각도 비례 회전(다이얼, 캔버스 로테이션), 변형 핸들(크롭/리사이즈).
      * *방어 간섭*: 포인터별 독립 식별자(`Map<id, Coord>`) 격리, 중심점(Centroid) 불변 보존, 포인터 수 변경($N \leftrightarrow M$) 시 앵커 즉시 재동기화.
+     * *3단계 순서쌍 분해 불변식 (Tuple Decomposition)*: 컬렉션에서 인덱스를 직접 찔러 연산하는 것을 금지하고, 반드시 `[1. 차수 검증(N>=2)] -> [2. 단일 점 명시적 분해(p1, p2 Unpacking)] -> [3. 순수 점 간 거리 d(p1, p2) 유도]` 단계를 거쳐 `NaN`/인덱스 탈락을 100% 원천 차단한다.
   3. **시간 누적 및 압력 임계 입력 (Temporal & Pressure Modality)**:
      * *표본*: 시간 유지(롱프레스, 홀드 투 액션), 연속 반복 탭(더블탭, 트리플탭), 압력 센서 터치.
      * *방어 간섭*: 5px 이내 생리적 미세 떨림(Tremor) 보존, 시간 임계(350ms) 도달 즉시 상위 스크롤러 권한 박탈 및 모달 승격.
@@ -184,7 +187,10 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 * **표본**: 2손가락 핀치 줌, 캔버스 회전 다이얼, 이미지 크롭/리사이즈 핸들.
 * **조작적 프로토콜**:
   1. **좌표 맵 독립 추적**: 모든 포인터를 `Map<id, Coord>` 형태로 독립 보관.
-  2. **식별자 분리 수식 검증**: 거리/각도 연산 시 좌항과 우항이 서로 다른 고유 식별자(Index 0 vs 1)를 참조하는지 확인.
+  2. **3단계 순서쌍 분해 불변식**:
+     * `[단계 1: 차수 가드]` 포인터 컬렉션 크기 $\ge 2$ 검증.
+     * `[단계 2: 독립 튜플 언패킹]` 두 점을 `(p1, p2)` 단일 객체로 완전히 분해 (연산 식 내부에서 컬렉션 인덱스 직접 혼용 절대 금지).
+     * `[단계 3: 순수 점 기하 유도]` $d(p_1, p_2) = \sqrt{(p_2.x - p_1.x)^2 + (p_2.y - p_1.y)^2}$, $C(p_1, p_2) = \left(\frac{p_1.x + p_2.x}{2}, \frac{p_1.y + p_2.y}{2}\right)$.
   3. **포인터 수 변경 시 앵커 재동기화**: 포인터 수가 변경되는 순간($N \to N-1$ or $N \to N+1$), 남은 포인터들의 현재 위치를 새 원점(Anchor)으로 즉시 재설정하여 좌표 튐 방지.
 
 ### 3) [클러스터 3] 시간 임계 승격 (Temporal Threshold & Modal Escalation)
@@ -232,6 +238,8 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 ---
 
 # [참조 헌장 2] 5대 상호작용 클러스터 상태 전이 및 불변식 나침반 (Cluster Invariants)
+
+# 5대 상호작용 클러스터 상태 전이 및 불변식 나침반 (Cluster Invariants)
 
 ## 0. 개요: LLM의 지식 바다를 인도하는 의사결정 기준
 
@@ -289,9 +297,12 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ```
 
 ### 🔒 반드시 유지해야 할 불변식 (Invariants)
-1. **식별자 분리 및 유효성 가드 불변식 (Disjoint & Valid Input Guard)**: 다점 기하 연산($\text{dist} = \sqrt{(x_A - x_B)^2 + (y_A - y_B)^2}$)에 전달되는 모든 인자는 반드시 **'서로 다른 고유 식별자($id_A \ne id_B$)'**를 가진 유효한 좌표 객체여야 하며, `undefined`, `null`, 단일 객체 중복 참조로 인한 $NaN$이나 $0$의 수식 유입을 원천 차단해야 한다.
-2. **원자적 추출 및 바운드 안전성 불변식 (Atomic Extraction & Bounds Safety)**: 다점 컨테이너(배열, 맵, 딕셔너리)에서 $N$개의 좌표를 추출할 때는 개별 순차 할당 중 발생하는 누락을 방지하도록 해당 언어/플랫폼 표준에 맞는 가장 안전한 집합 추출 방식(구조 분해, 인덱스 바운드 검사, 튜플 언패킹 등)을 적용한다.
-3. **포인터 수 변경 불변식**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정해야 한다.
+1. **3단계 순서쌍 분해 불변식 (3-Step Tuple Decomposition Invariant)**:
+   * **원칙**: 다점 기하 연산($\text{dist} = \sqrt{(p_2.x - p_1.x)^2 + (p_2.y - p_1.y)^2}$)을 수행할 때는 컬렉션 식별자나 배열 인덱스를 수식 내부에 직접 혼용하는 것을 엄격히 금지한다. 반드시 아래 3단계를 순차 준수해야 한다:
+     1. `[단계 1: 차수 가드 (Arity Guard)]`: 포인터 컬렉션 크기 $\ge 2$ 유효성을 선언적으로 검증.
+     2. `[단계 2: 독립 튜플 언패킹 (Tuple Unpacking)]`: 컬렉션에서 계산 대상이 되는 두 점을 독립적인 단일 변수 `(p1, p2)`로 완전히 분해(Unpack).
+     3. `[단계 3: 순수 점 기하 유도 (Primitive Geometry)]`: 분해된 순수 점 객체 `p1`, `p2`의 원시 좌표(`x`, `y`)만으로 거리 $d(p_1, p_2)$와 중심점 $C(p_1, p_2)$를 유도하여 `NaN`/인덱스 탈락을 $0\%$로 원천 차단.
+2. **포인터 수 변경 불변식 (N <-> M Anchor Re-sync)**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정하여 화면 튐(Jump Glitch)을 방어해야 한다.
 4. **중심점 불변 보존 불변식 (Centroid Invariant Preservation Contract)**:
    * **수학적 계약**: 단일 포인터(마우스 휠/트랙패드) 또는 2포인터(핀치) 조작 시, 화면 상의 중심 앵커 $C(c_x, c_y)$에 놓인 월드 좌표 $W(w_x, w_y)$는 스케일이 $s_{\text{old}} \to s_{\text{new}}$로 변경된 직후에도 화면 상의 $C(c_x, c_y)$와 $0\text{px}$ 오차로 일치해야 한다.
      $$w_x = \frac{c_x - \text{pan}_x}{s_{\text{old}}}, \quad w_y = \frac{c_y - \text{pan}_y}{s_{\text{old}}}$$
@@ -347,7 +358,9 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ---
 ---
 
-# [참조 헌장 3] 복합 중첩 상호작용 충돌 해소 헌장 (Nested Interaction Resolution)
+# [참조 헌장 3] 복합 중첩 상호작용 충돌 해소 헌장 (Composite Gesture Conflict Resolution)
+
+# 복합 중첩 상호작용 충돌 해소 헌장 (Nested Interaction Resolution)
 
 ## 0. 개요: 중첩 상호작용의 의사결정 원칙
 
@@ -394,7 +407,9 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ---
 ---
 
-# [참조 헌장 4] 국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
+# [참조 헌장 4] 국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장 (Platform & Device Invariants)
+
+# 국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
 
 ## 0. 개요: 국제 표준 및 인간공학(HCI) 기초
 
@@ -543,7 +558,9 @@ Modifier.pointerInput(Unit) {
 ---
 ---
 
-# [참조 헌장 5] 상호작용 결함 증상 역추적 진단서 (Interaction Diagnostics)
+# [참조 헌장 5] 상호작용 결함 증상 역추적 진단서 (Symptom-to-Defect Diagnostic Chart)
+
+# 상호작용 결함 증상 역추적 진단서 (Interaction Diagnostics)
 
 ## 0. 개요: 체감 증상으로부터 원인을 역추적하는 나침반
 
@@ -575,7 +592,9 @@ Modifier.pointerInput(Unit) {
 ---
 ---
 
-# [참조 헌장 6] 보편 환경-물리 불변식 및 결함 인과 보증서 (Universal Invariant & Defect Guarantee Matrix)
+# [참조 헌장 6] 36대 결함 해결 인과 보증서 (36 Defect Guarantee Matrix)
+
+# 보편 환경-물리 불변식 및 결함 인과 보증서 (Universal Invariant & Defect Guarantee Matrix)
 
 ## 0. 개요: 환경 기반 결정론적 인과 보증 (Deterministic Guarantee)
 
