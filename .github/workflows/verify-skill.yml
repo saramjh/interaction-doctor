@@ -1,0 +1,20 @@
+name: Verify Skill Structure
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Skill Files Exist
+        run: |
+          test -f skills/interaction-doctor/SKILL.md || exit 1
+          test -f skills/interaction-doctor/STANDALONE.md || exit 1
+          test -f showcase/index.html || exit 1
+          echo "✅ All core skill assets and showcase entrypoints verified."
