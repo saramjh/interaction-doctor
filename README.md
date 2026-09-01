@@ -33,11 +33,11 @@ LLMs know CSS syntax and DOM properties, but they have never felt the **sub-pixe
 ### 1. Claude Code / Antigravity Agent (Recommended)
 ```bash
 # Skills.sh one-line installer
-npx skills add interaction-doctor/interaction-doctor
+npx skills add saramjh/interaction-doctor
 ```
 ```bash
 # Or manual install to local agent skills
-git clone https://github.com/interaction-doctor/interaction-doctor
+git clone https://github.com/saramjh/interaction-doctor
 cp -r interaction-doctor/skills/interaction-doctor ~/.claude/skills/
 ```
 

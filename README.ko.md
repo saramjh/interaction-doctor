@@ -32,11 +32,11 @@ AI 모델은 CSS 문법과 DOM 속성은 잘 알지만, **실제 터치스크린
 ### 1. Claude Code / Antigravity 에이전트 스킬 (권장)
 ```bash
 # Skills.sh 원클릭 설치
-npx skills add interaction-doctor/interaction-doctor
+npx skills add saramjh/interaction-doctor
 ```
 ```bash
 # 또는 로컬 에이전트 스킬 폴더에 직접 복사
-git clone https://github.com/interaction-doctor/interaction-doctor
+git clone https://github.com/saramjh/interaction-doctor
 cp -r interaction-doctor/skills/interaction-doctor ~/.claude/skills/
 ```
 
