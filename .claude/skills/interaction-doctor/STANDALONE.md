@@ -310,6 +310,16 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
   2. **경계 탄성 및 상위 전이**: 캐러셀이 첫 장이나 마지막 장에 도달했을 때의 추가 스와이프는 저항 계수($0.3$)를 적용한 고무줄 탄성을 보여주되, 부모 스크롤 컨테이너의 위치를 강제로 흔들지 않아야 한다.
 
 ---
+
+### 4) 다중 인스턴스 스코프 및 이벤트 격리 법칙 (Multi-Instance Scope & Event Isolation)
+> **상황**: 단일 화면에 비슷한 제스처 로직을 가진 컴포넌트가 복수 개 배치되어 있을 때 (예: 복수 캔버스/미니맵, 복수 캐러셀, 리스트 내 수십 개의 드래그 카드).
+
+* **해소 원칙**:
+  1. **인스턴스 단위 상태 캡슐화 (Zero Global Variables)**: `pointerMap`, `timer`, `velocityQueue`, `rafId` 등 모든 제스처 상태는 전역 변수가 아닌 **개별 컴포넌트 인스턴스(Class, Hook, Closure Factory, StateObject)** 내부에 100% 독립 격리하여 상태 덮어쓰기를 차단한다.
+  2. **이벤트 경계 차단 (`e.stopPropagation()` & Target Capture)**: 자식 컴포넌트 조작 시작 즉시 상위 전파를 차단(`stopPropagation()`)하고 해당 요소에 포인터를 독점 캡처(`setPointerCapture`)하여 상위 캔버스/스크롤러와의 동시 발화를 원천 차단한다.
+  3. **독립 관성 애니메이션 루프**: 인스턴스마다 고유한 `rafId` 채널을 관리하여 한 컴포넌트의 터치 진입이나 애니메이션 취소가 다른 컴포넌트의 관성 감속 루프를 멈추지 않도록 보증한다.
+
+---
 ---
 
 # [참조 헌장 4] 국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
