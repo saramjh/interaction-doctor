@@ -56,11 +56,11 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ```
 
 ### 🔒 반드시 유지해야 할 불변식 (Invariants)
-1. **3단계 순서쌍 분해 불변식 (3-Step Tuple Decomposition Invariant)**:
-   * **원칙**: 다점 기하 연산($\text{dist} = \sqrt{(p_2.x - p_1.x)^2 + (p_2.y - p_1.y)^2}$)을 수행할 때는 컬렉션 식별자나 배열 인덱스를 수식 내부에 직접 혼용하는 것을 엄격히 금지한다. 반드시 아래 3단계를 순차 준수해야 한다:
-     1. `[단계 1: 차수 가드 (Arity Guard)]`: 포인터 컬렉션 크기 $\ge 2$ 유효성을 선언적으로 검증.
-     2. `[단계 2: 독립 튜플 언패킹 (Tuple Unpacking)]`: 컬렉션에서 계산 대상이 되는 두 점을 독립적인 단일 변수 `(p1, p2)`로 완전히 분해(Unpack).
-     3. `[단계 3: 순수 점 기하 유도 (Primitive Geometry)]`: 분해된 순수 점 객체 `p1`, `p2`의 원시 좌표(`x`, `y`)만으로 거리 $d(p_1, p_2)$와 중심점 $C(p_1, p_2)$를 유도하여 `NaN`/인덱스 탈락을 $0\%$로 원천 차단.
+1. **4대 원시 스칼라 분리 불변식 (4-Scalar Primitive Binding Invariant)**:
+   * **원칙**: 다점 기하 연산($\text{dist} = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$)을 수행할 때는 어떤 언어에서든 복합 객체(Object/Struct)나 컨테이너(Array/List)를 기하 수식 내부에 직접 혼용하는 것을 엄격히 금지한다. 반드시 아래 3단계를 순차 준수해야 한다:
+     1. `[단계 1: 차수 가드 (Arity Guard)]`: 포인터 컨테이너 크기 $\ge 2$ 유효성을 선언적으로 검증.
+     2. `[단계 2: 4대 원시 스칼라 바인딩 (4-Scalar Binding)]`: 해당 언어 표준 방식으로 $x_1, y_1, x_2, y_2$ 4개의 실수 스칼라(Float/Double) 변수를 각각 독립적으로 먼저 추출·할당 (연산식 내부의 객체 속성 체이닝 및 컨테이너 단독 참조 배제).
+     3. `[단계 3: 순수 스칼라 기하 유도 (Pure Scalar Geometry)]`: 바인딩된 순수 실수 스칼라 변수($x_1, y_1, x_2, y_2$)만으로 거리 $d$와 중심점 $C$를 계산하여, 전 언어 런타임에서 속성 누락, `NaN`, `undefined`, 타입 오참조를 $0\%$로 원천 박멸.
 2. **포인터 수 변경 불변식 (N <-> M Anchor Re-sync)**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정하여 화면 튐(Jump Glitch)을 방어해야 한다.
 4. **중심점 불변 보존 불변식 (Centroid Invariant Preservation Contract)**:
    * **수학적 계약**: 단일 포인터(마우스 휠/트랙패드) 또는 2포인터(핀치) 조작 시, 화면 상의 중심 앵커 $C(c_x, c_y)$에 놓인 월드 좌표 $W(w_x, w_y)$는 스케일이 $s_{\text{old}} \to s_{\text{new}}$로 변경된 직후에도 화면 상의 $C(c_x, c_y)$와 $0\text{px}$ 오차로 일치해야 한다.
