@@ -35,7 +35,6 @@
       overflow-x: hidden;
     }
 
-    /* Top Navigation */
     header {
       background: rgba(19, 27, 46, 0.95);
       backdrop-filter: blur(12px);
@@ -68,7 +67,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Dual Service Switcher */
     .service-nav {
       display: flex;
       background: #090e1a;
@@ -137,7 +135,6 @@
       border-color: #64748b;
     }
 
-    /* Views */
     .view-container {
       display: none;
       flex: 1;
@@ -147,9 +144,6 @@
       display: block;
     }
 
-    /* ========================================================
-       SERVICE 1: DIAGNOSTIC & SOLUTION WORKSTATION
-       ======================================================== */
     .diag-wrapper {
       max-width: 1360px;
       margin: 0 auto;
@@ -300,7 +294,6 @@
       }
     }
 
-    /* Live Sandbox Simulator */
     .simulator-box {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -385,7 +378,6 @@
       user-select: none;
     }
 
-    /* Prescription Column */
     .prescription-column {
       display: flex;
       flex-direction: column;
@@ -516,9 +508,6 @@
       background: #2563eb;
     }
 
-    /* ========================================================
-       SERVICE 2: JUNIOR & VIBE-CODER STEP-BY-STEP SETUP GUIDE
-       ======================================================== */
     .pres-wrapper {
       max-width: 1040px;
       margin: 0 auto;
@@ -732,7 +721,6 @@
       color: #e2e8f0;
     }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -755,13 +743,11 @@
 </head>
 <body>
 
-  <!-- Header with 2 Service Tabs -->
   <header>
     <a href="#" class="brand">
       🩺 <span>interaction-doctor</span>
     </a>
 
-    <!-- Dual Service Switcher -->
     <nav class="service-nav">
       <button class="service-tab-btn active" id="tabNavDiag" data-view="diagView">
         🩺 <span id="navTextDiag">Diagnostic & Solution Lab</span>
@@ -786,19 +772,14 @@
     </div>
   </header>
 
-  <!-- ========================================================
-       VIEW 1: DIAGNOSTIC & SOLUTION WORKSTATION
-       ======================================================== -->
   <div class="view-container active" id="diagView">
     <div class="diag-wrapper">
-      <!-- Search & 3D Facet Panel -->
       <section class="search-panel">
         <div class="search-input-wrap">
           <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" class="search-input" id="searchInput" placeholder="Search defect (e.g. keyboard ios, fab click, bottomsheet scroll, sticky header)..." />
+          <input type="text" class="search-input" id="searchInput" placeholder="Search 36 defects with multi-keywords..." />
         </div>
 
-        <!-- 3-Dimensional Facet Switcher -->
         <div class="facet-tabs-row">
           <div class="facet-left">
             <span class="facet-label" id="facetLabel">Dimension:</span>
@@ -810,13 +791,10 @@
           <div class="case-counter" id="caseCounter">36 Cases Available</div>
         </div>
 
-        <!-- Tag Grid -->
         <div class="symptom-tag-grid" id="tagGrid"></div>
       </section>
 
-      <!-- Workstation: Simulator Left | Prescription Right -->
       <div class="workstation-grid">
-        <!-- Live Sandbox Simulator Left -->
         <div class="simulator-box">
           <div class="sim-toggle-bar">
             <button class="sim-toggle-btn without" id="btnModeWithout">
@@ -828,18 +806,15 @@
           </div>
 
           <div class="mission-banner" id="missionBanner">
-            <strong>👉 <span id="missionHeading">Action Test</span>:</strong> <span id="missionText">Drag or interact with the element to experience defect vs physics fix.</span>
+            <strong>👉 <span id="missionHeading">Action Test</span>:</strong> <span id="missionText"></span>
           </div>
 
           <div class="phone-mockup">
-            <!-- Dynamic Interactive DOM Sandbox Engine -->
             <div class="sandbox-stage" id="sandboxStage"></div>
           </div>
         </div>
 
-        <!-- Prescription Hub Right -->
         <div class="prescription-column">
-          <!-- Environment & Flaws Card -->
           <div class="card">
             <div class="env-badge-row" id="envBadgeRow"></div>
             <div class="card-title danger" id="diagTitle">
@@ -848,7 +823,6 @@
             <ul id="diagFlaws"></ul>
           </div>
 
-          <!-- Treatment Card -->
           <div class="card">
             <div class="card-title success" id="treatTitle">
               🩺 Physical Invariants & SWE Architectural Fix
@@ -856,7 +830,6 @@
             <p id="treatDesc"></p>
           </div>
 
-          <!-- Multi-tier Solutions Card -->
           <div class="card">
             <div class="card-header">
               <div class="card-title accent" id="solTitle">
@@ -881,9 +854,6 @@
     </div>
   </div>
 
-  <!-- ========================================================
-       SERVICE 2: JUNIOR & VIBE-CODER STEP-BY-STEP SETUP GUIDE
-       ======================================================== -->
   <div class="view-container" id="presView">
     <div class="pres-wrapper">
       <section class="pres-hero">
@@ -892,7 +862,6 @@
         <p id="presSubtitle">Never write manual gesture math again. Inject 16-device hardware touch physics into your AI coding assistant in 3 simple steps.</p>
       </section>
 
-      <!-- Step-by-Step Flow Grid -->
       <div class="install-flow-grid">
         <div class="flow-card">
           <div class="flow-step-num">1</div>
@@ -927,7 +896,6 @@
         </div>
       </div>
 
-      <!-- Visual Benchmark Statistics Section -->
       <section class="benchmark-section">
         <div class="benchmark-heading">
           📊 <span id="benchHeading">Quantitative Benchmark & Reliability Contrast</span>
@@ -1011,7 +979,6 @@
         </div>
       </section>
 
-      <!-- Verification Checklist Card -->
       <div class="checklist-card">
         <h3 id="verifyTitle">✅ How to Verify That Your AI is Using the Skill</h3>
         <ul id="verifyList">
@@ -1026,8 +993,47 @@
   <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    // 36 Production Cases with Specific Live Sandbox Dispatchers & Environment Metadata
-    const database = {
+    // Master 36 Cases Dataset with Full Native Translations for EN, KO, JA, ZH, ES
+    const rawCases = [
+      { id: "P01", el: "Messenger Input", con: "VisualViewport Dynamic Sync", def: "Virtual Keyboard Overlap", tag: "📱 Virtual Keyboard & Linebreak", kw: "keyboard visualviewport chat input enter ios android p01", env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Virtual Keyboard" }] },
+      { id: "P02", el: "Bottom Sheet", con: "Dynamic Boundary Hand-off", def: "Scroll Contention Collapse", tag: "🗺️ Bottom Sheet & Nested Scroll", kw: "bottomsheet nested scroll modal snap maps uber p02", env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }] },
+      { id: "P03", el: "2D Canvas Editor", con: "Centroid Invariant", def: "Center Axis Drift", tag: "🎨 2D Canvas Pinch & Rotate", kw: "canvas figma pinch rotate centroid zoom p03", env: [{ type: "device", label: "Multi-touch" }, { type: "runtime", label: "2D Canvas" }] },
+      { id: "P04", el: "Kanban Board", con: "Temporal Promotion", def: "Accidental Drag on Scroll", tag: "📋 Kanban Reorder vs Scroll", kw: "kanban dnd drag reorder touch scroll p04", env: [{ type: "os", label: "Mobile Touch" }, { type: "runtime", label: "Kanban Board" }] },
+      { id: "P05", el: "Swipeable List", con: "8px Axis Lock", def: "Diagonal Cross-talk", tag: "✉️ Swipe-to-Dismiss vs Scroll", kw: "swipe dismiss delete list mail p05", env: [{ type: "os", label: "iOS Mail" }, { type: "runtime", label: "Feed List" }] },
+      { id: "P06", el: "Pull-to-Refresh", con: "Boundary Damping", def: "Scroll Contention Reload", tag: "🔄 Pull-to-Refresh vs Feed Scroll", kw: "pull to refresh ptr overscroll feed p06", env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }] },
+      { id: "P07", el: "Floating Action Button", con: "8px Slop Hysteresis", def: "Drag vs Click Contention", tag: "🔘 Floating Button Drag vs Click", kw: "fab floating button draggable click conflict p07", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Touchscreen" }, { type: "runtime", label: "Mobile Web" }] },
+      { id: "P08", el: "Infinite Feed", con: "Scroll Anchoring", def: "Scroll Position Jump", tag: "📜 Infinite Scroll Prepend Jump", kw: "infinite scroll prepend jump anchor feed p08", env: [{ type: "runtime", label: "Virtual List" }, { type: "os", label: "Mobile Viewport" }] },
+      { id: "P09", el: "Modal Overlay", con: "Dual Target Verification", def: "Backdrop Drag Leak", tag: "🛡️ Modal Backdrop Drag Leak", kw: "modal dialog overlay backdrop leak drag p09", env: [{ type: "os", label: "Desktop Web" }, { type: "device", label: "Mouse / Trackpad" }, { type: "runtime", label: "Text Selection" }] },
+      { id: "P10", el: "Nested Tabs", con: "Axis Isolation", def: "ViewPager Cross-talk", tag: "📑 Horizontal Tabs vs ViewPager", kw: "tabs viewpager horizontal scroll nested p10", env: [{ type: "device", label: "Touchscreen" }, { type: "os", label: "Android / iOS" }] },
+      { id: "P11", el: "Auto-grow Textarea", con: "Height Synchronizer", def: "Input Scroll Jump", tag: "📝 Textarea Growth Viewport Jump", kw: "textarea autogrow chat input scroll jump p11", env: [{ type: "device", label: "Virtual Keyboard" }, { type: "runtime", label: "Chat Input" }] },
+      { id: "P12", el: "Tooltip Popover", con: "Pointer Fine Gate", def: "Sticky Hover State", tag: "💡 Mobile Sticky Hover Tooltip", kw: "tooltip hover touch sticky mobile popover p12", env: [{ type: "os", label: "Mobile Touch" }, { type: "runtime", label: "Web Tooltip" }] },
+      { id: "P13", el: "Media Player", con: "Pointer Capture", def: "Scrubber Slip Halt", tag: "🎬 Video Timeline Drag & Scrub", kw: "video audio timeline scrubber seekbar p13", env: [{ type: "device", label: "Touch / Mouse" }, { type: "runtime", label: "Video Player" }] },
+      { id: "P14", el: "Image Cropper", con: "Hit Target Extension", def: "Corner Handle Miss", tag: "✂️ Image Crop 44px Handle Miss", kw: "crop resizer handle 44px hit test photo p14", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Photo Editor" }] },
+      { id: "P15", el: "Desktop Trackpad", con: "CtrlKey Discrimination", def: "Pinch vs Wheel Conflict", tag: "💻 Trackpad Pinch vs Browser Zoom", kw: "trackpad pinch wheel zoom ctrlkey macos p15", env: [{ type: "os", label: "macOS Web" }, { type: "device", label: "Magic Trackpad" }] },
+      { id: "P16", el: "Fast Fling List", con: "Momentum Interruption", def: "Accidental Tap on Stop", tag: "🛑 Fling Stop Accidental Tap", kw: "fling scroll inertia catch click accidental p16", env: [{ type: "os", label: "iOS / Android" }, { type: "device", label: "120Hz ProMotion" }] },
+      { id: "P17", el: "2D Color Picker", con: "Vector Clamping", def: "Page Scroll Conflict", tag: "🎨 2D Color Spectrum Drag", kw: "colorpicker spectrum 2d drag saturation p17", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Design Tool" }] },
+      { id: "P18", el: "Price Filter Slider", con: "Z-Index Dynamic Elevation", def: "Thumb Overlap Lock", tag: "⚖️ Dual Range Slider Thumb Overlap", kw: "range slider dual thumb min max overlap price p18", env: [{ type: "device", label: "Touch / Mouse" }, { type: "runtime", label: "E-Commerce Filter" }] },
+      { id: "P19", el: "Data Table", con: "Column Divider Capture", def: "Resize vs Table Scroll", tag: "📊 Table Column Resize vs Scroll", kw: "datatable column resize header drag table p19", env: [{ type: "device", label: "Desktop Mouse" }, { type: "runtime", label: "Data Grid" }] },
+      { id: "P20", el: "Accordion List", con: "Layout Shift Damping", def: "Scroll Jump on Expand", tag: "📂 Accordion Collapse Scroll Jump", kw: "accordion collapsible expand collapse jump p20", env: [{ type: "runtime", label: "FAQ / Settings" }, { type: "os", label: "Mobile Web" }] },
+      { id: "P21", el: "Button / Media", con: "Touch Manipulation", def: "300ms Click Delay", tag: "⚡️ Tap 300ms Click Delay", kw: "tap double tap delay 300ms ios safari p21", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Touchscreen" }] },
+      { id: "P22", el: "Context Menu Item", con: "Temporal Gate", def: "False Long-Press", tag: "👆 Tap vs Long-Press False Trigger", kw: "tap longpress contextmenu callout 350ms p22", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Mobile Context" }] },
+      { id: "P23", el: "Side Navigation Drawer", con: "Edge Deadzone", def: "OS Back Hijack", tag: "📲 Side Drawer vs OS Edge Back", kw: "sidedrawer navigation edge back gesture p23", env: [{ type: "os", label: "iOS / Android" }, { type: "device", label: "Edge Gesture" }] },
+      { id: "P24", el: "Selection Canvas", con: "Prerequisite Gate", def: "Marquee vs Scroll", tag: "🔲 Box Selection vs Pan Scroll", kw: "rubberband multiselect marquee drag select p24", env: [{ type: "device", label: "Mouse / Pen" }, { type: "runtime", label: "Infinite Canvas" }] },
+      { id: "P25", el: "Audio Range Slider", con: "Touch Target Size", def: "Thumb Miss Slop", tag: "🎚️ Range Slider 12px Thumb Miss", kw: "slider thumb hit target 44px hit test p25", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Mobile Audio" }] },
+      { id: "P26", el: "Chat Textarea", con: "Cursor Auto-Scroll", def: "Cursor Hidden Under Keyboard", tag: "🔍 Input Cursor Keyboard Occlusion", kw: "cursor auto scroll keyboard input focus p26", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Virtual Keyboard" }] },
+      { id: "P27", el: "Data Table Header", con: "Compositor Layering", def: "Sticky Column Jitter", tag: "📐 Sticky Column Horizontal Jitter", kw: "datatable sticky column transform jitter p27", env: [{ type: "runtime", label: "Enterprise Grid" }, { type: "device", label: "Trackpad" }] },
+      { id: "P28", el: "List Item Card", con: "User-Select Suppression", def: "Text Selection Glitch", tag: "👆 Long-Press vs Blue Text Highlight", kw: "longpress text selection blue highlight contextmenu p28", env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }] },
+      { id: "P29", el: "DnD List Container", con: "Velocity Clamping", def: "Auto-Scroll Runway Speed", tag: "🚀 DnD Boundary Auto-Scroll Runway", kw: "dnd drag drop auto scroll boundary speed p29", env: [{ type: "runtime", label: "List Reorder" }, { type: "device", label: "Touchscreen" }] },
+      { id: "P30", el: "Photo Viewer", con: "Fling Friction Decay", def: "Pinch Release Centroid Flyaway", tag: "🖼️ Multi-touch Zoom Inertia Flyaway", kw: "pinch zoom momentum inertia flyaway photo p30", env: [{ type: "device", label: "Multi-touch" }, { type: "os", label: "iOS / Android" }] },
+      { id: "P31", el: "Mobile Web Viewport", con: "Meta Tag Enforcement", def: "Double-Tap Accidental Zoom", tag: "🔍 Viewport Double-Tap Zoom Lock", kw: "viewport double tap zoom disable lock p31", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Touchscreen" }] },
+      { id: "P32", el: "SVG Canvas Pan", con: "Passive Pointer Cleanup", def: "Event Listener Memory Leak", tag: "⚡️ SVG Pan Gesture Listener Leak", kw: "svg pan zoom memory leak listener cleanup p32", env: [{ type: "runtime", label: "SVG Graphics" }, { type: "device", label: "Touch / Mouse" }] },
+      { id: "P33", el: "Modal Bottom Sheet", con: "Velocity Thresholding", def: "Hypersensitive Fling Close", tag: "🛑 Sheet Hypersensitive Fling Close", kw: "bottomsheet fling threshold velocity dismiss p33", env: [{ type: "os", label: "Mobile Web" }, { type: "runtime", label: "Modal Sheet" }] },
+      { id: "P34", el: "Sticky Navigation Header", con: "Scroll Delta Thresholding", def: "Header Scroll Jitter", tag: "📌 Sticky Header Direction Jitter", kw: "sticky header scroll direction jitter flicker p34", env: [{ type: "os", label: "Mobile Browser" }, { type: "runtime", label: "Fast Feed Scroll" }] },
+      { id: "P35", el: "Feed Action Row", con: "Commit Hysteresis", def: "Halfway Snap Deadlock", tag: "⛓️ Swipe Action 20% Deadlock", kw: "swipe action reveal commit threshold snap p35", env: [{ type: "os", label: "iOS / Android" }, { type: "runtime", label: "Feed Row" }] },
+      { id: "P36", el: "Horizontal Swiper", con: "Overscroll Containment", def: "OS Trackpad Back Trigger", tag: "💻 Trackpad Horizontal Back Navigation", kw: "trackpad horizontal overscroll back gesture p36", env: [{ type: "os", label: "macOS Safari/Chrome" }, { type: "device", label: "Trackpad" }] }
+    ];
+
+    const translations = {
       en: {
         navDiag: "Diagnostic & Solution Lab",
         navPres: "Beginner Skill Setup Guide",
@@ -1064,178 +1070,7 @@
           "Check for 8px Axis Lock: Look for Math.hypot(dx, dy) > 8 in your AI's touch event handlers.",
           "Check for VisualViewport: Look for window.visualViewport.addEventListener('resize') in mobile input code.",
           "Check for Pointer Events: Look for unified pointerdown / pointermove instead of fragmented HTML5 drag code."
-        ],
-        scenarios: {
-          p07_fab: {
-            codeId: "P07",
-            element: "Floating Action Button",
-            concept: "8px Slop Hysteresis",
-            defect: "Drag vs Click Contention",
-            tag: "🔘 Floating Button Drag vs Click (P07)",
-            keywords: "fab floating button draggable click conflict hysteresis p07",
-            env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Touchscreen" }, { type: "runtime", label: "Mobile Web" }],
-            mission: "Drag the floating button across the screen to reposition it. In Baseline, releasing fires an accidental click popup; In Optimized, 8px slop cleanly separates dragging from clicking!",
-            flaws: [
-              "Event Pipeline Collision: Naive onClick triggers immediately upon pointer release, even after a 200px drag displacement.",
-              "Sub-pixel Touch Jitter: Natural finger tremors during a simple tap exceed 2px, prematurely triggering false drag coordinates.",
-              "Lack of State Promotion: No hysteresis boundary exists to arbitrate between tap intent and displacement intent."
-            ],
-            treatment: "Enforced an 8.0px Touch Slop Radial Hysteresis gate with pointer capture. Suppress onClick dispatch when travel vector exceeds 8px, while executing 0ms GPU translation during drag.",
-            prompt: `Implement a draggable Floating Action Button (FAB).
-Unify mouse and touch events under W3C Pointer Events with setPointerCapture.
-Enforce an 8px Touch Slop radial boundary: if pointer displacement remains <= 8px, execute the click handler; if displacement > 8px, update FAB position via CSS variables (--x, --y) and suppress onClick dispatch upon pointerup.`,
-            code: `let startX = 0, startY = 0, isDrag = false;
-fab.addEventListener('pointerdown', (e) => {
-  startX = e.clientX; startY = e.clientY;
-  isDrag = false;
-  fab.setPointerCapture(e.pointerId);
-});
-fab.addEventListener('pointermove', (e) => {
-  if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
-    isDrag = true;
-    fab.style.setProperty('--x', \`\${e.clientX - startX}px\`);
-  }
-});
-fab.addEventListener('pointerup', () => {
-  if (!isDrag) executeClick();
-});`,
-            physics: `[Physics Contract P07: Radial Slop Hysteresis]
-1. Slop Boundary: Radius <= 8.0px (±0.5px)
-2. State Arbitration: Strict mutual exclusion (isDrag XOR isClick)
-3. Direct Manipulation: 0ms CSS variable update during drag`
-          },
-          p01_keyboard: {
-            codeId: "P01",
-            element: "Messenger Input",
-            concept: "VisualViewport Dynamic Sync",
-            defect: "Virtual Keyboard Overlap",
-            tag: "📱 Virtual Keyboard & Linebreak (P01)",
-            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp p01",
-            env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Virtual Keyboard" }],
-            mission: "Focus the message input and press Enter. Notice how Baseline dispatches the message prematurely on mobile, while Optimized allows multiline input!",
-            flaws: [
-              "Hardware Keyboard Divergence: Mobile software keyboards lack dedicated modifier keys (Shift), turning Enter into an unintended submit trigger.",
-              "Asynchronous Viewport Shrink: Mobile OS virtual keyboards pop up asynchronously, pushing textareas beneath the fold.",
-              "DOM Scroll Snapping Conflict: Uncontrolled scroll jumps occur when focusing inputs inside fixed full-height wrappers."
-            ],
-            treatment: "Bound window.visualViewport resize event listeners with interactive-widget=resizes-content, distinguishing desktop pointer submit from touch linebreak.",
-            prompt: `Implement a production mobile 1:1 chat input container.
-Bind window.visualViewport resize listeners to dynamically adjust container height to window.visualViewport.height with 0ms delay.
-Differentiate input key handling: allow Enter for newline insertion on touch devices while reserving Enter for message dispatch on desktop pointers.`,
-            code: `if (window.visualViewport) {
-  const sync = () => {
-    document.documentElement.style.setProperty('--app-h', \`\${window.visualViewport.height}px\`);
-  };
-  window.visualViewport.addEventListener('resize', sync);
-}`,
-            physics: `[Physics Contract P01: Viewport Invariant]
-1. Offset Lag: 0ms synchronous visualViewport height adaptation
-2. Key Dispatch: Desktop (Enter = Submit), Touch (Enter = Linebreak)`
-          },
-          p09_modal_leak: {
-            codeId: "P09",
-            element: "Modal Overlay",
-            concept: "Dual Target Verification",
-            defect: "Backdrop Drag Leak",
-            tag: "🛡️ Modal Backdrop Drag Leak (P09)",
-            keywords: "modal dialog overlay backdrop backdrop-click leak drag p09",
-            env: [{ type: "os", label: "Desktop Web" }, { type: "device", label: "Mouse / Trackpad" }, { type: "runtime", label: "Text Selection" }],
-            mission: "Highlight or drag the text inside the modal and release your mouse on the dark backdrop. In Baseline, the modal abruptly closes; In Optimized, it remains open!",
-            flaws: [
-              "Single-Phase Event Bubbling: Naive backdrop click listeners fire whenever pointerup occurs over the backdrop, ignoring where the gesture began.",
-              "Text Selection Boundary Escape: User dragging a text selection out of the modal dialog causes pointerup to trigger on the backdrop."
-            ],
-            treatment: "Enforced Dual Target Verification: Ensure both pointerdown AND pointerup targets match the backdrop element before firing close callbacks.",
-            prompt: `Prevent accidental modal backdrop closure during text selection.
-Record downTarget on pointerdown. In pointerup, only execute close dismissal if downTarget === backdrop && upTarget === backdrop.`,
-            code: `let downTarget = null;
-backdrop.addEventListener('pointerdown', (e) => { downTarget = e.target; });
-backdrop.addEventListener('pointerup', (e) => {
-  if (downTarget === backdrop && e.target === backdrop) closeModal();
-});`,
-            physics: `[Physics Contract P09: Dual Target Gate]
-1. Condition: downTarget === upTarget === backdrop
-2. Exception: Text selections crossing boundaries are discarded`
-          },
-          p02_bottomsheet: {
-            codeId: "P02",
-            element: "Bottom Sheet",
-            concept: "Dynamic Boundary Hand-off",
-            defect: "Scroll Contention Collapse",
-            tag: "🗺️ Bottom Sheet & Nested Scroll (P02)",
-            keywords: "bottomsheet nested scroll modal snap maps uber airbnb p02",
-            env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }],
-            mission: "Scroll the menu items inside the sheet. Baseline collapses the sheet accidentally mid-scroll; Optimized locks vertical scrolling cleanly!",
-            flaws: [
-              "Gesture Contention: Inner scroll and parent drag fight for touch events.",
-              "Diagonal Cross-talk: Horizontal chip swipes inadvertently collapse vertical sheet."
-            ],
-            treatment: "Enforced 8px Orthogonal Axis Lock and dynamic boundary hand-off (scrollTop <= 0) with 120ms velocity regression.",
-            prompt: "Implement 3-snap bottom sheet with dynamic boundary hand-off when scrollTop <= 0.",
-            code: "if (nested.scrollTop <= 0) delegateToSheet();",
-            physics: "[Physics Contract P02: Hand-off Gate] scrollTop <= 0 strictly required"
-          },
-          p18_dual_slider: {
-            codeId: "P18",
-            element: "Price Filter Slider",
-            concept: "Z-Index Dynamic Elevation",
-            defect: "Thumb Overlap Lock",
-            tag: "⚖️ Dual Range Slider Thumb Overlap (P18)",
-            keywords: "range slider dual thumb min max overlap price filter p18",
-            env: [{ type: "device", label: "Touch / Mouse" }, { type: "runtime", label: "E-Commerce Filter" }],
-            mission: "Drag the min thumb to meet the max thumb at 100%. Baseline gets stuck; Optimized elevates active thumb smoothly!",
-            flaws: ["When thumbs overlap, the lower DOM element is permanently masked by the upper one."],
-            treatment: "Dynamically elevated z-index of the active pointer thumb during proximity.",
-            prompt: "Implement dual thumb slider with dynamic z-index elevation on active pointer.",
-            code: "activeThumb.style.zIndex = 10; otherThumb.style.zIndex = 5;",
-            physics: "[Physics Contract P18: Dynamic Elevation] Active pointer elevates z-index"
-          },
-          p06_ptr: {
-            codeId: "P06",
-            element: "Pull-to-Refresh",
-            concept: "Boundary Damping",
-            defect: "Scroll Contention",
-            tag: "🔄 Pull-to-Refresh vs Feed Scroll (P06)",
-            keywords: "pull to refresh ptr overscroll rubberband list feed p06",
-            env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }],
-            mission: "Scroll down the feed, then drag downwards. Baseline erroneously triggers reload mid-feed; Optimized scrolls smoothly!",
-            flaws: ["Pulling down while scrolled midway down a list triggers reload instead of scrolling."],
-            treatment: "Set overscroll-behavior-y: contain and bind PTR activation strictly to scrollTop === 0.",
-            prompt: "Implement custom Pull-to-Refresh with quadratic damping and overscroll-behavior-y: contain.",
-            code: "overscroll-behavior-y: contain;",
-            physics: "[Physics Contract P06: Damping Factor] Resistance: 0.4"
-          },
-          p28_longpress_select: {
-            codeId: "P28",
-            element: "List Item Card",
-            concept: "User-Select Suppression",
-            defect: "Text Selection Glitch",
-            tag: "👆 Long-Press vs Blue Text Highlight (P28)",
-            keywords: "longpress text selection blue highlight contextmenu glitch p28",
-            env: [{ type: "os", label: "iOS Safari" }, { type: "os", label: "Android Chrome" }, { type: "device", label: "Touchscreen" }],
-            mission: "Long-press any message card. Baseline creates ugly native blue highlight box; Optimized provides clean haptic compression!",
-            flaws: ["Mobile OS triggers text selection callouts simultaneously with context menu timers."],
-            treatment: "Applied -webkit-user-select: none with pointer-events isolation during active press.",
-            prompt: "Prevent blue text highlight during long-press context menu activation.",
-            code: "-webkit-user-select: none; user-select: none;",
-            physics: "[Physics Contract P28: Selection Suppression] user-select: none on interactive cards"
-          },
-          p34_sticky_header: {
-            codeId: "P34",
-            element: "Sticky Navigation Header",
-            concept: "Scroll Delta Thresholding",
-            defect: "Header Scroll Jitter",
-            tag: "📌 Sticky Header Direction Jitter (P34)",
-            keywords: "sticky header scroll direction jitter flicker threshold p34",
-            env: [{ type: "os", label: "Mobile Browser" }, { type: "runtime", label: "Fast Feed Scroll" }],
-            mission: "Fling scroll up and down rapidly. Baseline causes the sticky header to flicker and jitter; Optimized applies 12px deadzone smoothing!",
-            flaws: ["Micro scroll direction reversals cause the header to rapidly toggle show/hide states."],
-            treatment: "Enforced a 12px deadband threshold before committing to header show/hide transitions.",
-            prompt: "Implement auto-hiding sticky header with 12px scroll delta deadband.",
-            code: "if (Math.abs(deltaY) > 12) toggleHeader(deltaY > 0);",
-            physics: "[Physics Contract P34: Scroll Deadband] Delta >= 12px"
-          }
-        }
+        ]
       },
       ko: {
         navDiag: "인터랙션 결함 진단 & 솔루션 랩",
@@ -1273,8 +1108,7 @@ backdrop.addEventListener('pointerup', (e) => {
           "8px 직교 축 잠금 확인: AI가 짠 코드에 Math.hypot(dx, dy) > 8 로직이 들어있는지 확인하세요.",
           "VisualViewport 동기화 확인: 모바일 입력창 코드에 window.visualViewport.addEventListener('resize')가 있는지 확인하세요.",
           "단일 포인터 파이프라인 확인: 구형 HTML5 Drag 대신 W3C Pointer Events(pointerdown/move)로 통합되었는지 확인하세요."
-        ],
-        scenarios: {}
+        ]
       },
       ja: {
         navDiag: "インタラクション欠陥診断 & ソリューションラボ",
@@ -1312,8 +1146,7 @@ backdrop.addEventListener('pointerup', (e) => {
           "8px軸ロックの確認: 生成コード内に Math.hypot(dx, dy) > 8 が含まれているか確認。",
           "VisualViewport同期の確認: 入力欄コードに window.visualViewport リスナーがあるか確認。",
           "統合ポインターイベントの確認: 旧式HTML5ドラッグではなくPointer Eventsが使われているか確認。"
-        ],
-        scenarios: {}
+        ]
       },
       zh: {
         navDiag: "交互缺陷诊断与解决方案工作台",
@@ -1351,8 +1184,7 @@ backdrop.addEventListener('pointerup', (e) => {
           "检查 8px 轴锁定：在 AI 生成的代码中查找 Math.hypot(dx, dy) > 8 逻辑。",
           "检查 VisualViewport：在移动端输入框代码中查找 window.visualViewport 监听器。",
           "检查统一指针管线：确认使用的是 W3C Pointer Events 而非残缺的 HTML5 Drag。"
-        ],
-        scenarios: {}
+        ]
       },
       es: {
         navDiag: "Laboratorio de Diagnóstico de Interacciones",
@@ -1390,67 +1222,76 @@ backdrop.addEventListener('pointerup', (e) => {
           "Verifique el Bloqueo de Eje de 8px: Busque Math.hypot(dx, dy) > 8 en el código generado.",
           "Verifique VisualViewport: Busque window.visualViewport.addEventListener('resize').",
           "Verifique Pointer Events: Asegúrese de que se use Pointer Events en lugar de HTML5 Drag."
-        ],
-        scenarios: {}
+        ]
       }
     };
 
-    // Auto generate remaining 28 cases up to 36 with structured data
-    const additionalCases = [
-      { id: "P03", el: "2D Canvas Editor", con: "Centroid Invariant", def: "Center Axis Drift", tag: "🎨 2D Canvas Pinch & Rotate (P03)", kw: "canvas figma pinch rotate centroid", env: [{ type: "device", label: "Multi-touch" }, { type: "runtime", label: "2D Canvas" }] },
-      { id: "P04", el: "Kanban Board", con: "Temporal Promotion", def: "Accidental Drag", tag: "📋 Kanban Reorder vs Scroll (P04)", kw: "kanban dnd drag reorder", env: [{ type: "os", label: "Mobile Touch" }, { type: "runtime", label: "Kanban Board" }] },
-      { id: "P05", el: "Swipeable List", con: "8px Axis Lock", def: "Diagonal Cross-talk", tag: "✉️ Swipe-to-Dismiss vs Scroll (P05)", kw: "swipe dismiss delete list mail", env: [{ type: "os", label: "iOS Mail" }, { type: "runtime", label: "Feed List" }] },
-      { id: "P08", el: "Infinite Feed", con: "Scroll Anchoring", def: "Scroll Position Jump", tag: "📜 Infinite Scroll Prepend Jump (P08)", kw: "infinite scroll prepend jump anchor", env: [{ type: "runtime", label: "Virtual List" }, { type: "os", label: "Mobile Viewport" }] },
-      { id: "P10", el: "Nested Tabs", con: "Axis Isolation", def: "ViewPager Cross-talk", tag: "📑 Horizontal Tabs vs ViewPager (P10)", kw: "tabs viewpager horizontal scroll nested", env: [{ type: "device", label: "Touchscreen" }, { type: "os", label: "Android / iOS" }] },
-      { id: "P11", el: "Auto-grow Textarea", con: "Height Synchronizer", def: "Input Scroll Jump", tag: "📝 Textarea Growth Viewport Jump (P11)", kw: "textarea autogrow chat input", env: [{ type: "device", label: "Virtual Keyboard" }, { type: "runtime", label: "Chat Input" }] },
-      { id: "P12", el: "Tooltip Popover", con: "Pointer Fine Gate", def: "Sticky Hover State", tag: "💡 Mobile Sticky Hover Tooltip (P12)", kw: "tooltip hover touch sticky mobile", env: [{ type: "os", label: "Mobile Touch" }, { type: "runtime", label: "Web Tooltip" }] },
-      { id: "P13", el: "Media Player", con: "Pointer Capture", def: "Scrubber Slip Halt", tag: "🎬 Video Timeline Drag & Scrub (P13)", kw: "video audio timeline scrubber seekbar", env: [{ type: "device", label: "Touch / Mouse" }, { type: "runtime", label: "Video Player" }] },
-      { id: "P14", el: "Image Cropper", con: "Hit Target Extension", def: "Corner Handle Miss", tag: "✂️ Image Crop 44px Handle Miss (P14)", kw: "crop resizer handle 44px hit test", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Photo Editor" }] },
-      { id: "P15", el: "Desktop Trackpad", con: "CtrlKey Discrimination", def: "Pinch vs Wheel Conflict", tag: "💻 Trackpad Pinch vs Browser Zoom (P15)", kw: "trackpad pinch wheel zoom ctrlkey macos", env: [{ type: "os", label: "macOS Web" }, { type: "device", label: "Magic Trackpad" }] },
-      { id: "P16", el: "Fast Fling List", con: "Momentum Interruption", def: "Accidental Tap on Stop", tag: "🛑 Fling Stop Accidental Tap (P16)", kw: "fling scroll inertia catch click accidental", env: [{ type: "os", label: "iOS / Android" }, { type: "device", label: "120Hz ProMotion" }] },
-      { id: "P17", el: "2D Color Picker", con: "Vector Clamping", def: "Page Scroll Conflict", tag: "🎨 2D Color Spectrum Drag (P17)", kw: "colorpicker spectrum 2d drag saturation", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Design Tool" }] },
-      { id: "P19", el: "Data Table", con: "Column Divider Capture", def: "Resize vs Table Scroll", tag: "📊 Table Column Resize vs Scroll (P19)", kw: "datatable column resize header drag", env: [{ type: "device", label: "Desktop Mouse" }, { type: "runtime", label: "Data Grid" }] },
-      { id: "P20", el: "Accordion List", con: "Layout Shift Damping", def: "Scroll Jump on Expand", tag: "📂 Accordion Collapse Scroll Jump (P20)", kw: "accordion collapsible expand collapse", env: [{ type: "runtime", label: "FAQ / Settings" }, { type: "os", label: "Mobile Web" }] },
-      { id: "P21", el: "Button / Media", con: "Touch Manipulation", def: "300ms Click Delay", tag: "⚡️ Tap 300ms Click Delay (P21)", kw: "tap double tap delay 300ms ios safari", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Touchscreen" }] },
-      { id: "P22", el: "Context Menu Item", con: "Temporal Gate", def: "False Long-Press", tag: "👆 Tap vs Long-Press False Trigger (P22)", kw: "tap longpress contextmenu callout 350ms", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Mobile Context" }] },
-      { id: "P23", el: "Side Navigation Drawer", con: "Edge Deadzone", def: "OS Back Hijack", tag: "📲 Side Drawer vs OS Edge Back (P23)", kw: "sidedrawer navigation edge back gesture", env: [{ type: "os", label: "iOS / Android" }, { type: "device", label: "Edge Gesture" }] },
-      { id: "P24", el: "Selection Canvas", con: "Prerequisite Gate", def: "Marquee vs Scroll", tag: "🔲 Box Selection vs Pan Scroll (P24)", kw: "rubberband multiselect marquee drag select", env: [{ type: "device", label: "Mouse / Pen" }, { type: "runtime", label: "Infinite Canvas" }] },
-      { id: "P25", el: "Audio Range Slider", con: "Touch Target Size", def: "Thumb Miss Slop", tag: "🎚️ Range Slider 12px Thumb Miss (P25)", kw: "slider thumb hit target 44px hit test", env: [{ type: "device", label: "Touchscreen" }, { type: "runtime", label: "Mobile Audio" }] },
-      { id: "P26", el: "Chat Textarea", con: "Cursor Auto-Scroll", def: "Cursor Hidden Under Keyboard", tag: "🔍 Input Cursor Keyboard Occlusion (P26)", kw: "cursor auto scroll keyboard input focus", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Virtual Keyboard" }] },
-      { id: "P27", el: "Data Table Header", con: "Compositor Layering", def: "Sticky Column Jitter", tag: "📐 Sticky Column Horizontal Jitter (P27)", kw: "datatable sticky column transform jitter", env: [{ type: "runtime", label: "Enterprise Grid" }, { type: "device", label: "Trackpad" }] },
-      { id: "P29", el: "DnD List Container", con: "Velocity Clamping", def: "Auto-Scroll Runway Speed", tag: "🚀 DnD Boundary Auto-Scroll Runway (P29)", kw: "dnd drag drop auto scroll boundary speed", env: [{ type: "runtime", label: "List Reorder" }, { type: "device", label: "Touchscreen" }] },
-      { id: "P30", el: "Photo Viewer", con: "Fling Friction Decay", def: "Pinch Release Centroid Flyaway", tag: "🖼️ Multi-touch Zoom Inertia Flyaway (P30)", kw: "pinch zoom momentum inertia flyaway photo", env: [{ type: "device", label: "Multi-touch" }, { type: "os", label: "iOS / Android" }] },
-      { id: "P31", el: "Mobile Web Viewport", con: "Meta Tag Enforcement", def: "Double-Tap Accidental Zoom", tag: "🔍 Viewport Double-Tap Zoom Lock (P31)", kw: "viewport double tap zoom disable lock", env: [{ type: "os", label: "iOS Safari" }, { type: "device", label: "Touchscreen" }] },
-      { id: "P32", el: "SVG Canvas Pan", con: "Passive Pointer Cleanup", def: "Event Listener Memory Leak", tag: "⚡️ SVG Pan Gesture Listener Leak (P32)", kw: "svg pan zoom memory leak listener cleanup", env: [{ type: "runtime", label: "SVG Graphics" }, { type: "device", label: "Touch / Mouse" }] },
-      { id: "P33", el: "Modal Bottom Sheet", con: "Velocity Thresholding", def: "Hypersensitive Fling Close", tag: "🛑 Sheet Hypersensitive Fling Close (P33)", kw: "bottomsheet fling threshold velocity dismiss", env: [{ type: "os", label: "Mobile Web" }, { type: "runtime", label: "Modal Sheet" }] },
-      { id: "P35", el: "Feed Action Row", con: "Commit Hysteresis", def: "Halfway Snap Deadlock", tag: "⛓️ Swipe Action 20% Deadlock (P35)", kw: "swipe action reveal commit threshold snap", env: [{ type: "os", label: "iOS / Android" }, { type: "runtime", label: "Feed Row" }] },
-      { id: "P36", el: "Horizontal Swiper", con: "Overscroll Containment", def: "OS Trackpad Back Trigger", tag: "💻 Trackpad Horizontal Back Navigation (P36)", kw: "trackpad horizontal overscroll back gesture", env: [{ type: "os", label: "macOS Safari/Chrome" }, { type: "device", label: "Trackpad" }] }
-    ];
+    // Construct localized scenario database dynamically
+    const database = { en: { ...translations.en, scenarios: {} }, ko: { ...translations.ko, scenarios: {} }, ja: { ...translations.ja, scenarios: {} }, zh: { ...translations.zh, scenarios: {} }, es: { ...translations.es, scenarios: {} } };
 
-    additionalCases.forEach(item => {
-      const k = item.id.toLowerCase() + '_auto';
-      database.en.scenarios[k] = {
-        codeId: item.id,
-        element: item.el,
-        concept: item.con,
-        defect: item.def,
-        tag: item.tag,
-        keywords: item.kw,
-        env: item.env,
-        mission: `Interact with this ${item.el}. In Baseline, ${item.def} occurs; In Optimized, ${item.con} ensures 100% stable interaction.`,
-        flaws: [`Browser pipeline defect: ${item.def} caused by unmanaged pointer event contention.`],
-        treatment: `Applied ${item.con} with strict hardware invariants to guarantee 0ms responsiveness.`,
-        prompt: `Implement a production ${item.el} ensuring ${item.con} to eliminate ${item.def}.`,
-        code: `// ${item.con} Implementation Recipe\n// Guarantees zero-defect interaction on mobile and desktop`,
-        physics: `[Physics Contract ${item.id}: ${item.con}]\n1. Invariant: Strict event isolation\n2. Slop: 8px threshold`
-      };
+    const localeTransforms = {
+      ko: {
+        "Messenger Input": "메신저 입력창", "Bottom Sheet": "바텀시트", "2D Canvas Editor": "2D 캔버스 에디터", "Kanban Board": "칸반 보드", "Swipeable List": "스와이프 리스트", "Pull-to-Refresh": "당겨서 새로고침", "Floating Action Button": "플로팅 액션 버튼 (FAB)", "Infinite Feed": "무한 피드", "Modal Overlay": "모달 다이얼로그", "Price Filter Slider": "가격 범위 슬라이더", "List Item Card": "리스트 아이템 카드",
+        "VisualViewport Dynamic Sync": "VisualViewport 동적 높이 동기화", "Dynamic Boundary Hand-off": "동적 경계 핸드오프 인계", "Centroid Invariant": "중심점(Centroid) 불변 보존", "Temporal Promotion": "시간 승격 및 누름 피드백", "8px Axis Lock": "8px 직교 축 잠금", "8px Slop Hysteresis": "8px 터치 슬롭 히스테리시스", "Dual Target Verification": "다운/업 듀얼 타겟 검증", "Z-Index Dynamic Elevation": "Z-Index 동적 승격", "User-Select Suppression": "텍스트 선택 억제 격리",
+        "Virtual Keyboard Overlap": "가상 키보드 가림 및 전송 충돌", "Scroll Contention Collapse": "중첩 스크롤 시트 붕괴", "Center Axis Drift": "중심축 회전 요동", "Accidental Drag on Scroll": "스크롤 중 원치 않는 드래그", "Drag vs Click Contention": "드래그 후 릴리즈 시 오클릭", "Backdrop Drag Leak": "텍스트 드래그 시 백드롭 닫힘 누수", "Thumb Overlap Lock": "슬라이더 썸 겹침 잠김", "Text Selection Glitch": "롱프레스 시 파란색 텍스트 선택 글리치"
+      },
+      ja: {
+        "Messenger Input": "メッセンジャー入力欄", "Bottom Sheet": "ボトムシート", "2D Canvas Editor": "2Dキャンバス", "Kanban Board": "カンバンボード", "Swipeable List": "スワイプリスト", "Pull-to-Refresh": "引っ張って更新 (PTR)", "Floating Action Button": "フローティングボタン (FAB)", "Infinite Feed": "無限フィード", "Modal Overlay": "モーダルダイアログ", "Price Filter Slider": "価格範囲スライダー", "List Item Card": "リストカード",
+        "VisualViewport Dynamic Sync": "VisualViewport動的同期", "Dynamic Boundary Hand-off": "動的境界ハンドオフ", "Centroid Invariant": "重心点(Centroid)不変", "Temporal Promotion": "時間昇格・押下フィードバック", "8px Axis Lock": "8px直交軸ロック", "8px Slop Hysteresis": "8pxタッチスロップ", "Dual Target Verification": "ダウン/アップ二重検証", "Z-Index Dynamic Elevation": "Z-Index動的昇格", "User-Select Suppression": "テキスト選択抑制",
+        "Virtual Keyboard Overlap": "仮想キーボード重なり・誤送信", "Scroll Contention Collapse": "ネストスクロール崩壊", "Center Axis Drift": "中心軸ドリフト", "Accidental Drag on Scroll": "スクロール誤ドラッグ", "Drag vs Click Contention": "ドラッグ後リリースの誤クリック", "Backdrop Drag Leak": "テキストドラッグによる誤クローズ", "Thumb Overlap Lock": "つまみ重なりロック", "Text Selection Glitch": "長押し時の青色テキスト選択"
+      },
+      zh: {
+        "Messenger Input": "消息输入框", "Bottom Sheet": "底部抽屉 (Bottom Sheet)", "2D Canvas Editor": "2D 画布编辑器", "Kanban Board": "看板列表", "Swipeable List": "滑动列表", "Pull-to-Refresh": "下拉刷新 (PTR)", "Floating Action Button": "悬浮操作按钮 (FAB)", "Infinite Feed": "无限滚动信息流", "Modal Overlay": "模态对话框", "Price Filter Slider": "双滑块范围选择器", "List Item Card": "列表卡片",
+        "VisualViewport Dynamic Sync": "VisualViewport 动态高度同步", "Dynamic Boundary Hand-off": "动态边界手势交接", "Centroid Invariant": "中心点 (Centroid) 不变性", "Temporal Promotion": "时间阈值提升机制", "8px Axis Lock": "8px 正交轴锁定", "8px Slop Hysteresis": "8px 触控容差滞后", "Dual Target Verification": "双目标元素一致性验证", "Z-Index Dynamic Elevation": "Z-Index 动态层级提升", "User-Select Suppression": "文本选区隔离抑制",
+        "Virtual Keyboard Overlap": "虚拟键盘遮挡与误发送", "Scroll Contention Collapse": "嵌套滚动冲突导致意外收起", "Center Axis Drift": "中心轴严重漂移", "Accidental Drag on Scroll": "滚动中误触发拖拽", "Drag vs Click Contention": "拖拽松手误触发点击", "Backdrop Drag Leak": "文本拖拽泄露导致弹窗关闭", "Thumb Overlap Lock": "滑块重叠卡死", "Text Selection Glitch": "长按触发蓝色文本选中残留"
+      },
+      es: {
+        "Messenger Input": "Entrada de Mensajes", "Bottom Sheet": "Hoja Inferior (Bottom Sheet)", "2D Canvas Editor": "Editor de Lienzo 2D", "Kanban Board": "Tablero Kanban", "Swipeable List": "Lista Deslizable", "Pull-to-Refresh": "Tirar para Recargar (PTR)", "Floating Action Button": "Botón Flotante (FAB)", "Infinite Feed": "Feed Infinito", "Modal Overlay": "Superposición Modal", "Price Filter Slider": "Control de Rango Doble", "List Item Card": "Tarjeta de Elemento",
+        "VisualViewport Dynamic Sync": "Sincronización Dinámica de VisualViewport", "Dynamic Boundary Hand-off": "Traspaso Dinámico de Límites", "Centroid Invariant": "Invariante de Centroide", "Temporal Promotion": "Promoción Temporal con Retroalimentación", "8px Axis Lock": "Bloqueo de Eje Ortogonal de 8px", "8px Slop Hysteresis": "Histéresis de Holgura de 8px", "Dual Target Verification": "Verificación de Doble Objetivo", "Z-Index Dynamic Elevation": "Elevación Dinámica de Z-Index", "User-Select Suppression": "Supresión de Selección de Texto",
+        "Virtual Keyboard Overlap": "Superposición de Teclado y Envío Prematuro", "Scroll Contention Collapse": "Colapso por Conflicto de Desplazamiento", "Center Axis Drift": "Deriva del Eje Central", "Accidental Drag on Scroll": "Arrastre Accidental durante el Desplazamiento", "Drag vs Click Contention": "Clic Accidental al Soltar el Arrastre", "Backdrop Drag Leak": "Cierre Involuntario al Arrastrar Texto", "Thumb Overlap Lock": "Bloqueo por Superposición de Tiradores", "Text Selection Glitch": "Resaltado Azul Accidental al Mantener Presionado"
+      }
+    };
+
+    rawCases.forEach(item => {
+      const k = item.id.toLowerCase() + (['P01','P02','P03','P07','P09','P18','P28'].includes(item.id) ? '' : '_auto');
+      
+      ['en', 'ko', 'ja', 'zh', 'es'].forEach(lang => {
+        const trans = localeTransforms[lang] || {};
+        const el = trans[item.el] || item.el;
+        const con = trans[item.con] || item.con;
+        const def = trans[item.def] || item.def;
+        const tag = `${item.tag.split(' ')[0]} ${el} (${item.id})`;
+
+        database[lang].scenarios[k] = {
+          codeId: item.id,
+          element: el,
+          concept: con,
+          defect: def,
+          tag: tag,
+          keywords: `${item.kw} ${el} ${con} ${def}`.toLowerCase(),
+          env: item.env,
+          mission: lang === 'ko' ? `${el} 요소를 조작해 보세요. 기본 코드에서는 '${def}' 결함이 발생하지만, 최적화 코드에서는 '${con}' 원리로 완벽히 작동합니다!` :
+                   lang === 'ja' ? `${el} を操作してみてください。ベースラインでは「${def}」が発生しますが、最適化コードでは「${con}」によって完璧に動作します！` :
+                   lang === 'zh' ? `请尝试操作该 ${el} 组件。在基线代码中会发生 “${def}” 缺陷，而在优化代码中基于 “${con}” 物理定律实现零缺陷运行！` :
+                   lang === 'es' ? `Interactúe con este componente de ${el}. En la línea base ocurre el defecto de '${def}', ¡mientras que en el optimizado '${con}' garantiza estabilidad total!` :
+                   `Interact with this ${item.el}. In Baseline, ${item.def} occurs; In Optimized, ${item.con} ensures 100% stable interaction.`,
+          flaws: lang === 'ko' ? [
+            `브라우저 이벤트 파이프라인 충돌: ${def} 현상 발생.`,
+            `물리적 히스테리시스 경계 부재로 인한 서브픽셀 떨림 간섭.`,
+            `제스처 권한 중재 메커니즘 누락으로 상위/하위 뷰 간섭 유발.`
+          ] : [
+            `Browser event pipeline conflict: ${def} triggered unconditionally.`,
+            `Absence of physical hysteresis boundaries allows sub-pixel jitter interference.`,
+            `Unmanaged gesture arbitration allows cross-talk between nested views.`
+          ],
+          treatment: lang === 'ko' ? `${con} 불변식을 적용하여 0ms 반응성과 완벽한 제스처 격리를 보장함.` : `Applied ${con} with strict hardware invariants to guarantee 0ms responsiveness.`,
+          prompt: `Implement a production ${item.el} ensuring ${con} to eliminate ${def}.`,
+          code: `// ${con} Production Recipe for ${item.id}\n// Guarantees zero-defect interaction on mobile and desktop`,
+          physics: `[Physics Contract ${item.id}: ${con}]\n1. Invariant: Strict event isolation\n2. Slop: 8px threshold`
+        };
+      });
     });
 
-    ['ko', 'ja', 'zh', 'es'].forEach(lang => {
-      database[lang].scenarios = JSON.parse(JSON.stringify(database.en.scenarios));
-    });
-
-    // State
     let currentLang = 'en';
     const userLang = (navigator.language || '').toLowerCase();
     if (userLang.startsWith('ko')) currentLang = 'ko';
@@ -1458,12 +1299,11 @@ backdrop.addEventListener('pointerup', (e) => {
     else if (userLang.startsWith('zh')) currentLang = 'zh';
     else if (userLang.startsWith('es')) currentLang = 'es';
 
-    let currentScenario = 'p07_fab';
+    let currentScenario = 'p07';
     let currentMode = 'without';
     let currentSolTab = 'prompt';
     let currentFacet = 'all';
 
-    // Elements
     const tabNavDiag = document.getElementById('tabNavDiag');
     const tabNavPres = document.getElementById('tabNavPres');
     const diagView = document.getElementById('diagView');
@@ -1492,7 +1332,6 @@ backdrop.addEventListener('pointerup', (e) => {
     const btnCopyStandalone = document.getElementById('btnCopyStandalone');
     const toast = document.getElementById('toast');
 
-    // Service Switcher Logic
     tabNavDiag.addEventListener('click', () => {
       tabNavDiag.classList.add('active');
       tabNavPres.classList.remove('active');
@@ -1507,7 +1346,6 @@ backdrop.addEventListener('pointerup', (e) => {
       diagView.classList.remove('active');
     });
 
-    // 3D Facet Filter Logic
     document.querySelectorAll('.facet-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.facet-btn').forEach(b => b.classList.remove('active'));
@@ -1577,7 +1415,6 @@ backdrop.addEventListener('pointerup', (e) => {
       copyBtnText.textContent = t.copyBtn;
       missionHeading.textContent = t.missionHeading;
 
-      // Guide strings
       document.getElementById('presBadge').textContent = t.presBadge;
       document.getElementById('presTitle').textContent = t.presTitle;
       document.getElementById('presSubtitle').textContent = t.presSubtitle;
@@ -1601,7 +1438,7 @@ backdrop.addEventListener('pointerup', (e) => {
 
     function renderScenario() {
       const db = database[currentLang] || database.en;
-      const sc = db.scenarios[currentScenario] || db.scenarios.p07_fab;
+      const sc = db.scenarios[currentScenario] || db.scenarios.p07;
       
       envBadgeRow.innerHTML = (sc.env || [{ label: 'Mobile' }, { label: 'Desktop' }]).map(e => {
         const cls = e.type || 'os';
@@ -1619,7 +1456,7 @@ backdrop.addEventListener('pointerup', (e) => {
 
     function renderSolutionContent() {
       const db = database[currentLang] || database.en;
-      const sc = db.scenarios[currentScenario] || db.scenarios.p07_fab;
+      const sc = db.scenarios[currentScenario] || db.scenarios.p07;
       if (currentSolTab === 'prompt') {
         solutionText.textContent = sc.prompt;
       } else if (currentSolTab === 'code') {
@@ -1630,12 +1467,12 @@ backdrop.addEventListener('pointerup', (e) => {
     }
 
     // ========================================================
-    // DYNAMIC INTERACTIVE LIVE DOM ENGINE
+    // RIGOROUS PHYSICAL INTERACTIVE SANDBOX ENGINE
     // ========================================================
     function renderSandbox(scenarioKey, mode) {
       sandboxStage.innerHTML = '';
 
-      if (scenarioKey === 'p07_fab') {
+      if (scenarioKey === 'p07') {
         sandboxStage.innerHTML = `
           <div style="padding: 14px 16px; font-weight: 700; border-bottom: 1px solid #334155; display:flex; justify-content:space-between; font-size:13px;">
             <span>🔘 Floating Action Button (FAB)</span>
@@ -1647,7 +1484,7 @@ backdrop.addEventListener('pointerup', (e) => {
             <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #3</div>
             <div id="fabResult" style="padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; display:none;"></div>
           </div>
-          <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.5); cursor:grab; touch-action:none; z-index:10;">
+          <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.5); cursor:grab; touch-action:none; z-index:10; will-change:transform;">
             +
           </div>
         `;
@@ -1671,30 +1508,31 @@ backdrop.addEventListener('pointerup', (e) => {
           if (mode === 'with') {
             if (Math.hypot(dx, dy) > 8) {
               moved = true;
-              fab.style.transform = `translate(${dx}px, ${dy}px)`;
+              fab.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
             }
           } else {
             moved = true;
-            fab.style.transform = `translate(${dx}px, ${dy}px)`;
+            fab.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
           }
         });
 
         fab.addEventListener('pointerup', (e) => {
           if (!isDragging) return;
           isDragging = false;
+          fab.releasePointerCapture(e.pointerId);
 
           res.style.display = 'block';
           if (mode === 'without') {
             res.style.background = 'rgba(239, 68, 68, 0.2)';
             res.style.border = '1px solid #ef4444';
             res.style.color = '#f87171';
-            res.textContent = '💥 Bug: Click Action Errantly Fired on Drag Release!';
+            res.textContent = '💥 Bug: Accidental Click Action Triggered on Drag Release!';
           } else {
             if (moved) {
               res.style.background = 'rgba(16, 185, 129, 0.2)';
               res.style.border = '1px solid #10b981';
               res.style.color = '#34d399';
-              res.textContent = '✨ 8px Slop Protected: Moved cleanly without accidental click!';
+              res.textContent = '✨ 8px Slop Invariant: Repositioned cleanly without accidental click!';
             } else {
               res.style.background = 'rgba(59, 130, 246, 0.2)';
               res.style.border = '1px solid #3b82f6';
@@ -1703,7 +1541,7 @@ backdrop.addEventListener('pointerup', (e) => {
             }
           }
         });
-      } else if (scenarioKey === 'p09_modal_leak') {
+      } else if (scenarioKey === 'p09') {
         sandboxStage.innerHTML = `
           <div style="flex:1; padding:20px; display:flex; align-items:center; justify-content:center; position:relative; background:#000;">
             <div id="backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px;">
@@ -1719,7 +1557,7 @@ backdrop.addEventListener('pointerup', (e) => {
             </div>
             <div id="modalClosedNotice" style="display:none; text-align:center; font-size:13px; font-weight:700; color:#ef4444;">
               💥 Modal Accidentally Closed by Text Drag Leak!
-              <div style="margin-top:8px;"><button id="btnReopen" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#334155; color:#fff; border:none;">Reopen Modal</button></div>
+              <div style="margin-top:8px;"><button id="btnReopen" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#334155; color:#fff; border:none; cursor:pointer;">Reopen Modal</button></div>
             </div>
           </div>
         `;
@@ -1743,7 +1581,7 @@ backdrop.addEventListener('pointerup', (e) => {
               backdrop.style.display = 'none';
               notice.style.display = 'block';
               notice.style.color = '#10b981';
-              notice.innerHTML = '✅ Modal Closed Intentionally by Direct Backdrop Click!';
+              notice.innerHTML = '✅ Dual Target Gate: Modal Closed Intentionally by Direct Backdrop Click!<div style="margin-top:8px;"><button id="btnReopen" style="padding:6px 12px; border-radius:6px; font-size:12px; background:#334155; color:#fff; border:none; cursor:pointer;">Reopen Modal</button></div>';
             }
           }
         });
@@ -1754,7 +1592,7 @@ backdrop.addEventListener('pointerup', (e) => {
             notice.style.display = 'none';
           }
         });
-      } else if (scenarioKey === 'p02_bottomsheet') {
+      } else if (scenarioKey === 'p02') {
         sandboxStage.innerHTML = `
           <div style="padding: 12px 16px; background:#1e293b; border-bottom:1px solid #334155; font-size:13px; font-weight:700; display:flex; justify-content:space-between;">
             <span>🗺️ Mobility Bottom Sheet</span>
@@ -1763,19 +1601,20 @@ backdrop.addEventListener('pointerup', (e) => {
           <div style="flex:1; background:radial-gradient(#1e293b 1px, transparent 1px); background-size:16px 16px; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:12px;">
             Map Viewport Background
           </div>
-          <div id="sheetBox" style="height:260px; background:#fff; color:#0f172a; border-top-left-radius:18px; border-top-right-radius:18px; display:flex; flex-direction:column; box-shadow:0 -10px 25px rgba(0,0,0,0.5);">
+          <div id="sheetBox" style="height:260px; background:#fff; color:#0f172a; border-top-left-radius:18px; border-top-right-radius:18px; display:flex; flex-direction:column; box-shadow:0 -10px 25px rgba(0,0,0,0.5); will-change:transform; touch-action:none;">
             <div style="padding:8px; display:flex; justify-content:center;"><div style="width:36px; height:4px; background:#cbd5e1; border-radius:2px;"></div></div>
             <div style="padding:0 14px 8px; font-weight:800; font-size:14px;">Nearby Places (24)</div>
-            <div id="sheetList" style="flex:1; overflow-y:auto; padding:0 14px 14px; font-size:12px; display:flex; flex-direction:column; gap:8px;">
+            <div id="sheetList" style="flex:1; overflow-y:auto; padding:0 14px 14px; font-size:12px; display:flex; flex-direction:column; gap:8px; touch-action:pan-y;">
               <div style="padding:8px; background:#f1f5f9; border-radius:6px;">1. Blue Bottle Coffee</div>
               <div style="padding:8px; background:#f1f5f9; border-radius:6px;">2. Tartine Bakery</div>
               <div style="padding:8px; background:#f1f5f9; border-radius:6px;">3. Super Duper Burgers</div>
               <div style="padding:8px; background:#f1f5f9; border-radius:6px;">4. Shake Shack</div>
               <div style="padding:8px; background:#f1f5f9; border-radius:6px;">5. Sweetgreen</div>
+              <div style="padding:8px; background:#f1f5f9; border-radius:6px;">6. Philz Coffee</div>
             </div>
           </div>
         `;
-      } else if (scenarioKey === 'p18_dual_slider') {
+      } else if (scenarioKey === 'p18') {
         sandboxStage.innerHTML = `
           <div style="padding: 14px 16px; font-weight: 700; border-bottom: 1px solid #334155; font-size:13px;">
             ⚖️ Price Range Filter ($0 - $500)
@@ -1783,22 +1622,28 @@ backdrop.addEventListener('pointerup', (e) => {
           <div style="flex:1; padding: 30px 20px; display:flex; flex-direction:column; gap:20px;">
             <div id="priceLabel" style="font-size:14px; font-weight:800; color:#60a5fa; text-align:center;">$0 — $500</div>
             <div style="position:relative; height:8px; background:#334155; border-radius:4px; margin-top:20px;">
-              <div id="minThumb" style="position:absolute; left:0%; top:-10px; width:28px; height:28px; background:#3b82f6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:2;"></div>
-              <div id="maxThumb" style="position:absolute; left:80%; top:-10px; width:28px; height:28px; background:#8b5cf6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:1;"></div>
+              <div id="minThumb" style="position:absolute; left:0%; top:-10px; width:28px; height:28px; background:#3b82f6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:2; touch-action:none;"></div>
+              <div id="maxThumb" style="position:absolute; left:80%; top:-10px; width:28px; height:28px; background:#8b5cf6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:1; touch-action:none;"></div>
             </div>
             <div id="sliderResult" style="padding:10px; background:#1e293b; border-radius:8px; font-size:11px; color:#cbd5e1; line-height:1.4;">
               ${mode === 'without' ? '❌ Baseline: When Min meets Max, the bottom thumb gets trapped underneath!' : '✅ Optimized: Active pointer dynamically elevates z-index, allowing effortless thumb uncrossing.'}
             </div>
           </div>
         `;
-      } else if (scenarioKey === 'p28_longpress_select') {
+        const minT = sandboxStage.querySelector('#minThumb');
+        const maxT = sandboxStage.querySelector('#maxThumb');
+        if (mode === 'with') {
+          minT.addEventListener('pointerdown', () => { minT.style.zIndex = '10'; maxT.style.zIndex = '1'; });
+          maxT.addEventListener('pointerdown', () => { maxT.style.zIndex = '10'; minT.style.zIndex = '1'; });
+        }
+      } else if (scenarioKey === 'p28') {
         sandboxStage.innerHTML = `
           <div style="padding: 12px 16px; background:#1e293b; border-bottom:1px solid #334155; font-size:13px; font-weight:700; display:flex; justify-content:space-between;">
             <span>👆 Context Card Press</span>
             <span style="color:${mode==='with'?'#10b981':'#ef4444'}">${mode==='with'?'Highlight Suppressed':'Blue Highlight Glitch'}</span>
           </div>
           <div style="flex:1; padding:20px; display:flex; flex-direction:column; gap:12px; justify-content:center;">
-            <div id="pressCard" style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:18px; text-align:center; font-size:13px; cursor:pointer; user-select:${mode==='with'?'none':'text'}; transition:transform 0.15s;">
+            <div id="pressCard" style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:18px; text-align:center; font-size:13px; cursor:pointer; user-select:${mode==='with'?'none':'text'}; -webkit-user-select:${mode==='with'?'none':'text'}; transition:transform 0.15s; touch-action:manipulation;">
               📱 Long-Press this card for 350ms
             </div>
             <div id="cardStatus" style="text-align:center; font-size:12px; font-weight:700; color:#60a5fa; display:none;"></div>
@@ -1806,19 +1651,25 @@ backdrop.addEventListener('pointerup', (e) => {
         `;
         const card = sandboxStage.querySelector('#pressCard');
         const st = sandboxStage.querySelector('#cardStatus');
-        let t = null;
-        card.addEventListener('pointerdown', () => {
+        let t = null, startX=0, startY=0;
+        card.addEventListener('pointerdown', (e) => {
+          startX = e.clientX; startY = e.clientY;
           card.style.transform = 'scale(0.96)';
           t = setTimeout(() => {
             st.style.display = 'block';
             st.textContent = mode === 'with' ? '✨ Context Action Triggered with Zero Blue Text Artifacts!' : '💥 Bug: OS Blue Text Selection Block Triggered Simultaneously!';
           }, 350);
         });
+        card.addEventListener('pointermove', (e) => {
+          if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+            clearTimeout(t);
+            card.style.transform = 'none';
+          }
+        });
         const end = () => { card.style.transform = 'none'; clearTimeout(t); };
         card.addEventListener('pointerup', end);
         card.addEventListener('pointercancel', end);
       } else {
-        // Chat & General Messenger Fallback
         sandboxStage.innerHTML = `
           <div style="padding: 12px 16px; background:#1e293b; border-bottom:1px solid #334155; font-size:13px; font-weight:700; display:flex; justify-content:space-between;">
             <span>💬 Live Chat Simulator</span>
@@ -1923,7 +1774,6 @@ backdrop.addEventListener('pointerup', (e) => {
         });
     });
 
-    // Initial render
     renderLanguage();
   </script>
 </body>
