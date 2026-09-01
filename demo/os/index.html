@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>인터랙티브 여행 지도 & 핀 편집기 | Trip Canvas</title>
+  <!-- Google Fonts: Pretendard & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       1. CSS 변수 및 리셋 (HCI & Native Look and Feel)
+       ========================================================================== */
+    :root {
+      --primary: #FF385C;          /* Airbnb 코랄 */
+      --primary-dark: #E00B41;
+      --naver-green: #03C75A;      /* Naver 그린 */
+      --accent-indigo: #4F46E5;
+      --accent-amber: #F59E0B;
+      --accent-purple: #8B5CF6;
+      --bg-dark: #1E293B;
+      --text-main: #191919;
+      --text-sub: #717171;
+      --text-muted: #94A3B8;
+      --bg-surface: #FFFFFF;
+      --bg-glass: rgba(255, 255, 255, 0.88);
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.18);
+      --shadow-float: 0 12px 32px rgba(255, 56, 92, 0.25);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      position: fixed;
+      background-color: #E2E8F0;
+      font-family: 'Pretendard', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      color: var(--text-main);
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+
+    #app-root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       2. 지도 뷰포트 & 캔버스 레이어
+       ========================================================================== */
+    #map-viewport {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: none;
+      cursor: grab;
+      background: #DCEAF5;
+    }
+
+    #map-viewport:active {
+      cursor: grabbing;
+    }
+
+    /* 트랜스폼 대상 월드 레이어 (transform-origin: 0 0 필수) */
+    #map-world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3200px;
+      height: 3200px;
+      transform-origin: 0 0;
+      will-change: transform;
+      pointer-events: auto;
+    }
+
+    #vector-map-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #route-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #markers-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* ==========================================================================
+       3. 핀 마커 (Pin Marker) 스타일
+       ========================================================================== */
+    .map-marker {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      pointer-events: auto;
+      cursor: pointer;
+      touch-action: none;
+      z-index: 25;
+      transition: z-index 0.15s ease, transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .map-marker.active {
+      z-index: 50;
+      transform: translate(-50%, -100%) scale(1.12);
+    }
+
+    .map-marker.dragging {
+      z-index: 100;
+      transform: translate(-50%, -100%) scale(1.25);
+      filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.3));
+      cursor: grabbing;
+      transition: none !important;
+    }
+
+    .marker-label-chip {
+      background: var(--bg-surface);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: none;
+      backdrop-filter: blur(8px);
+    }
+
+    .marker-label-chip .order-num {
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pin-body-wrapper {
+      position: relative;
+      width: 44px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+    }
+
+    .pin-svg-shape {
+      width: 100%;
+      height: 100%;
+      transition: fill 0.2s ease;
+    }
+
+    .pin-icon-inner {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .marker-pulse-ring {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: -1;
+    }
+
+    .map-marker.dragging .marker-pulse-ring {
+      background: rgba(255, 56, 92, 0.4);
+      transform: translateX(-50%) scale(2);
+      animation: pulse-wave 1s infinite;
+    }
+
+    @keyframes pulse-wave {
+      0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+      100% { transform: translateX(-50%) scale(2.5); opacity: 0; }
+    }
+
+    /* 롱프레스 퀵 액션 플로팅 팝업 */
+    .marker-quick-menu {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.85);
+      opacity: 0;
+      pointer-events: none;
+      background: var(--bg-surface);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 120;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .marker-quick-menu.open {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .quick-menu-color-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .quick-menu-color-btn:active { transform: scale(0.85); }
+
+    .quick-menu-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      background: #F1F5F9;
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .quick-menu-action-btn.delete {
+      background: #FEE2E2;
+      color: #EF4444;
+    }
+    .quick-menu-action-btn:active { transform: scale(0.92); }
+
+    /* ==========================================================================
+       4. 상단 헤더 & 컨트롤
+       ========================================================================== */
+    .top-header-bar {
+      position: absolute;
+      top: max(16px, var(--safe-top));
+      left: 16px;
+      right: 16px;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .trip-title-card {
+      pointer-events: auto;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 10px 16px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-width: calc(100% - 110px);
+    }
+
+    .trip-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trip-status-chip {
+      background: var(--primary);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+    }
+
+    .trip-date-text {
+      font-size: 11px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    .trip-main-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .trip-stats-summary {
+      font-size: 11px;
+      color: var(--naver-green);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .top-action-buttons {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-glass-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      touch-action: manipulation;
+    }
+    .icon-glass-btn:active { transform: scale(0.92); }
+    .icon-glass-btn.primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      box-shadow: var(--shadow-float);
+    }
+
+    .map-floating-controls {
+      position: absolute;
+      right: 16px;
+      top: 90px;
+      z-index: 55;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .map-ctrl-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .map-ctrl-btn:active { transform: scale(0.92); }
+
+    /* ==========================================================================
+       5. 하단 오버레이 (일정 타임라인 & 예산 슬라이더 바)
+       ========================================================================== */
+    .bottom-overlay-wrapper {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 70;
+      padding-bottom: max(16px, var(--safe-bottom));
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.15) 60%, transparent 100%);
+    }
+
+    .budget-controller-card {
+      pointer-events: auto;
+      margin: 0 16px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 16px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      touch-action: none;
+    }
+
+    .budget-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .budget-title-area {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .budget-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .budget-value-display {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .budget-status-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: #DCFCE7;
+      color: #15803D;
+    }
+    .budget-status-tag.warning { background: #FEF3C7; color: #B45309; }
+    .budget-status-tag.danger { background: #FEE2E2; color: #B91C1C; }
+
+    /* 1D 슬라이더 바 (신체 가림 방지 툴팁 버블) */
+    .slider-track-container {
+      position: relative;
+      width: 100%;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      touch-action: none;
+    }
+
+    .slider-bg-rail {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: #E2E8F0;
+      overflow: hidden;
+    }
+
+    .slider-fill-rail {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      background: linear-gradient(90deg, var(--naver-green), var(--primary));
+      border-radius: var(--radius-full);
+    }
+
+    .slider-thumb-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+      border: 3px solid var(--primary);
+      cursor: grab;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider-thumb-handle:active {
+      cursor: grabbing;
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    .slider-tooltip-bubble {
+      position: absolute;
+      bottom: 34px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: var(--bg-dark);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .slider-tooltip-bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--bg-dark);
+    }
+
+    .slider-track-container.active .slider-tooltip-bubble {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* 일정 타임라인 가로 스크롤 카드 캐러셀 */
+    .timeline-carousel-section {
+      pointer-events: auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .timeline-section-header {
+      margin: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .timeline-day-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 3px;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .day-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+
+    .day-tab-btn.active {
+      background: var(--text-main);
+      color: white;
+    }
+
+    .timeline-optimize-btn {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow-sm);
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-indigo);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .timeline-optimize-btn:active { transform: scale(0.95); }
+
+    .cards-horizontal-scroll {
+      display: flex;
+      gap: 12px;
+      padding: 4px 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+      overscroll-behavior-x: contain;
+    }
+    .cards-horizontal-scroll::-webkit-scrollbar { display: none; }
+
+    .timeline-place-card {
+      flex: 0 0 240px;
+      scroll-snap-align: center;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1.5px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      touch-action: pan-x;
+    }
+
+    .timeline-place-card:active { transform: scale(0.97); }
+    .timeline-place-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 10px 28px rgba(255, 56, 92, 0.28);
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .card-top-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .card-thumb-img {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .card-info-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .card-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .card-order-badge {
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-category-tag {
+      font-size: 10px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    .card-place-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+      border-top: 1px dashed rgba(0, 0, 0, 0.08);
+      padding-top: 6px;
+    }
+
+    .card-cost-text {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .timeline-add-card {
+      flex: 0 0 100px;
+      scroll-snap-align: center;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      border: 2px dashed rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .timeline-add-card:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.9); }
+
+    /* ==========================================================================
+       6. 상세 모달 & 핀 편집 바텀시트
+       ========================================================================== */
+    .bottom-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .bottom-sheet-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .detail-bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 520px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+      z-index: 210;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 16px 20px max(24px, var(--safe-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .detail-bottom-sheet.open {
+      transform: translateY(0);
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: var(--radius-full);
+      background: #CBD5E1;
+      margin: 0 auto 4px;
+    }
+
+    .sheet-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .sheet-title-group h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .sheet-title-group p {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .sheet-close-btn {
+      background: #F1F5F9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--text-sub);
+    }
+
+    .sheet-img-banner {
+      width: 100%;
+      height: 140px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+    }
+
+    .sheet-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sheet-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sheet-input-group label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .sheet-input-field {
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid #E2E8F0;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      background: #F8FAFC;
+    }
+    .sheet-input-field:focus {
+      border-color: var(--primary);
+      background: white;
+    }
+
+    .sheet-action-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .sheet-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s ease;
+    }
+    .sheet-btn:active { transform: scale(0.97); }
+
+    .sheet-btn.primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 14px rgba(255, 56, 92, 0.35);
+    }
+
+    .sheet-btn.danger {
+      background: #FEE2E2;
+      color: #DC2626;
+      flex: 0 0 48px;
+    }
+
+    #toast-msg {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: var(--shadow-lg);
+      z-index: 300;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-root">
+
+    <!-- 1. 메인 인터랙티브 지도 뷰포트 -->
+    <div id="map-viewport">
+      <div id="map-world">
+        <!-- SVG 벡터 지도 그래픽 -->
+        <svg id="vector-map-svg" viewBox="0 0 3200 3200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ocean-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#CBE3F7"/>
+              <stop offset="100%" stop-color="#AFD4F2"/>
+            </linearGradient>
+            <linearGradient id="land-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#F4F8FA"/>
+              <stop offset="100%" stop-color="#E8F1F5"/>
+            </linearGradient>
+            <linearGradient id="forest-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#D5ECD8"/>
+              <stop offset="100%" stop-color="#BEE3C4"/>
+            </linearGradient>
+            <linearGradient id="beach-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFF5DC"/>
+              <stop offset="100%" stop-color="#FCEBC2"/>
+            </linearGradient>
+            <pattern id="grid-pattern" width="100" height="100" patternUnits="userSpaceOnUse">
+              <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(0, 70, 140, 0.04)" stroke-width="1"/>
+            </pattern>
+          </defs>
+
+          <!-- 바다 & 그리드 -->
+          <rect width="3200" height="3200" fill="url(#ocean-grad)" />
+          <rect width="3200" height="3200" fill="url(#grid-pattern)" />
+
+          <!-- 메인 섬 지형 -->
+          <path d="M 400,3200 Q 550,2200 650,1800 Q 750,1300 950,900 Q 1200,600 1600,450 Q 2100,350 2700,400 Q 3200,450 3200,3200 Z" fill="url(#land-grad)" stroke="#C8DDE8" stroke-width="6"/>
+
+          <!-- 해변 & 부속 섬 -->
+          <path d="M 700,1650 Q 780,1500 860,1380 Q 940,1450 850,1620 Z" fill="url(#beach-grad)" opacity="0.9"/>
+          <path d="M 1050,780 Q 1200,680 1350,600 Q 1400,660 1200,780 Z" fill="url(#beach-grad)" opacity="0.9"/>
+          <ellipse cx="560" cy="1420" rx="90" ry="70" fill="url(#forest-grad)" stroke="#B0D6B8" stroke-width="4"/>
+          <text x="560" y="1425" font-size="16" font-weight="700" fill="#3B7A57" text-anchor="middle">비양도 🏝️</text>
+
+          <!-- 녹지대 -->
+          <path d="M 1300,1100 Q 1650,950 1900,1200 Q 2100,1600 1750,1850 Q 1400,1700 1300,1100 Z" fill="url(#forest-grad)" opacity="0.85"/>
+          <text x="1600" y="1450" font-size="20" font-weight="800" fill="#2E6945" text-anchor="middle" letter-spacing="2">한라산 국립공원 녹지대 🌲</text>
+
+          <!-- 도로망 -->
+          <path d="M 500,2800 Q 720,1950 820,1550 Q 980,1050 1300,700 Q 1700,500 2400,450" fill="none" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round"/>
+          <path d="M 500,2800 Q 720,1950 820,1550 Q 980,1050 1300,700 Q 1700,500 2400,450" fill="none" stroke="#38BDF8" stroke-width="12" stroke-linecap="round"/>
+
+          <path d="M 800,2800 Q 1100,2000 1250,1500 Q 1450,1100 1900,750 Q 2300,600 2800,550" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round"/>
+          <path d="M 800,2800 Q 1100,2000 1250,1500 Q 1450,1100 1900,750 Q 2300,600 2800,550" fill="none" stroke="#CBD5E1" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+
+        <!-- 여행 코스 동선 Polyline -->
+        <svg id="route-svg">
+          <defs>
+            <linearGradient id="route-line-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FF385C"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+          <g id="route-line-group"></g>
+          <g id="route-chips-group"></g>
+        </svg>
+
+        <!-- 마커 DOM 컨테이너 -->
+        <div id="markers-container"></div>
+      </div>
+    </div>
+
+    <!-- 2. 상단 헤더 카드 & 액션 버튼 -->
+    <header class="top-header-bar">
+      <div class="trip-title-card" id="trip-header-card">
+        <div class="trip-badge-row">
+          <span class="trip-status-chip">DAY 1 코스</span>
+          <span class="trip-date-text">2026. 09. 02 (수)</span>
+        </div>
+        <h1 class="trip-main-title">제주 서쪽 감성 힐링 로드 🌴</h1>
+        <div class="trip-stats-summary">
+          <span id="header-total-distance">총 38.5 km</span>
+          <span>•</span>
+          <span id="header-total-time">예상 4시간 20분</span>
+        </div>
+      </div>
+
+      <div class="top-action-buttons">
+        <button class="icon-glass-btn primary" id="btn-add-pin" title="새 장소 핀 추가">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+        <button class="icon-glass-btn" id="btn-fit-bounds" title="전체 코스 한눈에 보기">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 3. 우측 맵 줌 컨트롤러 -->
+    <div class="map-floating-controls">
+      <button class="map-ctrl-btn" id="btn-zoom-in" title="확대">+</button>
+      <button class="map-ctrl-btn" id="btn-zoom-out" title="축소">−</button>
+    </div>
+
+    <!-- 4. 하단 오버레이 (예산 슬라이더 바 & 일정 타임라인 캐러셀) -->
+    <div class="bottom-overlay-wrapper">
+
+      <!-- 여행 예산 조절 1D 슬라이더 바 -->
+      <div class="budget-controller-card" id="budget-card">
+        <div class="budget-header-row">
+          <div class="budget-title-area">
+            <span class="icon">💳</span>
+            <span class="budget-label">여행 예산 조절</span>
+            <span class="budget-status-tag" id="budget-status-badge">여유있음</span>
+          </div>
+          <div class="budget-value-display">
+            <span id="budget-used-text" style="color: var(--primary);">₩285,000</span>
+            <span style="color: var(--text-muted); font-weight: 500; font-size: 13px;"> / </span>
+            <span id="budget-target-text">₩500,000</span>
+          </div>
+        </div>
+
+        <!-- 슬라이더 트랙 & 실시간 툴팁 -->
+        <div class="slider-track-container" id="budget-slider-track">
+          <div class="slider-bg-rail">
+            <div class="slider-fill-rail" id="budget-fill-rail"></div>
+          </div>
+          <div class="slider-thumb-handle" id="budget-thumb-handle">
+            <div class="slider-tooltip-bubble" id="slider-bubble">₩500,000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 방문 순서 가로 스크롤 타임라인 캐러셀 -->
+      <section class="timeline-carousel-section">
+        <div class="timeline-section-header">
+          <div class="timeline-day-tabs">
+            <button class="day-tab-btn active">Day 1</button>
+            <button class="day-tab-btn">Day 2</button>
+            <button class="day-tab-btn">+ 추가</button>
+          </div>
+          <button class="timeline-optimize-btn" id="btn-optimize-route">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            동선 최적화
+          </button>
+        </div>
+
+        <div class="cards-horizontal-scroll" id="timeline-cards-scroll"></div>
+      </section>
+    </div>
+
+    <!-- 5. 핀 상세 정보 & 편집 바텀시트 모달 -->
+    <div class="bottom-sheet-backdrop" id="sheet-backdrop"></div>
+    <div class="detail-bottom-sheet" id="detail-sheet">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header-box">
+        <div class="sheet-title-group">
+          <h2 id="sheet-place-name">장소명</h2>
+          <p id="sheet-place-subtitle">카테고리 • 체류 시간</p>
+        </div>
+        <button class="sheet-close-btn" id="sheet-btn-close">✕</button>
+      </div>
+
+      <img id="sheet-banner-img" class="sheet-img-banner" src="" alt="장소 사진">
+
+      <div class="sheet-form-row">
+        <div class="sheet-input-group">
+          <label>장소 이름</label>
+          <input type="text" id="sheet-input-title" class="sheet-input-field" placeholder="장소명 입력">
+        </div>
+        <div class="sheet-input-group">
+          <label>카테고리</label>
+          <select id="sheet-select-category" class="sheet-input-field">
+            <option value="cafe">☕ 감성 카페</option>
+            <option value="sight">🌊 자연/명소</option>
+            <option value="food">🍽️ 맛집/식당</option>
+            <option value="hotel">🏨 감성 숙소</option>
+            <option value="activity">🏄 액티비티</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sheet-form-row">
+        <div class="sheet-input-group">
+          <label>예상 비용 (원)</label>
+          <input type="number" id="sheet-input-cost" class="sheet-input-field" step="5000" placeholder="0">
+        </div>
+        <div class="sheet-input-group">
+          <label>체류 시간</label>
+          <input type="text" id="sheet-input-time" class="sheet-input-field" placeholder="예: 1시간 30분">
+        </div>
+      </div>
+
+      <div class="sheet-input-group">
+        <label>여행 메모 & 꿀팁</label>
+        <input type="text" id="sheet-input-memo" class="sheet-input-field" placeholder="방문 꿀팁 및 포토스팟 메모">
+      </div>
+
+      <div class="sheet-action-row">
+        <button class="sheet-btn danger" id="sheet-btn-delete" title="장소 삭제">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+        <button class="sheet-btn primary" id="sheet-btn-save">수정 내용 저장</button>
+      </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast-msg">알림 메시지</div>
+
+  </div>
+
+  <!-- ==========================================================================
+       자바스크립트 엔진 (HCI 물리 엔진 및 이벤트 바인딩)
+       ========================================================================== -->
+  <script>
+    const CATEGORY_META = {
+      cafe: { icon: '☕', label: '감성 카페', color: '#FF385C' },
+      sight: { icon: '🌊', label: '자연/명소', color: '#03C75A' },
+      food: { icon: '🍽️', label: '맛집/식당', color: '#F59E0B' },
+      hotel: { icon: '🏨', label: '감성 숙소', color: '#4F46E5' },
+      activity: { icon: '🏄', label: '액티비티', color: '#8B5CF6' }
+    };
+
+    const COLOR_PALETTE = ['#FF385C', '#03C75A', '#4F46E5', '#F59E0B', '#8B5CF6'];
+
+    let places = [
+      {
+        id: 'p1',
+        title: '애월 한담해안산책로',
+        category: 'sight',
+        color: '#03C75A',
+        x: 880,
+        y: 830,
+        cost: 0,
+        stayTime: '1시간',
+        memo: '노을 뷰가 환상적인 투명 카약 & 산책 명소',
+        img: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: 'p2',
+        title: '랜디스 도넛 제주애월',
+        category: 'cafe',
+        color: '#FF385C',
+        x: 990,
+        y: 960,
+        cost: 24000,
+        stayTime: '45분',
+        memo: '시그니처 버터크림 도넛 포장 필수!',
+        img: 'https://images.unsplash.com/photo-1527515862127-a4fc05baf7a5?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: 'p3',
+        title: '새별오름 나홀로나무',
+        category: 'sight',
+        color: '#03C75A',
+        x: 1280,
+        y: 1220,
+        cost: 0,
+        stayTime: '1시간 20분',
+        memo: '억새풀 사이에서 인생샷 찍기 좋은 코스',
+        img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: 'p4',
+        title: '협재 해수욕장 & 금능',
+        category: 'sight',
+        color: '#03C75A',
+        x: 750,
+        y: 1540,
+        cost: 15000,
+        stayTime: '1시간 30분',
+        memo: '에메랄드빛 바다와 비양도 뷰 바라보며 휴식',
+        img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: 'p5',
+        title: '오설록 티뮤지엄',
+        category: 'food',
+        color: '#F59E0B',
+        x: 1460,
+        y: 1680,
+        cost: 46000,
+        stayTime: '1시간',
+        memo: '녹차 아이스크림 & 롤케이크 세트 맛보기',
+        img: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: 'p6',
+        title: '신창 풍차해안도로',
+        category: 'activity',
+        color: '#8B5CF6',
+        x: 680,
+        y: 2000,
+        cost: 0,
+        stayTime: '1시간',
+        memo: '일몰 타이밍에 맞춰 바다 위 해상교 걷기',
+        img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        id: 'p7',
+        title: '제주 풀빌라 스테이',
+        category: 'hotel',
+        color: '#4F46E5',
+        x: 1050,
+        y: 1850,
+        cost: 200000,
+        stayTime: '숙박',
+        memo: '자쿠지 온수풀에서 피로 풀고 바비큐 파티',
+        img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80'
+      }
+    ];
+
+    let currentSelectedId = 'p1';
+    let targetBudget = 500000;
+
+    const viewportEl = document.getElementById('map-viewport');
+    const worldEl = document.getElementById('map-world');
+    const markersContainerEl = document.getElementById('markers-container');
+    const routeLineGroupEl = document.getElementById('route-line-group');
+    const routeChipsGroupEl = document.getElementById('route-chips-group');
+
+    let scale = 0.85;
+    let panX = -300;
+    let panY = -350;
+
+    const MIN_SCALE = 0.35;
+    const MAX_SCALE = 2.5;
+
+    const activePointers = new Map();
+    let initialPinchDist = 0;
+    let initialScale = scale;
+    let initialCentroid = { x: 0, y: 0 };
+    let initialPan = { x: 0, y: 0 };
+
+    let velocityQueue = [];
+    let inertiaRafId = null;
+
+    function applyTransform() {
+      worldEl.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+    }
+
+    function cancelInertia() {
+      if (inertiaRafId) {
+        cancelAnimationFrame(inertiaRafId);
+        inertiaRafId = null;
+      }
+    }
+
+    function panToWorldCoord(targetWx, targetWy, targetScale = 1.0, duration = 400) {
+      cancelInertia();
+      const vw = viewportEl.clientWidth;
+      const vh = viewportEl.clientHeight;
+
+      const startPanX = panX;
+      const startPanY = panY;
+      const startScale = scale;
+
+      const endScale = Math.min(Math.max(targetScale, MIN_SCALE), MAX_SCALE);
+      const endPanX = (vw / 2) - (targetWx * endScale);
+      const endPanY = (vh * 0.42) - (targetWy * endScale);
+
+      const startTime = performance.now();
+
+      function animateCamera(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+
+        scale = startScale + (endScale - startScale) * ease;
+        panX = startPanX + (endPanX - startPanX) * ease;
+        panY = startPanY + (endPanY - startPanY) * ease;
+
+        applyTransform();
+
+        if (progress < 1) {
+          inertiaRafId = requestAnimationFrame(animateCamera);
+        } else {
+          inertiaRafId = null;
+        }
+      }
+
+      inertiaRafId = requestAnimationFrame(animateCamera);
+    }
+
+    // 맵 제스처 이벤트 리스너 (핀치 줌 & 패닝)
+    viewportEl.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.map-marker') || e.target.closest('.bottom-overlay-wrapper') || e.target.closest('.top-header-bar') || e.target.closest('.map-floating-controls')) {
+        return;
+      }
+
+      cancelInertia();
+      viewportEl.setPointerCapture(e.pointerId);
+
+      activePointers.set(e.pointerId, {
+        x: e.clientX,
+        y: e.clientY,
+        startX: e.clientX,
+        startY: e.clientY,
+        time: performance.now()
+      });
+
+      velocityQueue = [{ x: e.clientX, y: e.clientY, t: performance.now() }];
+
+      if (activePointers.size === 2) {
+        const pts = Array.from(activePointers.values());
+        if (pts.length >= 2) {
+          const p1 = pts[0];
+          const p2 = pts;
+          initialPinchDist = Math.max(1, Math.hypot(p2.x - p1.x, p2.y - p1.y));
+          initialScale = scale;
+          initialCentroid = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+          initialPan = { x: panX, y: panY };
+        }
+      }
+    });
+
+    viewportEl.addEventListener('pointermove', (e) => {
+      if (!activePointers.has(e.pointerId)) return;
+
+      const prev = activePointers.get(e.pointerId);
+      activePointers.set(e.pointerId, {
+        ...prev,
+        x: e.clientX,
+        y: e.clientY,
+        time: performance.now()
+      });
+
+      if (activePointers.size === 1) {
+        const dx = e.clientX - prev.x;
+        const dy = e.clientY - prev.y;
+
+        panX += dx;
+        panY += dy;
+
+        const now = performance.now();
+        velocityQueue.push({ x: e.clientX, y: e.clientY, t: now });
+        while (velocityQueue.length > 0 && (now - velocityQueue[0].t) > 120) {
+          velocityQueue.shift();
+        }
+
+        applyTransform();
+      } else if (activePointers.size >= 2) {
+        const pts = Array.from(activePointers.values());
+        if (pts.length >= 2) {
+          const p1 = pts[0];
+          const p2 = pts;
+          const curDist = Math.max(1, Math.hypot(p2.x - p1.x, p2.y - p1.y));
+          const curCentroid = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+
+          const scaleFactor = curDist / initialPinchDist;
+          const newScale = Math.min(Math.max(initialScale * scaleFactor, MIN_SCALE), MAX_SCALE);
+
+          const worldX = (initialCentroid.x - initialPan.x) / initialScale;
+          const worldY = (initialCentroid.y - initialPan.y) / initialScale;
+
+          scale = newScale;
+          panX = curCentroid.x - (worldX * newScale);
+          panY = curCentroid.y - (worldY * newScale);
+
+          applyTransform();
+        }
+      }
+    });
+
+    function handlePointerRelease(e) {
+      if (!activePointers.has(e.pointerId)) return;
+
+      try {
+        if (viewportEl.hasPointerCapture(e.pointerId)) {
+          viewportEl.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
+
+      activePointers.delete(e.pointerId);
+
+      if (activePointers.size === 1) {
+        const remaining = Array.from(activePointers.values())[0];
+        velocityQueue = [{ x: remaining.x, y: remaining.y, t: performance.now() }];
+      } else if (activePointers.size === 0) {
+        if (velocityQueue.length >= 2) {
+          const first = velocityQueue[0];
+          const last = velocityQueue[velocityQueue.length - 1];
+          const dt = Math.max(1, last.t - first.t);
+          let vx = (last.x - first.x) / dt;
+          let vy = (last.y - first.y) / dt;
+
+          if (Math.hypot(vx, vy) > 0.15) {
+            startInertiaDecay(vx, vy);
+          }
+        }
+        velocityQueue = [];
+      }
+    }
+
+    viewportEl.addEventListener('pointerup', handlePointerRelease);
+    viewportEl.addEventListener('pointercancel', handlePointerRelease);
+
+    function startInertiaDecay(vx, vy) {
+      cancelInertia();
+      let lastTime = performance.now();
+      const friction = 0.92;
+
+      function decayLoop(now) {
+        const dt = Math.min(now - lastTime, 32);
+        lastTime = now;
+
+        panX += vx * dt;
+        panY += vy * dt;
+
+        vx *= Math.pow(friction, dt / 16.6);
+        vy *= Math.pow(friction, dt / 16.6);
+
+        applyTransform();
+
+        if (Math.hypot(vx, vy) > 0.02) {
+          inertiaRafId = requestAnimationFrame(decayLoop);
+        } else {
+          inertiaRafId = null;
+        }
+      }
+
+      inertiaRafId = requestAnimationFrame(decayLoop);
+    }
+
+    viewportEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      cancelInertia();
+
+      const cursorX = e.clientX;
+      const cursorY = e.clientY;
+
+      let zoomFactor = e.ctrlKey ? (1 - e.deltaY * 0.01) : (e.deltaY > 0 ? 0.9 : 1.1);
+      const newScale = Math.min(Math.max(scale * zoomFactor, MIN_SCALE), MAX_SCALE);
+
+      const worldX = (cursorX - panX) / scale;
+      const worldY = (cursorY - panY) / scale;
+
+      panX = cursorX - worldX * newScale;
+      panY = cursorY - worldY * newScale;
+      scale = newScale;
+
+      applyTransform();
+    }, { passive: false });
+
+    document.getElementById('btn-zoom-in').addEventListener('click', () => {
+      const cx = viewportEl.clientWidth / 2;
+      const cy = viewportEl.clientHeight / 2;
+      const newScale = Math.min(scale * 1.25, MAX_SCALE);
+      const wx = (cx - panX) / scale;
+      const wy = (cy - panY) / scale;
+      panX = cx - wx * newScale;
+      panY = cy - wy * newScale;
+      scale = newScale;
+      applyTransform();
+    });
+
+    document.getElementById('btn-zoom-out').addEventListener('click', () => {
+      const cx = viewportEl.clientWidth / 2;
+      const cy = viewportEl.clientHeight / 2;
+      const newScale = Math.max(scale * 0.8, MIN_SCALE);
+      const wx = (cx - panX) / scale;
+      const wy = (cy - panY) / scale;
+      panX = cx - wx * newScale;
+      panY = cy - wy * newScale;
+      scale = newScale;
+      applyTransform();
+    });
+
+    document.getElementById('btn-fit-bounds').addEventListener('click', () => {
+      if (places.length === 0) return;
+
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      places.forEach(p => {
+        minX = Math.min(minX, p.x);
+        maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y);
+        maxY = Math.max(maxY, p.y);
+      });
+
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+      const boundWidth = Math.max(maxX - minX + 250, 400);
+      const boundHeight = Math.max(maxY - minY + 350, 400);
+
+      const vw = viewportEl.clientWidth;
+      const vh = viewportEl.clientHeight;
+
+      const scaleX = vw / boundWidth;
+      const scaleY = (vh * 0.6) / boundHeight;
+      const targetScale = Math.min(Math.max(Math.min(scaleX, scaleY), MIN_SCALE), 1.2);
+
+      panToWorldCoord(centerX, centerY, targetScale, 450);
+      showToast('🗺️ 전체 여행 코스를 화면에 맞췄습니다');
+    });
+
+    /* ==========================================================================
+       마커 렌더링 & 드래그 / 탭 / 롱프레스 인터랙션
+       ========================================================================== */
+    function renderMarkers() {
+      markersContainerEl.innerHTML = '';
+
+      places.forEach((place, index) => {
+        const orderNum = index + 1;
+        const meta = CATEGORY_META[place.category] || CATEGORY_META.sight;
+        const pinColor = place.color || meta.color;
+
+        const markerEl = document.createElement('div');
+        markerEl.className = `map-marker ${place.id === currentSelectedId ? 'active' : ''}`;
+        markerEl.id = `marker-${place.id}`;
+        markerEl.style.left = `${place.x}px`;
+        markerEl.style.top = `${place.y}px`;
+
+        markerEl.innerHTML = `
+          <div class="marker-label-chip">
+            <span class="order-num" style="background:${pinColor};">${orderNum}</span>
+            <span>${place.title}</span>
+          </div>
+
+          <div class="pin-body-wrapper">
+            <svg class="pin-svg-shape" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 0C8.50659 0 0 8.50659 0 19C0 29.5 16 46 18.2 47.6C18.67 47.93 19.33 47.93 19.8 47.6C22 46 38 29.5 38 19C38 8.50659 29.4934 0 19 0Z" fill="${pinColor}"/>
+              <circle cx="19" cy="18" r="14" fill="white"/>
+            </svg>
+            <div class="pin-icon-inner">${meta.icon}</div>
+            <div class="marker-pulse-ring"></div>
+          </div>
+
+          <div class="marker-quick-menu" id="quick-menu-${place.id}">
+            ${COLOR_PALETTE.map(c => `<div class="quick-menu-color-btn" style="background:${c};" data-color="${c}" title="색상 변경"></div>`).join('')}
+            <button class="quick-menu-action-btn delete" data-action="delete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              삭제
+            </button>
+          </div>
+        `;
+
+        bindMarkerEvents(markerEl, place);
+        markersContainerEl.appendChild(markerEl);
+      });
+
+      renderRouteLines();
+      updateBudgetStats();
+    }
+
+    function bindMarkerEvents(markerEl, place) {
+      let isPointerDown = false;
+      let startX = 0, startY = 0;
+      let startTime = 0;
+      let isDragging = false;
+      let isLongPressed = false;
+      let longPressTimer = null;
+
+      const quickMenuEl = markerEl.querySelector('.marker-quick-menu');
+
+      quickMenuEl.addEventListener('pointerdown', (e) => e.stopPropagation());
+      quickMenuEl.querySelectorAll('.quick-menu-color-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          place.color = btn.dataset.color;
+          quickMenuEl.classList.remove('open');
+          renderMarkers();
+          renderTimelineCards();
+          triggerHaptic(20);
+          showToast(`🎨 핀 색상이 변경되었습니다`);
+        });
+      });
+
+      const deleteBtn = quickMenuEl.querySelector('[data-action="delete"]');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deletePlace(place.id);
+        });
+      }
+
+      markerEl.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.marker-quick-menu')) return;
+
+        e.stopPropagation();
+        cancelInertia();
+
+        isPointerDown = true;
+        isDragging = false;
+        isLongPressed = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        startTime = performance.now();
+
+        try {
+          markerEl.setPointerCapture(e.pointerId);
+        } catch (err) {}
+
+        longPressTimer = setTimeout(() => {
+          if (!isDragging && isPointerDown) {
+            isLongPressed = true;
+            triggerHaptic(45);
+            document.querySelectorAll('.marker-quick-menu.open').forEach(m => m.classList.remove('open'));
+            quickMenuEl.classList.add('open');
+            showToast(`⚙️ '${place.title}' 마커 옵션 메뉴 열림`);
+          }
+        }, 350);
+      });
+
+      markerEl.addEventListener('pointermove', (e) => {
+        if (!isPointerDown) return;
+        e.stopPropagation();
+
+        const moveDist = Math.hypot(e.clientX - startX, e.clientY - startY);
+
+        if (moveDist > 5 && longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+
+        if (moveDist > 8 && !isLongPressed) {
+          if (!isDragging) {
+            isDragging = true;
+            markerEl.classList.add('dragging');
+            triggerHaptic(15);
+          }
+
+          const screenX = e.clientX;
+          const screenY = e.clientY - 28;
+
+          const newWx = (screenX - panX) / scale;
+          const newWy = (screenY - panY) / scale;
+
+          place.x = Math.max(50, Math.min(3150, newWx));
+          place.y = Math.max(50, Math.min(3150, newWy));
+
+          markerEl.style.left = `${place.x}px`;
+          markerEl.style.top = `${place.y}px`;
+
+          renderRouteLines();
+        }
+      });
+
+      function handleEnd(e) {
+        if (!isPointerDown) return;
+        e.stopPropagation();
+
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+
+        try {
+          if (markerEl.hasPointerCapture(e.pointerId)) {
+            markerEl.releasePointerCapture(e.pointerId);
+          }
+        } catch (err) {}
+
+        const duration = performance.now() - startTime;
+        const moveDist = Math.hypot(e.clientX - startX, e.clientY - startY);
+
+        if (isDragging) {
+          markerEl.classList.remove('dragging');
+          triggerHaptic(25);
+          showToast(`📍 '${place.title}' 위치가 수정되었습니다`);
+          updateRouteSummary();
+        } else if (!isLongPressed && duration < 350 && moveDist <= 8) {
+          triggerHaptic(15);
+          selectPlace(place.id);
+          openDetailSheet(place);
+        }
+
+        isPointerDown = false;
+        isDragging = false;
+        isLongPressed = false;
+      }
+
+      markerEl.addEventListener('pointerup', handleEnd);
+      markerEl.addEventListener('pointercancel', handleEnd);
+    }
+
+    function selectPlace(placeId) {
+      currentSelectedId = placeId;
+
+      document.querySelectorAll('.map-marker').forEach(m => {
+        m.classList.toggle('active', m.id === `marker-${placeId}`);
+      });
+
+      document.querySelectorAll('.timeline-place-card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.id === placeId);
+      });
+
+      const targetCard = document.querySelector(`.timeline-place-card[data-id="${placeId}"]`);
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+
+      const place = places.find(p => p.id === placeId);
+      if (place) {
+        panToWorldCoord(place.x, place.y, Math.max(scale, 0.95), 350);
+      }
+    }
+
+    function deletePlace(placeId) {
+      const idx = places.findIndex(p => p.id === placeId);
+      if (idx !== -1) {
+        const deletedTitle = places[idx].title;
+        places.splice(idx, 1);
+        renderMarkers();
+        renderTimelineCards();
+        triggerHaptic(30);
+        showToast(`🗑️ '${deletedTitle}' 삭제되었습니다`);
+      }
+    }
+
+    /* ==========================================================================
+       코스 경로선 & 소요 시간/거리 칩
+       ========================================================================== */
+    function renderRouteLines() {
+      routeLineGroupEl.innerHTML = '';
+      routeChipsGroupEl.innerHTML = '';
+
+      if (places.length < 2) {
+        updateRouteSummary();
+        return;
+      }
+
+      let dPath = `M ${places[0].x} ${places[0].y}`;
+      for (let i = 1; i < places.length; i++) {
+        dPath += ` L ${places[i].x} ${places[i].y}`;
+      }
+
+      const glowLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      glowLine.setAttribute('d', dPath);
+      glowLine.setAttribute('stroke', '#FF385C');
+      glowLine.setAttribute('stroke-width', '8');
+      glowLine.setAttribute('stroke-opacity', '0.35');
+      glowLine.setAttribute('fill', 'none');
+      glowLine.setAttribute('stroke-linecap', 'round');
+      glowLine.setAttribute('stroke-linejoin', 'round');
+      routeLineGroupEl.appendChild(glowLine);
+
+      const mainLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      mainLine.setAttribute('d', dPath);
+      mainLine.setAttribute('stroke', 'url(#route-line-grad)');
+      mainLine.setAttribute('stroke-width', '4');
+      mainLine.setAttribute('stroke-dasharray', '8 6');
+      mainLine.setAttribute('fill', 'none');
+      mainLine.setAttribute('stroke-linecap', 'round');
+      mainLine.setAttribute('stroke-linejoin', 'round');
+      routeLineGroupEl.appendChild(mainLine);
+
+      for (let i = 0; i < places.length - 1; i++) {
+        const pA = places[i];
+        const pB = places[i + 1];
+
+        const midX = (pA.x + pB.x) / 2;
+        const midY = (pA.y + pB.y) / 2;
+
+        const pixelDist = Math.hypot(pB.x - pA.x, pB.y - pA.y);
+        const kmDist = (pixelDist * 0.035).toFixed(1);
+        const carMins = Math.max(3, Math.round(kmDist * 1.6));
+
+        const chipG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        chipG.setAttribute('transform', `translate(${midX}, ${midY})`);
+
+        chipG.innerHTML = `
+          <rect x="-42" y="-12" width="84" height="24" rx="12" fill="#FFFFFF" stroke="#FF385C" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(0,0,0,0.15))"/>
+          <text x="0" y="4" font-size="10.5" font-weight="700" fill="#1E293B" text-anchor="middle">🚗 ${carMins}분 (${kmDist}km)</text>
+        `;
+
+        routeChipsGroupEl.appendChild(chipG);
+      }
+
+      updateRouteSummary();
+    }
+
+    function updateRouteSummary() {
+      let totalKm = 0;
+      for (let i = 0; i < places.length - 1; i++) {
+        const d = Math.hypot(places[i+1].x - places[i].x, places[i+1].y - places[i].y);
+        totalKm += d * 0.035;
+      }
+
+      const totalMins = Math.round(totalKm * 1.8) + (places.length * 50);
+      const hours = Math.floor(totalMins / 60);
+      const mins = totalMins % 60;
+
+      document.getElementById('header-total-distance').textContent = `총 ${totalKm.toFixed(1)} km`;
+      document.getElementById('header-total-time').textContent = `예상 ${hours > 0 ? hours + '시간 ' : ''}${mins}분`;
+    }
+
+    /* ==========================================================================
+       타임라인 카드 캐러셀 & 동선 최적화
+       ========================================================================== */
+    const timelineScrollEl = document.getElementById('timeline-cards-scroll');
+
+    function renderTimelineCards() {
+      timelineScrollEl.innerHTML = '';
+
+      places.forEach((place, index) => {
+        const orderNum = index + 1;
+        const meta = CATEGORY_META[place.category] || CATEGORY_META.sight;
+        const pinColor = place.color || meta.color;
+
+        const cardEl = document.createElement('div');
+        cardEl.className = `timeline-place-card ${place.id === currentSelectedId ? 'selected' : ''}`;
+        cardEl.dataset.id = place.id;
+
+        cardEl.innerHTML = `
+          <div class="card-top-row">
+            <img class="card-thumb-img" src="${place.img}" alt="${place.title}">
+            <div class="card-info-box">
+              <div class="card-badge-row">
+                <span class="card-order-badge" style="background:${pinColor};">${orderNum}</span>
+                <span class="card-category-tag">${meta.icon} ${meta.label}</span>
+              </div>
+              <div class="card-place-title">${place.title}</div>
+            </div>
+          </div>
+          <div class="card-bottom-row">
+            <span>⏱️ ${place.stayTime}</span>
+            <span class="card-cost-text">${place.cost > 0 ? '₩' + place.cost.toLocaleString() : '무료'}</span>
+          </div>
+        `;
+
+        cardEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          triggerHaptic(15);
+          selectPlace(place.id);
+        });
+
+        timelineScrollEl.appendChild(cardEl);
+      });
+
+      const addCardEl = document.createElement('div');
+      addCardEl.className = 'timeline-add-card';
+      addCardEl.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>장소 추가</span>
+      `;
+      addCardEl.addEventListener('click', () => {
+        addNewPlacePrompt();
+      });
+      timelineScrollEl.appendChild(addCardEl);
+    }
+
+    document.getElementById('btn-optimize-route').addEventListener('click', () => {
+      if (places.length <= 2) {
+        showToast('📍 장소가 3개 이상일 때 최적화가 가능합니다');
+        return;
+      }
+
+      triggerHaptic(35);
+      const unvisited = [...places];
+      const optimized = [unvisited.shift()];
+
+      while (unvisited.length > 0) {
+        const last = optimized[optimized.length - 1];
+        let nearestIdx = 0;
+        let minDist = Infinity;
+
+        unvisited.forEach((p, idx) => {
+          const dist = Math.hypot(p.x - last.x, p.y - last.y);
+          if (dist < minDist) {
+            minDist = dist;
+            nearestIdx = idx;
+          }
+        });
+
+        optimized.push(unvisited.splice(nearestIdx, 1)[0]);
+      }
+
+      places = optimized;
+      renderMarkers();
+      renderTimelineCards();
+      showToast('⚡ 최단 이동 동선으로 일정이 자동 재정렬되었습니다!');
+    });
+
+    /* ==========================================================================
+       여행 예산 1D 슬라이더 바
+       ========================================================================== */
+    const budgetTrackEl = document.getElementById('budget-slider-track');
+    const budgetFillEl = document.getElementById('budget-fill-rail');
+    const budgetThumbEl = document.getElementById('budget-thumb-handle');
+    const sliderBubbleEl = document.getElementById('slider-bubble');
+    const budgetUsedTextEl = document.getElementById('budget-used-text');
+    const budgetTargetTextEl = document.getElementById('budget-target-text');
+    const budgetStatusBadgeEl = document.getElementById('budget-status-badge');
+
+    const MIN_BUDGET = 100000;
+    const MAX_BUDGET = 1500000;
+    const BUDGET_STEP = 20000;
+
+    let isDraggingSlider = false;
+
+    function updateBudgetStats() {
+      const totalCost = places.reduce((sum, p) => sum + (p.cost || 0), 0);
+      budgetUsedTextEl.textContent = `₩${totalCost.toLocaleString()}`;
+      budgetTargetTextEl.textContent = `₩${targetBudget.toLocaleString()}`;
+
+      const percent = Math.min(Math.max((targetBudget - MIN_BUDGET) / (MAX_BUDGET - MIN_BUDGET), 0), 1);
+      budgetFillEl.style.width = `${percent * 100}%`;
+      budgetThumbEl.style.left = `${percent * 100}%`;
+      sliderBubbleEl.textContent = `₩${targetBudget.toLocaleString()}`;
+
+      if (totalCost <= targetBudget * 0.85) {
+        budgetStatusBadgeEl.textContent = '여유있음';
+        budgetStatusBadgeEl.className = 'budget-status-tag';
+      } else if (totalCost <= targetBudget) {
+        budgetStatusBadgeEl.textContent = '예산근접';
+        budgetStatusBadgeEl.className = 'budget-status-tag warning';
+      } else {
+        const over = totalCost - targetBudget;
+        budgetStatusBadgeEl.textContent = `₩${over.toLocaleString()} 초과`;
+        budgetStatusBadgeEl.className = 'budget-status-tag danger';
+      }
+    }
+
+    function setBudgetFromClientX(clientX) {
+      const rect = budgetTrackEl.getBoundingClientRect();
+      const ratio = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+      const rawBudget = MIN_BUDGET + ratio * (MAX_BUDGET - MIN_BUDGET);
+      const steppedBudget = Math.round(rawBudget / BUDGET_STEP) * BUDGET_STEP;
+
+      if (steppedBudget !== targetBudget) {
+        targetBudget = steppedBudget;
+        triggerHaptic(10);
+        updateBudgetStats();
+      }
+    }
+
+    budgetTrackEl.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      isDraggingSlider = true;
+      budgetTrackEl.setPointerCapture(e.pointerId);
+      budgetTrackEl.classList.add('active');
+      setBudgetFromClientX(e.clientX);
+    });
+
+    budgetTrackEl.addEventListener('pointermove', (e) => {
+      if (!isDraggingSlider) return;
+      e.stopPropagation();
+      setBudgetFromClientX(e.clientX);
+    });
+
+    function handleSliderEnd(e) {
+      if (!isDraggingSlider) return;
+      e.stopPropagation();
+      try {
+        if (budgetTrackEl.hasPointerCapture(e.pointerId)) {
+          budgetTrackEl.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
+      isDraggingSlider = false;
+      budgetTrackEl.classList.remove('active');
+    }
+
+    budgetTrackEl.addEventListener('pointerup', handleSliderEnd);
+    budgetTrackEl.addEventListener('pointercancel', handleSliderEnd);
+
+    /* ==========================================================================
+       상세 정보 모달 & 핀 편집 바텀시트
+       ========================================================================== */
+    const sheetBackdropEl = document.getElementById('sheet-backdrop');
+    const detailSheetEl = document.getElementById('detail-sheet');
+    const sheetPlaceNameEl = document.getElementById('sheet-place-name');
+    const sheetSubtitleEl = document.getElementById('sheet-place-subtitle');
+    const sheetBannerImgEl = document.getElementById('sheet-banner-img');
+    const sheetInputTitleEl = document.getElementById('sheet-input-title');
+    const sheetSelectCategoryEl = document.getElementById('sheet-select-category');
+    const sheetInputCostEl = document.getElementById('sheet-input-cost');
+    const sheetInputTimeEl = document.getElementById('sheet-input-time');
+    const sheetInputMemoEl = document.getElementById('sheet-input-memo');
+
+    let currentEditingPlace = null;
+
+    function openDetailSheet(place) {
+      currentEditingPlace = place;
+      const meta = CATEGORY_META[place.category] || CATEGORY_META.sight;
+
+      sheetPlaceNameEl.textContent = place.title;
+      sheetSubtitleEl.textContent = `${meta.label} • ${place.stayTime}`;
+      sheetBannerImgEl.src = place.img;
+
+      sheetInputTitleEl.value = place.title;
+      sheetSelectCategoryEl.value = place.category;
+      sheetInputCostEl.value = place.cost;
+      sheetInputTimeEl.value = place.stayTime;
+      sheetInputMemoEl.value = place.memo;
+
+      sheetBackdropEl.classList.add('open');
+      detailSheetEl.classList.add('open');
+    }
+
+    function closeDetailSheet() {
+      sheetBackdropEl.classList.remove('open');
+      detailSheetEl.classList.remove('open');
+      currentEditingPlace = null;
+    }
+
+    document.getElementById('sheet-btn-close').addEventListener('click', closeDetailSheet);
+    sheetBackdropEl.addEventListener('click', closeDetailSheet);
+
+    document.getElementById('sheet-btn-save').addEventListener('click', () => {
+      if (!currentEditingPlace) return;
+
+      currentEditingPlace.title = sheetInputTitleEl.value.trim() || currentEditingPlace.title;
+      currentEditingPlace.category = sheetSelectCategoryEl.value;
+      currentEditingPlace.cost = parseInt(sheetInputCostEl.value, 10) || 0;
+      currentEditingPlace.stayTime = sheetInputTimeEl.value.trim() || '1시간';
+      currentEditingPlace.memo = sheetInputMemoEl.value.trim();
+
+      renderMarkers();
+      renderTimelineCards();
+      closeDetailSheet();
+      triggerHaptic(25);
+      showToast(`💾 '${currentEditingPlace.title}' 저장되었습니다`);
+    });
+
+    document.getElementById('sheet-btn-delete').addEventListener('click', () => {
+      if (!currentEditingPlace) return;
+      deletePlace(currentEditingPlace.id);
+      closeDetailSheet();
+    });
+
+    /* ==========================================================================
+       새 장소 핀 추가 & 유틸리티
+       ========================================================================== */
+    function addNewPlacePrompt() {
+      const newId = 'p_' + Date.now();
+      const cx = viewportEl.clientWidth / 2;
+      const cy = viewportEl.clientHeight / 2;
+      const wx = (cx - panX) / scale;
+      const wy = (cy - panY) / scale;
+
+      const newPlace = {
+        id: newId,
+        title: `제주 추천 스팟 ${places.length + 1}`,
+        category: 'cafe',
+        color: COLOR_PALETTE[places.length % COLOR_PALETTE.length],
+        x: Math.round(wx),
+        y: Math.round(wy),
+        cost: 15000,
+        stayTime: '1시간',
+        memo: '새로 추가된 여행 명소 메모',
+        img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80'
+      };
+
+      places.push(newPlace);
+      renderMarkers();
+      renderTimelineCards();
+      selectPlace(newId);
+      openDetailSheet(newPlace);
+      triggerHaptic(30);
+      showToast('✨ 새 여행지 핀이 지도 중심에 생성되었습니다');
+    }
+
+    document.getElementById('btn-add-pin').addEventListener('click', addNewPlacePrompt);
+
+    function triggerHaptic(durationMs = 20) {
+      try {
+        if ('vibrate' in navigator) {
+          navigator.vibrate(durationMs);
+        }
+      } catch (e) {}
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toastEl = document.getElementById('toast-msg');
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 2200);
+    }
+
+    // 초기 실행
+    applyTransform();
+    renderMarkers();
+    renderTimelineCards();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>인터랙티브 여행 지도 & 핀 편집기</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #60a5fa;
+      --accent: #f43f5e;
+      --bg-ocean: #dbeafe;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(226, 232, 240, 0.8);
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.14);
+      --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.22);
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-ocean);
+      color: var(--text-main);
+      position: fixed;
+      touch-action: none;
+    }
+
+    /* === 지도 뷰포트 & 캔버스 레이어 === */
+    #map-viewport {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: grab;
+      touch-action: none;
+    }
+    #map-viewport:active {
+      cursor: grabbing;
+    }
+
+    #map-world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2600px;
+      height: 2600px;
+      transform-origin: 0 0;
+      will-change: transform;
+      background-color: #dbeafe;
+      background-image: 
+        radial-gradient(#bfdbfe 1.5px, transparent 1.5px),
+        radial-gradient(#93c5fd 1px, #dbeafe 1px);
+      background-size: 48px 48px, 120px 120px;
+    }
+
+    /* 지형 & 일러스트 SVG */
+    #terrain-svg, #route-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* === 경로 선 애니메이션 === */
+    .route-line {
+      fill: none;
+      stroke: #3b82f6;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 8 8;
+      animation: dashMove 25s linear infinite;
+    }
+    .route-line-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.9);
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -400; }
+    }
+
+    /* === 마커(핀) 스타일 === */
+    .pin-container {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      cursor: pointer;
+      pointer-events: auto;
+      touch-action: none;
+      z-index: 20;
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .pin-container.active {
+      z-index: 50;
+      transform: translate(-50%, -100%) scale(1.15);
+    }
+    .pin-container.dragging {
+      z-index: 100;
+      transform: translate(-50%, -100%) scale(1.22);
+      filter: drop-shadow(0 16px 20px rgba(0,0,0,0.35));
+    }
+
+    .pin-card-preview {
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: none;
+      border: 1px solid var(--card-border);
+    }
+    .pin-card-preview .price {
+      color: #059669;
+      font-weight: 800;
+    }
+
+    .pin-body {
+      width: 44px;
+      height: 54px;
+      position: relative;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+    }
+    .pin-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .pin-badge {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    /* === 상단 헤더 & 컨트롤 UI === */
+    .top-overlay {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .trip-title-card {
+      pointer-events: auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      padding: 10px 16px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-md);
+    }
+    .trip-title-card h1 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .trip-title-card p {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: transform 0.1s, background-color 0.2s;
+    }
+    .btn-icon:active {
+      transform: scale(0.92);
+      background-color: #f1f5f9;
+    }
+
+    /* 줌 & 센터 버튼 (우측 중단) */
+    .map-controls {
+      position: fixed;
+      right: 14px;
+      top: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    /* === 하단 UI 컨테이너 === */
+    .bottom-overlay {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 0 calc(var(--safe-bottom) + 8px) 0;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.1) 60%, transparent 100%);
+      z-index: 90;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* 예산 슬라이더 바 */
+    .budget-glass-bar {
+      pointer-events: auto;
+      margin: 0 14px;
+      background: var(--card-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 10px 16px;
+      box-shadow: var(--shadow-md);
+    }
+    .budget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .budget-progress-track {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .budget-progress-fill {
+      height: 100%;
+      width: 45%;
+      background: linear-gradient(90deg, #10b981, #3b82f6);
+      border-radius: 6px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+    }
+    .budget-progress-fill.over {
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+    }
+    .budget-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .budget-slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+      height: 6px;
+      cursor: pointer;
+    }
+
+    /* 가로 스크롤 타임라인 */
+    .timeline-scroller {
+      pointer-events: auto;
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 14px 8px 14px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .timeline-scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .timeline-card {
+      flex: 0 0 240px;
+      scroll-snap-align: start;
+      background: var(--card-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      display: flex;
+      gap: 10px;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .timeline-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary), var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    .card-thumb {
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      background: #e2e8f0;
+      flex-shrink: 0;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .card-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .card-order-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 1px 0;
+    }
+    .card-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-cost {
+      font-weight: 700;
+      color: #059669;
+    }
+
+    /* === 상세 정보 모달 (Bottom Sheet) === */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sheet-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-radius: 24px 24px 0 0;
+      padding: 16px 20px calc(var(--safe-bottom) + 20px) 20px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(105%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 210;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .sheet-backdrop.open .bottom-sheet {
+      transform: translateY(0);
+    }
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      margin: 0 auto 14px auto;
+    }
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .sheet-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .sheet-cat {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+    .sheet-close-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: bold;
+      color: #64748b;
+      cursor: pointer;
+    }
+    .sheet-body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #334155;
+    }
+    .sheet-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 14px 0;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .stat-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* === 롱프레스 컨텍스트 메뉴 === */
+    .context-menu {
+      position: fixed;
+      z-index: 300;
+      background: white;
+      border-radius: 18px;
+      box-shadow: var(--shadow-lg);
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      width: 190px;
+      border: 1px solid var(--card-border);
+      animation: popIn 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .context-item {
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+    .context-item:active {
+      background: #f1f5f9;
+    }
+    .context-item.danger {
+      color: #ef4444;
+    }
+    .color-picker-row {
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 0;
+      border-top: 1px solid #f1f5f9;
+      margin-top: 4px;
+    }
+    .color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 0 0 1px #cbd5e1;
+      transition: transform 0.15s;
+    }
+    .color-dot:active {
+      transform: scale(1.25);
+    }
+
+    /* 도움말 토스트 */
+    .toast-tip {
+      position: fixed;
+      top: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      opacity: 0;
+    }
+    .toast-tip.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 지도 뷰포트 -->
+  <div id="map-viewport">
+    <div id="map-world">
+      <!-- 배경 일러스트 (섬, 지형, 해안선) -->
+      <svg id="terrain-svg">
+        <defs>
+          <filter id="island-shadow" x="-5%" y="-5%" width="115%" height="115%">
+            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.12"/>
+          </filter>
+        </defs>
+        <!-- 큰 섬 본토 -->
+        <path d="M 400 650 C 450 400, 900 320, 1400 360 C 1900 400, 2250 650, 2150 1200 C 2050 1750, 1800 2150, 1200 2200 C 650 2250, 300 1800, 320 1250 Z" 
+              fill="#fef9c3" stroke="#fef08a" stroke-width="20" filter="url(#island-shadow)"/>
+        <path d="M 420 670 C 470 420, 890 350, 1380 380 C 1870 420, 2210 670, 2120 1190 C 2030 1710, 1780 2110, 1200 2160 C 670 2210, 340 1780, 350 1260 Z" 
+              fill="#f0fdf4"/>
+        
+        <!-- 숲 & 국립공원 녹지 구역 -->
+        <path d="M 850 650 C 1100 600, 1450 700, 1550 950 C 1650 1200, 1400 1500, 1150 1550 C 900 1600, 750 1350, 750 1050 Z" 
+              fill="#dcfce7" opacity="0.9"/>
+        <!-- 화산/산 랜드마크 -->
+        <circle cx="1200" cy="1100" r="140" fill="#bbf7d0"/>
+        <text x="1200" y="1090" font-size="28" font-weight="900" fill="#166534" text-anchor="middle">한라산</text>
+        <text x="1200" y="1120" font-size="16" font-weight="700" fill="#15803d" text-anchor="middle">1,947m</text>
+
+        <!-- 도로망 라인 -->
+        <path d="M 600 700 Q 1150 500 1750 650 T 1950 1350 T 1500 1950 T 700 1750 Z" 
+              fill="none" stroke="#fed7aa" stroke-width="16" stroke-linecap="round"/>
+        <path d="M 600 700 Q 1150 500 1750 650 T 1950 1350 T 1500 1950 T 700 1750 Z" 
+              fill="none" stroke="#ffffff" stroke-width="8" stroke-dasharray="16 12"/>
+
+        <!-- 작은 부속 섬 -->
+        <ellipse cx="2300" cy="850" rx="90" ry="70" fill="#fef08a"/>
+        <ellipse cx="2300" cy="850" rx="80" ry="60" fill="#f0fdf4"/>
+        <text x="2300" y="855" font-size="15" font-weight="800" fill="#166534" text-anchor="middle">우도</text>
+      </svg>
+
+      <!-- 이동 경로 SVG -->
+      <svg id="route-svg">
+        <path id="route-line-bg" class="route-line-bg" d=""/>
+        <path id="route-line-fg" class="route-line" d=""/>
+      </svg>
+
+      <!-- 핀 마커 DOM 레이어 -->
+      <div id="pins-layer"></div>
+    </div>
+  </div>
+
+  <!-- 상단 오버레이 헤더 -->
+  <div class="top-overlay">
+    <div class="trip-title-card">
+      <h1><span>🏝️</span> 제주 감성 로드 트립</h1>
+      <p id="trip-summary-info">총 5개 장소 • 예상 이동거리 계산 중...</p>
+    </div>
+    <div class="top-actions">
+      <button class="btn-icon" id="btn-add-pin" title="새 장소 핀 추가">📍+</button>
+      <button class="btn-icon" id="btn-reset-view" title="전체 경로 맞춤">🧭</button>
+    </div>
+  </div>
+
+  <!-- 우측 줌 컨트롤 -->
+  <div class="map-controls">
+    <button class="btn-icon" id="btn-zoom-in">＋</button>
+    <button class="btn-icon" id="btn-zoom-out">－</button>
+  </div>
+
+  <!-- 힌트 토스트 -->
+  <div class="toast-tip" id="toast-tip">핀을 드래그하여 옮기거나, 꾹 눌러 메뉴를 열어보세요!</div>
+
+  <!-- 하단 UI 오버레이 -->
+  <div class="bottom-overlay">
+    <!-- 예산 슬라이더 바 -->
+    <div class="budget-glass-bar">
+      <div class="budget-header">
+        <span>💰 여행 예산 플래너</span>
+        <span id="budget-calc-text"><strong>18.5만</strong> / 목표 30만 원</span>
+      </div>
+      <div class="budget-progress-track">
+        <div class="budget-progress-fill" id="budget-progress-bar"></div>
+      </div>
+      <div class="budget-slider-row">
+        <span style="font-size: 11px; color: var(--text-sub); font-weight: 700;">10만</span>
+        <input type="range" id="budget-range-input" min="100000" max="800000" step="10000" value="300000">
+        <span style="font-size: 11px; color: var(--text-sub); font-weight: 700;">80만 원</span>
+      </div>
+    </div>
+
+    <!-- 일정 타임라인 카드 가로 스크롤 -->
+    <div class="timeline-scroller" id="timeline-scroller"></div>
+  </div>
+
+  <!-- 상세 정보 모달 (Bottom Sheet) -->
+  <div class="sheet-backdrop" id="sheet-backdrop">
+    <div class="bottom-sheet" id="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <h2 class="sheet-title" id="sheet-title">장소 이름</h2>
+          <span class="sheet-cat" id="sheet-category">카테고리</span>
+        </div>
+        <button class="sheet-close-btn" id="sheet-close">✕</button>
+      </div>
+      <div class="sheet-body">
+        <p id="sheet-description" style="margin-bottom: 10px;">상세 메모 정보가 표시됩니다.</p>
+        <div class="sheet-stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">예상 소요 예산</span>
+            <span class="stat-value" id="sheet-cost">0원</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">체류 시간</span>
+            <span class="stat-value" id="sheet-stay">약 1시간 30분</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <button style="flex:1; padding: 12px; border:none; background: var(--primary); color:white; font-weight:700; border-radius:14px; font-size:14px; cursor:pointer;" id="sheet-nav-btn">길찾기 / 출발</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 핀 롱프레스 컨텍스트 메뉴 -->
+  <div class="context-menu" id="context-menu">
+    <div class="context-item" id="ctx-edit">✏️ 장소 메모 수정</div>
+    <div class="context-item danger" id="ctx-delete">🗑️ 이 핀 삭제하기</div>
+    <div class="color-picker-row">
+      <div class="color-dot" style="background:#ef4444;" data-color="#ef4444"></div>
+      <div class="color-dot" style="background:#3b82f6;" data-color="#3b82f6"></div>
+      <div class="color-dot" style="background:#10b981;" data-color="#10b981"></div>
+      <div class="color-dot" style="background:#8b5cf6;" data-color="#8b5cf6"></div>
+      <div class="color-dot" style="background:#f59e0b;" data-color="#f59e0b"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. 여행 장소 기본 데이터 모델
+       ========================================================================== */
+    const initialSpots = [
+      {
+        id: "spot-1",
+        title: "제주국제공항",
+        category: "출발지",
+        emoji: "✈️",
+        x: 820,
+        y: 520,
+        color: "#3b82f6",
+        cost: 0,
+        stay: "30분",
+        desc: "렌터카 수령 및 여행의 설레는 시작점! 게이트 5번 앞 파리바게뜨 마음샌드 픽업 완료."
+      },
+      {
+        id: "spot-2",
+        title: "애월 한담해변 카페거리",
+        category: "오션뷰 카페",
+        emoji: "☕",
+        x: 560,
+        y: 780,
+        color: "#f59e0b",
+        cost: 32000,
+        stay: "1시간 30분",
+        desc: "에메랄드빛 바다를 바라보며 시그니처 흑임자 라떼와 당근 케이크 즐기기."
+      },
+      {
+        id: "spot-3",
+        title: "협재 해수욕장 & 금능",
+        category: "힐링 해변",
+        emoji: "🏖️",
+        x: 480,
+        y: 1120,
+        color: "#10b981",
+        cost: 15000,
+        stay: "2시간",
+        desc: "비양도가 보이는 투명한 바다에서 발 담그고 조개껍질 줍기 및 사진 촬영."
+      },
+      {
+        id: "spot-4",
+        title: "중문 흑돼지 참숯구이",
+        category: "로컬 맛집",
+        emoji: "🥩",
+        x: 950,
+        y: 1850,
+        color: "#ef4444",
+        cost: 98000,
+        stay: "1시간 30분",
+        desc: "두툼한 근고기와 멜젓 소스의 환상적인 조화! 김치찌개는 필수 주문."
+      },
+      {
+        id: "spot-5",
+        title: "성산 일출봉 리조트",
+        category: "숙소 & 일출",
+        emoji: "🏨",
+        x: 1980,
+        y: 1100,
+        color: "#8b5cf6",
+        cost: 140000,
+        stay: "1박 (체크인)",
+        desc: "창밖으로 성산일출봉이 한눈에 보이는 파노라마 오션뷰 숙소."
+      }
+    ];
+
+    let spots = [...initialSpots];
+    let selectedSpotId = spots[0].id;
+    let targetBudget = 300000;
+
+    /* ==========================================================================
+       2. 제스처 줌/팬 엔진 (Pinch-to-Zoom & Pan Coordinates)
+       ========================================================================== */
+    const viewport = document.getElementById("map-viewport");
+    const world = document.getElementById("map-world");
+    const pinsLayer = document.getElementById("pins-layer");
+    const routeLineFg = document.getElementById("route-line-fg");
+    const routeLineBg = document.getElementById("route-line-bg");
+
+    let scale = 0.85;
+    let panX = -200;
+    let panY = -150;
+    const MIN_SCALE = 0.35;
+    const MAX_SCALE = 2.8;
+
+    // 포인터 추적 맵
+    const activePointers = new Map();
+    let initialPinchDist = null;
+    let initialScale = 1;
+    let pinchCenterWorld = { x: 0, y: 0 };
+    let isPanning = false;
+    let lastPanPos = { x: 0, y: 0 };
+
+    function applyTransform() {
+      world.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+    }
+
+    // 뷰포트 화면 좌표 -> 맵 월드 좌표 변환
+    function screenToWorld(clientX, clientY) {
+      const rect = viewport.getBoundingClientRect();
+      const vx = clientX - rect.left;
+      const vy = clientY - rect.top;
+      return {
+        x: (vx - panX) / scale,
+        y: (vy - panY) / scale
+      };
+    }
+
+    // 포인터 이벤트 리스너 등록
+    viewport.addEventListener("pointerdown", (e) => {
+      // 핀이나 모달 클릭 시 맵 패닝 방지
+      if (e.target.closest(".pin-container") || e.target.closest(".bottom-sheet") || e.target.closest(".context-menu")) {
+        return;
+      }
+      viewport.setPointerCapture(e.pointerId);
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (activePointers.size === 1) {
+        isPanning = true;
+        lastPanPos = { x: e.clientX, y: e.clientY };
+      } else if (activePointers.size === 2) {
+        isPanning = false;
+        const pts = Array.from(activePointers.values());
+        initialPinchDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        initialScale = scale;
+        const midScreen = {
+          x: (pts[0].x + pts[1].x) / 2,
+          y: (pts[0].y + pts[1].y) / 2
+        };
+        pinchCenterWorld = screenToWorld(midScreen.x, midScreen.y);
+      }
+      hideContextMenu();
+    });
+
+    viewport.addEventListener("pointermove", (e) => {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (activePointers.size === 1 && isPanning) {
+        const dx = e.clientX - lastPanPos.x;
+        const dy = e.clientY - lastPanPos.y;
+        panX += dx;
+        panY += dy;
+        lastPanPos = { x: e.clientX, y: e.clientY };
+        applyTransform();
+      } else if (activePointers.size === 2 && initialPinchDist) {
+        const pts = Array.from(activePointers.values());
+        const currentDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        const midScreen = {
+          x: (pts[0].x + pts[1].x) / 2,
+          y: (pts[0].y + pts[1].y) / 2
+        };
+
+        const factor = currentDist / initialPinchDist;
+        const newScale = Math.min(Math.max(initialScale * factor, MIN_SCALE), MAX_SCALE);
+
+        // 핀치 줌 앵커 포인트를 기준으로 좌표 튐 없이 보정
+        panX = midScreen.x - pinchCenterWorld.x * newScale;
+        panY = midScreen.y - pinchCenterWorld.y * newScale;
+        scale = newScale;
+        applyTransform();
+      }
+    });
+
+    function endPointer(e) {
+      activePointers.delete(e.pointerId);
+      if (activePointers.size === 1) {
+        const remaining = Array.from(activePointers.values())[0];
+        lastPanPos = { x: remaining.x, y: remaining.y };
+        isPanning = true;
+        initialPinchDist = null;
+      } else if (activePointers.size === 0) {
+        isPanning = false;
+        initialPinchDist = null;
+      }
+    }
+
+    viewport.addEventListener("pointerup", endPointer);
+    viewport.addEventListener("pointercancel", endPointer);
+
+    // 마우스 휠 줌 (데스크톱 호환)
+    viewport.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.87;
+      const newScale = Math.min(Math.max(scale * zoomFactor, MIN_SCALE), MAX_SCALE);
+      const wPos = screenToWorld(e.clientX, e.clientY);
+
+      panX = e.clientX - wPos.x * newScale;
+      panY = e.clientY - wPos.y * newScale;
+      scale = newScale;
+      applyTransform();
+    }, { passive: false });
+
+    /* ==========================================================================
+       3. 핀 렌더링 & 드래그 & 롱프레스 로직
+       ========================================================================== */
+    let longPressTimer = null;
+    let draggedPinId = null;
+    let dragStartPos = { x: 0, y: 0 };
+    let hasMovedSignificantly = false;
+
+    function renderPins() {
+      pinsLayer.innerHTML = "";
+      spots.forEach((spot, index) => {
+        const pinEl = document.createElement("div");
+        pinEl.className = `pin-container ${spot.id === selectedSpotId ? "active" : ""}`;
+        pinEl.id = `pin-${spot.id}`;
+        pinEl.style.left = `${spot.x}px`;
+        pinEl.style.top = `${spot.y}px`;
+
+        pinEl.innerHTML = `
+          <div class="pin-card-preview">
+            <span>${spot.emoji}</span>
+            <span>${spot.title}</span>
+            <span class="price">${(spot.cost / 10000).toFixed(1)}만</span>
+          </div>
+          <div class="pin-body">
+            <svg class="pin-svg" viewBox="0 0 44 54" fill="none">
+              <path d="M22 0C9.85 0 0 9.85 0 22C0 35.5 18 50 22 54C26 50 44 35.5 44 22C44 9.85 34.15 0 22 0Z" fill="${spot.color}"/>
+              <circle cx="22" cy="18" r="14" fill="white" opacity="0.95"/>
+            </svg>
+            <div class="pin-badge">${index + 1}</div>
+          </div>
+        `;
+
+        // 핀 터치 및 드래그 바인딩
+        pinEl.addEventListener("pointerdown", (e) => onPinPointerDown(e, spot));
+        pinsLayer.appendChild(pinEl);
+      });
+
+      renderRoute();
+      renderTimeline();
+      updateBudgetUI();
+    }
+
+    function onPinPointerDown(e, spot) {
+      e.stopPropagation();
+      e.preventDefault();
+      const pinEl = document.getElementById(`pin-${spot.id}`);
+      pinEl.setPointerCapture(e.pointerId);
+
+      draggedPinId = spot.id;
+      dragStartPos = { x: e.clientX, y: e.clientY };
+      hasMovedSignificantly = false;
+
+      // 롱프레스 타이머 (500ms)
+      longPressTimer = setTimeout(() => {
+        if (!hasMovedSignificantly) {
+          if (navigator.vibrate) navigator.vibrate(40);
+          showContextMenu(e.clientX, e.clientY, spot);
+          draggedPinId = null;
+        }
+      }, 480);
+
+      const onMove = (moveEvt) => {
+        if (!draggedPinId) return;
+        const dist = Math.hypot(moveEvt.clientX - dragStartPos.x, moveEvt.clientY - dragStartPos.y);
+        if (dist > 6) {
+          hasMovedSignificantly = true;
+          clearTimeout(longPressTimer);
+          hideContextMenu();
+
+          pinEl.classList.add("dragging");
+          const worldPos = screenToWorld(moveEvt.clientX, moveEvt.clientY);
+          spot.x = Math.round(worldPos.x);
+          spot.y = Math.round(worldPos.y);
+          pinEl.style.left = `${spot.x}px`;
+          pinEl.style.top = `${spot.y}px`;
+
+          renderRoute();
+        }
+      };
+
+      const onUp = (upEvt) => {
+        clearTimeout(longPressTimer);
+        pinEl.classList.remove("dragging");
+        pinEl.removeEventListener("pointermove", onMove);
+        pinEl.removeEventListener("pointerup", onUp);
+        pinEl.removeEventListener("pointercancel", onUp);
+
+        // 짧은 탭인 경우 상세 시트 오픈
+        if (!hasMovedSignificantly && draggedPinId) {
+          selectSpot(spot.id, true);
+        }
+        draggedPinId = null;
+      };
+
+      pinEl.addEventListener("pointermove", onMove);
+      pinEl.addEventListener("pointerup", onUp);
+      pinEl.addEventListener("pointercancel", onUp);
+    }
+
+    /* ==========================================================================
+       4. 경로 렌더링 (곡선 SVG 연결)
+       ========================================================================== */
+    function renderRoute() {
+      if (spots.length < 2) {
+        routeLineFg.setAttribute("d", "");
+        routeLineBg.setAttribute("d", "");
+        return;
+      }
+
+      let d = `M ${spots[0].x} ${spots[0].y}`;
+      let totalDistPx = 0;
+
+      for (let i = 0; i < spots.length - 1; i++) {
+        const p1 = spots[i];
+        const p2 = spots[i + 1];
+        const mx = (p1.x + p2.x) / 2;
+        const my = (p1.y + p2.y) / 2;
+        // 자연스러운 굴곡을 위한 컨트롤 포인트
+        const cx = mx - (p2.y - p1.y) * 0.15;
+        const cy = my + (p2.x - p1.x) * 0.15;
+        d += ` Q ${cx} ${cy} ${p2.x} ${p2.y}`;
+
+        totalDistPx += Math.hypot(p2.x - p1.x, p2.y - p1.y);
+      }
+
+      routeLineFg.setAttribute("d", d);
+      routeLineBg.setAttribute("d", d);
+
+      // 대략적인 픽셀 -> km 환산 정보 업데이트
+      const kmEst = (totalDistPx * 0.08).toFixed(1);
+      document.getElementById("trip-summary-info").innerText = `총 ${spots.length}개 장소 • 총 이동거리 약 ${kmEst} km`;
+    }
+
+    /* ==========================================================================
+       5. 하단 타임라인 & 예산 바 UI
+       ========================================================================== */
+    const timelineScroller = document.getElementById("timeline-scroller");
+
+    function renderTimeline() {
+      timelineScroller.innerHTML = "";
+      spots.forEach((spot, idx) => {
+        const card = document.createElement("div");
+        card.className = `timeline-card ${spot.id === selectedSpotId ? "active" : ""}`;
+        card.id = `card-${spot.id}`;
+        card.innerHTML = `
+          <div class="card-thumb" style="background:${spot.color}18; color:${spot.color}">
+            ${spot.emoji}
+          </div>
+          <div class="card-info">
+            <span class="card-order-tag">DAY 1 • SPOT 0${idx + 1}</span>
+            <div class="card-title">${spot.title}</div>
+            <div class="card-meta">
+              <span>${spot.category}</span>
+              <span class="card-cost">${(spot.cost / 10000).toFixed(1)}만원</span>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          selectSpot(spot.id, false);
+          focusPin(spot);
+        });
+
+        timelineScroller.appendChild(card);
+      });
+    }
+
+    function selectSpot(id, openSheet = false) {
+      selectedSpotId = id;
+      document.querySelectorAll(".pin-container").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".timeline-card").forEach(el => el.classList.remove("active"));
+
+      const pinEl = document.getElementById(`pin-${id}`);
+      const cardEl = document.getElementById(`card-${id}`);
+      if (pinEl) pinEl.classList.add("active");
+      if (cardEl) {
+        cardEl.classList.add("active");
+        cardEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+
+      if (openSheet) {
+        const spot = spots.find(s => s.id === id);
+        if (spot) showDetailSheet(spot);
+      }
+    }
+
+    function focusPin(spot) {
+      const rect = viewport.getBoundingClientRect();
+      // 화면 중앙 약간 위에 핀이 오도록 포커싱
+      panX = rect.width / 2 - spot.x * scale;
+      panY = rect.height / 2 - 80 - spot.y * scale;
+      applyTransform();
+    }
+
+    // 예산 슬라이더 바 반응
+    const budgetInput = document.getElementById("budget-range-input");
+    const budgetCalcText = document.getElementById("budget-calc-text");
+    const budgetProgressBar = document.getElementById("budget-progress-bar");
+
+    function updateBudgetUI() {
+      const totalCost = spots.reduce((acc, cur) => acc + cur.cost, 0);
+      const ratio = Math.min((totalCost / targetBudget) * 100, 100);
+
+      budgetProgressBar.style.width = `${ratio}%`;
+      if (totalCost > targetBudget) {
+        budgetProgressBar.classList.add("over");
+        budgetCalcText.innerHTML = `<strong style="color:#ef4444">${(totalCost / 10000).toFixed(1)}만</strong> / 목표 ${(targetBudget / 10000).toFixed(0)}만 원 (초과!)`;
+      } else {
+        budgetProgressBar.classList.remove("over");
+        budgetCalcText.innerHTML = `<strong>${(totalCost / 10000).toFixed(1)}만</strong> / 목표 ${(targetBudget / 10000).toFixed(0)}만 원`;
+      }
+    }
+
+    budgetInput.addEventListener("input", (e) => {
+      targetBudget = parseInt(e.target.value, 10);
+      updateBudgetUI();
+    });
+
+    /* ==========================================================================
+       6. 상세 바텀시트 & 컨텍스트 메뉴 제어
+       ========================================================================== */
+    const sheetBackdrop = document.getElementById("sheet-backdrop");
+    const sheetClose = document.getElementById("sheet-close");
+    let activeContextSpot = null;
+
+    function showDetailSheet(spot) {
+      document.getElementById("sheet-title").innerText = `${spot.emoji} ${spot.title}`;
+      document.getElementById("sheet-category").innerText = spot.category;
+      document.getElementById("sheet-description").innerText = spot.desc;
+      document.getElementById("sheet-cost").innerText = `${spot.cost.toLocaleString()}원`;
+      document.getElementById("sheet-stay").innerText = spot.stay;
+      sheetBackdrop.classList.add("open");
+    }
+
+    sheetClose.addEventListener("click", () => sheetBackdrop.classList.remove("open"));
+    sheetBackdrop.addEventListener("click", (e) => {
+      if (e.target === sheetBackdrop) sheetBackdrop.classList.remove("open");
+    });
+
+    // 롱프레스 컨텍스트 메뉴
+    const contextMenu = document.getElementById("context-menu");
+    function showContextMenu(clientX, clientY, spot) {
+      activeContextSpot = spot;
+      contextMenu.style.display = "flex";
+      // 화면 밖 벗어남 방지 계산
+      const x = Math.min(clientX, window.innerWidth - 210);
+      const y = Math.min(clientY - 80, window.innerHeight - 200);
+      contextMenu.style.left = `${Math.max(10, x)}px`;
+      contextMenu.style.top = `${Math.max(10, y)}px`;
+    }
+
+    function hideContextMenu() {
+      contextMenu.style.display = "none";
+      activeContextSpot = null;
+    }
+
+    document.getElementById("ctx-delete").addEventListener("click", () => {
+      if (!activeContextSpot) return;
+      spots = spots.filter(s => s.id !== activeContextSpot.id);
+      hideContextMenu();
+      renderPins();
+    });
+
+    document.getElementById("ctx-edit").addEventListener("click", () => {
+      if (!activeContextSpot) return;
+      const newTitle = prompt("장소 이름을 입력하세요:", activeContextSpot.title);
+      if (newTitle) {
+        activeContextSpot.title = newTitle;
+        renderPins();
+      }
+      hideContextMenu();
+    });
+
+    // 핀 색상 즉시 변경 팔레트
+    document.querySelectorAll(".color-dot").forEach(dot => {
+      dot.addEventListener("click", (e) => {
+        if (!activeContextSpot) return;
+        activeContextSpot.color = e.target.getAttribute("data-color");
+        hideContextMenu();
+        renderPins();
+      });
+    });
+
+    /* ==========================================================================
+       7. 추가 조작 버튼들 (줌, 리셋, 새 핀 추가)
+       ========================================================================== */
+    document.getElementById("btn-zoom-in").addEventListener("click", () => {
+      scale = Math.min(scale * 1.25, MAX_SCALE);
+      applyTransform();
+    });
+    document.getElementById("btn-zoom-out").addEventListener("click", () => {
+      scale = Math.max(scale / 1.25, MIN_SCALE);
+      applyTransform();
+    });
+
+    // 전체 코스 화면 맞춤
+    document.getElementById("btn-reset-view").addEventListener("click", () => {
+      if (spots.length === 0) return;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      spots.forEach(s => {
+        minX = Math.min(minX, s.x);
+        maxX = Math.max(maxX, s.x);
+        minY = Math.min(minY, s.y);
+        maxY = Math.max(maxY, s.y);
+      });
+
+      const rect = viewport.getBoundingClientRect();
+      const padding = 120;
+      const spreadW = maxX - minX + padding * 2;
+      const spreadH = maxY - minY + padding * 2;
+
+      scale = Math.min(Math.max(Math.min(rect.width / spreadW, rect.height / spreadH), MIN_SCALE), 1.2);
+      panX = rect.width / 2 - ((minX + maxX) / 2) * scale;
+      panY = (rect.height - 180) / 2 - ((minY + maxY) / 2) * scale;
+      applyTransform();
+    });
+
+    // 새 핀 추가
+    document.getElementById("btn-add-pin").addEventListener("click", () => {
+      const rect = viewport.getBoundingClientRect();
+      const centerWorld = screenToWorld(rect.width / 2, rect.height / 2 - 50);
+
+      const newSpot = {
+        id: `spot-${Date.now()}`,
+        title: `새 여행지 #${spots.length + 1}`,
+        category: "자유 일정",
+        emoji: "📍",
+        x: Math.round(centerWorld.x),
+        y: Math.round(centerWorld.y),
+        color: "#f43f5e",
+        cost: 20000,
+        stay: "1시간",
+        desc: "새로 추가된 여행지입니다. 손가락으로 드래그해서 원하는 위치로 옮겨보세요!"
+      };
+
+      spots.push(newSpot);
+      renderPins();
+      selectSpot(newSpot.id, true);
+    });
+
+    // 가이드 토스트 표시
+    setTimeout(() => {
+      const toast = document.getElementById("toast-tip");
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 4000);
+    }, 800);
+
+    // 초기화 실행
+    applyTransform();
+    renderPins();
+    document.getElementById("btn-reset-view").click();
+  </script>
+</body>
+</html>
