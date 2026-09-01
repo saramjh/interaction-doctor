@@ -363,7 +363,7 @@
     }
     .mission-banner strong { color: #60a5fa; }
 
-    /* HARDWARE REALISTIC MOBILE DEVICE SHELL */
+    /* HARDWARE REALISTIC MOBILE DEVICE SHELL WITH STRICT ISOLATION */
     .phone-mockup {
       width: 100%;
       height: 600px;
@@ -406,18 +406,8 @@
       justify-content: center;
       gap: 6px;
     }
-    .phone-camera {
-      width: 8px;
-      height: 8px;
-      background: #1e293b;
-      border-radius: 50%;
-    }
-    .phone-speaker {
-      width: 32px;
-      height: 3px;
-      background: #1e293b;
-      border-radius: 2px;
-    }
+    .phone-camera { width: 8px; height: 8px; background: #1e293b; border-radius: 50%; }
+    .phone-speaker { width: 32px; height: 3px; background: #1e293b; border-radius: 2px; }
 
     .phone-home-indicator {
       height: 16px;
@@ -427,12 +417,7 @@
       justify-content: center;
       z-index: 50;
     }
-    .home-bar {
-      width: 110px;
-      height: 4px;
-      background: #475569;
-      border-radius: 2px;
-    }
+    .home-bar { width: 110px; height: 4px; background: #475569; border-radius: 2px; }
 
     .sandbox-stage {
       flex: 1;
@@ -1033,7 +1018,7 @@
           </div>
 
           <!-- HARDWARE REALISTIC MOBILE DEVICE SHELL -->
-          <div class="phone-mockup">
+          <div class="phone-mockup" id="phoneMockup">
             <div class="phone-status-bar">
               <span>9:41</span>
               <div class="phone-notch">
@@ -1500,6 +1485,7 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
     const caseCounter = document.getElementById('caseCounter');
     const btnModeWith = document.getElementById('btnModeWith');
     const btnModeWithout = document.getElementById('btnModeWithout');
+    const phoneMockup = document.getElementById('phoneMockup');
     const sandboxStage = document.getElementById('sandboxStage');
     const missionHeading = document.getElementById('missionHeading');
     const missionText = document.getElementById('missionText');
@@ -1518,8 +1504,10 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
     const btnCopyStandalone = document.getElementById('btnCopyStandalone');
     const toast = document.getElementById('toast');
 
-    // PREVENT WHEEL CHAINING INSIDE SIMULATOR PHONE
-    sandboxStage.addEventListener('wheel', (e) => {
+    // ========================================================
+    // STRICT WINDOW-LEVEL SCROLL CHAINING KILLER FOR PHONE MOCKUP
+    // ========================================================
+    phoneMockup.addEventListener('wheel', (e) => {
       e.stopPropagation();
     }, { passive: true });
 
@@ -1665,27 +1653,37 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
       sandboxStage.innerHTML = '';
 
       if (scenarioKey === 'p03') {
-        // 2D CANVAS PINCH / WHEEL ZOOM CENTROID INVARIANT SIMULATOR
+        // P03: 2D CANVAS CENTROID INVARIANT & WHEEL / BUTTON ZOOM SIMULATOR
         sandboxStage.innerHTML = `
-          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+          <div style="padding: 8px 12px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
             <span>🎨 2D Canvas Centroid Zoom</span>
             <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Centroid Locked':'Origin Drift Disaster'}</span>
           </div>
 
-          <div id="canvasViewport" style="flex:1; position:relative; background:radial-gradient(#334155 1px, transparent 1px); background-size:18px 18px; overflow:hidden; touch-action:none; display:flex; align-items:center; justify-content:center;">
+          <!-- Interactive Action Toolbar for Wheel / Click Zoom -->
+          <div style="padding:6px 12px; background:#090e1a; border-bottom:1px solid #1e293b; display:flex; gap:6px; align-items:center; justify-content:space-between;">
+            <div style="display:flex; gap:4px;">
+              <button id="btnZoomIn" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔍 Zoom In (+)</button>
+              <button id="btnZoomOut" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔎 Zoom Out (-)</button>
+              <button id="btnRotateCard" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔄 Rotate 45°</button>
+            </div>
+            <button id="btnResetCanvas" style="padding:4px 8px; background:#1e293b; color:#94a3b8; border:1px solid #334155; border-radius:5px; font-size:10px; cursor:pointer;">↺ Reset</button>
+          </div>
+
+          <div id="canvasViewport" class="scroll-contained" style="flex:1; position:relative; background:radial-gradient(#334155 1.5px, transparent 1.5px); background-size:18px 18px; overflow:hidden; touch-action:none; display:flex; align-items:center; justify-content:center;">
             
-            <!-- Transformable Canvas Graphic Layer -->
-            <div id="canvasArtboard" style="width:200px; height:200px; background:linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius:18px; box-shadow:0 15px 35px rgba(0,0,0,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; will-change:transform; position:absolute; cursor:grab;">
+            <div id="canvasArtboard" style="width:190px; height:190px; background:linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius:18px; box-shadow:0 15px 35px rgba(0,0,0,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; will-change:transform; position:absolute; cursor:grab; border:2px solid rgba(255,255,255,0.2);">
               <div style="font-size:32px;">🖼️</div>
-              <div style="font-weight:800; font-size:13px; color:#fff;">Design Artboard</div>
-              <div style="font-size:10px; color:rgba(255,255,255,0.8);">Zoom with Mouse Wheel</div>
-              <div id="artboardZoomLabel" style="font-family:'JetBrains Mono'; font-size:11px; font-weight:800; background:rgba(0,0,0,0.4); padding:2px 8px; border-radius:6px;">100%</div>
+              <div style="font-weight:800; font-size:13px; color:#fff;">Mobile App Wireframe</div>
+              <div style="font-size:10px; color:rgba(255,255,255,0.85);">Roll Wheel or Drag Card</div>
+              <div id="artboardZoomLabel" style="font-family:'JetBrains Mono'; font-size:11px; font-weight:800; background:rgba(0,0,0,0.45); padding:2px 8px; border-radius:6px; color:#60a5fa;">Scale: 100% | Rot: 0°</div>
             </div>
 
-            <div id="centroidCrosshair" style="display:none; position:absolute; width:16px; height:16px; border:2px solid #10b981; border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%, -50%);"></div>
+            <!-- Visual Centroid Crosshair Indicator -->
+            <div id="centroidCrosshair" style="display:none; position:absolute; width:18px; height:18px; border:2px solid #10b981; border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%, -50%); box-shadow:0 0 10px #10b981;"></div>
 
             <div id="canvasFlyawayAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:8px 14px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.6); z-index:30; text-align:center;">
-              💥 Disaster: Zoom anchored to (0,0) origin! Artboard drifted completely out of sight!
+              💥 Disaster: Zoom anchored to (0,0) origin! Card drifted completely out of viewport!
             </div>
           </div>
         `;
@@ -1695,10 +1693,19 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
         const label = sandboxStage.querySelector('#artboardZoomLabel');
         const crosshair = sandboxStage.querySelector('#centroidCrosshair');
         const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
+        const btnIn = sandboxStage.querySelector('#btnZoomIn');
+        const btnOut = sandboxStage.querySelector('#btnZoomOut');
+        const btnRot = sandboxStage.querySelector('#btnRotateCard');
+        const btnReset = sandboxStage.querySelector('#btnResetCanvas');
 
-        let scale = 1.0;
+        let scale = 1.0, rotation = 0;
         let transX = 0, transY = 0;
         let isPan = false, pStartX = 0, pStartY = 0;
+
+        const updateTransform = () => {
+          board.style.transform = `translate3d(${transX}px, ${transY}px, 0) scale(${scale}) rotate(${rotation}deg)`;
+          label.textContent = `Scale: ${Math.round(scale * 100)}% | Rot: ${rotation}°`;
+        };
 
         board.addEventListener('pointerdown', (e) => {
           isPan = true;
@@ -1711,7 +1718,7 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
           if (!isPan) return;
           transX = e.clientX - pStartX;
           transY = e.clientY - pStartY;
-          board.style.transform = `translate3d(${transX}px, ${transY}px, 0) scale(${scale})`;
+          updateTransform();
         });
 
         board.addEventListener('pointerup', (e) => {
@@ -1720,45 +1727,68 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
           board.releasePointerCapture(e.pointerId);
         });
 
-        vp.addEventListener('wheel', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-
-          const delta = e.deltaY < 0 ? 1.12 : 0.88;
-          const rect = vp.getBoundingClientRect();
-          const cursorX = e.clientX - rect.left;
-          const cursorY = e.clientY - rect.top;
-
+        const executeZoom = (deltaFactor, focusX, focusY) => {
           if (mode === 'without') {
-            // Baseline defect: fixed (0,0) zoom origin without centroid offset
-            scale *= delta;
-            transX -= (delta > 1 ? 40 : -40);
-            transY -= (delta > 1 ? 40 : -40);
-            board.style.transform = `translate3d(${transX}px, ${transY}px, 0) scale(${scale})`;
+            // Baseline defect: (0,0) anchor causes runaway coordinate drift
+            scale *= deltaFactor;
+            transX -= (deltaFactor > 1 ? 55 : -55);
+            transY -= (deltaFactor > 1 ? 55 : -55);
+            updateTransform();
 
-            if (scale > 1.6 || scale < 0.6) {
+            if (scale > 1.8 || scale < 0.6) {
               alertBox.style.display = 'block';
               setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
             }
           } else {
-            // Optimized: Centroid invariant zoom
+            // Optimized: Centroid Invariant Clamping
             crosshair.style.display = 'block';
-            crosshair.style.left = `${cursorX}px`;
-            crosshair.style.top = `${cursorY}px`;
+            crosshair.style.left = `${focusX}px`;
+            crosshair.style.top = `${focusY}px`;
 
             const prevScale = scale;
-            scale = Math.max(0.4, Math.min(3.0, scale * delta));
-            
-            // Centroid translation compensation formula
-            transX = cursorX - (cursorX - transX) * (scale / prevScale);
-            transY = cursorY - (cursorY - transY) * (scale / prevScale);
-            board.style.transform = `translate3d(${transX}px, ${transY}px, 0) scale(${scale})`;
+            scale = Math.max(0.4, Math.min(3.0, scale * deltaFactor));
+            transX = focusX - (focusX - transX) * (scale / prevScale);
+            transY = focusY - (focusY - transY) * (scale / prevScale);
+            updateTransform();
 
             setTimeout(() => { crosshair.style.display = 'none'; }, 800);
           }
+        };
 
-          label.textContent = `${Math.round(scale * 100)}%`;
+        vp.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const rect = vp.getBoundingClientRect();
+          const cursorX = e.clientX - rect.left;
+          const cursorY = e.clientY - rect.top;
+          const factor = e.deltaY < 0 ? 1.15 : 0.85;
+          executeZoom(factor, cursorX, cursorY);
         }, { passive: false });
+
+        btnIn.addEventListener('click', () => {
+          const rect = vp.getBoundingClientRect();
+          executeZoom(1.2, rect.width / 2, rect.height / 2);
+        });
+
+        btnOut.addEventListener('click', () => {
+          const rect = vp.getBoundingClientRect();
+          executeZoom(0.8, rect.width / 2, rect.height / 2);
+        });
+
+        btnRot.addEventListener('click', () => {
+          rotation = (rotation + 45) % 360;
+          if (mode === 'without') {
+            // Rotation center drift
+            transX += 30; transY -= 30;
+          }
+          updateTransform();
+        });
+
+        btnReset.addEventListener('click', () => {
+          scale = 1.0; rotation = 0; transX = 0; transY = 0;
+          alertBox.style.display = 'none';
+          updateTransform();
+        });
 
       } else if (scenarioKey === 'p01') {
         // MOBILE VIRTUAL KEYBOARD & ENTER CRASH
@@ -1970,8 +2000,432 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
           }
         });
 
+      } else if (scenarioKey === 'p04') {
+        // P04: KANBAN BOARD REORDER VS SCROLL
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📋 Kanban Board (DnD vs Scroll)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'350ms Temporal Gate':'Immediate Drag Crash'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; position:relative;">
+            <div style="font-size:11px; color:#94a3b8;">Try scrolling the list or dragging a card:</div>
+            
+            <div class="kanban-card" data-id="1" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+              <div style="font-weight:700; font-size:12px; color:#fff;">🚀 Task 1: Refactor Auth API</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to Alex · High Priority</div>
+            </div>
+
+            <div class="kanban-card" data-id="2" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+              <div style="font-weight:700; font-size:12px; color:#fff;">🎨 Task 2: Design Token Extraction</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to Sarah · Design System</div>
+            </div>
+
+            <div class="kanban-card" data-id="3" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+              <div style="font-weight:700; font-size:12px; color:#fff;">📊 Task 3: Performance Telemetry</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to David · SWE Team</div>
+            </div>
+
+            <div class="kanban-card" data-id="4" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+              <div style="font-weight:700; font-size:12px; color:#fff;">🔒 Task 4: GDPR Compliance Audit</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to Legal Tech Team</div>
+            </div>
+
+            <div id="kanbanDisasterAlert" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center; box-shadow:0 6px 20px rgba(0,0,0,0.6);">
+              💥 Disaster: Card grabbed instantly on scroll without 350ms delay! Column order broken!
+            </div>
+
+            <div id="kanbanSuccessAlert" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:rgba(16, 185, 129, 0.25); border:1px solid #10b981; color:#34d399; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              ✨ 350ms Temporal Gate: Normal scroll scrolls freely. Press & hold for 350ms to lift card!
+            </div>
+          </div>
+        `;
+
+        const cards = sandboxStage.querySelectorAll('.kanban-card');
+        const kDisaster = sandboxStage.querySelector('#kanbanDisasterAlert');
+        const kSuccess = sandboxStage.querySelector('#kanbanSuccessAlert');
+
+        cards.forEach(c => {
+          let timer = null, isLifted = false;
+          c.addEventListener('pointerdown', (e) => {
+            if (mode === 'without') {
+              // Immediate accidental drag on simple touch/scroll
+              c.style.transform = 'scale(1.05) rotate(2deg)';
+              c.style.borderColor = '#ef4444';
+              kDisaster.style.display = 'block';
+              setTimeout(() => {
+                c.style.transform = '';
+                c.style.borderColor = '#334155';
+                kDisaster.style.display = 'none';
+              }, 2500);
+            } else {
+              // 350ms Temporal Gate
+              timer = setTimeout(() => {
+                isLifted = true;
+                c.style.transform = 'scale(1.04)';
+                c.style.borderColor = '#10b981';
+                c.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.4)';
+                kSuccess.style.display = 'block';
+              }, 350);
+            }
+          });
+
+          c.addEventListener('pointerup', () => {
+            clearTimeout(timer);
+            if (isLifted) {
+              isLifted = false;
+              c.style.transform = '';
+              c.style.borderColor = '#334155';
+              c.style.boxShadow = '';
+              setTimeout(() => { kSuccess.style.display = 'none'; }, 2000);
+            }
+          });
+        });
+
+      } else if (scenarioKey === 'p05') {
+        // P05: SWIPEABLE LIST 8PX AXIS LOCK
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>✉️ Inbox (Swipe vs Vertical Scroll)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'8px Axis Lock Active':'No Axis Lock Crash'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; position:relative;">
+            <div style="font-size:11px; color:#94a3b8;">Swipe an item horizontally or scroll vertically:</div>
+            
+            <div class="mail-row" style="position:relative; background:#1e293b; border-radius:10px; overflow:hidden; touch-action:none;">
+              <div class="mail-action-bg" style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
+              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s; will-change:transform;">
+                <div style="font-weight:700; font-size:12px; color:#fff;">Google Cloud Security Alert</div>
+                <div style="font-size:11px; color:#94a3b8; margin-top:2px;">New login detected from Safari on macOS</div>
+              </div>
+            </div>
+
+            <div class="mail-row" style="position:relative; background:#1e293b; border-radius:10px; overflow:hidden; touch-action:none;">
+              <div class="mail-action-bg" style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
+              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s; will-change:transform;">
+                <div style="font-weight:700; font-size:12px; color:#fff;">Stripe Weekly Payout</div>
+                <div style="font-size:11px; color:#94a3b8; margin-top:2px;">$12,450.00 is on its way to your bank account</div>
+              </div>
+            </div>
+
+            <div class="mail-row" style="position:relative; background:#1e293b; border-radius:10px; overflow:hidden; touch-action:none;">
+              <div class="mail-action-bg" style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
+              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s; will-change:transform;">
+                <div style="font-weight:700; font-size:12px; color:#fff;">GitHub: PR #42 Merged</div>
+                <div style="font-size:11px; color:#94a3b8; margin-top:2px;">feat: add 8.0px orthogonal axis lock</div>
+              </div>
+            </div>
+
+            <div id="swipeAlertBox" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Diagonal scroll accidentally triggered item dismissal!
+            </div>
+          </div>
+        `;
+
+        const rows = sandboxStage.querySelectorAll('.mail-row');
+        const alertEl = sandboxStage.querySelector('#swipeAlertBox');
+
+        rows.forEach(r => {
+          const content = r.querySelector('.mail-content');
+          let sX = 0, sY = 0, lockedAxis = null;
+
+          content.addEventListener('pointerdown', (e) => {
+            sX = e.clientX; sY = e.clientY; lockedAxis = null;
+            content.setPointerCapture(e.pointerId);
+          });
+
+          content.addEventListener('pointermove', (e) => {
+            const dx = e.clientX - sX, dy = e.clientY - sY;
+            if (mode === 'without') {
+              // Diagonal cross-talk: tiny X motion triggers horizontal swipe
+              if (Math.abs(dx) > 10) {
+                content.style.transform = `translateX(${dx}px)`;
+                if (dx < -70) {
+                  alertEl.style.display = 'block';
+                  setTimeout(() => { alertEl.style.display = 'none'; }, 2500);
+                }
+              }
+            } else {
+              // 8px Orthogonal Axis Lock
+              if (!lockedAxis && Math.hypot(dx, dy) > 8) {
+                lockedAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+              }
+              if (lockedAxis === 'x') {
+                content.style.transform = `translateX(${Math.min(0, dx)}px)`;
+              }
+            }
+          });
+
+          content.addEventListener('pointerup', (e) => {
+            content.releasePointerCapture(e.pointerId);
+            content.style.transform = 'none';
+          });
+        });
+
+      } else if (scenarioKey === 'p09') {
+        // P09: MODAL OVERLAY DRAG LEAK
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🛡️ Modal Overlay (Backdrop Drag Leak)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Dual Target OK':'Backdrop Drag Leak'}</span>
+          </div>
+          <div id="modalStageArea" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; background:#090e1a;">
+            
+            <button id="btnOpenModal" style="padding:10px 16px; background:#3b82f6; border:none; border-radius:8px; color:#fff; font-weight:700; font-size:12px; cursor:pointer;">
+              Open Terms Modal
+            </button>
+
+            <!-- Full Backdrop Overlay -->
+            <div id="demoModalBackdrop" style="display:flex; position:absolute; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px; z-index:30;">
+              
+              <div id="demoModalDialog" style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:18px; max-width:280px; display:flex; flex-direction:column; gap:10px; box-shadow:0 20px 40px rgba(0,0,0,0.8);">
+                <div style="font-weight:800; font-size:13px; color:#fff; display:flex; justify-content:space-between;">
+                  <span>License Agreement</span>
+                  <span id="btnCloseCross" style="cursor:pointer; color:#94a3b8;">✕</span>
+                </div>
+                <p id="selectableText" style="font-size:11px; line-height:1.5; color:#cbd5e1; user-select:text;">
+                  👉 <strong>Test Mission:</strong> Click and drag to select this text, but release your mouse <em>outside</em> this dialog box onto the dark backdrop!
+                </p>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                  <button id="btnAccept" style="flex:1; padding:6px; background:#10b981; border:none; border-radius:6px; color:#fff; font-size:11px; font-weight:700; cursor:pointer;">Accept</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="modalLeakAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px; text-align:center; z-index:40;">
+              💥 Disaster: Releasing drag outside dialog closed the modal while selecting text!
+            </div>
+          </div>
+        `;
+
+        const backdrop = sandboxStage.querySelector('#demoModalBackdrop');
+        const dialog = sandboxStage.querySelector('#demoModalDialog');
+        const btnOpen = sandboxStage.querySelector('#btnOpenModal');
+        const alertEl = sandboxStage.querySelector('#modalLeakAlert');
+        const btnClose = sandboxStage.querySelector('#btnCloseCross');
+        const btnAccept = sandboxStage.querySelector('#btnAccept');
+
+        btnOpen.addEventListener('click', () => { backdrop.style.display = 'flex'; });
+        btnClose.addEventListener('click', () => { backdrop.style.display = 'none'; });
+        btnAccept.addEventListener('click', () => { backdrop.style.display = 'none'; });
+
+        let downTarget = null;
+        backdrop.addEventListener('pointerdown', (e) => {
+          downTarget = e.target;
+        });
+
+        backdrop.addEventListener('pointerup', (e) => {
+          const upTarget = e.target;
+          if (mode === 'without') {
+            // Baseline flaw: if mouse released on backdrop, it closes modal!
+            if (upTarget === backdrop) {
+              backdrop.style.display = 'none';
+              alertEl.style.display = 'block';
+              setTimeout(() => { alertEl.style.display = 'none'; }, 2500);
+            }
+          } else {
+            // Dual Target Verification: Both down and up must be the backdrop!
+            if (downTarget === backdrop && upTarget === backdrop) {
+              backdrop.style.display = 'none';
+            }
+          }
+        });
+
+      } else if (scenarioKey === 'p18') {
+        // P18: DUAL RANGE SLIDER THUMB OVERLAP
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>⚖️ Price Range Filter ($0 - $1,000)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Z-Index Dynamic Elevation':'Thumb Overlap Lock'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:30px 20px; display:flex; flex-direction:column; gap:24px; justify-content:center;">
+            
+            <div style="background:#090e1a; padding:16px; border-radius:12px; border:1px solid #334155; display:flex; flex-direction:column; gap:16px;">
+              <div style="display:flex; justify-content:space-between; font-weight:700; font-size:12px;">
+                <span id="priceLabelMin" style="color:#3b82f6;">Min: $500</span>
+                <span id="priceLabelMax" style="color:#8b5cf6;">Max: $500</span>
+              </div>
+
+              <!-- Dual Slider Track -->
+              <div id="sliderTrack" style="height:8px; background:#1e293b; border-radius:4px; position:relative; touch-action:none;">
+                <div id="sliderHighlight" style="position:absolute; left:50%; width:0%; height:100%; background:linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius:4px;"></div>
+                
+                <!-- Thumb Min -->
+                <div id="thumbMin" style="position:absolute; left:calc(50% - 12px); top:-8px; width:24px; height:24px; background:#3b82f6; border:2px solid #fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:grab; z-index:2;"></div>
+                
+                <!-- Thumb Max -->
+                <div id="thumbMax" style="position:absolute; left:calc(50% - 12px); top:-8px; width:24px; height:24px; background:#8b5cf6; border:2px solid #fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:grab; z-index:3;"></div>
+              </div>
+            </div>
+
+            <div id="sliderAlertBox" style="padding:10px; border-radius:8px; font-size:11px; line-height:1.4; text-align:center; background:${mode==='without'?'rgba(239, 68, 68, 0.2)':'rgba(16, 185, 129, 0.2)'}; border:1px solid ${mode==='without'?'#ef4444':'#10b981'}; color:${mode==='without'?'#f87171':'#34d399'}; font-weight:700;">
+              ${mode === 'without' ? '💥 Disaster: Thumbs are both at $500! Min thumb is trapped underneath Max thumb and cannot be dragged left!' : '✨ Z-Index Elevation: Dragging left dynamically brings Min thumb to top; dragging right elevates Max thumb!'}
+            </div>
+          </div>
+        `;
+
+        const tMin = sandboxStage.querySelector('#thumbMin');
+        const tMax = sandboxStage.querySelector('#thumbMax');
+        const track = sandboxStage.querySelector('#sliderTrack');
+        const lMin = sandboxStage.querySelector('#priceLabelMin');
+        const lMax = sandboxStage.querySelector('#priceLabelMax');
+        const hl = sandboxStage.querySelector('#sliderHighlight');
+
+        let minVal = 50, maxVal = 50;
+
+        const updateSliders = () => {
+          tMin.style.left = `calc(${minVal}% - 12px)`;
+          tMax.style.left = `calc(${maxVal}% - 12px)`;
+          hl.style.left = `${Math.min(minVal, maxVal)}%`;
+          hl.style.width = `${Math.abs(maxVal - minVal)}%`;
+          lMin.textContent = `Min: $${minVal * 10}`;
+          lMax.textContent = `Max: $${maxVal * 10}`;
+        };
+
+        const attachDrag = (thumb, isMin) => {
+          let isDragging = false;
+          thumb.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            thumb.setPointerCapture(e.pointerId);
+            if (mode === 'with') {
+              thumb.style.zIndex = '10';
+              (isMin ? tMax : tMin).style.zIndex = '2';
+            }
+          });
+
+          thumb.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            const rect = track.getBoundingClientRect();
+            let pct = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
+            if (isMin) minVal = Math.min(pct, maxVal);
+            else maxVal = Math.max(pct, minVal);
+            updateSliders();
+          });
+
+          thumb.addEventListener('pointerup', (e) => {
+            isDragging = false;
+            thumb.releasePointerCapture(e.pointerId);
+          });
+        };
+
+        attachDrag(tMin, true);
+        attachDrag(tMax, false);
+
+      } else if (scenarioKey === 'p23') {
+        // P23: SIDE DRAWER VS OS EDGE BACK
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📲 Navigation Drawer (Edge Back Conflict)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'20px Edge Deadzone':'OS Back Hijack Crash'}</span>
+          </div>
+          <div id="drawerStage" class="scroll-contained" style="flex:1; position:relative; overflow:hidden; background:#090e1a; touch-action:none;">
+            
+            <div style="padding:20px; color:#cbd5e1; font-size:12px; line-height:1.6;">
+              <p>👉 <strong>Swipe Test:</strong> Swipe your cursor/finger from the very left edge (0 ~ 20px) inwards!</p>
+            </div>
+
+            <!-- Virtual OS Back Screen Fade -->
+            <div id="osBackFade" style="display:none; position:absolute; inset:0; background:#000; z-index:35; align-items:center; justify-content:center; color:#ef4444; font-size:13px; font-weight:800; text-align:center; padding:20px;">
+              💥 [OS Back Triggered!]<br><span style="font-size:11px; color:#94a3b8; font-weight:500;">Browser back gesture was hijacked by the edge touch. App closed!</span>
+            </div>
+
+            <!-- Side Drawer Panel -->
+            <div id="drawerPanel" style="position:absolute; top:0; bottom:0; left:0; width:220px; background:#1e293b; border-right:1px solid #334155; transform:translateX(-100%); transition:transform 0.25s ease; z-index:20; padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:5px 0 25px rgba(0,0,0,0.6);">
+              <div style="font-weight:800; font-size:14px; color:#fff;">Navigation Menu</div>
+              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">🏠 Dashboard</div>
+              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">📁 Projects</div>
+              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">⚙️ Settings</div>
+            </div>
+
+            <div id="drawerSuccessToast" style="display:none; position:absolute; bottom:14px; left:12px; right:12px; background:rgba(16, 185, 129, 0.25); border:1px solid #10b981; color:#34d399; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center; z-index:30;">
+              ✨ 20px Edge Deadzone: Safely ignored OS back gesture zone, opening drawer cleanly!
+            </div>
+          </div>
+        `;
+
+        const st = sandboxStage.querySelector('#drawerStage');
+        const dr = sandboxStage.querySelector('#drawerPanel');
+        const osBack = sandboxStage.querySelector('#osBackFade');
+        const sToast = sandboxStage.querySelector('#drawerSuccessToast');
+
+        let sX = 0, isSwiping = false;
+        st.addEventListener('pointerdown', (e) => {
+          const rect = st.getBoundingClientRect();
+          sX = e.clientX - rect.left;
+          isSwiping = true;
+        });
+
+        st.addEventListener('pointerup', (e) => {
+          if (!isSwiping) return;
+          isSwiping = false;
+          const rect = st.getBoundingClientRect();
+          const endX = e.clientX - rect.left;
+
+          if (endX - sX > 40) {
+            if (mode === 'without') {
+              if (sX < 25) {
+                // OS Back Hijack
+                osBack.style.display = 'flex';
+                setTimeout(() => { osBack.style.display = 'none'; }, 2500);
+              } else {
+                dr.style.transform = 'translateX(0)';
+              }
+            } else {
+              // 20px Edge Deadzone protects OS back
+              dr.style.transform = 'translateX(0)';
+              sToast.style.display = 'block';
+              setTimeout(() => { sToast.style.display = 'none'; }, 2500);
+            }
+          }
+        });
+
+      } else if (scenarioKey === 'p31') {
+        // P31: DOUBLE TAP ACCIDENTAL ZOOM LOCK
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🔍 Viewport Double-Tap Zoom Lock</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Double-Tap Lock Active':'300% Zoom Explosion'}</span>
+          </div>
+          <div id="doubleTapContainer" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; transition:transform 0.3s; will-change:transform;">
+            
+            <div id="heartBtn" style="width:70px; height:70px; border-radius:50%; background:#ef4444; display:flex; align-items:center; justify-content:center; font-size:32px; color:#fff; cursor:pointer; box-shadow:0 8px 20px rgba(239,68,68,0.5); user-select:none; touch-action:${mode==='with'?'manipulation':'auto'};">
+              ❤️
+            </div>
+            <div style="font-weight:800; font-size:13px; color:#fff;">Like Post (Double-Tap Quickly)</div>
+            <div style="font-size:11px; color:#94a3b8; text-align:center;">Double tap the heart button in rapid succession!</div>
+
+            <div id="doubleTapAlert" style="display:none; padding:10px; border-radius:8px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; text-align:center;">
+              💥 Disaster: Double-tap zoomed entire page by 300%! Viewport broken!
+            </div>
+          </div>
+        `;
+
+        const btn = sandboxStage.querySelector('#heartBtn');
+        const container = sandboxStage.querySelector('#doubleTapContainer');
+        const dtAlert = sandboxStage.querySelector('#doubleTapAlert');
+
+        let lastTap = 0;
+        btn.addEventListener('click', () => {
+          const now = Date.now();
+          if (now - lastTap < 320) {
+            if (mode === 'without') {
+              // 300% Zoom Explosion
+              container.style.transform = 'scale(2.2)';
+              dtAlert.style.display = 'block';
+              setTimeout(() => {
+                container.style.transform = 'none';
+                dtAlert.style.display = 'none';
+              }, 2500);
+            } else {
+              // Protected by manipulation
+              btn.style.transform = 'scale(1.3)';
+              setTimeout(() => { btn.style.transform = 'scale(1)'; }, 180);
+            }
+          }
+          lastTap = now;
+        });
+
       } else {
-        // GENERAL REAL-TOUCH INTERACTION COMPONENT
+        // GENERAL REAL-TOUCH INTERACTION COMPONENT FOR OTHER SCENARIOS
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
             <span>📱 Interactive Touch Lab</span>
@@ -2009,7 +2463,6 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
               card.style.transform = `translate3d(${cX + dx}px, ${cY + dy}px, 0)`;
             }
           } else {
-            // Baseline jitter
             card.style.transform = `translate3d(${cX + dx + (Math.random()*6-3)}px, ${cY + dy + (Math.random()*6-3)}px, 0)`;
           }
         });
@@ -2059,7 +2512,6 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
       window.addEventListener('pointermove', (e) => {
         if (!bDragging) return;
         const dx = e.clientX - bStartX, dy = e.clientY - bStartY;
-        // Introduce artificial 140ms lag and jitter
         setTimeout(() => {
           if (!bDragging) return;
           cardBase.style.transform = `translate3d(${bCurX + dx * 0.75}px, ${bCurY + dy * 0.75}px, 0)`;
@@ -2090,7 +2542,6 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
       cardDoc.addEventListener('pointermove', (e) => {
         if (!dDragging) return;
         const dx = e.clientX - dStartX, dy = e.clientY - dStartY;
-        // 0ms direct GPU transform
         cardDoc.style.transform = `translate3d(${dCurX + dx}px, ${dCurY + dy}px, 0)`;
       });
 
@@ -2098,7 +2549,6 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
         if (!dDragging) return;
         dDragging = false;
         cardDoc.releasePointerCapture(e.pointerId);
-        // Magnetic spring return
         cardDoc.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
         cardDoc.style.transform = 'none';
         setTimeout(() => {
