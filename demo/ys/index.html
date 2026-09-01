@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0F1117">
+  <title>Studio Canvas | 무드보드 & 아이디어 화이트보드</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Pretendard:wght@400;500;600;700;800&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. CSS RESET & DESIGN SYSTEM VARIABLES
+       ========================================================================== */
+    :root {
+      --bg-dark: #0f1117;
+      --bg-surface: #181b24;
+      --bg-surface-elevated: #222634;
+      
+      --accent-primary: #6366f1;
+      --accent-primary-hover: #4f46e5;
+      --accent-secondary: #ec4899;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.6);
+      
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+      --shadow-card-drag: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px rgba(99, 102, 241, 0.35);
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      
+      --font-ui: 'Plus Jakarta Sans', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --font-hand: 'Caveat', cursive, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      user-select: none;
+      -webkit-user-select: none;
+      overscroll-behavior: none;
+      position: fixed;
+      inset: 0;
+    }
+
+    /* ==========================================================================
+       2. CANVAS VIEWPORT & BACKGROUND DOT GRID
+       ========================================================================== */
+    #canvas-viewport {
+      width: 100vw;
+      height: 100dvh;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      cursor: grab;
+      touch-action: none;
+      background-color: #0d0f15;
+      background-image: radial-gradient(circle, rgba(148, 163, 184, 0.22) 1.2px, transparent 1.2px);
+      background-size: 28px 28px;
+      background-position: 0px 0px;
+    }
+
+    #canvas-viewport:active {
+      cursor: grabbing;
+    }
+
+    #canvas-world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       3. TOP HEADER TOOLBAR
+       ========================================================================== */
+    .app-header {
+      position: fixed;
+      top: calc(12px + var(--safe-top));
+      left: 12px;
+      right: 12px;
+      height: 54px;
+      background: rgba(24, 27, 36, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-logo svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-radius: 6px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .brand-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card-counter-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .card-counter-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+
+    .opacity-control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 12px;
+      border-radius: 12px;
+      transition: opacity 0.2s ease;
+    }
+
+    .opacity-control-group.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .opacity-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .opacity-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 80px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .opacity-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      border: 2px solid var(--accent-primary);
+    }
+
+    .opacity-value-text {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent-primary);
+      min-width: 32px;
+      text-align: right;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon-header {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-icon-header:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .btn-icon-header:active {
+      transform: scale(0.95);
+    }
+
+    .btn-icon-header svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ==========================================================================
+       4. FLOATING HUD CONTROLS (ZOOM & RESET)
+       ========================================================================== */
+    .hud-controls {
+      position: fixed;
+      top: calc(76px + var(--safe-top));
+      right: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 90;
+    }
+
+    .hud-card {
+      background: rgba(24, 27, 36, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hud-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .hud-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hud-btn:active {
+      background: rgba(99, 102, 241, 0.25);
+      transform: scale(0.92);
+    }
+
+    .hud-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hud-zoom-text {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 4px 0;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    /* ==========================================================================
+       5. CARD OBJECTS & VISUAL STYLING
+       ========================================================================== */
+    .card-object {
+      position: absolute;
+      pointer-events: auto;
+      touch-action: none;
+      cursor: grab;
+      border-radius: 16px;
+      transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: center center;
+      will-change: transform, opacity;
+    }
+
+    .card-object:active {
+      cursor: grabbing;
+    }
+
+    .card-object.is-dragging {
+      cursor: grabbing;
+      box-shadow: var(--shadow-card-drag) !important;
+      z-index: 9999 !important;
+    }
+
+    .card-object.is-selected {
+      outline: 2.5px solid var(--accent-primary);
+      outline-offset: 3px;
+    }
+
+    /* --- Type 1: Sticky Note --- */
+    .card-sticky {
+      width: 220px;
+      min-height: 190px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #1e293b;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .sticky-tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 18px;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(4px);
+      border-radius: 3px;
+    }
+
+    .card-sticky .sticky-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .card-sticky .sticky-body {
+      font-size: 15px;
+      font-family: var(--font-hand);
+      font-weight: 600;
+      line-height: 1.4;
+      flex: 1;
+      white-space: pre-wrap;
+      color: #334155;
+    }
+
+    .card-sticky .sticky-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.7;
+    }
+
+    .sticky-tag {
+      background: rgba(0, 0, 0, 0.08);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .theme-yellow { background: linear-gradient(145deg, #fef08a 0%, #fde047 100%); }
+    .theme-peach { background: linear-gradient(145deg, #fed7aa 0%, #fdba74 100%); }
+    .theme-mint { background: linear-gradient(145deg, #a7f3d0 0%, #6ee7b7 100%); }
+    .theme-sky { background: linear-gradient(145deg, #bae6fd 0%, #7dd3fc 100%); }
+    .theme-lavender { background: linear-gradient(145deg, #e9d5ff 0%, #d8b4fe 100%); }
+    .theme-rose { background: linear-gradient(145deg, #fecdd3 0%, #fda4af 100%); }
+
+    /* --- Type 2: Photo Moodboard Card --- */
+    .card-photo {
+      width: 260px;
+      background: #1e2230;
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      color: var(--text-main);
+    }
+
+    .photo-frame {
+      width: 100%;
+      height: 175px;
+      position: relative;
+      overflow: hidden;
+      background: #0f1117;
+    }
+
+    .photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .photo-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .photo-content {
+      padding: 14px 16px;
+    }
+
+    .photo-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .photo-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* --- Type 3: Color Palette Chip --- */
+    .card-palette {
+      width: 240px;
+      background: #181b24;
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      color: var(--text-main);
+    }
+
+    .palette-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .palette-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .swatches-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      height: 44px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .swatch-item {
+      height: 100%;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .swatch-item:hover {
+      transform: scaleY(1.1);
+      z-index: 2;
+    }
+
+    .swatch-codes {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .swatch-code-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .swatch-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* --- Type 4: Idea & Insight Card --- */
+    .card-idea {
+      width: 250px;
+      background: linear-gradient(145deg, #1e2235 0%, #151824 100%);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      color: var(--text-main);
+    }
+
+    .idea-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .idea-icon-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .idea-category {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fbbf24;
+      text-transform: uppercase;
+    }
+
+    .idea-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .idea-body {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* --- Type 5: Checklist / ToDo Card --- */
+    .card-todo {
+      width: 240px;
+      background: #181c28;
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .todo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .todo-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .todo-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      border: 1.5px solid #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .todo-item.done .todo-checkbox {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+    }
+
+    .todo-item.done .todo-text {
+      text-decoration: line-through;
+      color: var(--text-subtle);
+    }
+
+    /* --- Type 6: Sticker Badge --- */
+    .card-sticker {
+      padding: 10px 18px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: var(--shadow-md);
+      cursor: grab;
+      white-space: nowrap;
+    }
+
+    .sticker-approved {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .sticker-trending {
+      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+
+    /* ==========================================================================
+       6. BOTTOM DOCK (STICKER & TEMPLATE TOOLBOX)
+       ========================================================================== */
+    .dock-container {
+      position: fixed;
+      bottom: calc(14px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100vw - 28px);
+      background: rgba(24, 27, 36, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 100;
+      box-shadow: var(--shadow-lg);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .dock-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dock-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      padding: 0 4px;
+      white-space: nowrap;
+    }
+
+    .dock-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border-subtle);
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .dock-item-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 58px;
+      height: 54px;
+      padding: 6px 8px;
+      border-radius: 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-main);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .dock-item-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .dock-item-btn:active {
+      transform: scale(0.92);
+      background: rgba(99, 102, 241, 0.2);
+    }
+
+    .dock-icon-box {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .dock-btn-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       7. LONGPRESS QUICK RADIAL/FLOATING ACTION MENU
+       ========================================================================== */
+    .quick-menu-popover {
+      position: fixed;
+      z-index: 150;
+      background: rgba(24, 27, 36, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(99, 102, 241, 0.3);
+      transform: translate(-50%, -100%) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+    }
+
+    .quick-menu-popover.active {
+      transform: translate(-50%, -120%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .quick-menu-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .quick-menu-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .quick-menu-btn:active {
+      transform: scale(0.92);
+    }
+
+    .quick-menu-btn.danger {
+      color: #f87171;
+    }
+
+    .quick-menu-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .quick-menu-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .quick-menu-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* ==========================================================================
+       8. BOTTOM SHEET EDITOR (CARD EDIT MODAL)
+       ========================================================================== */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .sheet-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 540px;
+      margin: 0 auto;
+      background: #181b24;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px 28px 0 0;
+      padding: 12px 20px calc(24px + var(--safe-bottom)) 20px;
+      z-index: 201;
+      transform: translateY(105%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.7);
+      max-height: 85dvh;
+      overflow-y: auto;
+    }
+
+    .bottom-sheet.open {
+      transform: translateY(0);
+    }
+
+    .sheet-handle-bar {
+      width: 44px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      margin: 0 auto 16px auto;
+      cursor: pointer;
+    }
+
+    .sheet-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .sheet-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sheet-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .sheet-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .sheet-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .sheet-input, .sheet-textarea {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .sheet-input:focus, .sheet-textarea:focus {
+      border-color: var(--accent-primary);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .sheet-textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    .color-swatches-picker {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .color-picker-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s ease;
+    }
+
+    .color-picker-dot.active {
+      transform: scale(1.15);
+      border-color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    .sheet-actions-footer {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-sheet-primary {
+      flex: 1;
+      padding: 12px;
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-sheet-primary:hover {
+      background: var(--accent-primary-hover);
+    }
+
+    .btn-sheet-danger {
+      padding: 12px 18px;
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       9. TOAST NOTIFICATION
+       ========================================================================== */
+    .toast-msg {
+      position: fixed;
+      top: calc(80px + var(--safe-top));
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(24, 27, 36, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 30px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      box-shadow: var(--shadow-md);
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+      .app-header { padding: 0 10px; }
+      .brand-desc { display: none; }
+      .opacity-label span { display: none; }
+      .opacity-slider { width: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Canvas Viewport -->
+  <div id="canvas-viewport">
+    <div id="canvas-world"></div>
+  </div>
+
+  <!-- 2. Header Toolbar -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <div class="brand-info">
+        <div class="brand-title">Studio Canvas <span class="brand-badge">2026</span></div>
+        <div class="brand-desc">무드보드 & 아이디어 화이트보드</div>
+      </div>
+    </div>
+
+    <!-- Header Middle: Counter & Opacity Controller -->
+    <div class="header-controls">
+      <div class="card-counter-badge" id="card-counter">
+        <span class="dot"></span>
+        <span id="counter-text">총 카드: 0개</span>
+      </div>
+
+      <div class="opacity-control-group disabled" id="opacity-group">
+        <div class="opacity-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 1 0 20z"></path>
+          </svg>
+          <span>투명도</span>
+        </div>
+        <input type="range" class="opacity-slider" id="opacity-slider" min="10" max="100" value="100">
+        <span class="opacity-value-text" id="opacity-val-text">100%</span>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="btn-icon-header" id="btn-export-json" title="JSON 저장">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </button>
+      <button class="btn-icon-header" id="btn-reset-sample" title="샘플 레이아웃 복원">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+          <path d="M21 3v5h-5"></path>
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+          <path d="M8 16H3v5"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 3. Floating HUD (Zoom In / Out / Reset) -->
+  <aside class="hud-controls">
+    <div class="hud-card">
+      <button class="hud-btn" id="hud-zoom-in" title="확대 (+)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <div class="hud-zoom-text" id="hud-zoom-display" title="100% 줌으로 초기화">100%</div>
+      <button class="hud-btn" id="hud-zoom-out" title="축소 (-)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <button class="hud-btn hud-btn-reset" id="hud-reset-view" title="화면 중앙 맞춤 (Reset)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h6v6"></path>
+          <path d="M9 21H3v-6"></path>
+          <path d="M21 3l-7 7"></path>
+          <path d="M3 21l7-7"></path>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- 4. Bottom Dock: Sticker & Template Card Toolbox -->
+  <nav class="dock-container" id="dock-bar">
+    <span class="dock-group-label">메모 & 아이디어</span>
+    
+    <button class="dock-item-btn" data-create="sticky-yellow">
+      <div class="dock-icon-box theme-yellow" style="color: #854d0e;">📝</div>
+      <span class="dock-btn-label">노랑 메모</span>
+    </button>
+    
+    <button class="dock-item-btn" data-create="sticky-peach">
+      <div class="dock-icon-box theme-peach" style="color: #9a3412;">🌸</div>
+      <span class="dock-btn-label">피치 메모</span>
+    </button>
+    
+    <button class="dock-item-btn" data-create="sticky-mint">
+      <div class="dock-icon-box theme-mint" style="color: #065f46;">🌿</div>
+      <span class="dock-btn-label">민트 메모</span>
+    </button>
+    
+    <button class="dock-item-btn" data-create="idea">
+      <div class="dock-icon-box" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">💡</div>
+      <span class="dock-btn-label">아이디어</span>
+    </button>
+
+    <div class="dock-divider"></div>
+    <span class="dock-group-label">디자인 & 무드</span>
+
+    <button class="dock-item-btn" data-create="photo">
+      <div class="dock-icon-box" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc;">🖼️</div>
+      <span class="dock-btn-label">사진 카드</span>
+    </button>
+
+    <button class="dock-item-btn" data-create="palette">
+      <div class="dock-icon-box" style="background: rgba(236, 72, 153, 0.2); color: #f472b6;">🎨</div>
+      <span class="dock-btn-label">팔레트</span>
+    </button>
+
+    <button class="dock-item-btn" data-create="todo">
+      <div class="dock-icon-box" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">✅</div>
+      <span class="dock-btn-label">체크리스트</span>
+    </button>
+
+    <div class="dock-divider"></div>
+    <span class="dock-group-label">스티커</span>
+
+    <button class="dock-item-btn" data-create="sticker-approved">
+      <div class="dock-icon-box sticker-approved" style="font-size: 10px;">✨</div>
+      <span class="dock-btn-label">APPROVED</span>
+    </button>
+
+    <button class="dock-item-btn" data-create="sticker-trending">
+      <div class="dock-icon-box sticker-trending" style="font-size: 10px;">🔥</div>
+      <span class="dock-btn-label">TRENDING</span>
+    </button>
+  </nav>
+
+  <!-- 5. Longpress Quick Floating Action Menu -->
+  <div class="quick-menu-popover" id="quick-menu">
+    <button class="quick-menu-btn" id="qm-rot-left" title="반시계 15도 회전">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+        <path d="M3 3v5h5"></path>
+      </svg>
+      -15°
+    </button>
+    <button class="quick-menu-btn" id="qm-rot-right" title="시계 15도 회전">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+        <path d="M21 3v5h-5"></path>
+      </svg>
+      +15°
+    </button>
+    <div class="quick-menu-divider"></div>
+    <button class="quick-menu-btn" id="qm-duplicate">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      복제
+    </button>
+    <button class="quick-menu-btn" id="qm-front">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+      </svg>
+      맨 위로
+    </button>
+    <div class="quick-menu-divider"></div>
+    <button class="quick-menu-btn danger" id="qm-delete">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      삭제
+    </button>
+  </div>
+
+  <!-- 6. Bottom Sheet Editor Modal -->
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="sheet-handle-bar" id="sheet-handle"></div>
+    
+    <div class="sheet-header-row">
+      <h3 class="sheet-title" id="sheet-header-title">카드 편집</h3>
+      <button class="sheet-close-btn" id="sheet-close-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="sheet-form-group">
+      <label class="sheet-label">제목</label>
+      <input type="text" class="sheet-input" id="edit-card-title" placeholder="카드 제목을 입력하세요">
+    </div>
+
+    <div class="sheet-form-group" id="group-content">
+      <label class="sheet-label">내용</label>
+      <textarea class="sheet-textarea" id="edit-card-content" placeholder="아이디어 또는 메모 내용을 적어보세요..."></textarea>
+    </div>
+
+    <div class="sheet-form-group" id="group-colors">
+      <label class="sheet-label">카드 테마 색상</label>
+      <div class="color-swatches-picker" id="color-picker-container">
+        <div class="color-picker-dot theme-yellow" data-theme="theme-yellow"></div>
+        <div class="color-picker-dot theme-peach" data-theme="theme-peach"></div>
+        <div class="color-picker-dot theme-mint" data-theme="theme-mint"></div>
+        <div class="color-picker-dot theme-sky" data-theme="theme-sky"></div>
+        <div class="color-picker-dot theme-lavender" data-theme="theme-lavender"></div>
+        <div class="color-picker-dot theme-rose" data-theme="theme-rose"></div>
+      </div>
+    </div>
+
+    <div class="sheet-actions-footer">
+      <button class="btn-sheet-danger" id="sheet-delete-btn">삭제</button>
+      <button class="btn-sheet-primary" id="sheet-save-btn">완료</button>
+    </div>
+  </div>
+
+  <!-- 7. Toast Feedback -->
+  <div class="toast-msg" id="toast-msg">알림 메시지</div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT: ENGINE & INTERACTION ARCHITECTURE
+       ========================================================================== -->
+  <script>
+    (function() {
+      'use strict';
+
+      // --- STATE MANAGEMENT ---
+      const state = {
+        panX: 0,
+        panY: 0,
+        scale: 1.0,
+        cards: [],
+        selectedCardId: null,
+        highestZIndex: 10,
+        editingCardId: null
+      };
+
+      const dom = {
+        viewport: document.getElementById('canvas-viewport'),
+        world: document.getElementById('canvas-world'),
+        counterText: document.getElementById('counter-text'),
+        opacityGroup: document.getElementById('opacity-group'),
+        opacitySlider: document.getElementById('opacity-slider'),
+        opacityValText: document.getElementById('opacity-val-text'),
+        hudZoomDisplay: document.getElementById('hud-zoom-display'),
+        hudZoomIn: document.getElementById('hud-zoom-in'),
+        hudZoomOut: document.getElementById('hud-zoom-out'),
+        hudResetView: document.getElementById('hud-reset-view'),
+        dockBar: document.getElementById('dock-bar'),
+        quickMenu: document.getElementById('quick-menu'),
+        sheetBackdrop: document.getElementById('sheet-backdrop'),
+        bottomSheet: document.getElementById('bottom-sheet'),
+        sheetHeaderTitle: document.getElementById('sheet-header-title'),
+        editTitle: document.getElementById('edit-card-title'),
+        editContent: document.getElementById('edit-card-content'),
+        groupContent: document.getElementById('group-content'),
+        groupColors: document.getElementById('group-colors'),
+        colorPickerContainer: document.getElementById('color-picker-container'),
+        sheetSaveBtn: document.getElementById('sheet-save-btn'),
+        sheetDeleteBtn: document.getElementById('sheet-delete-btn'),
+        sheetCloseBtn: document.getElementById('sheet-close-btn'),
+        toast: document.getElementById('toast-msg'),
+        btnExportJson: document.getElementById('btn-export-json'),
+        btnResetSample: document.getElementById('btn-reset-sample')
+      };
+
+      let toastTimer = null;
+      function showToast(msg) {
+        dom.toast.textContent = msg;
+        dom.toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          dom.toast.classList.remove('show');
+        }, 2200);
+      }
+
+      function triggerHaptic(type = 'light') {
+        if (!navigator.vibrate) return;
+        if (type === 'light') navigator.vibrate(15);
+        else if (type === 'medium') navigator.vibrate(35);
+        else if (type === 'heavy') navigator.vibrate([40, 30, 50]);
+      }
+
+      // ==========================================================================
+      // 2D CANVAS VIEWPORT TRANSFORM & INERTIA SYSTEM
+      // ==========================================================================
+      const viewportPointers = new Map();
+      let inertiaRafId = null;
+      let velocityQueue = [];
+      let isPinching = false;
+      let initialPinchDistance = 0;
+      let initialPinchScale = 1.0;
+      let pinchAnchorWorldX = 0;
+      let pinchAnchorWorldY = 0;
+      let isCanvasPanning = false;
+      let panStartPoint = { x: 0, y: 0 };
+      let panStartOrigin = { x: 0, y: 0 };
+
+      function updateWorldTransform() {
+        state.scale = Math.min(Math.max(state.scale, 0.2), 3.0);
+        dom.world.style.transform = `translate3d(${state.panX}px, ${state.panY}px, 0) scale(${state.scale})`;
+        
+        const bgDotSize = 28 * state.scale;
+        dom.viewport.style.backgroundSize = `${bgDotSize}px ${bgDotSize}px`;
+        dom.viewport.style.backgroundPosition = `${state.panX}px ${state.panY}px`;
+        dom.hudZoomDisplay.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function stopInertia() {
+        if (inertiaRafId) {
+          cancelAnimationFrame(inertiaRafId);
+          inertiaRafId = null;
+        }
+      }
+
+      dom.viewport.addEventListener('pointerdown', (e) => {
+        hideQuickMenu();
+        if (e.target === dom.viewport || e.target === dom.world) {
+          deselectCard();
+        }
+
+        stopInertia();
+        viewportPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (viewportPointers.size === 1) {
+          isCanvasPanning = true;
+          isPinching = false;
+          panStartPoint = { x: e.clientX, y: e.clientY };
+          panStartOrigin = { x: state.panX, y: state.panY };
+          velocityQueue = [{ x: e.clientX, y: e.clientY, time: performance.now() }];
+        } else if (viewportPointers.size === 2) {
+          isPinching = true;
+          isCanvasPanning = false;
+          
+          const ptrArr = Array.from(viewportPointers.values());
+          const p1 = ptrArr[0];
+          const p2 = ptrArr;
+          
+          const x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+          const cx = (x1 + x2) / 2;
+          const cy = (y1 + y2) / 2;
+          initialPinchDistance = Math.hypot(x2 - x1, y2 - y1);
+          initialPinchScale = state.scale;
+          
+          pinchAnchorWorldX = (cx - state.panX) / state.scale;
+          pinchAnchorWorldY = (cy - state.panY) / state.scale;
+        }
+      });
+
+      dom.viewport.addEventListener('pointermove', (e) => {
+        if (!viewportPointers.has(e.pointerId)) return;
+        viewportPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        const now = performance.now();
+
+        if (isPinching && viewportPointers.size >= 2) {
+          const ptrArr = Array.from(viewportPointers.values());
+          const p1 = ptrArr[0];
+          const p2 = ptrArr;
+          
+          const x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+          const cx = (x1 + x2) / 2;
+          const cy = (y1 + y2) / 2;
+          const currentDist = Math.hypot(x2 - x1, y2 - y1);
+
+          if (initialPinchDistance > 0) {
+            const scaleFactor = currentDist / initialPinchDistance;
+            state.scale = Math.min(Math.max(initialPinchScale * scaleFactor, 0.2), 3.0);
+            state.panX = cx - pinchAnchorWorldX * state.scale;
+            state.panY = cy - pinchAnchorWorldY * state.scale;
+            updateWorldTransform();
+          }
+        } else if (isCanvasPanning && viewportPointers.size === 1) {
+          const dx = e.clientX - panStartPoint.x;
+          const dy = e.clientY - panStartPoint.y;
+          state.panX = panStartOrigin.x + dx;
+          state.panY = panStartOrigin.y + dy;
+          updateWorldTransform();
+
+          velocityQueue.push({ x: e.clientX, y: e.clientY, time: now });
+          while (velocityQueue.length > 0 && now - velocityQueue[0].time > 120) {
+            velocityQueue.shift();
+          }
+        }
+      });
+
+      function handlePointerEnd(e) {
+        viewportPointers.delete(e.pointerId);
+
+        if (viewportPointers.size === 1) {
+          isPinching = false;
+          isCanvasPanning = true;
+          const remainingPtr = Array.from(viewportPointers.values())[0];
+          panStartPoint = { x: remainingPtr.x, y: remainingPtr.y };
+          panStartOrigin = { x: state.panX, y: state.panY };
+          velocityQueue = [{ x: remainingPtr.x, y: remainingPtr.y, time: performance.now() }];
+        } else if (viewportPointers.size === 0) {
+          if (isCanvasPanning) {
+            isCanvasPanning = false;
+            if (velocityQueue.length >= 2) {
+              const first = velocityQueue[0];
+              const last = velocityQueue[velocityQueue.length - 1];
+              const dt = Math.max(1, last.time - first.time);
+              const vx = (last.x - first.x) / dt;
+              const vy = (last.y - first.y) / dt;
+              const speed = Math.hypot(vx, vy);
+
+              if (speed > 0.15) {
+                let curVx = vx * 16.0;
+                let curVy = vy * 16.0;
+                const friction = 0.94;
+
+                function inertiaLoop() {
+                  if (Math.hypot(curVx, curVy) < 0.2) {
+                    stopInertia();
+                    return;
+                  }
+                  state.panX += curVx;
+                  state.panY += curVy;
+                  curVx *= friction;
+                  curVy *= friction;
+                  updateWorldTransform();
+                  inertiaRafId = requestAnimationFrame(inertiaLoop);
+                }
+                stopInertia();
+                inertiaRafId = requestAnimationFrame(inertiaLoop);
+              }
+            }
+          }
+          isPinching = false;
+        }
+      }
+
+      dom.viewport.addEventListener('pointerup', handlePointerEnd);
+      dom.viewport.addEventListener('pointercancel', handlePointerEnd);
+
+      dom.viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        stopInertia();
+
+        const cursorX = e.clientX;
+        const cursorY = e.clientY;
+        const worldX = (cursorX - state.panX) / state.scale;
+        const worldY = (cursorY - state.panY) / state.scale;
+
+        const zoomDelta = e.deltaY < 0 ? 1.12 : 0.89;
+        const oldScale = state.scale;
+        const newScale = Math.min(Math.max(oldScale * zoomDelta, 0.2), 3.0);
+
+        state.scale = newScale;
+        state.panX = cursorX - worldX * newScale;
+        state.panY = cursorY - worldY * newScale;
+        updateWorldTransform();
+      }, { passive: false });
+
+      function zoomAtCenter(factor) {
+        stopInertia();
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const worldX = (cx - state.panX) / state.scale;
+        const worldY = (cy - state.panY) / state.scale;
+
+        const newScale = Math.min(Math.max(state.scale * factor, 0.2), 3.0);
+        state.scale = newScale;
+        state.panX = cx - worldX * newScale;
+        state.panY = cy - worldY * newScale;
+        updateWorldTransform();
+        triggerHaptic('light');
+      }
+
+      dom.hudZoomIn.addEventListener('click', () => zoomAtCenter(1.2));
+      dom.hudZoomOut.addEventListener('click', () => zoomAtCenter(0.83));
+      dom.hudZoomDisplay.addEventListener('click', () => {
+        zoomAtCenter(1.0 / state.scale);
+        showToast('줌 배율 100% 리셋');
+      });
+
+      function centerCanvasContent() {
+        stopInertia();
+        if (state.cards.length === 0) {
+          state.panX = window.innerWidth / 2;
+          state.panY = window.innerHeight / 2;
+          state.scale = 1.0;
+          updateWorldTransform();
+          return;
+        }
+
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        state.cards.forEach(c => {
+          minX = Math.min(minX, c.x);
+          minY = Math.min(minY, c.y);
+          maxX = Math.max(maxX, c.x + 260);
+          maxY = Math.max(maxY, c.y + 220);
+        });
+
+        const contentW = Math.max(maxX - minX, 400);
+        const contentH = Math.max(maxY - minY, 400);
+        const centerWorldX = (minX + maxX) / 2;
+        const centerWorldY = (minY + maxY) / 2;
+
+        const pad = 120;
+        const availW = window.innerWidth - pad;
+        const availH = window.innerHeight - pad;
+
+        const fitScale = Math.min(Math.max(Math.min(availW / contentW, availH / contentH), 0.45), 1.15);
+        state.scale = fitScale;
+        state.panX = (window.innerWidth / 2) - centerWorldX * fitScale;
+        state.panY = (window.innerHeight / 2) - centerWorldY * fitScale;
+        updateWorldTransform();
+        triggerHaptic('medium');
+        showToast('캔버스 중앙 정렬 완료');
+      }
+
+      dom.hudResetView.addEventListener('click', centerCanvasContent);
+
+      // ==========================================================================
+      // CARD OBJECTS & GESTURES
+      // ==========================================================================
+      function updateCardCounter() {
+        dom.counterText.textContent = `총 카드: ${state.cards.length}개`;
+      }
+
+      function selectCard(cardId) {
+        state.selectedCardId = cardId;
+        const card = state.cards.find(c => c.id === cardId);
+        
+        document.querySelectorAll('.card-object').forEach(el => {
+          if (el.dataset.id === cardId) {
+            el.classList.add('is-selected');
+          } else {
+            el.classList.remove('is-selected');
+          }
+        });
+
+        if (card) {
+          dom.opacityGroup.classList.remove('disabled');
+          const opPercent = Math.round((card.opacity ?? 1.0) * 100);
+          dom.opacitySlider.value = opPercent;
+          dom.opacityValText.textContent = `${opPercent}%`;
+        } else {
+          dom.opacityGroup.classList.add('disabled');
+        }
+      }
+
+      function deselectCard() {
+        state.selectedCardId = null;
+        document.querySelectorAll('.card-object').forEach(el => el.classList.remove('is-selected'));
+        dom.opacityGroup.classList.add('disabled');
+        hideQuickMenu();
+      }
+
+      dom.opacitySlider.addEventListener('input', (e) => {
+        if (!state.selectedCardId) return;
+        const val = parseInt(e.target.value, 10);
+        const card = state.cards.find(c => c.id === state.selectedCardId);
+        if (card) {
+          card.opacity = val / 100;
+          dom.opacityValText.textContent = `${val}%`;
+          const cardEl = document.querySelector(`.card-object[data-id="${card.id}"]`);
+          if (cardEl) {
+            cardEl.style.opacity = card.opacity;
+          }
+        }
+      });
+
+      function showQuickMenu(card, cardEl) {
+        state.selectedCardId = card.id;
+        selectCard(card.id);
+        
+        const rect = cardEl.getBoundingClientRect();
+        const menuX = rect.left + rect.width / 2;
+        const menuY = rect.top;
+
+        dom.quickMenu.style.left = `${menuX}px`;
+        dom.quickMenu.style.top = `${menuY}px`;
+        dom.quickMenu.classList.add('active');
+        triggerHaptic('heavy');
+      }
+
+      function hideQuickMenu() {
+        dom.quickMenu.classList.remove('active');
+      }
+
+      function createCardElement(card) {
+        const cardEl = document.createElement('div');
+        cardEl.className = `card-object card-${card.type} ${card.theme || ''}`;
+        cardEl.dataset.id = card.id;
+        cardEl.style.zIndex = card.zIndex || 1;
+        cardEl.style.opacity = card.opacity ?? 1.0;
+        cardEl.style.transform = `translate3d(${card.x}px, ${card.y}px, 0) rotate(${card.rotation || 0}deg)`;
+
+        if (card.type === 'sticky') {
+          cardEl.innerHTML = `
+            <div class="sticky-tape"></div>
+            <div class="sticky-title">${escapeHtml(card.title || '새 메모')}</div>
+            <div class="sticky-body">${escapeHtml(card.content || '')}</div>
+            <div class="sticky-footer">
+              <span class="sticky-tag">${escapeHtml(card.tag || 'Design')}</span>
+              <span>${card.date || 'Today'}</span>
+            </div>
+          `;
+        } else if (card.type === 'photo') {
+          cardEl.innerHTML = `
+            <div class="photo-frame">
+              <img class="photo-img" src="${card.image}" alt="Moodboard Photo" loading="lazy">
+              <span class="photo-badge">${escapeHtml(card.tag || 'INSPIRATION')}</span>
+            </div>
+            <div class="photo-content">
+              <div class="photo-title">${escapeHtml(card.title || '디자인 무드')}</div>
+              <div class="photo-desc">${escapeHtml(card.content || '')}</div>
+            </div>
+          `;
+        } else if (card.type === 'palette') {
+          const swatches = card.swatches || ['#6366F1', '#EC4899', '#38BDF8', '#10B981', '#F59E0B'];
+          cardEl.innerHTML = `
+            <div class="palette-header">
+              <div class="palette-title">${escapeHtml(card.title || '컬러 팔레트')}</div>
+            </div>
+            <div class="swatches-grid">
+              ${swatches.map(hex => `<div class="swatch-item" style="background: ${hex};" title="${hex}" onclick="copyHex('${hex}')"></div>`).join('')}
+            </div>
+            <div class="swatch-codes">
+              ${swatches.slice(0, 3).map(hex => `
+                <div class="swatch-code-row">
+                  <span><span class="swatch-dot" style="background: ${hex};"></span> ${hex}</span>
+                  <span>HEX</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else if (card.type === 'idea') {
+          cardEl.innerHTML = `
+            <div class="idea-top-row">
+              <div class="idea-icon-badge">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M9 18h6"></path><path d="M10 22h4"></path>
+                  <path d="M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z"></path>
+                </svg>
+              </div>
+              <span class="idea-category">${escapeHtml(card.tag || 'KEY INSIGHT')}</span>
+            </div>
+            <div class="idea-title">${escapeHtml(card.title || '핵심 아이디어')}</div>
+            <div class="idea-body">${escapeHtml(card.content || '')}</div>
+          `;
+        } else if (card.type === 'todo') {
+          const items = card.todos || [];
+          cardEl.innerHTML = `
+            <div class="todo-header">
+              <div class="todo-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                ${escapeHtml(card.title || '체크리스트')}
+              </div>
+            </div>
+            <div class="todo-list">
+              ${items.map((item, idx) => `
+                <div class="todo-item ${item.done ? 'done' : ''}" data-idx="${idx}">
+                  <div class="todo-checkbox">
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" style="display: ${item.done ? 'block' : 'none'};"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <span class="todo-text">${escapeHtml(item.text)}</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else if (card.type === 'sticker') {
+          cardEl.innerHTML = `
+            <span>${card.emoji || '✨'}</span>
+            <span>${escapeHtml(card.title || 'APPROVED')}</span>
+          `;
+        }
+
+        attachCardGestures(cardEl, card);
+        return cardEl;
+      }
+
+      function renderAllCards() {
+        dom.world.innerHTML = '';
+        state.cards.forEach(card => {
+          const cardEl = createCardElement(card);
+          dom.world.appendChild(cardEl);
+        });
+        updateCardCounter();
+      }
+
+      function attachCardGestures(cardEl, card) {
+        let isDragging = false;
+        let isLongPressed = false;
+        let hasMovedPastSlop = false;
+        let startClient = { x: 0, y: 0 };
+        let startCardPos = { x: 0, y: 0 };
+        let longpressTimer = null;
+        const SLOP_THRESHOLD = 6.0;
+
+        cardEl.addEventListener('pointerdown', (e) => {
+          const todoItem = e.target.closest('.todo-item');
+          if (todoItem && card.type === 'todo') {
+            const idx = parseInt(todoItem.dataset.idx, 10);
+            if (card.todos && card.todos[idx]) {
+              card.todos[idx].done = !card.todos[idx].done;
+              triggerHaptic('light');
+              renderCardContent(cardEl, card);
+            }
+          }
+
+          e.stopPropagation();
+          stopInertia();
+          hideQuickMenu();
+
+          state.highestZIndex += 1;
+          card.zIndex = state.highestZIndex;
+          cardEl.style.zIndex = card.zIndex;
+          selectCard(card.id);
+
+          isDragging = false;
+          isLongPressed = false;
+          hasMovedPastSlop = false;
+          startClient = { x: e.clientX, y: e.clientY };
+          startCardPos = { x: card.x, y: card.y };
+
+          longpressTimer = setTimeout(() => {
+            if (!hasMovedPastSlop && !isDragging) {
+              isLongPressed = true;
+              showQuickMenu(card, cardEl);
+            }
+          }, 1000);
+
+          try {
+            cardEl.setPointerCapture(e.pointerId);
+          } catch(err) {}
+
+          const onPointerMove = (moveEv) => {
+            const dx = moveEv.clientX - startClient.x;
+            const dy = moveEv.clientY - startClient.y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist > SLOP_THRESHOLD) {
+              clearTimeout(longpressTimer);
+              hasMovedPastSlop = true;
+
+              if (!isLongPressed) {
+                if (!isDragging) {
+                  isDragging = true;
+                  cardEl.classList.add('is-dragging');
+                  triggerHaptic('light');
+                }
+
+                const worldDx = dx / state.scale;
+                const worldDy = dy / state.scale;
+                card.x = startCardPos.x + worldDx;
+                card.y = startCardPos.y + worldDy;
+                
+                cardEl.style.transform = `translate3d(${card.x}px, ${card.y}px, 0) rotate(${card.rotation || 0}deg)`;
+              }
+            }
+          };
+
+          const onPointerUp = (upEv) => {
+            clearTimeout(longpressTimer);
+            cardEl.removeEventListener('pointermove', onPointerMove);
+            cardEl.removeEventListener('pointerup', onPointerUp);
+            cardEl.removeEventListener('pointercancel', onPointerUp);
+            cardEl.classList.remove('is-dragging');
+
+            try {
+              cardEl.releasePointerCapture(upEv.pointerId);
+            } catch(err) {}
+
+            if (!hasMovedPastSlop && !isLongPressed) {
+              triggerHaptic('light');
+              openBottomSheetEditor(card);
+            }
+          };
+
+          cardEl.addEventListener('pointermove', onPointerMove);
+          cardEl.addEventListener('pointerup', onPointerUp);
+          cardEl.addEventListener('pointercancel', onPointerUp);
+        });
+      }
+
+      function renderCardContent(cardEl, card) {
+        const newEl = createCardElement(card);
+        cardEl.replaceWith(newEl);
+      }
+
+      // Quick Radial Menu Actions
+      dom.quickMenu.querySelector('#qm-rot-left').addEventListener('click', () => {
+        const card = state.cards.find(c => c.id === state.selectedCardId);
+        if (card) {
+          card.rotation = (card.rotation || 0) - 15;
+          const el = document.querySelector(`.card-object[data-id="${card.id}"]`);
+          if (el) el.style.transform = `translate3d(${card.x}px, ${card.y}px, 0) rotate(${card.rotation}deg)`;
+          triggerHaptic('light');
+          showToast(`회전: ${card.rotation}°`);
+        }
+      });
+
+      dom.quickMenu.querySelector('#qm-rot-right').addEventListener('click', () => {
+        const card = state.cards.find(c => c.id === state.selectedCardId);
+        if (card) {
+          card.rotation = (card.rotation || 0) + 15;
+          const el = document.querySelector(`.card-object[data-id="${card.id}"]`);
+          if (el) el.style.transform = `translate3d(${card.x}px, ${card.y}px, 0) rotate(${card.rotation}deg)`;
+          triggerHaptic('light');
+          showToast(`회전: ${card.rotation}°`);
+        }
+      });
+
+      dom.quickMenu.querySelector('#qm-duplicate').addEventListener('click', () => {
+        const card = state.cards.find(c => c.id === state.selectedCardId);
+        if (card) {
+          const clone = JSON.parse(JSON.stringify(card));
+          clone.id = 'card_' + Date.now();
+          clone.x += 30;
+          clone.y += 30;
+          state.highestZIndex += 1;
+          clone.zIndex = state.highestZIndex;
+          state.cards.push(clone);
+          
+          const newEl = createCardElement(clone);
+          dom.world.appendChild(newEl);
+          updateCardCounter();
+          selectCard(clone.id);
+          hideQuickMenu();
+          triggerHaptic('medium');
+          showToast('카드가 복제되었습니다');
+        }
+      });
+
+      dom.quickMenu.querySelector('#qm-front').addEventListener('click', () => {
+        const card = state.cards.find(c => c.id === state.selectedCardId);
+        if (card) {
+          state.highestZIndex += 1;
+          card.zIndex = state.highestZIndex;
+          const el = document.querySelector(`.card-object[data-id="${card.id}"]`);
+          if (el) el.style.zIndex = card.zIndex;
+          triggerHaptic('light');
+          showToast('맨 앞으로 가져왔습니다');
+        }
+      });
+
+      dom.quickMenu.querySelector('#qm-delete').addEventListener('click', () => {
+        if (!state.selectedCardId) return;
+        deleteCard(state.selectedCardId);
+        hideQuickMenu();
+      });
+
+      function deleteCard(cardId) {
+        state.cards = state.cards.filter(c => c.id !== cardId);
+        const el = document.querySelector(`.card-object[data-id="${cardId}"]`);
+        if (el) el.remove();
+        deselectCard();
+        updateCardCounter();
+        triggerHaptic('medium');
+        showToast('카드가 삭제되었습니다');
+      }
+
+      // ==========================================================================
+      // BOTTOM SHEET EDITOR SYSTEM
+      // ==========================================================================
+      let selectedTheme = 'theme-yellow';
+
+      function openBottomSheetEditor(card) {
+        state.editingCardId = card.id;
+        dom.sheetHeaderTitle.textContent = `${card.title || '카드'} 편집`;
+        dom.editTitle.value = card.title || '';
+        dom.editContent.value = card.content || '';
+
+        if (card.type === 'sticky') {
+          dom.groupColors.style.display = 'flex';
+          selectedTheme = card.theme || 'theme-yellow';
+          updateColorPickerSelection();
+        } else {
+          dom.groupColors.style.display = 'none';
+        }
+
+        if (card.type === 'sticker' || card.type === 'palette') {
+          dom.groupContent.style.display = 'none';
+        } else {
+          dom.groupContent.style.display = 'flex';
+        }
+
+        dom.sheetBackdrop.classList.add('open');
+        dom.bottomSheet.classList.add('open');
+      }
+
+      function closeBottomSheetEditor() {
+        dom.sheetBackdrop.classList.remove('open');
+        dom.bottomSheet.classList.remove('open');
+        state.editingCardId = null;
+      }
+
+      function updateColorPickerSelection() {
+        dom.colorPickerContainer.querySelectorAll('.color-picker-dot').forEach(dot => {
+          if (dot.dataset.theme === selectedTheme) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      dom.colorPickerContainer.addEventListener('click', (e) => {
+        const dot = e.target.closest('.color-picker-dot');
+        if (dot) {
+          selectedTheme = dot.dataset.theme;
+          updateColorPickerSelection();
+          triggerHaptic('light');
+        }
+      });
+
+      dom.sheetSaveBtn.addEventListener('click', () => {
+        if (!state.editingCardId) return;
+        const card = state.cards.find(c => c.id === state.editingCardId);
+        if (card) {
+          card.title = dom.editTitle.value.trim() || '제목 없음';
+          card.content = dom.editContent.value.trim();
+          if (card.type === 'sticky') {
+            card.theme = selectedTheme;
+          }
+          
+          const el = document.querySelector(`.card-object[data-id="${card.id}"]`);
+          if (el) renderCardContent(el, card);
+          triggerHaptic('light');
+          showToast('수정 사항이 저장되었습니다');
+        }
+        closeBottomSheetEditor();
+      });
+
+      dom.sheetDeleteBtn.addEventListener('click', () => {
+        if (state.editingCardId) {
+          deleteCard(state.editingCardId);
+        }
+        closeBottomSheetEditor();
+      });
+
+      dom.sheetCloseBtn.addEventListener('click', closeBottomSheetEditor);
+      dom.sheetBackdrop.addEventListener('click', closeBottomSheetEditor);
+
+      // ==========================================================================
+      // BOTTOM DOCK: CARD SPAWNING AT SCREEN CENTER
+      // ==========================================================================
+      function getScreenCenterWorldCoords() {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const jitterX = (Math.random() - 0.5) * 50;
+        const jitterY = (Math.random() - 0.5) * 50;
+
+        const worldX = (cx - state.panX) / state.scale - 110 + jitterX;
+        const worldY = (cy - state.panY) / state.scale - 90 + jitterY;
+        return { x: worldX, y: worldY };
+      }
+
+      function spawnNewCard(createType) {
+        const center = getScreenCenterWorldCoords();
+        state.highestZIndex += 1;
+        
+        let newCard = {
+          id: 'card_' + Date.now(),
+          x: center.x,
+          y: center.y,
+          rotation: (Math.random() - 0.5) * 8,
+          opacity: 1.0,
+          zIndex: state.highestZIndex
+        };
+
+        if (createType === 'sticky-yellow') {
+          newCard = { ...newCard, type: 'sticky', theme: 'theme-yellow', title: '아이디어 메모', content: '새로운 브랜딩 컨셉과 인터랙션 플로우를 구상해보세요.', tag: 'Idea' };
+        } else if (createType === 'sticky-peach') {
+          newCard = { ...newCard, type: 'sticky', theme: 'theme-peach', title: '무드 & 톤앤매너', content: '따뜻하고 인간적인 느낌의 파스텔 컬러와 둥근 모서리.', tag: 'Design' };
+        } else if (createType === 'sticky-mint') {
+          newCard = { ...newCard, type: 'sticky', theme: 'theme-mint', title: '스프린트 목표', content: '부드러운 제스처 감속과 핀치 줌 0ms 물리 추종 완성!', tag: 'Sprint' };
+        } else if (createType === 'idea') {
+          newCard = { ...newCard, type: 'idea', title: 'AI 캔버스 인터랙션', content: '도구함을 통한 즉시 생성과 롱프레스 퀵 액션으로 데스크톱급 생산성 제공.', tag: 'Innovation' };
+        } else if (createType === 'photo') {
+          const photoSamples = [
+            'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&auto=format&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=600&auto=format&fit=crop&q=80'
+          ];
+          const randomPhoto = photoSamples[Math.floor(Math.random() * photoSamples.length)];
+          newCard = { ...newCard, type: 'photo', title: '미니멀 오브젝트', content: '빛과 그림자의 조화로운 공간 구성', image: randomPhoto, tag: 'AESTHETIC' };
+        } else if (createType === 'palette') {
+          newCard = { ...newCard, type: 'palette', title: '2026 트렌드 팔레트', swatches: ['#4F46E5', '#06B6D4', '#10B981', '#F59E0B', '#EC4899'] };
+        } else if (createType === 'todo') {
+          newCard = { ...newCard, type: 'todo', title: '디자인 체크리스트', todos: [
+            { text: '무드보드 컬러 칩 수집', done: true },
+            { text: '타이포그래피 위계 정립', done: false },
+            { text: '키 인터랙션 프로토타이핑', done: false }
+          ]};
+        } else if (createType === 'sticker-approved') {
+          newCard = { ...newCard, type: 'sticker', theme: 'sticker-approved', title: 'APPROVED', emoji: '✨', rotation: -5 };
+        } else if (createType === 'sticker-trending') {
+          newCard = { ...newCard, type: 'sticker', theme: 'sticker-trending', title: 'TRENDING', emoji: '🔥', rotation: 6 };
+        }
+
+        state.cards.push(newCard);
+        const cardEl = createCardElement(newCard);
+        dom.world.appendChild(cardEl);
+        updateCardCounter();
+        selectCard(newCard.id);
+        triggerHaptic('medium');
+        showToast('새 카드가 생성되었습니다');
+      }
+
+      dom.dockBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.dock-item-btn');
+        if (btn && btn.dataset.create) {
+          spawnNewCard(btn.dataset.create);
+        }
+      });
+
+      // ==========================================================================
+      // INITIAL PRELOADED SAMPLE MOODBOARD LAYOUT
+      // ==========================================================================
+      function loadDefaultMoodboard() {
+        state.cards = [
+          {
+            id: 'c_welcome',
+            type: 'sticky',
+            theme: 'theme-yellow',
+            x: -280,
+            y: -180,
+            rotation: -3,
+            opacity: 1.0,
+            zIndex: 2,
+            title: '✨ 2026 Brand Design',
+            content: '두 손가락 핀치 줌과 드래그로 무한 캔버스를 탐색해보세요.\n\n카드를 가볍게 탭하면 편집, 1초간 길게 누르면 퀵 메뉴가 나타납니다!',
+            tag: 'Guide',
+            date: 'Sep 2026'
+          },
+          {
+            id: 'c_photo_1',
+            type: 'photo',
+            x: 0,
+            y: -240,
+            rotation: 2,
+            opacity: 1.0,
+            zIndex: 3,
+            title: 'Nordic Architecture',
+            content: '정갈한 선과 자연광이 주는 미니멀한 공간감.',
+            image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80',
+            tag: 'ARCHITECTURE'
+          },
+          {
+            id: 'c_palette_1',
+            type: 'palette',
+            x: 300,
+            y: -190,
+            rotation: -2,
+            opacity: 1.0,
+            zIndex: 4,
+            title: 'Editorial Horizon',
+            swatches: ['#0f172a', '#334155', '#6366f1', '#ec4899', '#f8fafc']
+          },
+          {
+            id: 'c_idea_1',
+            type: 'idea',
+            x: -260,
+            y: 110,
+            rotation: 4,
+            opacity: 1.0,
+            zIndex: 5,
+            title: '자연스러운 물리 인터랙션',
+            content: '120ms 모멘텀 큐 기반 관성 감속과 0ms GPU 밀착 추종으로 극상의 조작감을 선사합니다.',
+            tag: 'HCI DESIGN'
+          },
+          {
+            id: 'c_todo_1',
+            type: 'todo',
+            x: 30,
+            y: 120,
+            rotation: -1,
+            opacity: 1.0,
+            zIndex: 6,
+            title: '릴리즈 체크리스트',
+            todos: [
+              { text: '핀치 줌 중심축 보존 검증', done: true },
+              { text: '카드 드래그 중 배경 패닝 차단', done: true },
+              { text: '롱프레스 퀵 액션 바텀시트 연동', done: true },
+              { text: '모바일/태블릿 반응형 UI 최적화', done: true }
+            ]
+          },
+          {
+            id: 'c_sticker_1',
+            type: 'sticker',
+            theme: 'sticker-approved',
+            x: 320,
+            y: 130,
+            rotation: 8,
+            opacity: 1.0,
+            zIndex: 7,
+            title: 'DESIGN SYSTEM V2',
+            emoji: '💎'
+          }
+        ];
+        state.highestZIndex = 10;
+        renderAllCards();
+        centerCanvasContent();
+      }
+
+      dom.btnResetSample.addEventListener('click', () => {
+        loadDefaultMoodboard();
+        showToast('기본 무드보드 레이아웃이 복원되었습니다');
+      });
+
+      dom.btnExportJson.addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.cards, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", `studio_canvas_moodboard_${Date.now()}.json`);
+        dlAnchor.click();
+        showToast('무드보드 데이터가 JSON으로 다운로드되었습니다');
+      });
+
+      window.copyHex = function(hex) {
+        navigator.clipboard.writeText(hex).then(() => {
+          triggerHaptic('light');
+          showToast(`색상 코드 복사됨: ${hex}`);
+        }).catch(() => {
+          showToast(`색상 코드: ${hex}`);
+        });
+      };
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"']/g, function(m) {
+          switch (m) {
+            case '&': return '&amp;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '"': return '&quot;';
+            case "'": return '&#039;';
+          }
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        loadDefaultMoodboard();
+      });
+
+    })();
+  </script>
+</body>
+</html>

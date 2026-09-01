@@ -56,11 +56,10 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ```
 
 ### 🔒 반드시 유지해야 할 불변식 (Invariants)
-1. **2계층 분리 선언 불변식 (Two-Tier Separation Invariant)**:
-   * **원칙**: 다점 기하 연산 시 컨테이너 인덱싱과 속성 조회를 단일 라인에서 동시 연쇄(`points[0].x`, `points[1].x`)하는 행위를 엄격히 금지한다. (LLM의 `[1]` 토큰 증발 및 `points.x` 오타 원천 방어). 반드시 아래 3단계를 순차 준수해야 한다:
-     1. `[Tier 1: 컨테이너 ➔ 독립 원소 격리 선언]`: 컬렉션/배열에서 2개의 점을 독립 단일 변수(`p1`, `p2`)로 완전히 분리 선언. 이 단계 이후 컨테이너 식별자(`points`, `touches` 등)는 폐기.
-     2. `[Tier 2: 독립 원소 ➔ 4대 스칼라 추출]`: 분리된 `p1`, `p2`로부터만 4대 실수 스칼라 좌표($x_1 = p_1.x, y_1 = p_1.y, x_2 = p_2.x, y_2 = p_2.y$)를 안전하게 바인딩.
-     3. `[Tier 3: 순수 스칼라 기하 유도]`: 바인딩된 실수 스칼라 변수($x_1, y_1, x_2, y_2$)만으로 거리 $d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$와 중심점 $C = \left(\frac{x_1 + x_2}{2}, \frac{y_1 + y_2}{2}\right)$를 완결하여, 전 언어 런타임에서 속성 누락, `points.x`, `NaN`, `undefined`를 $0\%$로 원천 박멸.
+1. **2계층 분리 + 생성 오류 최소화 불변식 (Two-Tier Separation & Generation Minimization)**:
+   * **원칙**: 다점 기하 연산에서는 의미적 분리와 생성 구조적 분리를 동시에 만족해야 한다.
+     * **A. 의미적 계층 분리**: 반드시 `Container → Element → Scalar → Derived Geometry`의 계층 구조를 유지한다. (`Tier 1: 컨테이너 → 독립 원소` ➔ `Tier 2: 독립 원소 → 스칼라` ➔ `Tier 3: 스칼라 → 기하 수학 연산`).
+     * **B. 생성 구조적 분리**: Tier 1의 독립 원소 추출에서는 불필요한 반복적 위치 지정(수동 인덱싱)과 토큰 복제를 최소화한다. 가능한 경우 인덱스 기반 반복 추출보다 구조적 바인딩·패턴 추출·튜플/구조 분해(Destructuring, Pattern Matching, Tuple Binding) 등 해당 언어에서 제공되는 동등한 비반복적 표현을 우선하여 2개의 독립 객체를 얻기 위해 동일한 컨테이너 접근 패턴을 반복 생성하지 않는다.
 2. **포인터 수 변경 불변식 (N <-> M Anchor Re-sync)**: 포인터 수가 $N \leftrightarrow M$으로 증감하는 순간, 누적 변환 행렬(Transform Matrix)을 동결하고 남은 포인터의 위치를 새로운 기준점(Anchor)으로 즉시 재설정하여 화면 튐(Jump Glitch)을 방어해야 한다.
 4. **중심점 불변 보존 불변식 (Centroid Invariant Preservation Contract)**:
    * **수학적 계약**: 단일 포인터(마우스 휠/트랙패드) 또는 2포인터(핀치) 조작 시, 화면 상의 중심 앵커 $C(c_x, c_y)$에 놓인 월드 좌표 $W(w_x, w_y)$는 스케일이 $s_{\text{old}} \to s_{\text{new}}$로 변경된 직후에도 화면 상의 $C(c_x, c_y)$와 $0\text{px}$ 오차로 일치해야 한다.
