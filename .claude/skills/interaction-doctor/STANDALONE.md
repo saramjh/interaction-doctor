@@ -308,44 +308,39 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ---
 ---
 
-# [참조 헌장 4] 플랫폼별 물리 제약 및 선점 방어 헌장 (Platform Bounds & Preemption)
+# [참조 헌장 4] 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
 
-## 0. 개요: 하드웨어 및 OS 물리 제약의 보편적 기준
-
-인간의 손가락 크기, 운영체제(OS)의 시스템 제스처 감지 영역, 디바이스의 하드웨어 특성은 수학적으로 측정 가능한 물리적 제약조건을 형성한다.
-본 문서는 에이전트가 어떤 플랫폼의 코드를 작성하든 **반드시 지켜야 할 물리적 한계치와 선점 방어 규칙**을 제공한다.
-
----
-
-## 1. 운영체제별 시스템 제스처 선점 및 방어 규칙
-
-### 🍎 Apple iOS / iPadOS (WebKit & Native)
-1. **텍스트 선택 콜아웃 & 돋보기 간섭**:
-   * *물리 특성*: 롱프레스 지속 시 시스템이 텍스트 선택 돋보기를 띄우며 다음 터치 이벤트를 삼킴.
-   * *보편 방어*: 상호작용 컴포넌트에 시스템 텍스트 선택 및 콜아웃 억제(`user-select: none`, `-webkit-touch-callout: none`)를 기본 탑재.
-2. **시스템 화면 엣지 뒤로가기 제스처 (`UIScreenEdgePanGestureRecognizer`)**:
-   * *물리 특성*: 화면 좌측 가장자리 16~20pt 영역에서 스와이프 시 OS가 뷰 계층 전체의 제스처를 가로챔.
-   * *보편 방어*: 좌측 슬라이드 드로어 등은 엣지 시작 제스처에 우선권을 주되, 뷰포트 오버스크롤 고무줄 튕김(`overscroll-behavior: none`)을 전역 격리.
-3. **홈 인디케이터 및 다이내믹 아일랜드 Inset**:
-   * *물리 특성*: 하단 34pt, 상단 44~59pt의 시스템 물리 침범.
-   * *보편 방어*: 최하단 액션 버튼은 반드시 Safe-Area Inset 마진을 확보하여 오동작 방지.
+## 0. 개요: 하드웨어, OS, 소프트웨어 런타임을 관통하는 보편 물리 계층
+인간의 신체적 특성과 입력 하드웨어(터치스크린, 스타일러스 펜, 트랙패드, 마우스)는 소프트웨어 스택과 무관한 **수학적·물리적 절대 법칙**을 형성한다.
+`interaction-doctor`는 특정 브라우저나 언어에 국한되지 않고 **Web, React Native, Flutter, Swift/SwiftUI, Kotlin/Jetpack Compose, Electron** 등 모든 환경에서 동일하게 적용되는 포괄적 물리 계약을 제공한다.
 
 ---
 
-### 🤖 Google Android (Blink & Material)
-1. **시스템 브라우저 컨텍스트 메뉴**:
-   * *물리 특성*: `user-select: none`이 걸려 있어도 롱프레스 시 시스템 `contextmenu` 이벤트가 독립 발화함.
-   * *보편 방어*: `contextmenu` 이벤트 핸들러에서 기본 동작 취소(`e.preventDefault()`)를 무조건 병행.
-2. **OS 제스처 내비게이션 바 Inset**:
-   * *물리 특성*: 화면 좌우/하단 가장자리 16~24dp 영역의 시스템 뒤로가기/홈 제스처 침범.
-   * *보편 방어*: 스와이프 트리거 영역을 엣지에 너무 밀착시키지 않고 최소 16dp의 여백 확보.
-3. **네이티브 Pull-to-Refresh 선점**:
-   * *물리 특성*: 페이지 최상단에서 아래로 당길 때 브라우저 엔진이 제스처를 강제 종료(`pointercancel`)시킴.
-   * *보편 방어*: `overscroll-behavior-y: contain` 또는 최상단 감지 시 비선점 터치 이벤트로 브라우저 탈취 차단.
+## 1. 멀티 디바이스 하드웨어 특성 (Multi-Device Matrix)
+1. **스마트폰 터치스크린 (60Hz / 120Hz ProMotion)**: 접촉 초기 3~5px 인체 손떨림 발생. **8.0px 터치 슬롭(Touch Slop)** 및 리플로우 없는 0ms GPU 변환(`transform3d`, `Matrix4`, `GraphicsLayer`) 필수.
+2. **태블릿 & 스타일러스 펜 (Apple Pencil, S-Pen)**: 0.5~1.0mm 초정밀 펜촉. `pointerType === 'pen'` 감지 시 슬롭 0.5px 축소, 15mm 초과 광역 터치 즉시 팜 리젝션(Palm Rejection) 폐기.
+3. **데스크톱 트랙패드 & 휠 마우스**: 트랙패드 2손가락 핀치는 Web에서 `e.ctrlKey === true`로 식별 격리. 마우스 휠 노치 틱(Tick) 단위와 픽셀 단위를 물리 픽셀(16~24px)로 정규화.
+4. **폴더블 & 가변 뷰포트**: 힌지(Hinge) 접힘 시 뷰포트 상대 비율($x / W_{\text{viewport}}$)로 앵커 보정.
 
 ---
 
-## 2. 물리적 인터랙션 표준 수치 룩업 (HCI Golden Thresholds)
+## 2. 멀티 운영체제(OS) 시스템 제스처 선점 방어
+* **Apple iOS/iPadOS**: 20pt 엣지 데드존(좌측 스와이프 뒤로가기 탈취 방어), `overscroll-behavior: contain !important`, `user-select: none`, `-webkit-touch-callout: none` 전역 격리.
+* **Google Android**: 24dp 예측 뒤로가기 제스처 마진 확보, `contextmenu` 이벤트 핸들러 `e.preventDefault()`, 상단 Pull-to-Refresh 탈취 방지.
+* **macOS / Windows**: 트랙패드 좌우 스와이프 브라우저 내비게이션 격리(`overscroll-behavior-x: contain`), DirectManipulation 포인터 캡처 일원화.
+
+---
+
+## 3. 멀티 소프트웨어 프레임워크 보편 매핑 (Universal Binding Table)
+* **Web (DOM & React)**: W3C Pointer Events API (`setPointerCapture`), `Centroid Invariant` ($panX_{\text{new}} = cx - wx \times s_{\text{new}}$), `transform-origin: 0 0`.
+* **React Native & Expo**: `react-native-gesture-handler` (`activeOffsetX([-8, 8])`, `minDuration(350)`), `Reanimated 3` UI Worklet 0ms 가속.
+* **Flutter**: `InteractiveViewer`, `ScaleUpdateDetails.localFocalPoint` 기반 `Matrix4` 앵커 불변 변환.
+* **Native iOS (Swift / SwiftUI)**: `SimultaneousGesture` (`MagnificationGesture`, `DragGesture(minimumDistance: 8)`), 44pt Hit Target Extension.
+* **Native Android (Kotlin / Jetpack Compose)**: `Modifier.pointerInput` (`detectTransformGestures(panZoomLock = true)`), 48dp 터치 타깃.
+
+---
+
+## 4. 물리적 인터랙션 표준 수치 룩업 (HCI Golden Thresholds)
 
 | 인터랙션 파라미터 | 황금 표준값 (Standard Value) | 엔지니어링 근거 및 인간공학적 이유 |
 |:---|:---:|:---|
