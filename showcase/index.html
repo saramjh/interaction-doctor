@@ -1352,6 +1352,119 @@
       display: block;
     }
 
+  
+    /* ========================================================
+       CSS ANIMATED DEMO PLAYBACK SYSTEM (GHOST POINTER & HUD)
+       Zero user friction: Shows exactly how defects occur in real life!
+       ======================================================== */
+
+    .anim-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #090e1a;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 6px 12px;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .btn-play-anim {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-play-anim:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.6);
+    }
+    .btn-play-anim.playing {
+      background: #334155;
+      box-shadow: none;
+    }
+
+    .anim-timeline-track {
+      flex: 1;
+      height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .anim-timeline-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      border-radius: 2px;
+      transition: width 0.05s linear;
+    }
+
+    /* Virtual Touch Finger (Ghost Pointer) */
+    .ghost-pointer {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      background: rgba(255, 255, 255, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.4);
+      transition: transform 0.05s ease, opacity 0.2s ease;
+    }
+    .ghost-pointer::after {
+      content: '👆';
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      font-size: 20px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    }
+    .ghost-pointer.pressing {
+      background: rgba(59, 130, 246, 0.6);
+      border-color: #60a5fa;
+      transform: translate(-50%, -50%) scale(0.85);
+      box-shadow: 0 0 24px rgba(59, 130, 246, 0.9);
+    }
+
+    /* Animated Subtitle Toast (HUD inside stage) */
+    .demo-hud-toast {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 90;
+      display: none;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      animation: fadeInHUD 0.2s ease-out;
+    }
+    @keyframes fadeInHUD {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
   </style>
 </head>
 <body>
@@ -1425,6 +1538,17 @@
             </button>
           </div>
 
+          <!-- CSS ANIMATED DEMO AUTO-PLAY ENGINE BAR -->
+          <div class="anim-control-bar">
+            <button class="btn-play-anim" id="btnPlayDemo">
+              <span id="playIcon">▶️</span> <span id="playText">Play Defect Demo</span>
+            </button>
+            <div class="anim-timeline-track">
+              <div class="anim-timeline-fill" id="animProgressFill"></div>
+            </div>
+            <span style="font-size:10px; color:#94a3b8; font-family:'JetBrains Mono';" id="animStatusLabel">Ready</span>
+          </div>
+
           <div class="sim-toggle-bar">
             <button class="sim-toggle-btn without" id="btnModeWithout">
               ❌ Baseline (Defects)
@@ -1458,7 +1582,10 @@
               <span class="mobile-status-item">5G 􀛨 100%</span>
             </div>
 
-            <div class="sandbox-stage scroll-contained" id="sandboxStage"></div>
+            <div class="sandbox-stage scroll-contained" id="sandboxStage">
+              <div class="ghost-pointer" id="ghostPointer"></div>
+              <div class="demo-hud-toast" id="demoHudToast"></div>
+            </div>
 
             <div class="phone-home-indicator" id="phoneHomeIndicator">
               <div class="home-bar"></div>
@@ -2175,6 +2302,7 @@
           document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           renderScenario();
+          playScenarioAnimation(currentScenario, currentMode);
         });
         tagGrid.appendChild(btn);
       });
@@ -2325,6 +2453,427 @@
     // RIGOROUS INTERACTIVE SANDBOX DISPATCHER (P01~P36 FULL INTERACTION)
     // ========================================================
     
+    
+    // ========================================================
+    // CSS ANIMATED DEMO AUTO-PLAY ENGINE (ZERO USER FRICTION)
+    // Plays out real-life defects & physics fixes as a movie!
+    // ========================================================
+    const btnPlayDemo = document.getElementById('btnPlayDemo');
+    const playIcon = document.getElementById('playIcon');
+    const playText = document.getElementById('playText');
+    const animProgressFill = document.getElementById('animProgressFill');
+    const animStatusLabel = document.getElementById('animStatusLabel');
+
+    let currentAnimTimeline = null;
+    let isAnimPlaying = false;
+
+    function getGhostPointer() {
+      return sandboxStage.querySelector('#ghostPointer') || document.getElementById('ghostPointer');
+    }
+
+    function getDemoHudToast() {
+      return sandboxStage.querySelector('#demoHudToast') || document.getElementById('demoHudToast');
+    }
+
+    function showGhostFinger(x, y, isPressing = false) {
+      let gp = getGhostPointer();
+      if (!gp) {
+        gp = document.createElement('div');
+        gp.id = 'ghostPointer';
+        gp.className = 'ghost-pointer';
+        sandboxStage.appendChild(gp);
+      }
+      gp.style.display = 'block';
+      gp.style.left = `${x}px`;
+      gp.style.top = `${y}px`;
+      if (isPressing) gp.classList.add('pressing');
+      else gp.classList.remove('pressing');
+    }
+
+    function hideGhostFinger() {
+      const gp = getGhostPointer();
+      if (gp) gp.style.display = 'none';
+    }
+
+    function showHudSubtitle(text, type = 'info') {
+      let toast = getDemoHudToast();
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'demoHudToast';
+        toast.className = 'demo-hud-toast';
+        sandboxStage.appendChild(toast);
+      }
+      toast.style.display = 'block';
+      if (type === 'danger') {
+        toast.style.background = 'rgba(239, 68, 68, 0.92)';
+        toast.style.borderColor = '#ef4444';
+      } else if (type === 'success') {
+        toast.style.background = 'rgba(16, 185, 129, 0.92)';
+        toast.style.borderColor = '#10b981';
+      } else {
+        toast.style.background = 'rgba(15, 23, 42, 0.92)';
+        toast.style.borderColor = '#334155';
+      }
+      toast.textContent = text;
+    }
+
+    function hideHudSubtitle() {
+      const toast = getDemoHudToast();
+      if (toast) toast.style.display = 'none';
+    }
+
+    function stopAnimatedDemo() {
+      if (currentAnimTimeline) {
+        currentAnimTimeline.forEach(t => clearTimeout(t));
+        currentAnimTimeline = null;
+      }
+      isAnimPlaying = false;
+      btnPlayDemo.classList.remove('playing');
+      playIcon.textContent = '▶️';
+      playText.textContent = currentMode === 'without' ? 'Play Defect Demo' : 'Play Physics Demo';
+      animProgressFill.style.width = '0%';
+      animStatusLabel.textContent = 'Ready';
+      hideGhostFinger();
+      hideHudSubtitle();
+    }
+
+    function playScenarioAnimation(scenarioKey, mode) {
+      stopAnimatedDemo();
+      isAnimPlaying = true;
+      btnPlayDemo.classList.add('playing');
+      playIcon.textContent = '⏹️';
+      playText.textContent = 'Stop Demo';
+      animStatusLabel.textContent = mode === 'without' ? '🚨 Replaying Defect...' : '✨ Replaying Physics...';
+
+      const timers = [];
+      currentAnimTimeline = timers;
+
+      // Animate progress bar over 3.6s
+      const startTime = Date.now();
+      const duration = 3600;
+      const progressInterval = setInterval(() => {
+        if (!isAnimPlaying) { clearInterval(progressInterval); return; }
+        const elapsed = Date.now() - startTime;
+        const pct = Math.min(100, Math.round((elapsed / duration) * 100));
+        animProgressFill.style.width = `${pct}%`;
+        if (pct >= 100) clearInterval(progressInterval);
+      }, 40);
+      timers.push(progressInterval);
+
+      const stageRect = sandboxStage.getBoundingClientRect();
+      const cx = stageRect.width / 2 || 180;
+      const cy = stageRect.height / 2 || 240;
+
+      // --- P01 ANIMATION ---
+      if (scenarioKey === 'p01') {
+        showGhostFinger(cx, cy + 180, false);
+        showHudSubtitle('1. User taps message input bar to type...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy + 180, true);
+          const input = sandboxStage.querySelector('#mobileChatInput');
+          const kb = sandboxStage.querySelector('#simKeyboard');
+          const bar = sandboxStage.querySelector('#chatInputBar');
+          const alertBox = sandboxStage.querySelector('#prematureAlert');
+
+          if (kb) kb.classList.add('open');
+
+          if (mode === 'without') {
+            if (bar) bar.style.bottom = '0px'; // Stays hidden behind 220px keyboard!
+            showHudSubtitle('💥 100vh Defect: Keyboard popped up and completely hid the input bar!', 'danger');
+            if (alertBox) alertBox.style.display = 'block';
+          } else {
+            if (bar) bar.style.bottom = '220px'; // 0ms GPU Lift!
+            showHudSubtitle('✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!', 'success');
+          }
+        }, 800));
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx + 80, cy + 220, true); // Tap Enter
+          if (mode === 'without') {
+            showHudSubtitle('💥 IME Defect: Enter key accidentally sent an incomplete draft!', 'danger');
+          } else {
+            showHudSubtitle('✨ IME Guard: Enter inserted a smooth linebreak without premature send!', 'success');
+          }
+        }, 2200));
+
+      // --- P02 ANIMATION ---
+      } else if (scenarioKey === 'p02') {
+        const sheet = sandboxStage.querySelector('#sheetBox');
+        const alertBox = sandboxStage.querySelector('#sheetCollapsedAlert');
+        const list = sandboxStage.querySelector('#sheetList');
+
+        showGhostFinger(cx, cy + 120, false);
+        showHudSubtitle('1. User swipes down inside the place list to scroll...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy + 120, true);
+        }, 600));
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy + 200, true);
+          if (mode === 'without') {
+            if (sheet) sheet.style.transform = 'translateY(180px)';
+            if (alertBox) alertBox.style.display = 'block';
+            showHudSubtitle('💥 Contention Defect: Bottom Sheet accidentally collapsed while scrolling list!', 'danger');
+          } else {
+            if (list) list.scrollTop = 60;
+            showHudSubtitle('✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!', 'success');
+          }
+        }, 1200));
+
+      // --- P03 ANIMATION ---
+      } else if (scenarioKey === 'p03') {
+        const world = sandboxStage.querySelector('#canvasWorld');
+        const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
+        const hud = sandboxStage.querySelector('#zoomHud');
+
+        showGhostFinger(cx + 40, cy + 40, false);
+        showHudSubtitle('1. User places cursor on Target 🎯 Pin and zooms in...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx + 40, cy + 40, true);
+          if (mode === 'without') {
+            if (world) world.style.transform = 'translate3d(-200px, -200px, 0) scale(2.2)';
+            if (alertBox) alertBox.style.display = 'block';
+            if (hud) hud.textContent = 'Scale: 220%';
+            showHudSubtitle('💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!', 'danger');
+          } else {
+            if (world) world.style.transform = `translate3d(${-cx}px, ${-cy}px, 0) scale(2.0)`;
+            if (hud) hud.textContent = 'Scale: 200%';
+            showHudSubtitle('✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!', 'success');
+          }
+        }, 1000));
+
+      // --- P04 ANIMATION ---
+      } else if (scenarioKey === 'p04') {
+        const card = sandboxStage.querySelector('.kanban-card');
+        const kDisaster = sandboxStage.querySelector('#kanbanDisasterAlert');
+        const kSuccess = sandboxStage.querySelector('#kanbanSuccessAlert');
+
+        showGhostFinger(cx, cy - 40, false);
+        showHudSubtitle('1. User tries to scroll the kanban board vertically...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy + 40, true);
+          if (mode === 'without') {
+            if (card) { card.style.transform = 'scale(1.06) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
+            if (kDisaster) kDisaster.style.display = 'block';
+            showHudSubtitle('💥 Immediate Drag: Card grabbed instantly without delay, breaking the column!', 'danger');
+          } else {
+            showHudSubtitle('✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!', 'success');
+            if (kSuccess) kSuccess.style.display = 'block';
+          }
+        }, 1000));
+
+      // --- P05 ANIMATION ---
+      } else if (scenarioKey === 'p05') {
+        const row = sandboxStage.querySelector('.mail-content');
+        const alertEl = sandboxStage.querySelector('#swipeAlertBox');
+
+        showGhostFinger(cx, cy, false);
+        showHudSubtitle('1. User scrolls diagonally across the email inbox...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx - 80, cy + 60, true); // Diagonal drag
+          if (mode === 'without') {
+            if (row) row.style.transform = 'translateX(-120px)';
+            if (alertEl) alertEl.style.display = 'block';
+            showHudSubtitle('💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!', 'danger');
+          } else {
+            showHudSubtitle('✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!', 'success');
+          }
+        }, 1000));
+
+      // --- P07 ANIMATION ---
+      } else if (scenarioKey === 'p07') {
+        const fab = sandboxStage.querySelector('#fabBtn');
+        const modal = sandboxStage.querySelector('#fabActionModal');
+        const toastEl = sandboxStage.querySelector('#fabSuccessToast');
+
+        showGhostFinger(cx + 80, cy + 180, false);
+        showHudSubtitle('1. User drags the floating FAB button to a new corner...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx + 80, cy + 180, true);
+        }, 600));
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy, true);
+          if (fab) fab.style.transform = 'translate3d(-80px, -140px, 0)';
+        }, 1200));
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy, false); // Release drag
+          if (mode === 'without') {
+            if (modal) modal.style.display = 'flex';
+            showHudSubtitle('💥 False Click: Released drag falsely popped up New Note Editor modal!', 'danger');
+          } else {
+            if (toastEl) toastEl.style.display = 'block';
+            showHudSubtitle('✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal popup!', 'success');
+          }
+        }, 2000));
+
+      // --- P08 ANIMATION ---
+      } else if (scenarioKey === 'p08') {
+        const feed = sandboxStage.querySelector('#prependFeed');
+        const btn = sandboxStage.querySelector('#btnPrependOlder');
+        const alertEl = sandboxStage.querySelector('#prependAlert');
+
+        showGhostFinger(cx, cy - 140, false);
+        showHudSubtitle('1. User taps "Load Older Messages" to prepend content...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy - 140, true);
+          if (btn) btn.click();
+          if (mode === 'without') {
+            showHudSubtitle('💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!', 'danger');
+          } else {
+            showHudSubtitle('✨ Scroll Anchoring: Eye-level reading position frozen with 0px drift!', 'success');
+          }
+        }, 1000));
+
+      // --- P09 ANIMATION ---
+      } else if (scenarioKey === 'p09') {
+        const backdrop = sandboxStage.querySelector('#demoModalBackdrop');
+        const alertEl = sandboxStage.querySelector('#modalLeakAlert');
+
+        showGhostFinger(cx, cy, false);
+        showHudSubtitle('1. User drags text inside modal and releases on backdrop...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx + 100, cy + 100, true); // Released on backdrop
+          if (mode === 'without') {
+            if (backdrop) backdrop.style.display = 'none';
+            if (alertEl) alertEl.style.display = 'block';
+            showHudSubtitle('💥 Backdrop Drag Leak: Releasing text selection outside closed modal!', 'danger');
+          } else {
+            showHudSubtitle('✨ Dual Target Guard: Text selected safely, modal remains open!', 'success');
+          }
+        }, 1200));
+
+      // --- P13 ANIMATION ---
+      } else if (scenarioKey === 'p13') {
+        const thumb = sandboxStage.querySelector('#scrubThumb');
+        const prog = sandboxStage.querySelector('#scrubProgress');
+        const alertEl = sandboxStage.querySelector('#scrubAlert');
+
+        showGhostFinger(cx - 50, cy + 20, false);
+        showHudSubtitle('1. User drags scrubber thumb, then finger slips 50px upwards...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx - 50, cy + 20, true);
+        }, 600));
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx + 60, cy - 60, true); // Slipped outside
+          if (mode === 'without') {
+            if (alertEl) alertEl.style.display = 'block';
+            showHudSubtitle('💥 Pointer Slip: Seeking halted prematurely because finger left track!', 'danger');
+          } else {
+            if (prog) prog.style.width = '75%';
+            if (thumb) thumb.style.left = 'calc(75% - 10px)';
+            showHudSubtitle('✨ Pointer Capture: Seeking continues continuously even outside track bounds!', 'success');
+          }
+        }, 1400));
+
+      // --- P15 ANIMATION ---
+      } else if (scenarioKey === 'p15') {
+        const card = sandboxStage.querySelector('#trackpadCard');
+        const alertEl = sandboxStage.querySelector('#trackpadAlert');
+
+        showGhostFinger(cx, cy, false);
+        showHudSubtitle('1. User pinches with 2 fingers on macOS trackpad...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy, true);
+          if (mode === 'without') {
+            if (alertEl) alertEl.style.display = 'block';
+            showHudSubtitle('💥 Window Zoom Disaster: Whole browser window zoomed! Web page broken!', 'danger');
+          } else {
+            if (card) card.style.transform = 'scale(1.4)';
+            showHudSubtitle('✨ CtrlKey Isolated: Canvas layer zoomed smoothly without window zoom!', 'success');
+          }
+        }, 1000));
+
+      // --- P23 ANIMATION ---
+      } else if (scenarioKey === 'p23') {
+        const osBack = sandboxStage.querySelector('#osBackFade');
+        const drawer = sandboxStage.querySelector('#drawerPanel');
+
+        showGhostFinger(cx - 150, cy, false);
+        showHudSubtitle('1. User swipes from the left edge (10px) to open drawer...', 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx - 70, cy, true);
+          if (mode === 'without') {
+            if (osBack) osBack.style.display = 'flex';
+            showHudSubtitle('💥 OS Back Hijack: Browser back gesture hijacked! App closed!', 'danger');
+          } else {
+            if (drawer) drawer.style.transform = 'translateX(0)';
+            showHudSubtitle('✨ 20px Edge Deadzone: Drawer opened safely without OS back collision!', 'success');
+          }
+        }, 1200));
+
+      // --- P31 ANIMATION ---
+      } else if (scenarioKey === 'p31') {
+        const btn = sandboxStage.querySelector('#heartBtn');
+        const container = sandboxStage.querySelector('#doubleTapContainer');
+        const dtAlert = sandboxStage.querySelector('#doubleTapAlert');
+
+        showGhostFinger(cx, cy - 20, false);
+        showHudSubtitle('1. User rapidly double-taps heart button to like post...', 'info');
+
+        timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 600));
+        timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, false); }, 750));
+        timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 900));
+
+        timers.push(setTimeout(() => {
+          if (mode === 'without') {
+            if (container) container.style.transform = 'scale(2.2)';
+            if (dtAlert) dtAlert.style.display = 'block';
+            showHudSubtitle('💥 Double-Tap Zoom Disaster: Browser forced 300% page zoom!', 'danger');
+          } else {
+            if (btn) btn.style.transform = 'scale(1.3)';
+            setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 200);
+            showHudSubtitle('✨ Double-Tap Zoom Lock: Like triggered cleanly without page zoom explosion!', 'success');
+          }
+        }, 1100));
+
+      // --- GENERAL SCENARIO ANIMATION FALLBACK ---
+      } else {
+        showGhostFinger(cx, cy, false);
+        showHudSubtitle(`1. Simulating physical touch interaction for ${scenarioKey.toUpperCase()}...`, 'info');
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx, cy, true);
+        }, 600));
+
+        timers.push(setTimeout(() => {
+          showGhostFinger(cx + 40, cy + 40, true);
+          if (mode === 'without') {
+            showHudSubtitle('💥 Baseline Defect: Unmanaged touch caused gesture contention & coordinate jitter!', 'danger');
+          } else {
+            showHudSubtitle('✨ Physics Passed: 0ms GPU tracking without dropped frames or contention!', 'success');
+          }
+        }, 1400));
+      }
+
+      // Finish sequence after 3.5s
+      timers.push(setTimeout(() => {
+        stopAnimatedDemo();
+      }, 3600));
+    }
+
+    btnPlayDemo.addEventListener('click', () => {
+      if (isAnimPlaying) {
+        stopAnimatedDemo();
+      } else {
+        playScenarioAnimation(currentScenario, currentMode);
+      }
+    });
+
+
     function renderSandbox(scenarioKey, mode) {
       sandboxStage.innerHTML = '';
 
@@ -3891,6 +4440,7 @@
       btnModeWith.classList.add('active');
       btnModeWithout.classList.remove('active');
       renderScenario();
+      playScenarioAnimation(currentScenario, currentMode);
     });
 
     btnModeWithout.addEventListener('click', () => {
@@ -3898,6 +4448,7 @@
       btnModeWithout.classList.add('active');
       btnModeWith.classList.remove('active');
       renderScenario();
+      playScenarioAnimation(currentScenario, currentMode);
     });
 
     document.querySelectorAll('.sol-tab-btn').forEach(btn => {
@@ -3929,6 +4480,9 @@
     });
 
     renderLanguage();
+    setTimeout(() => {
+      playScenarioAnimation(currentScenario, currentMode);
+    }, 800);
   </script>
 </body>
 </html>
