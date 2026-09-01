@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Stepper (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 28px 20px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+  .stepper-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .step-btn {
+    width: 52px; /* 52dp 넉넉한 터치 타겟 */
+    height: 52px;
+    border-radius: 14px;
+    background: #090d16;
+    border: 2px solid #334155;
+    color: #38bdf8;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation; /* 300ms 탭 딜레이 및 더블탭 줌 완전 억제 */
+    transition: transform 0.1s, background 0.1s, border-color 0.1s;
+  }
+  .step-btn:active, .step-btn.pressed {
+    transform: scale(0.92);
+    background: #1e293b;
+    border-color: #38bdf8;
+  }
+  .count-display {
+    width: 80px;
+    font-size: 32px;
+    font-weight: 800;
+    color: #f8fafc;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px;">🛒 상품 수량 조절</h3>
+  <p style="font-size:12px; color:#94a3b8;">버튼을 빠르게 연타하거나 <strong>길게 누르고 있으면 고속으로 연속 증감</strong>합니다.</p>
+
+  <div class="stepper-control">
+    <button class="step-btn" id="btnMinus">−</button>
+    <div class="count-display" id="count">1</div>
+    <button class="step-btn" id="btnPlus">+</button>
+  </div>
+</div>
+
+<script>
+  let count = 1;
+  const countEl = document.getElementById('count');
+  const btnMinus = document.getElementById('btnMinus');
+  const btnPlus = document.getElementById('btnPlus');
+
+  function update(delta) {
+    count = Math.max(1, Math.min(99, count + delta));
+    countEl.textContent = count;
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  function bindContinuous(btn, delta) {
+    let holdTimer = null;
+    let repeatInterval = null;
+    let activePointerId = null;
+
+    btn.addEventListener('pointerdown', (e) => {
+      if (activePointerId !== null) return;
+      activePointerId = e.pointerId;
+      try { btn.setPointerCapture(e.pointerId); } catch(err) {}
+      btn.classList.add('pressed');
+      update(delta);
+
+      holdTimer = setTimeout(() => {
+        repeatInterval = setInterval(() => {
+          update(delta);
+        }, 75); // 75ms 초고속 연속 증감
+      }, 350);
+    });
+
+    const release = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      clearTimeout(holdTimer);
+      clearInterval(repeatInterval);
+      btn.classList.remove('pressed');
+      try { btn.releasePointerCapture(e.pointerId); } catch(err) {}
+      activePointerId = null;
+    };
+
+    btn.addEventListener('pointerup', release);
+    btn.addEventListener('pointercancel', release);
+  }
+
+  bindContinuous(btnMinus, -1);
+  bindContinuous(btnPlus, 1);
+</script>
+</body>
+</html>

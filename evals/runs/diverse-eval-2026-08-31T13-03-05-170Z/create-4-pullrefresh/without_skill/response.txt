@@ -1,0 +1,445 @@
+요청하신 모바일 리스트 화면용 **Pull-to-Refresh (PTR)** 컴포넌트를 단일 `index.html` 파일로 구현했습니다.
+
+### 주요 구현 특징
+1. **정밀한 스크롤 감지**: 리스트의 최상단(`scrollTop === 0`)일 때 아래로 당기는 동작에서만 인디케이터가 동작하며, **리스트 중간이나 하단 스크롤 중에는 절대 인디케이터가 트리거되지 않습니다.**
+2. **부드러운 저항감 (Damping Effect)**: 손가락으로 당길 때 정밀하게 계산된 저항 공식(`Math.pow`)을 적용하여 실제 네이티브 앱과 같은 자연스러운 피드백을 제공합니다.
+3. **상태별 Visual Feedback**:
+   - **당기는 중**: 아이콘 회전 및 문구 변경 ("아래로 당겨서 새로고침" → "손을 놓아 새로고침")
+   - **임계값 달성 시**: 모바일 햅틱 진동 피드백(`navigator.vibrate`) 제공
+   - **새로고침 중**: 부드러운 스피너 애니메이션 및 리스트 데이터 갱신
+4. **60fps 성능 최적화**: `requestAnimationFrame`과 CSS `transform`을 활용하여 끊김 없는 부드러운 모션을 제공합니다.
+
+---
+
+### 전체 코드 (`index.html`)
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pull-to-Refresh Component</title>
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --border-color: #e2e8f0;
+      --ptr-height: 60px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #1e293b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text-main);
+    }
+
+    /* 모바일 디바이스 프레임 (데스크톱 시뮬레이션용) */
+    .phone-container {
+      width: 100%;
+      max-width: 414px;
+      height: 100vh;
+      max-height: 896px;
+      background-color: var(--bg-color);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (min-width: 440px) {
+      .phone-container {
+        border-radius: 40px;
+        height: 844px;
+        border: 8px solid #334155;
+      }
+    }
+
+    /* 상단 헤더 */
+    .app-header {
+      height: 60px;
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .app-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .refresh-badge {
+      font-size: 12px;
+      color: var(--text-sub);
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+
+    /* 스크롤 가능한 리스트 영역 */
+    .scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+      -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+      overscroll-behavior-y: contain; /* 브라우저 기본 PTR 방지 */
+    }
+
+    /* Pull-to-Refresh 인디케이터 */
+    .ptr-element {
+      position: absolute;
+      top: calc(-1 * var(--ptr-height));
+      left: 0;
+      width: 100%;
+      height: var(--ptr-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-sub);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 5;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .ptr-icon-wrapper {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--card-bg);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .ptr-icon {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: var(--primary-color);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.2s ease;
+    }
+
+    /* 스피너 애니메이션 */
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e2e8f0;
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 리스트 콘텐츠 */
+    .list-content {
+      will-change: transform;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background-color: #eff6ff;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .card-info {
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-date {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    /* 트랜지션 제어용 클래스 */
+    .is-animating .ptr-element,
+    .is-animating .list-content {
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* 새로고침 중 상태 */
+    .is-refreshing .spinner {
+      display: block;
+    }
+    .is-refreshing .ptr-icon {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-container">
+    <!-- 헤더 -->
+    <header class="app-header">
+      <h1>피드 목록</h1>
+      <span class="refresh-badge" id="lastUpdated">방금 전 업데이트</span>
+    </header>
+
+    <!-- 스크롤 가능한 컨테이너 -->
+    <div class="scroll-container" id="scrollContainer">
+      
+      <!-- PTR 인디케이터 -->
+      <div class="ptr-element" id="ptrIndicator">
+        <div class="ptr-icon-wrapper">
+          <svg class="ptr-icon" id="ptrIcon" viewBox="0 0 24 24">
+            <path d="M12 5v14M19 12l-7 7-7-7"/>
+          </svg>
+          <div class="spinner" id="ptrSpinner"></div>
+        </div>
+        <span class="ptr-text" id="ptrText">당겨서 새로고침</span>
+      </div>
+
+      <!-- 아이템 리스트 -->
+      <div class="list-content" id="listContent">
+        <!-- JS로 동적 생성됨 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- DOM 요소 참조 ---
+    const scrollContainer = document.getElementById('scrollContainer');
+    const listContent = document.getElementById('listContent');
+    const ptrIndicator = document.getElementById('ptrIndicator');
+    const ptrIcon = document.getElementById('ptrIcon');
+    const ptrText = document.getElementById('ptrText');
+    const lastUpdated = document.getElementById('lastUpdated');
+
+    // --- 설정 및 상태 변수 ---
+    const THRESHOLD = 70;      // 새로고침을 트리거하는 당김 거리 (px)
+    const MAX_PULL = 110;      // 최대 당길 수 있는 거리 (px)
+    const RESISTANCE = 0.45;    // 당길 때 손가락 움직임 대비 저항계수
+
+    let startY = 0;
+    let currentY = 0;
+    let pullDistance = 0;
+    let isPulling = false;
+    let isRefreshing = false;
+    let reachThreshold = false;
+
+    // 초기 더미 데이터 생성
+    let itemCounter = 1;
+    function generateItems(count, isPrepend = false) {
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < count; i++) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-icon">#${itemCounter}</div>
+          <div class="card-info">
+            <div class="card-title">새로운 소식 ${itemCounter}번째</div>
+            <div class="card-date">${new Date().toLocaleTimeString()} 등록됨</div>
+          </div>
+        `;
+        if (isPrepend) {
+          fragment.insertBefore(card, fragment.firstChild);
+        } else {
+          fragment.appendChild(card);
+        }
+        itemCounter++;
+      }
+      return fragment;
+    }
+
+    // 초기 리스트 채우기
+    listContent.appendChild(generateItems(10));
+
+    // --- Touch Event Handlers ---
+
+    // 1. 터치 시작 (Touch Start)
+    scrollContainer.addEventListener('touchstart', (e) => {
+      // 리스트의 맨 위(scrollTop === 0)이고, 현재 새로고침 중이 아닐 때만 시작 가능
+      if (scrollContainer.scrollTop === 0 && !isRefreshing) {
+        startY = e.touches[0].clientY;
+        isPulling = true;
+        
+        // 애니메이션 클래스 제거 (드래그 시 즉각적인 반응을 위해)
+        scrollContainer.classList.remove('is-animating');
+      }
+    }, { passive: true });
+
+    // 2. 터치 이동 (Touch Move)
+    scrollContainer.addEventListener('touchmove', (e) => {
+      if (!isPulling || isRefreshing) return;
+
+      currentY = e.touches[0].clientY;
+      const diffY = currentY - startY;
+
+      // ★ 핵심 조건: 최상단에서 아래로 당길 때만 트리거 (위로 스크롤 시 절대 작동 금지)
+      if (diffY > 0 && scrollContainer.scrollTop <= 0) {
+        // 브라우저 기본 바운스/스크롤 동작 방지
+        if (e.cancelable) e.preventDefault();
+
+        // 저항을 적용한 당김 거리 계산
+        pullDistance = Math.min(Math.pow(diffY, 0.85) * RESISTANCE, MAX_PULL);
+
+        // UI 업데이트 (60fps를 위해 Transform 활용)
+        updatePTRUI(pullDistance);
+      } else {
+        // 리스트 중간 스크롤 등으로 전환될 경우 PTR 취소
+        if (pullDistance > 0) {
+          resetPTR();
+        }
+        isPulling = false;
+      }
+    }, { passive: false });
+
+    // 3. 터치 종료 (Touch End)
+    scrollContainer.addEventListener('touchend', () => {
+      if (!isPulling || isRefreshing) return;
+      
+      isPulling = false;
+      scrollContainer.classList.add('is-animating');
+
+      // 임계값을 넘었으면 새로고침 실행, 미달시 원위치
+      if (pullDistance >= THRESHOLD) {
+        triggerRefresh();
+      } else {
+        resetPTR();
+      }
+    });
+
+    // --- UI 및 상태 제어 함수 ---
+
+    // 당길 때 UI 상태 실시간 갱신
+    function updatePTRUI(distance) {
+      // 인디케이터와 콘텐츠 위치 이동
+      ptrIndicator.style.transform = `translateY(${distance}px)`;
+      listContent.style.transform = `translateY(${distance}px)`;
+
+      // 아이콘 회전 각도 및 텍스트 변경
+      const progress = Math.min(distance / THRESHOLD, 1);
+      const rotation = progress * 180;
+      ptrIcon.style.transform = `rotate(${rotation}deg)`;
+
+      if (distance >= THRESHOLD) {
+        if (!reachThreshold) {
+          reachThreshold = true;
+          ptrText.textContent = '손을 놓아 새로고침';
+          // 햅틱 진동 피드백 (지원되는 기기)
+          if (navigator.vibrate) navigator.vibrate(10);
+        }
+      } else {
+        if (reachThreshold) {
+          reachThreshold = false;
+          ptrText.textContent = '아래로 당겨서 새로고침';
+        }
+      }
+    }
+
+    // 새로고침 실행
+    function triggerRefresh() {
+      isRefreshing = true;
+      scrollContainer.classList.add('is-refreshing');
+
+      // 인디케이터를 임계값 높이에 고정
+      ptrIndicator.style.transform = `translateY(${THRESHOLD}px)`;
+      listContent.style.transform = `translateY(${THRESHOLD}px)`;
+      ptrText.textContent = '새로고침 중...';
+
+      // 서버 비동기 요청 시뮬레이션 (1.5초)
+      setTimeout(() => {
+        // 새로운 데이터 리스트 상단에 추가
+        listContent.insertBefore(generateItems(3, true), listContent.firstChild);
+        
+        // 마지막 업데이트 시간 변경
+        const now = new Date();
+        lastUpdated.textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} 업데이트됨`;
+
+        // 완료 후 PTR 상태 복구
+        completeRefresh();
+      }, 1500);
+    }
+
+    // 새로고침 완료 처리
+    function completeRefresh() {
+      ptrText.textContent = '완료!';
+      
+      setTimeout(() => {
+        resetPTR(() => {
+          isRefreshing = false;
+          scrollContainer.classList.remove('is-refreshing');
+          ptrIcon.style.transform = 'rotate(0deg)';
+        });
+      }, 300);
+    }
+
+    // 인디케이터 원위치 리셋
+    function resetPTR(callback) {
+      scrollContainer.classList.add('is-animating');
+      ptrIndicator.style.transform = 'translateY(0)';
+      listContent.style.transform = 'translateY(0)';
+      
+      pullDistance = 0;
+      reachThreshold = false;
+      ptrText.textContent = '아래로 당겨서 새로고침';
+
+      if (callback) {
+        setTimeout(callback, 300);
+      }
+    }
+  </script>
+</body>
+</html>
+```

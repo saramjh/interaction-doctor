@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pull to Refresh (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #090d16;
+    color: #f1f5f9;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .app-bar {
+    padding: 16px 20px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+  }
+  .scroll-container {
+    height: calc(100vh - 57px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    overscroll-behavior-y: none;
+  }
+  .ptr-indicator {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #38bdf8;
+    font-size: 14px;
+    font-weight: 600;
+    will-change: transform;
+    pointer-events: none;
+  }
+  .ptr-icon {
+    font-size: 18px;
+    transition: transform 0.18s;
+  }
+  .content-list {
+    padding: 16px;
+    will-change: transform;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .content-list.pulling {
+    transition: none; /* 드래그 중 1:1 밀착 */
+  }
+  .feed-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+<body>
+
+<div class="app-bar">
+  <span>⚡ 실시간 피드</span>
+  <span style="font-size:12px; color:#94a3b8;" id="statusText">맨 위에서 아래로 당김</span>
+</div>
+
+<div class="scroll-container" id="scrollContainer">
+  <div class="ptr-indicator" id="ptrIndicator">
+    <span class="ptr-icon" id="ptrIcon">↓</span>
+    <span id="ptrText">당겨서 새로고침</span>
+  </div>
+
+  <div class="content-list" id="contentList">
+    <div class="feed-card">
+      <h4 style="margin-bottom:6px; color:#38bdf8;">✅ 정밀 Pull-to-Refresh</h4>
+      <p style="font-size:13px; color:#cbd5e1;">최상단에서 당기면 안드로이드/iOS 네이티브 간섭 없이 즉시 인디케이터가 따라옵니다.</p>
+    </div>
+    <div class="feed-card">📌 최신 뉴스 피드 1</div>
+    <div class="feed-card">📌 최신 뉴스 피드 2</div>
+    <div class="feed-card">📌 최신 뉴스 피드 3</div>
+    <div class="feed-card">📌 최신 뉴스 피드 4</div>
+    <div class="feed-card">📌 최신 뉴스 피드 5</div>
+  </div>
+</div>
+
+<script>
+  const container = document.getElementById('scrollContainer');
+  const contentList = document.getElementById('contentList');
+  const ptrIndicator = document.getElementById('ptrIndicator');
+  const ptrIcon = document.getElementById('ptrIcon');
+  const ptrText = document.getElementById('ptrText');
+  const statusText = document.getElementById('statusText');
+
+  let startY = 0;
+  let activePointerId = null;
+  let isPulling = false;
+  let isRefreshing = false;
+  const THRESHOLD = 52; // 반응성 최적화 임계값 (52px)
+
+  container.addEventListener('pointerdown', (e) => {
+    if (isRefreshing || activePointerId !== null) return;
+    if (container.scrollTop <= 0) {
+      activePointerId = e.pointerId;
+      startY = e.clientY;
+      isPulling = false;
+    }
+  });
+
+  container.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId || isRefreshing) return;
+
+    const dy = e.clientY - startY;
+    if (dy > 4 && container.scrollTop <= 0) {
+      isPulling = true;
+      contentList.classList.add('pulling');
+
+      // 부드러운 물리 저항 감속
+      const clamped = Math.min(80, (dy - 4) * 0.65);
+
+      contentList.style.transform = `translate3d(0, ${clamped}px, 0)`;
+      ptrIndicator.style.transform = `translate3d(0, ${clamped}px, 0)`;
+
+      if (clamped >= THRESHOLD) {
+        ptrIcon.style.transform = 'rotate(180deg)';
+        ptrText.textContent = '놓으면 새로고침';
+      } else {
+        ptrIcon.style.transform = 'rotate(0deg)';
+        ptrText.textContent = '당겨서 새로고침';
+      }
+    }
+  });
+
+  const endPull = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    activePointerId = null;
+
+    if (!isPulling) return;
+    isPulling = false;
+    contentList.classList.remove('pulling');
+
+    const currentTransform = contentList.style.transform;
+    const match = /translate3d\(0px,\s*([\d.]+)px/.exec(currentTransform);
+    const pulledY = match ? parseFloat(match[1]) : 0;
+
+    if (pulledY >= THRESHOLD) {
+      isRefreshing = true;
+      contentList.style.transform = `translate3d(0, 45px, 0)`;
+      ptrIndicator.style.transform = `translate3d(0, 45px, 0)`;
+      ptrIcon.textContent = '⏳';
+      ptrText.textContent = '데이터 갱신 중...';
+      statusText.textContent = '새로고침 진행 중';
+
+      setTimeout(() => {
+        isRefreshing = false;
+        contentList.style.transform = 'translate3d(0, 0, 0)';
+        ptrIndicator.style.transform = 'translate3d(0, 0, 0)';
+        ptrIcon.textContent = '↓';
+        ptrText.textContent = '당겨서 새로고침';
+        statusText.textContent = '갱신 완료';
+      }, 1000);
+    } else {
+      contentList.style.transform = 'translate3d(0, 0, 0)';
+      ptrIndicator.style.transform = 'translate3d(0, 0, 0)';
+    }
+  };
+
+  container.addEventListener('pointerup', endPull);
+  container.addEventListener('pointercancel', endPull);
+
+  // 안드로이드 크롬 기본 PTR 제스처 억제 가드
+  container.addEventListener('touchmove', (e) => {
+    if (isPulling && e.cancelable) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
+</body>
+</html>

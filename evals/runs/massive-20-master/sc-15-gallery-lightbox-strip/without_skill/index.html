@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery Lightbox (Without Skill)</title>
+<style>
+body { margin:0; background:#111; color:#fff; font-family:sans-serif; padding:20px; }
+.main-view { width:100%; height:200px; background:#333; display:flex; align-items:center; justify-content:center; font-size:24px; }
+.strip { display:flex; gap:10px; overflow-x:scroll; margin-top:10px; }
+.thumb { width:60px; height:60px; background:#555; flex-shrink:0; cursor:pointer; }
+</style>
+</head>
+<body>
+<h3>갤러리 라이트박스 (Without Skill)</h3>
+<div class="main-view" id="main">사진 1</div>
+<div class="strip">
+  <div class="thumb" onclick="change(1)">1</div>
+  <div class="thumb" onclick="change(2)">2</div>
+  <div class="thumb" onclick="change(3)">3</div>
+  <div class="thumb" onclick="change(4)">4</div>
+  <div class="thumb" onclick="change(5)">5</div>
+</div>
+<script>
+function change(n) { document.getElementById('main').textContent = '사진 ' + n; }
+</script>
+</body>
+</html>

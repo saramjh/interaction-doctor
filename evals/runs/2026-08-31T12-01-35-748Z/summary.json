@@ -1,0 +1,16 @@
+[
+  {
+    "scenario": "01-reorder-no-handle",
+    "condition": "noskill",
+    "ok": true,
+    "codeLength": 3518,
+    "warning": null
+  },
+  {
+    "scenario": "01-reorder-no-handle",
+    "condition": "skill",
+    "ok": true,
+    "codeLength": 4176,
+    "warning": null
+  }
+]

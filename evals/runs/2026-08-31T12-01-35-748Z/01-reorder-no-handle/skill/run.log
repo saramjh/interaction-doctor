@@ -1,0 +1,5 @@
+다음 호출을 실행합니다: 01-reorder-no-handle, skill · model=gemini-3.6-flash · systemInstruction 52808자, input(request.txt) 131자 · 예상 비용 추정 ≈ $0.0174 USD(대략치, 출력 2000토큰 가정 — 실제 청구액과 다를 수 있음)
+API 호출 시작 (model=gemini-3.6-flash, systemInstruction 52808자, input(request.txt) 131자)
+  시도 1/3 시작 — 2026-08-31T12:02:07.623Z
+  시도 1 성공 — 2026-08-31T12:02:33.172Z
+성공 — 코드 4176자를 project/index.html로 저장함

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tag Cloud (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px;
+    border-radius: 20px;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .zone-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+  .tag-zone {
+    min-height: 90px;
+    background: #090d16;
+    border: 2px dashed #334155;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    margin-bottom: 18px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .tag-zone.highlight {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+  }
+  .tag-chip {
+    padding: 8px 16px;
+    background: #1e293b;
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: grab;
+    touch-action: none; /* 브라우저 스크롤 차단 */
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .tag-chip.dragging {
+    opacity: 0.4;
+  }
+  .ghost-tag {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    padding: 8px 16px;
+    background: #38bdf8;
+    color: #0f172a;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.6);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px;">🏷️ 기술 스택 태그 분류</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">태그를 손가락으로 끌어 '선택한 기술' 영역으로 이동시키세요.</p>
+
+  <div class="zone-title">📌 보유 기술 풀 (드래그 가능)</div>
+  <div class="tag-zone" id="poolZone">
+    <div class="tag-chip" data-id="1">TypeScript</div>
+    <div class="tag-chip" data-id="2">Next.js</div>
+    <div class="tag-chip" data-id="3">TailwindCSS</div>
+    <div class="tag-chip" data-id="4">PostgreSQL</div>
+  </div>
+
+  <div class="zone-title">⭐ 프로젝트 투입 기술</div>
+  <div class="tag-zone" id="targetZone"></div>
+</div>
+
+<script>
+  let draggingTag = null;
+  let ghost = null;
+  let activePointerId = null;
+
+  const poolZone = document.getElementById('poolZone');
+  const targetZone = document.getElementById('targetZone');
+
+  function initTag(tag) {
+    tag.addEventListener('pointerdown', (e) => {
+      if (activePointerId !== null) return;
+      activePointerId = e.pointerId;
+      try { tag.setPointerCapture(e.pointerId); } catch(err) {}
+
+      draggingTag = tag;
+      tag.classList.add('dragging');
+
+      ghost = document.createElement('div');
+      ghost.className = 'ghost-tag';
+      ghost.textContent = tag.textContent;
+      document.body.appendChild(ghost);
+      moveGhost(e.clientX, e.clientY);
+
+      if (navigator.vibrate) navigator.vibrate(25);
+    });
+
+    tag.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== activePointerId || !ghost) return;
+      moveGhost(e.clientX, e.clientY);
+
+      // 드롭 영역 하이라이트 체크
+      const overZone = getZoneUnder(e.clientX, e.clientY);
+      targetZone.classList.toggle('highlight', overZone === targetZone);
+      poolZone.classList.toggle('highlight', overZone === poolZone);
+    });
+
+    const onRelease = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      if (ghost) ghost.remove();
+      tag.classList.remove('dragging');
+
+      const dropZone = getZoneUnder(e.clientX, e.clientY);
+      if (dropZone) {
+        dropZone.appendChild(tag);
+        if (navigator.vibrate) navigator.vibrate(35);
+      }
+
+      targetZone.classList.remove('highlight');
+      poolZone.classList.remove('highlight');
+      try { tag.releasePointerCapture(e.pointerId); } catch(err) {}
+
+      activePointerId = null;
+      draggingTag = null;
+      ghost = null;
+    };
+
+    tag.addEventListener('pointerup', onRelease);
+    tag.addEventListener('pointercancel', onRelease);
+  }
+
+  function moveGhost(x, y) {
+    if (ghost) {
+      ghost.style.left = `${x}px`;
+      ghost.style.top = `${y}px`;
+    }
+  }
+
+  function getZoneUnder(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (el) return el.closest('.tag-zone');
+    return null;
+  }
+
+  document.querySelectorAll('.tag-chip').forEach(initTag);
+</script>
+</body>
+</html>

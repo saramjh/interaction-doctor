@@ -64,6 +64,46 @@ const subtests = {
 		return { ...r, reorderIndicatorShown: r.opacityDuringMove === "0.6" };
 	},
 
+	// common-pitfalls.md §9 원칙("결과가 예상과 다르면 그레이더부터
+	// 의심하라")의 반대 적용: 이번엔 그레이더가 애초에 CONFLICTS.md#C6가
+	// 요구하는 결함(네이티브 UI 누출)을 잡을 능력이 있었는지 재확인한다.
+	// 기존 a~d(규칙1, 500ms 메뉴, 규칙2, 다른 행 독립)에는 이 항목이
+	// 없었다 — 여기 새로 추가한다.
+	async androidContextMenuSuppressed(page) {
+		const prevented = await page.evaluate(() => {
+			const row = document.querySelector(".contact");
+			const ev = new MouseEvent("contextmenu", { bubbles: true, cancelable: true });
+			row.dispatchEvent(ev);
+			return ev.defaultPrevented;
+		});
+		return { defaultPrevented: prevented, suppressed: prevented === true };
+	},
+
+	// iOS 콜아웃 억제(-webkit-touch-callout)는 Playwright/Chromium으로
+	// 런타임 검증이 원천적으로 불가능하다(ux-standards-architecture.md
+	// §6 — Playwright는 브라우저 엔진만 자동화하고, 이건 WebKit 전용
+	// 네이티브 UI라 Chromium엔 대응 동작 자체가 없다). 그래서 이 항목은
+	// "선언이 있는가"만 정적으로 확인한다 — 자체 점검이지 [검증됨]이 아니다.
+	async iosCalloutSuppressionDeclared(page) {
+		const result = await page.evaluate(() => {
+			const row = document.querySelector(".contact");
+			const cs = getComputedStyle(row);
+			// cssRules를 통해 재직렬화된 cssText는 브라우저가 인식 못 하는
+			// 벤더 프리픽스(-webkit-touch-callout 등)를 누락시킬 수 있어서,
+			// <style> 태그의 원본 textContent를 직접 읽는다 — 파싱/정규화를
+			// 거치지 않은 실제 소스 그대로.
+			const styleText = [...document.querySelectorAll("style")]
+				.map((el) => el.textContent)
+				.join("\n");
+			return {
+				userSelect: cs.userSelect,
+				webkitUserSelectDeclaredInSource: /-webkit-user-select\s*:\s*none/.test(styleText),
+				webkitTouchCalloutDeclaredInSource: /-webkit-touch-callout\s*:\s*none/.test(styleText),
+			};
+		});
+		return { ...result, note: "선언 존재 여부만 확인 — 실제 iOS 콜아웃 억제 효과는 이 도구로 검증 불가" };
+	},
+
 	// 관찰(원본 문서 범위 밖): 서로 다른 행이 동시에 눌려도 각자 독립적으로
 	// 동작하는가 — 구현 방식(전역 잠금 vs 행별 격리)에 따라 갈릴 수 있다
 	async differentRowsIndependent(page) {

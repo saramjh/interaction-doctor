@@ -1,0 +1,40 @@
+[
+  {
+    "scenario": "scenario-A-create",
+    "condition": "without_skill",
+    "grade": {
+      "ok": true,
+      "hasTouchActionInterferenceGuard": true,
+      "hasUserSelectInterferenceGuard": true,
+      "isDirectlyTracking": true
+    }
+  },
+  {
+    "scenario": "scenario-A-create",
+    "condition": "with_skill",
+    "grade": {
+      "ok": true,
+      "hasTouchActionInterferenceGuard": true,
+      "hasUserSelectInterferenceGuard": true,
+      "isDirectlyTracking": true
+    }
+  },
+  {
+    "scenario": "scenario-B-refactor",
+    "condition": "without_skill",
+    "grade": {
+      "ok": true,
+      "innerScrollProtected": true,
+      "sheetCollapseAtTopAllowed": true
+    }
+  },
+  {
+    "scenario": "scenario-B-refactor",
+    "condition": "with_skill",
+    "grade": {
+      "ok": true,
+      "innerScrollProtected": true,
+      "sheetCollapseAtTopAllowed": true
+    }
+  }
+]

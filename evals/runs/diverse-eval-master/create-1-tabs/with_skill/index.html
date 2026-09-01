@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Swipe Tabs (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .tab-bar {
+    display: flex;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    position: relative;
+    z-index: 10;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 16px 0;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s;
+    touch-action: manipulation;
+  }
+  .tab-btn.active { color: #38bdf8; }
+  .tab-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 33.33%;
+    height: 3px;
+    background: #38bdf8;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    touch-action: pan-y; /* 세로 스크롤 허용, 가로 축은 JS가 엄격 제어 */
+  }
+  .track {
+    display: flex;
+    width: 300%;
+    height: 100%;
+    will-change: transform;
+    transform: translateX(0%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .track.swiping { transition: none; /* 1:1 즉각 밀착 */ }
+  .tab-pane {
+    width: 33.333%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    color: #e2e8f0;
+  }
+</style>
+</head>
+<body>
+  <div class="tab-bar">
+    <div class="tab-btn active" data-idx="0">홈</div>
+    <div class="tab-btn" data-idx="1">탐색</div>
+    <div class="tab-btn" data-idx="2">설정</div>
+    <div class="tab-indicator" id="indicator"></div>
+  </div>
+
+  <div class="viewport" id="viewport">
+    <div class="track" id="track">
+      <div class="tab-pane">
+        <h2>🏠 홈 피드</h2>
+        <div class="card">✅ 축 잠금(Axis Locking) 적용: 세로 스크롤 중 좌우 탭 전환 차단</div>
+        <div class="card">✅ 8px 슬롭 이내 스크롤 100% 보호</div>
+        <div class="card">스크롤 테스트 항목 1</div>
+        <div class="card">스크롤 테스트 항목 2</div>
+        <div class="card">스크롤 테스트 항목 3</div>
+      </div>
+      <div class="tab-pane">
+        <h2>🔍 실시간 탐색</h2>
+        <div class="card">탐색 콘텐츠 A</div>
+        <div class="card">탐색 콘텐츠 B</div>
+      </div>
+      <div class="tab-pane">
+        <h2>⚙️ 환경 설정</h2>
+        <div class="card">계정 보안 설정</div>
+        <div class="card">테마 및 알림 설정</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const track = document.getElementById('track');
+  const viewport = document.getElementById('viewport');
+  const indicator = document.getElementById('indicator');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+
+  let currentTab = 0;
+  let startX = 0, startY = 0;
+  let activePointerId = null;
+  let isSwiping = false;
+  let axisLocked = null; // 'x' | 'y'
+  const SLOP_PX = 8;
+
+  function setTab(idx) {
+    currentTab = Math.max(0, Math.min(2, idx));
+    track.classList.remove('swiping');
+    track.style.transform = `translateX(-${currentTab * 33.333}%)`;
+    indicator.style.transform = `translateX(${currentTab * 100}%)`;
+    tabBtns.forEach((btn, i) => btn.classList.toggle('active', i === currentTab));
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => setTab(Number(btn.dataset.idx)));
+  });
+
+  viewport.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    startX = e.clientX;
+    startY = e.clientY;
+    axisLocked = null;
+    isSwiping = false;
+  });
+
+  viewport.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (!axisLocked) {
+      if (Math.abs(dx) > SLOP_PX || Math.abs(dy) > SLOP_PX) {
+        axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+    }
+
+    if (axisLocked === 'x') {
+      isSwiping = true;
+      track.classList.add('swiping');
+      const width = viewport.clientWidth;
+      const baseOffset = -currentTab * width;
+      const currentOffset = baseOffset + dx;
+      track.style.transform = `translateX(${currentOffset}px)`;
+    }
+  });
+
+  const endSwipe = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    if (isSwiping) {
+      const dx = e.clientX - startX;
+      const width = viewport.clientWidth;
+      if (dx < -width * 0.2 && currentTab < 2) {
+        setTab(currentTab + 1);
+      } else if (dx > width * 0.2 && currentTab > 0) {
+        setTab(currentTab - 1);
+      } else {
+        setTab(currentTab);
+      }
+    }
+    activePointerId = null;
+    isSwiping = false;
+    axisLocked = null;
+  };
+
+  viewport.addEventListener('pointerup', endSwipe);
+  viewport.addEventListener('pointercancel', endSwipe);
+</script>
+</body>
+</html>

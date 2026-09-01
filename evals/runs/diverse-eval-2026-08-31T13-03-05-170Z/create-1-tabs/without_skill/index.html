@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>모바일 스와이프 탭 페이지</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #f2f2f7;
+      color: #1c1c1e;
+      height: 100vh;
+      overflow: hidden; /* 바깥쪽 스크롤 방지 */
+    }
+
+    /* App Header & Fixed Tabs Navigation */
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 96px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 1000;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      padding-top: 14px;
+    }
+
+    .tab-bar {
+      display: flex;
+      position: relative;
+      height: 44px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 600;
+      color: #8e8e93;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab-btn.active {
+      color: #007aff;
+    }
+
+    /* Moving Active Line Indicator */
+    .tab-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 33.333%; /* 탭이 3개이므로 100/3 % */
+      height: 3px;
+      background-color: #007aff;
+      border-radius: 3px 3px 0 0;
+      will-change: transform;
+    }
+
+    /* Horizontal Swipe Container */
+    .swipe-container {
+      display: flex;
+      width: 100vw;
+      height: calc(100vh - 96px);
+      margin-top: 96px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      
+      /* 스크롤바 숨기기 */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .swipe-container::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    /* Individual Tab Content Pages */
+    .tab-page {
+      flex: 0 0 100vw;
+      width: 100vw;
+      height: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      
+      /* 내부 세로 스크롤 및 간섭 방지 처리 */
+      overflow-y: auto;
+      overscroll-behavior-y: contain; /* 세로 바운스 시 외부 영향을 막음 */
+      touch-action: pan-y; /* 수직 스크롤 우선 제어 */
+      -webkit-overflow-scrolling: touch;
+      padding: 16px;
+    }
+
+    /* UI Content Elements (더미 컨텐츠 스타일) */
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .card h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .card-banner {
+      height: 120px;
+      background: linear-gradient(135deg, #007aff, #5ac8fa);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #e5e5ea;
+      background: #fff;
+      font-size: 15px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .grid-item {
+      background: #fff;
+      padding: 20px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: white;
+      border-bottom: 1px solid #f2f2f7;
+    }
+
+    .list-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+    .list-item:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-bottom: none; }
+
+    /* Toggle Switch UI */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 28px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #e5e5ea; transition: .3s; border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px;
+      background-color: white; transition: .3s; border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    input:checked + .slider { background-color: #34c759; }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 고정 헤더 & 탭 메뉴 -->
+  <header class="app-header">
+    <div class="header-title">스와이프 앱</div>
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-index="0">홈</button>
+      <button class="tab-btn" data-index="1">탐색</button>
+      <button class="tab-btn" data-index="2">설정</button>
+      <!-- 위치 이동을 나타내는 인디케이터 바 -->
+      <div class="tab-indicator" id="tabIndicator"></div>
+    </nav>
+  </header>
+
+  <!-- 좌우 스와이프 컨테이너 -->
+  <main class="swipe-container" id="swipeContainer">
+
+    <!-- TAB 1: 홈 (긴 세로 스크롤 내용) -->
+    <section class="tab-page">
+      <div class="card-banner">WELCOME HOME</div>
+      <div class="card">
+        <h3>세로 스크롤 테스트 1</h3>
+        <p>화면을 위아래로 스크롤해 보세요. 세로 스크롤 중에는 좌우 스와이프가 쉽게 동작하지 않아 서로 간섭이 발생하지 않습니다.</p>
+      </div>
+      <div class="card">
+        <h3>최신 뉴스피드</h3>
+        <p>모바일 웹 환경에 최적화된 터치 인터페이스입니다. 하드웨어 가속 Scroll Snap을 활용하여 프레임 드랍 없이 매끄럽게 움직입니다.</p>
+      </div>
+      <div class="card">
+        <h3>세로 스크롤 테스트 2</h3>
+        <p>콘텐츠가 길어지면 내부에서 자연스럽게 세로 스크롤이 진행됩니다.</p>
+      </div>
+      <div class="card">
+        <h3>세로 스크롤 테스트 3</h3>
+        <p>좌우로 스와이프하면 다음 탭으로 자연스럽게 전환됩니다.</p>
+      </div>
+      <div class="card">
+        <h3>하단 피드 목록</h3>
+        <p>홈 탭의 마지막 콘텐츠 부분입니다.</p>
+      </div>
+    </section>
+
+    <!-- TAB 2: 탐색 -->
+    <section class="tab-page">
+      <input type="text" class="search-input" placeholder="검색어를 입력하세요...">
+      
+      <h4 style="margin: 0 0 12px 4px; color: #666;">카테고리 탐색</h4>
+      <div class="grid-container">
+        <div class="grid-item">🎨 디자인</div>
+        <div class="grid-item">💻 개발</div>
+        <div class="grid-item">🚀 스타트업</div>
+        <div class="grid-item">📈 마케팅</div>
+        <div class="grid-item">🎵 음악</div>
+        <div class="grid-item">📷 사진</div>
+      </div>
+
+      <div class="card">
+        <h3>실시간 트렌드</h3>
+        <p>1. 반응형 웹 디자인<br>2. 모바일 UX 터치 구현<br>3. CSS Scroll Snap 기술</p>
+      </div>
+      <div class="card">
+        <h3>추천 탐색 리스트</h3>
+        <p>탐색 페이지도 긴 콘텐츠가 있을 경우 세로 스크롤이 독립적으로 작동합니다.</p>
+      </div>
+    </section>
+
+    <!-- TAB 3: 설정 -->
+    <section class="tab-page">
+      <div class="card" style="text-align: center;">
+        <div style="width: 60px; height: 60px; background: #007aff; border-radius: 50%; margin: 0 auto 12px; color: white; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:bold;">U</div>
+        <h3>홍길동 님</h3>
+        <p>user@example.com</p>
+      </div>
+
+      <h4 style="margin: 16px 0 8px 4px; color: #666;">앱 설정</h4>
+      <div>
+        <div class="list-item">
+          <span>알림 설정</span>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="list-item">
+          <span>다크 모드</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="list-item">
+          <span>자동 업데이트</span>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <h3>앱 정보</h3>
+        <p>버전: v1.0.0 (Swipe Tabs Native)</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const container = document.getElementById('swipeContainer');
+    const indicator = document.getElementById('tabIndicator');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const pageCount = tabBtns.length;
+
+    let isProgrammaticScroll = false; // 버튼 클릭으로 인한 스크롤 중인지 여부
+
+    // 1. 실시간 스크롤 감지 및 인디케이터 바 위치 계산
+    container.addEventListener('scroll', () => {
+      const scrollLeft = container.scrollLeft;
+      const width = container.clientWidth;
+      
+      // 현재 진행률 (0.0 ~ 2.0)
+      const progress = scrollLeft / width;
+      
+      // 인디케이터 바를 진행률만큼 실시간 변환(TranslateX)
+      // 탭 1개당 너비가 100% (전체 인디케이터 바 너비 기준)이므로 progress * 100% 이동
+      indicator.style.transform = `translateX(${progress * 100}%)`;
+
+      // 스와이프 상태에서 활성화된 탭 버튼 하이라이트 제어
+      if (!isProgrammaticScroll) {
+        const activeIndex = Math.round(progress);
+        updateActiveTabUI(activeIndex);
+      }
+    });
+
+    // 2. 탭 버튼 클릭 시 스크롤 이동
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const targetIndex = parseInt(e.currentTarget.getAttribute('data-index'));
+        
+        isProgrammaticScroll = true;
+        updateActiveTabUI(targetIndex);
+
+        // 해당 위치로 부드럽게 스크롤
+        container.scrollTo({
+          left: targetIndex * container.clientWidth,
+          behavior: 'smooth'
+        });
+
+        // 애니메이션 완료 후 스크롤 상태 해제
+        setTimeout(() => {
+          isProgrammaticScroll = false;
+        }, 350);
+      });
+    });
+
+    // 활성화 탭 Class 업데이트 함수
+    function updateActiveTabUI(index) {
+      tabBtns.forEach((btn, idx) => {
+        if (idx === index) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // 창 크기 변경 시 스크롤 위치 보정
+    window.addEventListener('resize', () => {
+      const activeBtn = document.querySelector('.tab-btn.active');
+      const index = parseInt(activeBtn.getAttribute('data-index'));
+      container.scrollLeft = index * container.clientWidth;
+    });
+  </script>
+</body>
+</html>

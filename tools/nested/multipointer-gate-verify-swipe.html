@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Multipointer gate — retrofit onto evals 02 (swipe-delete-todo) baseline</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header { padding: 16px; font-size: 18px; font-weight: 700; background: #fff; border-bottom: 1px solid #e2e2e6; }
+	#list { padding: 12px; }
+	.row { position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 8px; }
+	.delete-bg {
+		position: absolute; inset: 0; background: #ff3b30;
+		display: flex; align-items: center; justify-content: flex-end;
+		padding-right: 18px; color: #fff; font-size: 13px; font-weight: 600;
+	}
+	.item {
+		position: relative; background: #fff; padding: 14px 16px;
+		display: flex; align-items: center; gap: 10px;
+		touch-action: pan-y; user-select: none;
+	}
+	.item input { width: 18px; height: 18px; }
+	.label { font-size: 15px; }
+	#status { padding: 8px 10px; font-size: 12px; line-height: 1.5; background: #111; color: #eee; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="status">status: idle</div>
+<header>오늘 할 일</header>
+<div id="list"></div>
+
+<script>
+// common-pitfalls.md §7 3단계 — evals/results/baseline/subjects/
+// 02-swipe-delete-todo/project/index.html(사례 D-02)에 §7-4의
+// withSinglePointerGate를 얹은 재검증 페이지. 원본 baseline 코드를
+// 그대로 옮기되, 리스너 등록만 게이트로 바꾼다 — 삭제 임계값(80px),
+// dx 계산, transform 로직은 한 글자도 바꾸지 않는다.
+//
+// ?buggy=1 이면 게이트 없이(원본 baseline과 동일하게) 동작해서, 같은
+// 재현 절차로 결함이 여전히 있다는 것도 같은 페이지에서 대조할 수
+// 있게 한다.
+
+const REPRODUCE_ORIGINAL_BUG = new URLSearchParams(location.search).has("buggy");
+
+const TODOS = [
+	"우유 사기",
+	"치과 예약",
+	"보고서 초안 검토",
+	"운동 30분",
+	"엄마한테 전화",
+	"세탁물 찾기",
+];
+
+const listEl = document.getElementById("list");
+const statusEl = document.getElementById("status");
+window.__events = []; // Playwright가 읽을 이벤트 로그
+
+function log(msg) {
+	window.__events.push(msg);
+	statusEl.textContent = "status: idle (mode=" + (REPRODUCE_ORIGINAL_BUG ? "buggy (no gate)" : "gated") + ")\n" + window.__events.join("\n");
+}
+
+function render() {
+	listEl.innerHTML = "";
+	TODOS.forEach((text, i) => {
+		const row = document.createElement("div");
+		row.className = "row";
+		row.innerHTML =
+			'<div class="delete-bg">삭제</div>' +
+			'<div class="item"><input type="checkbox" /><div class="label">' + text + "</div></div>";
+		listEl.appendChild(row);
+		attachSwipeGated(row.querySelector(".item"), row, i);
+	});
+	statusEl.textContent = "status: idle (mode=" + (REPRODUCE_ORIGINAL_BUG ? "buggy (no gate)" : "gated") + ")\n" + window.__events.join("\n");
+}
+
+const SWIPE_DELETE_PX = 80;
+
+// ---- common-pitfalls.md §7-4 공용 패턴 (그대로 옮김, 수정 없음) ----
+function withSinglePointerGate(el, { onStart, onMove, onEnd } = {}) {
+	let activePointerId = null; // 스코프 축 — attachSwipeGated가 항목마다 새로 호출되므로 항목당 독립 클로저
+
+	el.addEventListener("pointerdown", (e) => {
+		if (!REPRODUCE_ORIGINAL_BUG && activePointerId !== null) return; // 게이트 축
+		activePointerId = e.pointerId;
+		onStart?.(e);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (!REPRODUCE_ORIGINAL_BUG && e.pointerId !== activePointerId) return; // 게이트 축
+		onMove?.(e);
+	});
+
+	function release(e, cancelled) {
+		if (!REPRODUCE_ORIGINAL_BUG && e.pointerId !== activePointerId) return; // 게이트 축
+		activePointerId = null;
+		onEnd?.(e, { cancelled });
+	}
+	el.addEventListener("pointerup", (e) => release(e, false));
+	el.addEventListener("pointercancel", (e) => release(e, true));
+}
+
+// ---- 사례 D-02(evals 02번 baseline) 로직 — dx/삭제 임계값 원본 그대로,
+// 리스너 등록만 withSinglePointerGate로 옮김. isDragging 불리언은
+// 게이트가 activePointerId로 대체하므로 제거 ----
+function attachSwipeGated(item, row, index) {
+	let startX = 0;
+
+	withSinglePointerGate(item, {
+		onStart(e) {
+			startX = e.clientX;
+			try { item.setPointerCapture(e.pointerId); } catch (err) {}
+			log("onStart pointerId=" + e.pointerId + " x=" + e.clientX);
+		},
+		onMove(e) {
+			const dx = e.clientX - startX;
+			if (Math.abs(dx) > 8) {
+				item.style.transform = "translateX(" + Math.min(0, dx) + "px)";
+			}
+			log("onMove pointerId=" + e.pointerId + " dx=" + dx.toFixed(1));
+		},
+		onEnd(e, { cancelled }) {
+			try { item.releasePointerCapture(e.pointerId); } catch (err) {}
+			if (cancelled) {
+				item.style.transform = "";
+				log("onEnd(cancelled) pointerId=" + e.pointerId);
+				return;
+			}
+			const dx = e.clientX - startX;
+			log("onEnd pointerId=" + e.pointerId + " finalDx=" + dx.toFixed(1));
+			if (Math.abs(dx) > SWIPE_DELETE_PX) {
+				window.__deletedIndex = index;
+				window.__deletedText = TODOS[index];
+				TODOS.splice(index, 1);
+				render();
+			} else {
+				item.style.transform = "";
+			}
+		},
+	});
+}
+
+window.__resetEvents = function () {
+	window.__events.length = 0;
+	window.__deletedIndex = undefined;
+	window.__deletedText = undefined;
+};
+
+render();
+</script>
+</body>
+</html>

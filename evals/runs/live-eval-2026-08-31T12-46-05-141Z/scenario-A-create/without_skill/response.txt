@@ -1,0 +1,251 @@
+요청하신 조건을 완벽하게 충족하는 모바일 웹용 캔버스 박스 드래그 페이지 `index.html` 전체 코드입니다.
+
+모바일 브라우저의 대표적인 방해 요소인 **스크롤, 피치 줌, 텍스트 선택, 롱프레스(길게 누르기) 팝업 메뉴, 탭 하이라이트**를 CSS와 JavaScript 수준에서 완벽하게 차단했으며, `Pointer Events`와 `translate3d`를 활용하여 120Hz 모바일 화면에서도 딜레이 없이 부드럽게 동작하도록 구현했습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>모바일 박스 드래그</title>
+  <style>
+    /* 1. 기본 스타일 및 브라우저 제스처 차단 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      /* 텍스트 및 요소 선택 방지 */
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      /* 모바일 롱프레스 팝업 메뉴 차단 */
+      -webkit-touch-callout: none;
+      /* 모바일 탭 터치 하이라이트 제거 */
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      /* 브라우저 기본 스크롤 및 피치 줌 차단 */
+      touch-action: none;
+      background-color: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* 2. 배경 격자 캔버스 */
+    #bgCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* 3. 화면 중앙 드래그 박스 (id="dragBox") */
+    #dragBox {
+      position: absolute;
+      z-index: 10;
+      width: 140px;
+      height: 140px;
+      /* 초기 중앙 배치 */
+      left: 50%;
+      top: 50%;
+      margin-left: -70px;
+      margin-top: -70px;
+      
+      /* 터치 제스처 차단 및 성능 최적화 */
+      touch-action: none;
+      will-change: transform;
+      cursor: grab;
+
+      /* 박스 UI 디자인 */
+      border-radius: 28px;
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4),
+                  inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      
+      /* 드래그 시작/종료 시 스케일 전환 애니메이션 */
+      transition: transform 0.05s ease-out, box-shadow 0.2s ease;
+    }
+
+    /* 드래그 중 상태 */
+    #dragBox.active {
+      cursor: grabbing;
+      box-shadow: 0 20px 45px rgba(168, 85, 247, 0.6),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    }
+
+    /* 박스 내부 아이콘 및 텍스트 */
+    .box-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+      pointer-events: none;
+    }
+
+    .box-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .box-coords {
+      font-size: 11px;
+      margin-top: 6px;
+      opacity: 0.7;
+      font-family: monospace;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 배경 격자 캔버스 -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- 화면 중앙 드래그 가능 박스 -->
+  <div id="dragBox">
+    <div class="box-icon">✦</div>
+    <div class="box-label">DRAG ME</div>
+    <div class="box-coords" id="coords">X: 0, Y: 0</div>
+  </div>
+
+  <script>
+    // --- 1. 배경 Canvas 격자 그리기 ---
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawGrid();
+    }
+
+    function drawGrid() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+
+      const gridSize = 40;
+      for (let x = 0; x < canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // --- 2. 박스 드래그 로직 (Pointer Events 사용) ---
+    const dragBox = document.getElementById('dragBox');
+    const coordsText = document.getElementById('coords');
+
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let initialX = 0;
+    let initialY = 0;
+
+    // 모바일 롱프레스 팝업 및 컨텍스트 메뉴 차단
+    window.addEventListener('contextmenu', (e) => e.preventDefault(), { passive: false });
+
+    // 터치 이동 시 브라우저 기본 동작(스크롤, 당겨서 새로고침 등) 차단
+    document.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // 드래그 시작 (손가락 터치 또는 마우스 클릭)
+    function onPointerDown(e) {
+      isDragging = true;
+      dragBox.classList.add('active');
+
+      // 터치 포인터 캡처 (손가락이 박스 영역을 빠르게 벗어나도 계속 추적)
+      dragBox.setPointerCapture(e.pointerId);
+
+      startX = e.clientX;
+      startY = e.clientY;
+      initialX = currentX;
+      initialY = currentY;
+
+      updateTransform();
+    }
+
+    // 드래그 중
+    function onPointerMove(e) {
+      if (!isDragging) return;
+
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      currentX = initialX + deltaX;
+      currentY = initialY + deltaY;
+
+      // requestAnimationFrame을 사용해 GPU 가속 프레임 동기화
+      requestAnimationFrame(updateTransform);
+    }
+
+    // 드래그 종료
+    function onPointerUp(e) {
+      if (!isDragging) return;
+
+      isDragging = false;
+      dragBox.classList.remove('active');
+
+      if (dragBox.hasPointerCapture(e.pointerId)) {
+        dragBox.releasePointerCapture(e.pointerId);
+      }
+
+      updateTransform();
+    }
+
+    // 화면 변형 반영 (translate3d로 GPU 가속 부드러운 이동)
+    function updateTransform() {
+      const scale = isDragging ? 1.08 : 1.0;
+      dragBox.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(${scale})`;
+      coordsText.textContent = `X: ${Math.round(currentX)}, Y: ${Math.round(currentY)}`;
+    }
+
+    // 이벤트 리스너 등록 (Pointer Event로 터치/마우스 모두 대응)
+    dragBox.addEventListener('pointerdown', onPointerDown);
+    dragBox.addEventListener('pointermove', onPointerMove);
+    dragBox.addEventListener('pointerup', onPointerUp);
+    dragBox.addEventListener('pointercancel', onPointerUp);
+  </script>
+</body>
+</html>
+```
+
+### 주요 기능 및 특징:
+1. **완벽한 방해 요인 차단**:
+   - `touch-action: none;`, `user-select: none;`, `-webkit-touch-callout: none;`을 적용하여 텍스트 선택, 롱프레스 팝업 메뉴, 브라우저 스크롤 및 피치 줌을 완전히 막았습니다.
+2. **Pointer Events & Pointer Capture**:
+   - `setPointerCapture`를 적용하여 손가락을 빠르게 움직여도 터치가 박스 밖으로 튀지 않고 끊김 없이 끌려옵니다.
+3. **60fps/120fps 부드러운 애니메이션**:
+   - `translate3d` 및 `requestAnimationFrame`을 사용하여 모바일 기기의 GPU 하드웨어 가속을 활용합니다.
+4. **반응형 UI**:
+   - 모바일 화면 중앙에 깔끔하게 배치되며, 드래그 시 박스가 살짝 커지는 시각적 피드백과 실시간 좌표 업데이트를 제공합니다.

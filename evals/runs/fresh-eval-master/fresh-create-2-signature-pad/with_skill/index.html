@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Signature Pad (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: 120vh; /* 본문 스크롤이 있어도 캔버스 위에서는 완벽히 락 */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    touch-action: none; /* 브라우저 스크롤 완벽 차단 */
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    cursor: crosshair;
+  }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .btn-clear {
+    padding: 8px 16px;
+    background: #334155;
+    color: #f8fafc;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:6px;">전자 계약 서명</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">손가락이나 펜으로 서명해 주세요. 스크롤 간섭 없이 부드럽게 그려집니다.</p>
+
+  <div class="canvas-wrapper">
+    <canvas id="sigCanvas"></canvas>
+  </div>
+
+  <div class="actions">
+    <span style="font-size:12px; color:#64748b;">✅ 고해상도 베지에 곡선 스무딩</span>
+    <button class="btn-clear" id="btnClear">지우기</button>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('sigCanvas');
+  const btnClear = document.getElementById('btnClear');
+  const ctx = canvas.getContext('2d');
+
+  let isDrawing = false;
+  let activePointerId = null;
+  let lastX = 0, lastY = 0;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#0f172a';
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  setTimeout(resizeCanvas, 50);
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    isDrawing = true;
+    try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+
+    const rect = canvas.getBoundingClientRect();
+    lastX = e.clientX - rect.left;
+    lastY = e.clientY - rect.top;
+
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId || !isDrawing) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const currentX = e.clientX - rect.left;
+    const currentY = e.clientY - rect.top;
+
+    // 부드러운 베지어 곡선 보간
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    const midX = (lastX + currentX) / 2;
+    const midY = (lastY + currentY) / 2;
+    ctx.quadraticCurveTo(lastX, lastY, midX, midY);
+    ctx.stroke();
+
+    lastX = currentX;
+    lastY = currentY;
+  });
+
+  const stopDrawing = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    isDrawing = false;
+    activePointerId = null;
+    try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+
+  canvas.addEventListener('pointerup', stopDrawing);
+  canvas.addEventListener('pointercancel', stopDrawing);
+
+  btnClear.addEventListener('click', () => {
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+  });
+</script>
+</body>
+</html>

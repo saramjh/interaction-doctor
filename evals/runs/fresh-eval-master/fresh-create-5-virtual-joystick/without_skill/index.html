@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Joystick (Without Skill)</title>
+<style>
+  body { font-family: sans-serif; margin: 0; background: #222; height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .base { width: 150px; height: 150px; background: rgba(255,255,255,0.2); border-radius: 50%; position: relative; }
+  .stick { width: 60px; height: 60px; background: #007bff; border-radius: 50%; position: absolute; top: 45px; left: 45px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="base" id="base">
+    <div class="stick" id="stick"></div>
+  </div>
+<script>
+  const stick = document.getElementById('stick');
+  const base = document.getElementById('base');
+  let isDown = false;
+
+  stick.onmousedown = () => isDown = true;
+  stick.ontouchstart = () => isDown = true;
+  window.onmouseup = () => { isDown = false; stick.style.left = '45px'; stick.style.top = '45px'; };
+  window.ontouchend = () => { isDown = false; stick.style.left = '45px'; stick.style.top = '45px'; };
+
+  window.addEventListener('touchmove', (e) => {
+    if (!isDown) return;
+    const rect = base.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left - 30;
+    const y = e.touches[0].clientY - rect.top - 30;
+    stick.style.left = x + 'px';
+    stick.style.top = y + 'px';
+  });
+</script>
+</body>
+</html>

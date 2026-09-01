@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ride Share (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: #090d16;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .map-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    touch-action: none;
+  }
+  .map-grid {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background-image: linear-gradient(rgba(56, 189, 248, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.15) 1px, transparent 1px);
+    background-size: 50px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform;
+  }
+  .taxi-pin {
+    position: absolute;
+    font-size: 32px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+  }
+  .bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 520px;
+    background: #1e293b;
+    border-top: 1px solid #334155;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+    z-index: 100;
+    touch-action: pan-y;
+    display: flex;
+    flex-direction: column;
+    transform: translate3d(0, 240px, 0); /* 초기 반열림 (280px 노출) */
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+  .bottom-sheet.dragging {
+    transition: none;
+  }
+  .sheet-header-area {
+    padding: 12px 20px 8px 20px;
+    cursor: grab;
+  }
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #475569;
+    border-radius: 2px;
+    margin: 0 auto 12px auto;
+  }
+  .ride-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 10px 20px 40px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ride-item {
+    padding: 14px 16px;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .ride-item:active {
+    border-color: #38bdf8;
+    background: #131d2e;
+  }
+</style>
+</head>
+<body>
+
+<div class="map-layer" id="mapLayer">
+  <div class="map-grid" id="mapGrid">
+    <div class="taxi-pin" style="top:48%; left:50%;">🚕</div>
+    <div class="taxi-pin" style="top:42%; left:56%;">🚙</div>
+    <div class="taxi-pin" style="top:58%; left:44%;">🚐</div>
+  </div>
+</div>
+
+<div class="bottom-sheet" id="sheet">
+  <div class="sheet-header-area" id="sheetHeader">
+    <div class="sheet-handle"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="font-size:16px;">🚕 배차 가능한 차량</h3>
+      <span style="font-size:12px; color:#38bdf8;">도착 예정 3분</span>
+    </div>
+  </div>
+
+  <div class="ride-list" id="rideList">
+    <div class="ride-item">
+      <div>
+        <div style="font-weight:700; font-size:14px;">🚕 블루 택시 (가장 빠름)</div>
+        <div style="font-size:11px; color:#94a3b8;">친절 기사 인증 완료</div>
+      </div>
+      <div style="font-weight:800; color:#38bdf8;">₩14,500</div>
+    </div>
+    <div class="ride-item">
+      <div>
+        <div style="font-weight:700; font-size:14px;">✨ 블랙 프리미엄 (고급 세단)</div>
+        <div style="font-size:11px; color:#94a3b8;">생수/충전기 완비</div>
+      </div>
+      <div style="font-weight:800; color:#fbbf24;">₩24,000</div>
+    </div>
+    <div class="ride-item">
+      <div>
+        <div style="font-weight:700; font-size:14px;">🚐 대형 밴 (최대 6인)</div>
+        <div style="font-size:11px; color:#94a3b8;">짐이 많을 때 추천</div>
+      </div>
+      <div style="font-weight:800; color:#a78bfa;">₩32,000</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const mapLayer = document.getElementById('mapLayer');
+  const mapGrid = document.getElementById('mapGrid');
+  const sheet = document.getElementById('sheet');
+  const sheetHeader = document.getElementById('sheetHeader');
+
+  // 1. 지도 2D 패닝 (격리)
+  let mapPointerId = null;
+  let mStartX = 0, mStartY = 0;
+  let curPanX = 0, curPanY = 0;
+
+  mapLayer.addEventListener('pointerdown', (e) => {
+    if (sheet.contains(e.target)) return;
+    if (mapPointerId !== null) return;
+    mapPointerId = e.pointerId;
+    mStartX = e.clientX - curPanX;
+    mStartY = e.clientY - curPanY;
+    try { mapLayer.setPointerCapture(e.pointerId); } catch(err) {}
+  });
+
+  mapLayer.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== mapPointerId) return;
+    curPanX = e.clientX - mStartX;
+    curPanY = e.clientY - mStartY;
+    mapGrid.style.transform = `translate3d(${curPanX}px, ${curPanY}px, 0)`;
+  });
+
+  const releaseMap = (e) => {
+    if (e.pointerId !== mapPointerId) return;
+    mapPointerId = null;
+    try { mapLayer.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+  mapLayer.addEventListener('pointerup', releaseMap);
+  mapLayer.addEventListener('pointercancel', releaseMap);
+
+  // 2. 바텀시트 3단계 스냅 (전체 0 / 중간 240 / 접힘 420)
+  const SNAPS = [0, 240, 420];
+  let curSnap = 240;
+  let sPointerId = null;
+  let sStartY = 0;
+
+  sheetHeader.addEventListener('pointerdown', (e) => {
+    if (sPointerId !== null) return;
+    sPointerId = e.pointerId;
+    sStartY = e.clientY;
+    sheet.classList.add('dragging');
+    try { sheetHeader.setPointerCapture(e.pointerId); } catch(err) {}
+  });
+
+  sheetHeader.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== sPointerId) return;
+    const dy = e.clientY - sStartY;
+    const nextY = Math.max(0, Math.min(420, curSnap + dy));
+    sheet.style.transform = `translate3d(0, ${nextY}px, 0)`;
+  });
+
+  const releaseSheet = (e) => {
+    if (e.pointerId !== sPointerId) return;
+    sheet.classList.remove('dragging');
+    const dy = e.clientY - sStartY;
+    const currentY = curSnap + dy;
+
+    // 가장 가까운 스냅 지점 찾기
+    curSnap = SNAPS.reduce((prev, curr) => Math.abs(curr - currentY) < Math.abs(prev - currentY) ? curr : prev);
+    sheet.style.transform = `translate3d(0, ${curSnap}px, 0)`;
+
+    try { sheetHeader.releasePointerCapture(e.pointerId); } catch(err) {}
+    sPointerId = null;
+    if (navigator.vibrate) navigator.vibrate(25);
+  };
+  sheetHeader.addEventListener('pointerup', releaseSheet);
+  sheetHeader.addEventListener('pointercancel', releaseSheet);
+
+  sheet.addEventListener('pointerdown', (e) => e.stopPropagation());
+</script>
+</body>
+</html>

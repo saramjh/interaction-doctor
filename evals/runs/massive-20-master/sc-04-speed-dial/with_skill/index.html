@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Speed Dial FAB (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: 200vh;
+    padding: 24px 16px;
+  }
+  .overlay-dim {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 90;
+    touch-action: none;
+  }
+  .overlay-dim.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .fab-container {
+    position: fixed;
+    bottom: 28px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    z-index: 100;
+  }
+  .speed-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.8);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+    pointer-events: none;
+  }
+  .fab-container.open .speed-item {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    pointer-events: auto;
+  }
+  .speed-label {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .speed-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 1px solid #38bdf8;
+    color: #f8fafc;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .speed-btn:active {
+    transform: scale(0.92);
+    background: #38bdf8;
+  }
+  .fab-trigger {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: 700;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.5);
+    touch-action: manipulation;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .fab-container.open .fab-trigger {
+    transform: rotate(135deg);
+    background: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+  }
+</style>
+</head>
+<body>
+
+<div class="overlay-dim" id="dim"></div>
+
+<h3 style="margin-bottom:8px;">⚡ 스피드 다이얼 FAB 데모</h3>
+<p style="color:#94a3b8; font-size:14px; line-height:1.6;">
+  우측 하단의 플로팅 버튼을 누르면 부드러운 스태거 애니메이션과 함께 보조 메뉴가 확장되며, 바깥 영역을 탭하면 즉시 닫힙니다.
+</p>
+
+<div class="fab-container" id="fabContainer">
+  <div class="speed-item" style="transition-delay: 0.08s;" onclick="action('사진 업로드')">
+    <div class="speed-label">사진 업로드</div>
+    <div class="speed-btn">📷</div>
+  </div>
+  <div class="speed-item" style="transition-delay: 0.04s;" onclick="action('문서 스캔')">
+    <div class="speed-label">문서 스캔</div>
+    <div class="speed-btn">📄</div>
+  </div>
+  <div class="speed-item" style="transition-delay: 0s;" onclick="action('새 메시지')">
+    <div class="speed-label">새 메시지</div>
+    <div class="speed-btn">✏️</div>
+  </div>
+
+  <button class="fab-trigger" id="fabBtn">+</button>
+</div>
+
+<script>
+  const container = document.getElementById('fabContainer');
+  const fabBtn = document.getElementById('fabBtn');
+  const dim = document.getElementById('dim');
+
+  function toggleFab() {
+    const isOpen = container.classList.toggle('open');
+    dim.classList.toggle('active', isOpen);
+    if (navigator.vibrate) navigator.vibrate(25);
+  }
+
+  function closeFab() {
+    container.classList.remove('open');
+    dim.classList.remove('active');
+  }
+
+  function action(type) {
+    alert(`[${type}] 선택됨`);
+    closeFab();
+  }
+
+  fabBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleFab();
+  });
+
+  dim.addEventListener('pointerdown', closeFab);
+</script>
+</body>
+</html>

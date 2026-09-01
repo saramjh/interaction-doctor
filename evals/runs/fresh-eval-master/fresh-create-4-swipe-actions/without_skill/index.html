@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swipe Actions (Without Skill)</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+  .list-item { background: #fff; border-radius: 8px; margin-bottom: 10px; position: relative; height: 60px; overflow: hidden; }
+  .item-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; align-items: center; padding: 0 16px; font-weight: bold; z-index: 2; transition: left 0.1s; }
+  .action-btn { position: absolute; top: 0; right: 0; width: 80px; height: 100%; background: #ff3b30; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 1; }
+</style>
+</head>
+<body>
+  <h3>스와이프 삭제 (Without Skill)</h3>
+  <div class="list-item">
+    <div class="action-btn">삭제</div>
+    <div class="item-content">메시지 1 (세로 스크롤 시 스와이프와 어긋남)</div>
+  </div>
+  <div class="list-item">
+    <div class="action-btn">삭제</div>
+    <div class="item-content">메시지 2</div>
+  </div>
+<script>
+  document.querySelectorAll('.item-content').forEach(item => {
+    let startX = 0;
+    item.ontouchstart = (e) => startX = e.touches[0].clientX;
+    item.ontouchmove = (e) => {
+      let dx = e.touches[0].clientX - startX;
+      if (dx < 0) item.style.left = dx + 'px';
+    };
+    item.ontouchend = () => item.style.left = '-80px';
+  });
+</script>
+</body>
+</html>

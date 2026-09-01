@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertical EQ Slider (Without Skill)</title>
+<style>
+  body { font-family: sans-serif; padding: 40px; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; }
+  .slider-box { height: 200px; width: 40px; background: #ddd; position: relative; border-radius: 20px; }
+  .thumb { width: 40px; height: 40px; background: #007bff; border-radius: 50%; position: absolute; bottom: 50%; left: 0; transform: translateY(50%); cursor: pointer; }
+</style>
+</head>
+<body>
+  <h3>세로 볼륨 슬라이더 (Without Skill)</h3>
+  <p style="font-size:13px; color:#666;">슬라이더를 위아래로 끌 때 페이지 전체가 상하로 스크롤되는 결함이 있습니다.</p>
+  <div class="slider-box" id="box">
+    <div class="thumb" id="thumb"></div>
+  </div>
+<script>
+  const thumb = document.getElementById('thumb');
+  const box = document.getElementById('box');
+  let isDown = false;
+
+  thumb.onmousedown = () => isDown = true;
+  thumb.ontouchstart = () => isDown = true;
+  window.onmouseup = () => isDown = false;
+  window.ontouchend = () => isDown = false;
+
+  window.addEventListener('mousemove', (e) => handleMove(e.clientY));
+  window.addEventListener('touchmove', (e) => { if (e.touches[0]) handleMove(e.touches[0].clientY); });
+
+  function handleMove(clientY) {
+    if (!isDown) return;
+    const rect = box.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(100, ((rect.bottom - clientY) / rect.height) * 100));
+    thumb.style.bottom = pct + '%';
+  }
+</script>
+</body>
+</html>

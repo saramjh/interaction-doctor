@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sortable Grid (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .header {
+    margin-bottom: 20px;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    position: relative;
+    touch-action: pan-y;
+  }
+  .photo-card {
+    height: 140px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: #e2e8f0;
+    cursor: grab;
+    will-change: transform;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+    touch-action: pan-y;
+    position: relative;
+    z-index: 1;
+  }
+  .photo-card.lifted {
+    z-index: 100;
+    cursor: grabbing;
+    transform: scale(1.08);
+    box-shadow: 0 20px 35px -5px rgba(56, 189, 248, 0.4), 0 10px 15px rgba(0,0,0,0.5);
+    border-color: #38bdf8;
+    background: #243247;
+    transition: none; /* 드래그 중 1:1 즉각 밀착 */
+    touch-action: none; /* 드래그 모드 진입 시 스크롤 간섭 완전 억제 */
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2 style="font-size:18px; margin-bottom:4px;">🖼️ 갤러리 그리드 터치 재배치</h2>
+  <p style="font-size:12px; color:#94a3b8;">길게 누르면(400ms) 카드가 떠오르며, 상하좌우 모든 방향으로 자유롭게 드래그하여 순서를 바꿀 수 있습니다.</p>
+</div>
+
+<div class="grid-container" id="grid">
+  <div class="photo-card" data-id="1">🌄 풍경 1</div>
+  <div class="photo-card" data-id="2">🏙️ 도시 2</div>
+  <div class="photo-card" data-id="3">🏖️ 바다 3</div>
+  <div class="photo-card" data-id="4">🏕️ 캠핑 4</div>
+  <div class="photo-card" data-id="5">🌌 은하수 5</div>
+  <div class="photo-card" data-id="6">🏜️ 사막 6</div>
+</div>
+
+<script>
+  const grid = document.getElementById('grid');
+  let activeCard = null;
+  let activePointerId = null;
+  let startX = 0, startY = 0;
+  let longPressTimer = null;
+  let isDragging = false;
+  const LONG_PRESS_DELAY = 400;
+  const SLOP_PX = 8;
+
+  grid.addEventListener('pointerdown', (e) => {
+    const card = e.target.closest('.photo-card');
+    if (!card || activePointerId !== null) return;
+
+    activePointerId = e.pointerId;
+    activeCard = card;
+    startX = e.clientX;
+    startY = e.clientY;
+    isDragging = false;
+
+    longPressTimer = setTimeout(() => {
+      isDragging = true;
+      card.classList.add('lifted');
+      card.style.touchAction = 'none';
+      grid.style.touchAction = 'none';
+      try { card.setPointerCapture(e.pointerId); } catch(err) {}
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, LONG_PRESS_DELAY);
+  });
+
+  grid.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId || !activeCard) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (!isDragging) {
+      if (Math.hypot(dx, dy) > SLOP_PX) {
+        clearTimeout(longPressTimer); // 8px 초과 이동 시 스크롤로 간주, 롱프레스 취소
+      }
+      return;
+    }
+
+    // 1:1 드래그 추종 (상하좌우 모든 방향)
+    activeCard.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.08)`;
+
+    // 타겟 감지 및 재배치
+    activeCard.style.visibility = 'hidden';
+    const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+    activeCard.style.visibility = 'visible';
+
+    const targetCard = elemBelow ? elemBelow.closest('.photo-card') : null;
+    if (targetCard && targetCard !== activeCard && targetCard.parentElement === grid) {
+      const cards = Array.from(grid.children);
+      const fromIdx = cards.indexOf(activeCard);
+      const toIdx = cards.indexOf(targetCard);
+      if (fromIdx < toIdx) targetCard.after(activeCard);
+      else targetCard.before(activeCard);
+    }
+  });
+
+  const endDrag = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    clearTimeout(longPressTimer);
+
+    if (activeCard && isDragging) {
+      activeCard.classList.remove('lifted');
+      activeCard.style.transform = '';
+      activeCard.style.touchAction = 'pan-y';
+      grid.style.touchAction = 'pan-y';
+      try { activeCard.releasePointerCapture(e.pointerId); } catch(err) {}
+    }
+
+    activeCard = null;
+    activePointerId = null;
+    isDragging = false;
+  };
+
+  grid.addEventListener('pointerup', endDrag);
+  grid.addEventListener('pointercancel', endDrag);
+
+  // 드래그 모드 중 네이티브 스크롤 방어
+  window.addEventListener('touchmove', (e) => {
+    if (isDragging && e.cancelable) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
+</body>
+</html>

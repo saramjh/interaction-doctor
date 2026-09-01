@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Controls (Without Skill)</title>
+<style>
+body { margin:0; background:#000; color:#fff; font-family:sans-serif; }
+.video-box { position:relative; width:100%; height:250px; background:#222; display:flex; align-items:center; justify-content:center; }
+.controls { position:absolute; bottom:0; left:0; width:100%; height:40px; background:rgba(0,0,0,0.7); display:flex; align-items:center; padding:0 10px; }
+</style>
+</head>
+<body>
+<div class="video-box" id="vbox">
+  <span>▶ 동영상 재생 중</span>
+  <div class="controls" id="ctrl">
+    <button id="btnPlay">일시정지</button>
+  </div>
+</div>
+<script>
+const vbox = document.getElementById('vbox');
+const ctrl = document.getElementById('ctrl');
+vbox.onclick = () => {
+  ctrl.style.display = ctrl.style.display === 'none' ? 'flex' : 'none';
+};
+</script>
+</body>
+</html>

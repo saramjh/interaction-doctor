@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaction Doctor — 실시간 A/B 테스트 비교 러너</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    background: #161b22;
+    padding: 12px 20px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  h1 { font-size: 16px; font-weight: 600; color: #58a6ff; }
+  .tabs {
+    display: flex;
+    gap: 8px;
+  }
+  .tab-btn {
+    background: #21262d;
+    color: #8b949e;
+    border: 1px solid #30363d;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: #1f6feb;
+    color: #fff;
+    border-color: #388bfd;
+  }
+  .container {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+    background: #0d1117;
+    overflow: hidden;
+  }
+  .panel {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+  }
+  .badge-noskill {
+    background: #f8514922;
+    color: #f85149;
+    border: 1px solid #f8514944;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  .badge-withskill {
+    background: #2ea04322;
+    color: #3fb950;
+    border: 1px solid #2ea04344;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  iframe {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #000;
+  }
+  .desc-box {
+    padding: 8px 14px;
+    background: #0d1117;
+    font-size: 12px;
+    color: #8b949e;
+    border-bottom: 1px solid #21262d;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 Interaction Doctor — 실시간 생성 코드 비교 러너</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchScenario('A')">시나리오 A: 캔버스 박스 드래그 (신규 생성)</button>
+    <button class="tab-btn" onclick="switchScenario('B')">시나리오 B: 바텀시트 충돌 (코드 개선)</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- 왼쪽 패널: Without Skill -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>❌ Without Skill (스킬 미주입)</span>
+      <span class="badge-noskill">Baseline</span>
+    </div>
+    <div class="desc-box" id="descLeft">
+      캔버스 박스 드래그: transition 지연(50ms) 및 전역 touchmove 가로챔
+    </div>
+    <iframe id="frameLeft" src="../evals/runs/live-eval-2026-08-31T12-46-05-141Z/scenario-A-create/without_skill/index.html"></iframe>
+  </div>
+
+  <!-- 오른쪽 패널: With Skill -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>✅ With Skill (interaction-doctor 적용)</span>
+      <span class="badge-withskill">Treatment</span>
+    </div>
+    <div class="desc-box" id="descRight">
+      캔버스 박스 드래그: 네이티브 억제 4종, 1:1 즉각 밀착(0ms), activePointerId 격리
+    </div>
+    <iframe id="frameRight" src="../evals/runs/live-eval-2026-08-31T12-46-05-141Z/scenario-A-create/with_skill/index.html"></iframe>
+  </div>
+</div>
+
+<script>
+  const RUN_PATH = '../evals/runs/live-eval-2026-08-31T12-46-05-141Z';
+
+  function switchScenario(type) {
+    document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', (type === 'A' && idx === 0) || (type === 'B' && idx === 1));
+    });
+
+    const frameLeft = document.getElementById('frameLeft');
+    const frameRight = document.getElementById('frameRight');
+    const descLeft = document.getElementById('descLeft');
+    const descRight = document.getElementById('descRight');
+
+    if (type === 'A') {
+      frameLeft.src = `${RUN_PATH}/scenario-A-create/without_skill/index.html`;
+      frameRight.src = `${RUN_PATH}/scenario-A-create/with_skill/index.html`;
+      descLeft.textContent = '캔버스 박스: transition 상시 적용으로 50ms 조작 지연(Lag) 발생, 멀티터치 미격리';
+      descRight.textContent = '캔버스 박스: 네이티브 4종 억제, 드래그 중 transition 0ms로 1:1 밀착, activePointerId 격리';
+    } else {
+      frameLeft.src = `${RUN_PATH}/scenario-B-refactor/without_skill/index.html`;
+      frameRight.src = `${RUN_PATH}/scenario-B-refactor/with_skill/index.html`;
+      descLeft.textContent = '바텀시트: 8px 슬롭 없음 -> 1px 미세 터치 시 시트가 덜컹거리며 내려감';
+      descRight.textContent = '바텀시트: 8px 슬롭 및 소유권 이양(ownedBySheet) -> 미세 스크롤 완벽 보호 + 상단 닫기';
+    }
+  }
+</script>
+</body>
+</html>

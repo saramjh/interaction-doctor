@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kanban (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    background: #090d16;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .board-header {
+    height: 52px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+  .kanban-board {
+    flex: 1;
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x; /* 보드는 가로 스크롤 전용 */
+  }
+  .kanban-col {
+    flex: 0 0 260px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .kanban-col.highlight {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+  }
+  .col-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .card-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y; /* 컬럼 내부는 세로 스크롤 */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .task-card {
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    cursor: grab;
+    touch-action: pan-y;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .task-card.dragging {
+    opacity: 0.3;
+  }
+  .ghost-card {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    width: 230px;
+    background: #38bdf8;
+    color: #0f172a;
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.6);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+</style>
+</head>
+<body>
+
+<header class="board-header">📋 모바일 애자일 칸반 보드</header>
+
+<div class="kanban-board" id="board">
+  <div class="kanban-col" id="col1">
+    <div class="col-title">
+      <span>🚀 백로그 (To-Do)</span>
+      <span style="color:#94a3b8; font-size:12px;">2</span>
+    </div>
+    <div class="card-list">
+      <div class="task-card">📝 사용자 피드백 분석 보고서 작성</div>
+      <div class="task-card">🎨 모바일 바텀시트 UI 디자인 시안</div>
+    </div>
+  </div>
+
+  <div class="kanban-col" id="col2">
+    <div class="col-title">
+      <span>⚡ 진행 중 (In Progress)</span>
+      <span style="color:#38bdf8; font-size:12px;">1</span>
+    </div>
+    <div class="card-list">
+      <div class="task-card">⚙️ 제스처 락 API 엔진 개발</div>
+    </div>
+  </div>
+
+  <div class="kanban-col" id="col3">
+    <div class="col-title">
+      <span>✅ 완료 (Done)</span>
+      <span style="color:#22c55e; font-size:12px;">1</span>
+    </div>
+    <div class="card-list">
+      <div class="task-card">🔒 OTP 키패드 보안 검증</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let draggingEl = null;
+  let ghost = null;
+  let activePointerId = null;
+  let longPressTimer = null;
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  const LONG_PRESS_MS = 350;
+  const SLOP = 8;
+
+  function bindCard(card) {
+    card.addEventListener('pointerdown', (e) => {
+      if (activePointerId !== null) return;
+      activePointerId = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      isDragging = false;
+
+      longPressTimer = setTimeout(() => {
+        isDragging = true;
+        draggingEl = card;
+        card.classList.add('dragging');
+        card.style.touchAction = 'none';
+
+        try { card.setPointerCapture(e.pointerId); } catch(err) {}
+
+        ghost = document.createElement('div');
+        ghost.className = 'ghost-card';
+        ghost.textContent = card.textContent;
+        document.body.appendChild(ghost);
+        moveGhost(e.clientX, e.clientY);
+
+        if (navigator.vibrate) navigator.vibrate(35);
+      }, LONG_PRESS_MS);
+    });
+
+    card.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== activePointerId) return;
+
+      if (!isDragging) {
+        if (Math.hypot(e.clientX - startX, e.clientY - startY) > SLOP) {
+          clearTimeout(longPressTimer);
+        }
+        return;
+      }
+
+      moveGhost(e.clientX, e.clientY);
+
+      // 목표 컬럼 하이라이트
+      const col = getColUnder(e.clientX, e.clientY);
+      document.querySelectorAll('.kanban-col').forEach(c => {
+        c.classList.toggle('highlight', c === col);
+      });
+    });
+
+    const release = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      clearTimeout(longPressTimer);
+
+      if (isDragging) {
+        if (ghost) ghost.remove();
+        card.classList.remove('dragging');
+        card.style.touchAction = 'pan-y';
+
+        const col = getColUnder(e.clientX, e.clientY);
+        if (col) {
+          col.querySelector('.card-list').appendChild(card);
+          if (navigator.vibrate) navigator.vibrate(20);
+        }
+
+        document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('highlight'));
+        try { card.releasePointerCapture(e.pointerId); } catch(err) {}
+      }
+
+      activePointerId = null;
+      draggingEl = null;
+      ghost = null;
+      isDragging = false;
+    };
+
+    card.addEventListener('pointerup', release);
+    card.addEventListener('pointercancel', release);
+  }
+
+  function moveGhost(x, y) {
+    if (ghost) {
+      ghost.style.left = `${x}px`;
+      ghost.style.top = `${y}px`;
+    }
+  }
+
+  function getColUnder(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (el) return el.closest('.kanban-col');
+    return null;
+  }
+
+  document.querySelectorAll('.task-card').forEach(bindCard);
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tooltip (Without Skill)</title>
+<style>
+body { padding:40px; height:150vh; font-family:sans-serif; background:#f4f4f4; }
+.btn-help { padding:8px 12px; font-size:16px; position:relative; cursor:pointer; }
+.tooltip { position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:8px 12px; border-radius:6px; font-size:13px; display:none; width:180px; }
+.tooltip.show { display:block; }
+</style>
+</head>
+<body>
+<h3>모바일 툴팁 (Without Skill)</h3>
+<button class="btn-help" id="btnHelp">도움말 ℹ️
+  <div class="tooltip" id="tooltip">여기에 상세한 안내 문구가 표시됩니다.</div>
+</button>
+<p style="margin-top:40px;">외부를 터치하거나 스크롤해도 툴팁이 닫히지 않고 남아있는 결함이 있습니다.</p>
+<script>
+const btn = document.getElementById('btnHelp');
+const tt = document.getElementById('tooltip');
+btn.onclick = (e) => {
+  e.stopPropagation();
+  tt.classList.toggle('show');
+};
+</script>
+</body>
+</html>

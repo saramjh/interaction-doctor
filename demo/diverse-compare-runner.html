@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaction Doctor — 10대 일반 인터랙션 A/B 비교 러너</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    background: #161b22;
+    padding: 10px 16px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  h1 { font-size: 15px; font-weight: 600; color: #58a6ff; }
+  .tabs-container {
+    background: #161b22;
+    padding: 6px 16px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .tab-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b949e;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+  }
+  .tab-btn {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: #1f6feb;
+    color: #fff;
+    border-color: #388bfd;
+  }
+  .container {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+    background: #090d13;
+    overflow: hidden;
+  }
+  .panel {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+  }
+  .badge-noskill {
+    background: #f8514922;
+    color: #f85149;
+    border: 1px solid #f8514944;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  .badge-withskill {
+    background: #2ea04322;
+    color: #3fb950;
+    border: 1px solid #2ea04344;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  iframe {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #ffffff;
+  }
+  .prompt-bar {
+    padding: 6px 14px;
+    background: #13171f;
+    font-size: 12px;
+    color: #8b949e;
+    border-bottom: 1px solid #21262d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 10대 일반 인터랙션 A/B 실시간 비교 러너</h1>
+  <div style="font-size:12px; color:#8b949e;">좌우 패널에서 실시간 터치/드래그 테스트 가능</div>
+</header>
+
+<div class="tabs-container">
+  <div class="tab-group-title">신규 5:</div>
+  <button class="tab-btn active" onclick="loadScenario('create-1-tabs', 0)">1. 스와이프 탭</button>
+  <button class="tab-btn" onclick="loadScenario('create-2-rangeslider', 1)">2. 범위 슬라이더</button>
+  <button class="tab-btn" onclick="loadScenario('create-3-imagezoom', 2)">3. 핀치 줌 뷰어</button>
+  <button class="tab-btn" onclick="loadScenario('create-4-pullrefresh', 3)">4. 당겨서 새로고침</button>
+  <button class="tab-btn" onclick="loadScenario('create-5-sortablegrid', 4)">5. 사진 그리드 재배치</button>
+
+  <div class="tab-group-title" style="margin-left:10px;">개선 5:</div>
+  <button class="tab-btn" onclick="loadScenario('refactor-1-drawer', 5)">6. 사이드 드로어</button>
+  <button class="tab-btn" onclick="loadScenario('refactor-2-carousel', 6)">7. 캐러셀 스냅</button>
+  <button class="tab-btn" onclick="loadScenario('refactor-3-segmented', 7)">8. 세그먼트 컨트롤</button>
+  <button class="tab-btn" onclick="loadScenario('refactor-4-tooltip', 8)">9. 툴팁 외부 닫기</button>
+  <button class="tab-btn" onclick="loadScenario('refactor-5-accordion', 9)">10. FAQ 아코디언</button>
+</div>
+
+<div class="prompt-bar" id="promptBar">
+  시나리오 요청 내용 로딩 중...
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-header">
+      <span>❌ Without Skill (스킬 미주입 Baseline)</span>
+      <span class="badge-noskill">Without Skill</span>
+    </div>
+    <iframe id="frameLeft"></iframe>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <span>✅ With Skill (interaction-doctor Treatment)</span>
+      <span class="badge-withskill">With Skill</span>
+    </div>
+    <iframe id="frameRight"></iframe>
+  </div>
+</div>
+
+<script>
+  let latestRunDir = '';
+
+  const scenarioPrompts = {
+    'create-1-tabs': '모바일 상단 탭 + 화면 좌우 스와이프 페이지 전환 (세로 스크롤과 좌우 스와이프 간섭 방지)',
+    'create-2-rangeslider': '모바일 듀얼 썸 가격 범위 슬라이더 (1:1 부드러운 터치 드래그, 화면 스크롤 간섭 방지)',
+    'create-3-imagezoom': '두 손가락 핀치 줌 & 팬 이미지 뷰어 (브라우저 기본 줌과 충돌 방지)',
+    'create-4-pullrefresh': '당겨서 새로고침 (맨 위에서만 로딩 트리거, 리스트 중간 스크롤 간섭 방지)',
+    'create-5-sortablegrid': '갤러리 사진 2열 격자 그리드 터치 롱프레스 재배치 (세로 스크롤 충돌 방지)',
+    'refactor-1-drawer': '사이드 드로어 메뉴 (배경 스크롤 락 및 iOS 뒤로가기 스와이프 충돌 수정)',
+    'refactor-2-carousel': '무한 루프 캐러셀 (터치 시 스냅 어긋남 및 터치 중 자동 롤링 일시정지)',
+    'refactor-3-segmented': 'iOS 세그먼트 컨트롤 (300ms 탭 지연 제거 및 슬라이딩 인디케이터 드래그 개선)',
+    'refactor-4-tooltip': '모바일 툴팁/팝오버 (외부 터치 시 안전한 닫기 및 터치 간섭 수정)',
+    'refactor-5-accordion': 'FAQ 아코디언 (더블탭 줌 및 텍스트 선택 간섭 없는 즉각적인 아코디언 전환)'
+  };
+
+  async function init() {
+    // 가장 최신 diverse-eval 디렉토리 경로 지정
+    loadScenario('create-1-tabs', 0);
+  }
+
+  function loadScenario(scId, tabIdx) {
+    document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', idx === tabIdx);
+    });
+
+    document.getElementById('promptBar').textContent = `📋 목표: ${scenarioPrompts[scId] || scId}`;
+
+    // runs 내 최신 생성 디렉토리 심볼릭/상대 경로 로딩
+    const frameLeft = document.getElementById('frameLeft');
+    const frameRight = document.getElementById('frameRight');
+
+    frameLeft.src = `../evals/runs/diverse-eval-master/${scId}/without_skill/index.html`;
+    frameRight.src = `../evals/runs/diverse-eval-master/${scId}/with_skill/index.html`;
+  }
+
+  window.onload = init;
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Story Editor (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: #000000;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .editor-header {
+    height: 52px;
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    border-bottom: 1px solid #334155;
+  }
+  .stage-canvas {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #090d16;
+    touch-action: none; /* 브라우저 기본 제스처 완전 차단 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bg-photo {
+    position: absolute;
+    width: 280px;
+    height: 380px;
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    will-change: transform;
+    pointer-events: none;
+  }
+  .sticker-box {
+    position: absolute;
+    top: 40%;
+    left: 20%;
+    padding: 12px 20px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid #38bdf8;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    cursor: grab;
+    touch-action: none;
+    will-change: transform;
+    z-index: 5;
+    transition: transform 0.1s;
+  }
+  .sticker-box.active {
+    cursor: grabbing;
+    border-color: #f43f5e;
+    box-shadow: 0 0 16px rgba(244, 63, 94, 0.6);
+  }
+  .toolbar-bottom {
+    height: 72px;
+    background: #0f172a;
+    border-top: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    z-index: 10;
+  }
+  .color-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 3px solid #1e293b;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 0.15s;
+  }
+  .color-btn:active { transform: scale(1.15); }
+</style>
+</head>
+<body>
+
+<header class="editor-header">
+  <div style="font-weight:700; font-size:15px; color:#38bdf8;">✨ 스토리 스튜디오</div>
+  <button style="background:#38bdf8; color:#0f172a; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:12px; touch-action:manipulation;">완료</button>
+</header>
+
+<div class="stage-canvas" id="canvas">
+  <div class="bg-photo" id="bgPhoto">
+    <div>📸</div>
+    <div style="font-size:13px; color:#94a3b8; margin-top:8px;">두 손가락으로 배경 핀치줌</div>
+  </div>
+
+  <div class="sticker-box" id="sticker">🔥 오늘의 무드 #OOTD</div>
+</div>
+
+<div class="toolbar-bottom">
+  <div class="color-btn" style="background:#ef4444;" onclick="changeColor('rgba(239, 68, 68, 0.85)')"></div>
+  <div class="color-btn" style="background:#f59e0b;" onclick="changeColor('rgba(245, 158, 11, 0.85)')"></div>
+  <div class="color-btn" style="background:#10b981;" onclick="changeColor('rgba(16, 185, 129, 0.85)')"></div>
+  <div class="color-btn" style="background:#38bdf8;" onclick="changeColor('rgba(56, 189, 248, 0.85)')"></div>
+  <div class="color-btn" style="background:#8b5cf6;" onclick="changeColor('rgba(139, 92, 246, 0.85)')"></div>
+  <div class="color-btn" style="background:#ec4899;" onclick="changeColor('rgba(236, 72, 153, 0.85)')"></div>
+</div>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const bgPhoto = document.getElementById('bgPhoto');
+  const sticker = document.getElementById('sticker');
+
+  function changeColor(c) {
+    sticker.style.background = c;
+    if (navigator.vibrate) navigator.vibrate(20);
+  }
+
+  // 1. 스티커 독립 1손가락 드래그 (격리)
+  let stickerPointerId = null;
+  let stStartX = 0, stStartY = 0;
+  let stCurX = 0, stCurY = 0;
+
+  sticker.addEventListener('pointerdown', (e) => {
+    e.stopPropagation(); // 배경 캔버스로 이벤트 전파 차단
+    if (stickerPointerId !== null) return;
+    stickerPointerId = e.pointerId;
+    try { sticker.setPointerCapture(e.pointerId); } catch(err) {}
+
+    stStartX = e.clientX - stCurX;
+    stStartY = e.clientY - stCurY;
+    sticker.classList.add('active');
+  });
+
+  sticker.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== stickerPointerId) return;
+    stCurX = e.clientX - stStartX;
+    stCurY = e.clientY - stStartY;
+    sticker.style.transform = `translate3d(${stCurX}px, ${stCurY}px, 0)`;
+  });
+
+  const releaseSticker = (e) => {
+    if (e.pointerId !== stickerPointerId) return;
+    stickerPointerId = null;
+    sticker.classList.remove('active');
+    try { sticker.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+  sticker.addEventListener('pointerup', releaseSticker);
+  sticker.addEventListener('pointercancel', releaseSticker);
+
+  // 2. 배경 캔버스 2손가락 핀치 줌 / 1손가락 팬 (멀티터치 불변 맵 격리)
+  const pointers = new Map();
+  let bgScale = 1.0;
+  let bgPanX = 0, bgPanY = 0;
+  let initDist = 0;
+  let initScale = 1.0;
+
+  canvas.addEventListener('pointerdown', (e) => {
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2) {
+      const pts = Array.from(pointers.values());
+      initDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      initScale = bgScale;
+    }
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (pointers.size === 2) {
+      const pts = Array.from(pointers.values());
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (initDist > 0) {
+        bgScale = Math.max(0.6, Math.min(2.5, initScale * (dist / initDist)));
+        bgPhoto.style.transform = `translate3d(${bgPanX}px, ${bgPanY}px, 0) scale(${bgScale})`;
+      }
+    }
+  });
+
+  const releaseCanvas = (e) => {
+    pointers.delete(e.pointerId);
+  };
+  canvas.addEventListener('pointerup', releaseCanvas);
+  canvas.addEventListener('pointercancel', releaseCanvas);
+</script>
+</body>
+</html>

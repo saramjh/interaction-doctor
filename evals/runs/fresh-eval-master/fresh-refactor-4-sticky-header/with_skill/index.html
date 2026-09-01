@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sticky Header (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: 250vh;
+  }
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+    will-change: transform;
+  }
+  .sticky-header.hidden {
+    transform: translate3d(0, -100%, 0);
+  }
+  .main-content {
+    padding: 84px 20px 40px 20px; /* 고정 패딩으로 레이아웃 시프트 완전 0 */
+  }
+  .feed-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    color: #cbd5e1;
+  }
+</style>
+</head>
+<body>
+
+<header class="sticky-header" id="header">
+  <div style="font-weight:700; font-size:16px; color:#38bdf8;">⚡ 스마트 스크롤 헤더</div>
+  <div style="font-size:12px; color:#94a3b8;">CLS 0.00 보장</div>
+</header>
+
+<main class="main-content">
+  <div class="feed-card">
+    <h3 style="color:#f8fafc; margin-bottom:8px;">✅ 레이아웃 시프트 없는 인터랙션</h3>
+    <p>아래로 스크롤하면 헤더가 부드럽게 숨겨지고, 위로 조금만 당겨도 즉시 나타납니다. 높이 변경이 아닌 <code>transform</code>을 사용하여 레이아웃 흔들림이 전혀 없습니다.</p>
+  </div>
+  <div class="feed-card">📌 콘텐츠 섹션 1 (스크롤 테스트)</div>
+  <div class="feed-card">📌 콘텐츠 섹션 2</div>
+  <div class="feed-card">📌 콘텐츠 섹션 3</div>
+  <div class="feed-card">📌 콘텐츠 섹션 4</div>
+  <div class="feed-card">📌 콘텐츠 섹션 5</div>
+</main>
+
+<script>
+  const header = document.getElementById('header');
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  function updateHeader() {
+    const currentY = window.scrollY;
+
+    // iOS 사파리 상단 고무줄 바운스 예외 처리
+    if (currentY <= 10) {
+      header.classList.remove('hidden');
+      lastScrollY = currentY;
+      ticking = false;
+      return;
+    }
+
+    const delta = currentY - lastScrollY;
+
+    if (delta > 8 && currentY > 64) {
+      // 아래로 8px 이상 스크롤 시 숨김
+      header.classList.add('hidden');
+    } else if (delta < -6) {
+      // 위로 6px 이상 스크롤 시 즉시 복구
+      header.classList.remove('hidden');
+    }
+
+    lastScrollY = currentY;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updateHeader);
+      ticking = true;
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>

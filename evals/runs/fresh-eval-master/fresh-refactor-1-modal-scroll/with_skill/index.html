@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Modal Scroll Chaining (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    padding: 24px 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 200vh;
+    background: #0f172a;
+    color: #f8fafc;
+  }
+  body.modal-open {
+    overflow: hidden;
+    touch-action: none;
+  }
+  .btn-open {
+    padding: 12px 20px;
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+    z-index: 100;
+    touch-action: none;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    transform: scale(0.95);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modal-overlay.open .modal-card {
+    transform: scale(1);
+  }
+  .modal-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain; /* 스크롤 체이닝 원천 방어 */
+    touch-action: pan-y;
+  }
+  .terms-item {
+    background: #0f172a;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+</style>
+</head>
+<body>
+
+<button class="btn-open" id="btnOpen">📜 이용약관 모달 열기</button>
+<p style="margin-top:20px; color:#94a3b8; line-height:1.6; font-size:14px;">
+  본문 영역입니다. 모달이 열리면 <strong>스크롤 체이닝(Scroll Chaining)이 완벽히 방어</strong>되어, 모달 내부 끝에 도달해 세게 당겨도 뒤의 본문이 절대 스크롤되지 않습니다.
+</p>
+
+<div class="modal-overlay" id="overlay">
+  <div class="modal-card" id="card">
+    <div class="modal-header">
+      <h3 style="font-size:16px;">서비스 이용약관</h3>
+      <button id="btnClose" style="background:transparent; border:none; color:#94a3b8; font-size:18px; cursor:pointer;">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="terms-item">제 1 조 (목적)<br>본 약관은 서비스의 이용조건 및 절차에 관한 제반 사항을 규정함을 목적으로 합니다.</div>
+      <div class="terms-item">제 2 조 (용어의 정의)<br>본 약관에서 사용하는 용어의 정의는 관계 법령 및 서비스별 안내에서 정하는 바에 따릅니다.</div>
+      <div class="terms-item">제 3 조 (이용계약의 성립)<br>이용계약은 회원의 이용신청에 대하여 회사가 승낙함으로써 성립합니다.</div>
+      <div class="terms-item">제 4 조 (개인정보보호 의무)<br>회사는 정보통신망법 등 관계 법령이 정하는 바에 따라 회원의 개인정보를 보호합니다.</div>
+      <div class="terms-item">제 5 조 (회원의 의무)<br>회원은 관계 법령, 본 약관의 규정, 이용안내 등을 준수하여야 합니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const btnOpen = document.getElementById('btnOpen');
+  const btnClose = document.getElementById('btnClose');
+  const overlay = document.getElementById('overlay');
+  const card = document.getElementById('card');
+
+  function openModal() {
+    overlay.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  btnOpen.addEventListener('click', openModal);
+  btnClose.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+</script>
+</body>
+</html>

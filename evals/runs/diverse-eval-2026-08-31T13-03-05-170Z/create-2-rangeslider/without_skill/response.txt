@@ -1,0 +1,498 @@
+모바일 기기에서 터치 드래그 시 화면 스크롤이나 확대 동작이 방해하지 않고, 손가락을 **1:1로 부드럽게 따라오는 듀얼 썸(양쪽 핸들) 범위 슬라이더 컴포넌트**입니다.
+
+단일 `index.html` 파일로 작성되었으며, iOS Safari 및 Android Chrome 브라우저의 터치 제스처 간섭을 완벽히 방지하도록 처리되어 있습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>모바일 듀얼 썸 범위 슬라이더</title>
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --primary-light: #c7d2fe;
+      --primary-hover: #4338ca;
+      --track-bg: #e5e7eb;
+      --thumb-size: 28px;
+      --thumb-active-size: 34px;
+      --text-color: #1f2937;
+      --bg-color: #f9fafb;
+      --card-bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      /* 모바일에서 터치 시 하이라이트 잔상 제거 및 텍스트 선택 방지 */
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 440px;
+      padding: 28px 24px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+
+    .title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    /* 값 표시 영역 */
+    .value-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      background-color: #f3f4f6;
+      padding: 12px 16px;
+      border-radius: 12px;
+    }
+
+    .value-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .value-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .value-number {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .value-separator {
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    /* 슬라이더 영역 - 터치 동작 방지 핵심 CSS */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      height: 48px; /* 터치하기 충분한 영역 고정 */
+      display: flex;
+      align-items: center;
+      /* 핵심: 화면 스크롤, 핀치줌 등 기본 터치 제스처 차단 */
+      touch-action: none;
+      cursor: pointer;
+    }
+
+    /* 슬라이더 트랙 배경 */
+    .slider-track {
+      position: absolute;
+      width: 100%;
+      height: 8px;
+      background-color: var(--track-bg);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* 선택된 범위 트랙 */
+    .slider-range {
+      position: absolute;
+      height: 8px;
+      background-color: var(--primary-color);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* 슬라이더 핸들 (Thumb) */
+    .slider-thumb {
+      position: absolute;
+      width: var(--thumb-size);
+      height: var(--thumb-size);
+      background-color: #ffffff;
+      border: 3px solid var(--primary-color);
+      border-radius: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      cursor: grab;
+      z-index: 2;
+      /* 부드러운 확대 효과만 적용 (위치 변경시에는 delay가 없어야 1:1 추종함) */
+      transition: width 0.15s ease, height 0.15s ease, border-width 0.15s ease, box-shadow 0.15s ease;
+      touch-action: none;
+      outline: none;
+    }
+
+    /* 활성화된 핸들 스타일 */
+    .slider-thumb.active {
+      width: var(--thumb-active-size);
+      height: var(--thumb-active-size);
+      border-width: 4px;
+      box-shadow: 0 0 0 6px var(--primary-light), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      z-index: 3;
+      cursor: grabbing;
+    }
+
+    /* 툴팁 표시 */
+    .thumb-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background-color: #1f2937;
+      color: #ffffff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .thumb-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px;
+      border-style: solid;
+      border-color: #1f2937 transparent transparent transparent;
+    }
+
+    .slider-thumb.active .thumb-tooltip,
+    .slider-container:hover .thumb-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* 눈금 표시 */
+    .scale-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    .scale-mark {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2 class="title">가격 범위 설정</h2>
+    <p class="subtitle">원하는 가격대를 터치하여 조절하세요.</p>
+
+    <!-- 수치 Display -->
+    <div class="value-display">
+      <div class="value-box">
+        <span class="value-label">최소 금액</span>
+        <span class="value-number" id="min-value-text">₩0</span>
+      </div>
+      <span class="value-separator">~</span>
+      <div class="value-box" style="text-align: right;">
+        <span class="value-label">최대 금액</span>
+        <span class="value-number" id="max-value-text">₩0</span>
+      </div>
+    </div>
+
+    <!-- 슬라이더 트랙 컴포넌트 -->
+    <div class="slider-container" id="slider-container">
+      <div class="slider-track"></div>
+      <div class="slider-range" id="slider-range"></div>
+      
+      <!-- 최소값 핸들 -->
+      <div class="slider-thumb" id="thumb-min" tabindex="0" role="slider" aria-label="최소값">
+        <div class="thumb-tooltip" id="tooltip-min">0</div>
+      </div>
+      
+      <!-- 최대값 핸들 -->
+      <div class="slider-thumb" id="thumb-max" tabindex="0" role="slider" aria-label="최대값">
+        <div class="thumb-tooltip" id="tooltip-max">0</div>
+      </div>
+    </div>
+
+    <!-- 범주 눈금 표시 -->
+    <div class="scale-container">
+      <span class="scale-mark" id="scale-min">₩0</span>
+      <span class="scale-mark" id="scale-max">₩100,000</span>
+    </div>
+  </div>
+
+  <script>
+    // Configuration Settings
+    const CONFIG = {
+      min: 0,
+      max: 100000,
+      step: 1000,
+      minGap: 5000, // 두 핸들 간의 최소 간격
+      initialMin: 20000,
+      initialMax: 70000
+    };
+
+    // Current State
+    let currentMin = CONFIG.initialMin;
+    let currentMax = CONFIG.initialMax;
+    let activeThumb = null;
+
+    // DOM Elements
+    const container = document.getElementById('slider-container');
+    const range = document.getElementById('slider-range');
+    const thumbMin = document.getElementById('thumb-min');
+    const thumbMax = document.getElementById('thumb-max');
+    const tooltipMin = document.getElementById('tooltip-min');
+    const tooltipMax = document.getElementById('tooltip-max');
+    const minValueText = document.getElementById('min-value-text');
+    const maxValueText = document.getElementById('max-value-text');
+    const scaleMin = document.getElementById('scale-min');
+    const scaleMax = document.getElementById('scale-max');
+
+    // 통화 포맷팅 함수
+    function formatCurrency(val) {
+      return '₩' + val.toLocaleString('ko-KR');
+    }
+
+    // 값 초기화 및 레이아웃 설정
+    function init() {
+      scaleMin.textContent = formatCurrency(CONFIG.min);
+      scaleMax.textContent = formatCurrency(CONFIG.max);
+      updateUI();
+    }
+
+    // 백분율 계산 함수 (0 ~ 100)
+    function getPercent(value) {
+      return ((value - CONFIG.min) / (CONFIG.max - CONFIG.min)) * 100;
+    }
+
+    // UI 업데이트 (1:1 픽셀 추종을 위해 직접 style 조작)
+    function updateUI() {
+      const minPercent = getPercent(currentMin);
+      const maxPercent = getPercent(currentMax);
+
+      // Thumb 위치 설정
+      thumbMin.style.left = `${minPercent}%`;
+      thumbMax.style.left = `${maxPercent}%`;
+
+      // 선택 영역(Range) 위치 및 너비 설정
+      range.style.left = `${minPercent}%`;
+      range.style.width = `${maxPercent - minPercent}%`;
+
+      // Text 및 Tooltip 업데이트
+      const minFormatted = formatCurrency(currentMin);
+      const maxFormatted = formatCurrency(currentMax);
+
+      minValueText.textContent = minFormatted;
+      maxValueText.textContent = maxFormatted;
+      tooltipMin.textContent = minFormatted;
+      tooltipMax.textContent = maxFormatted;
+
+      // Accessibility ARIA 업데이트
+      thumbMin.setAttribute('aria-valuenow', currentMin);
+      thumbMax.setAttribute('aria-valuenow', currentMax);
+    }
+
+    // 터치/마우스 좌표에서 슬라이더 값(Value) 추출
+    function getValueFromClientX(clientX) {
+      const rect = container.getBoundingClientRect();
+      // 컨테이너 범위 내 좌표 clamping (0 ~ 1)
+      let offsetX = clientX - rect.left;
+      let percent = offsetX / rect.width;
+      percent = Math.max(0, Math.min(1, percent));
+
+      // 비율을 정수 값으로 환산
+      let rawValue = CONFIG.min + percent * (CONFIG.max - CONFIG.min);
+
+      // Step 단위 Snap 처리
+      let steppedValue = Math.round((rawValue - CONFIG.min) / CONFIG.step) * CONFIG.step + CONFIG.min;
+      return Math.max(CONFIG.min, Math.min(CONFIG.max, steppedValue));
+    }
+
+    // 드래그 시작 이벤트 핸들러
+    function handleStart(clientX, target) {
+      const clickedValue = getValueFromClientX(clientX);
+
+      // 직접 핸들을 터치하지 않고 트랙을 터치했을 때 가까운 핸들 선택
+      if (target === thumbMin) {
+        activeThumb = thumbMin;
+      } else if (target === thumbMax) {
+        activeThumb = thumbMax;
+      } else {
+        const distToMin = Math.abs(clickedValue - currentMin);
+        const distToMax = Math.abs(clickedValue - currentMax);
+
+        if (distToMin < distMax) {
+          activeThumb = thumbMin;
+        } else if (distToMin > distToMax) {
+          activeThumb = thumbMax;
+        } else {
+          // 간격이 같을 경우 터치 위치 기준으로 결정
+          activeThumb = clickedValue < currentMin ? thumbMin : thumbMax;
+        }
+      }
+
+      // 선택된 핸들의 Z-Index 조정하여 위로 올림
+      if (activeThumb === thumbMin) {
+        thumbMin.style.zIndex = '4';
+        thumbMax.style.zIndex = '2';
+      } else {
+        thumbMin.style.zIndex = '2';
+        thumbMax.style.zIndex = '4';
+      }
+
+      activeThumb.classList.add('active');
+      handleMove(clientX); // 터치 즉시 그 위치로 추종
+    }
+
+    // 드래그 중 이벤트 핸들러
+    function handleMove(clientX) {
+      if (!activeThumb) return;
+
+      const newValue = getValueFromClientX(clientX);
+
+      if (activeThumb === thumbMin) {
+        // 최소값 핸들은 (최대값 - minGap)을 넘을 수 없음
+        currentMin = Math.min(newValue, currentMax - CONFIG.minGap);
+      } else if (activeThumb === thumbMax) {
+        // 최대값 핸들은 (최소값 + minGap)을 넘을 수 없음
+        currentMax = Math.max(newValue, currentMin + CONFIG.minGap);
+      }
+
+      // UI 즉시 반영 (delay 없는 1:1 추종)
+      requestAnimationFrame(updateUI);
+    }
+
+    // 드래그 종료 이벤트 핸들러
+    function handleEnd() {
+      if (activeThumb) {
+        activeThumb.classList.remove('active');
+        activeThumb = null;
+      }
+    }
+
+    /* === 이벤트 리스너 등록 (터치/마우스 호환 & 스크롤 방지) === */
+
+    // Touch Events (모바일 전용 - passive: false 설정으로 e.preventDefault() 보장)
+    container.addEventListener('touchstart', function(e) {
+      // 화면 스크롤 및 핀치 줌 완벽 차단
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleStart(touch.clientX, e.target);
+    }, { passive: false });
+
+    window.addEventListener('touchmove', function(e) {
+      if (activeThumb) {
+        // 드래그 도중 스크롤 방지
+        e.preventDefault();
+        const touch = e.touches[0];
+        handleMove(touch.clientX);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', function(e) {
+      handleEnd();
+    });
+
+    window.addEventListener('touchcancel', function(e) {
+      handleEnd();
+    });
+
+    // Mouse/Pointer Events (데스크톱 및 Pointer 호환 기기)
+    container.addEventListener('pointerdown', function(e) {
+      // 터치 이벤트와 중복 실행 방지
+      if (e.pointerType === 'touch') return;
+      e.preventDefault();
+      handleStart(e.clientX, e.target);
+    });
+
+    window.addEventListener('pointermove', function(e) {
+      if (e.pointerType === 'touch') return;
+      if (activeThumb) {
+        e.preventDefault();
+        handleMove(e.clientX);
+      }
+    });
+
+    window.addEventListener('pointerup', function(e) {
+      if (e.pointerType === 'touch') return;
+      handleEnd();
+    });
+
+    // 키보드 접근성 지원 (Tab 이동 후 화살표 조작)
+    [thumbMin, thumbMax].forEach(thumb => {
+      thumb.addEventListener('keydown', function(e) {
+        const isMin = this === thumbMin;
+        let step = CONFIG.step;
+        if (e.shiftKey) step *= 5; // Shift 누를 시 크게 이동
+
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (isMin) {
+            currentMin = Math.max(CONFIG.min, currentMin - step);
+          } else {
+            currentMax = Math.max(currentMin + CONFIG.minGap, currentMax - step);
+          }
+          updateUI();
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (isMin) {
+            currentMin = Math.min(currentMax - CONFIG.minGap, currentMin + step);
+          } else {
+            currentMax = Math.min(CONFIG.max, currentMax + step);
+          }
+          updateUI();
+        }
+      });
+    });
+
+    // 초기화 실행
+    init();
+  </script>
+</body>
+</html>
+```
+
+### 💡 주요 기능 및 모바일 최적화 포인트
+
+1. **터치 동작 간섭 완전 차단 (`touch-action: none` & `passive: false`)**
+   * CSS `touch-action: none;`과 JS `e.preventDefault()`를 `{ passive: false }` 옵션으로 결합하여 슬라이더를 맞잡고 끌 때 모바일 브라우저의 **페이지 스크롤 및 핀치 줌을 완벽히 차단**합니다.
+2. **1:1 손가락 추종 (Direct Tracking)**
+   * 드래그 도중 위치 계산 시 CSS Transition 지연 요소를 배제하고 `requestAnimationFrame`과 실시간 픽셀 좌표 변환 알고리즘을 사용하여, **손가락 움직임과 핸들이 지연 없이 exact하게 반응**합니다.
+3. **충돌 및 넘침 방지 (`minGap`)**
+   * 최소값과 최대값 핸들이 서로 겹치거나 지쳐 지나치지 않도록 안전 간격(`minGap`)을 보장합니다.
+4. **스마트 핸들 선택 (Closest Thumb Selection)**
+   * 두 핸들이 매우 가까이 붙어있거나 트랙 빈 곳을 직접 터치할 때, 클릭 위치에서 **더 가까운 핸들이 자동으로 선택**되어 즉시 움직입니다.
+5. **접근성(Accessibility) 지원**
+   * 모바일 터치 외에도 키보드 Tab 이동 후 **좌/우 화살표 키**로 조작할 수 있도록 ARIA 속성 및 Keyboard Listener가 구현되어 있습니다.

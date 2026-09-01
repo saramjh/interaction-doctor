@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Smart Home (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    padding: 24px 16px 40px 16px;
+    background: #090d16;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .dash-header {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    touch-action: pan-y;
+  }
+  .dash-tile {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+    cursor: grab;
+    touch-action: pan-y;
+    position: relative;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .dash-tile.active-drag {
+    cursor: grabbing;
+    transform: scale(1.05);
+    border-color: #38bdf8;
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
+    z-index: 10;
+  }
+  .mini-knob {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #090d16;
+    border: 2px solid #38bdf8;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: ew-resize;
+    touch-action: none; /* 다이얼 회전 격리 */
+  }
+  .knob-dot {
+    position: absolute;
+    top: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+  }
+</style>
+</head>
+<body>
+
+<div class="dash-header">
+  <div>
+    <h2 style="font-size:18px; color:#38bdf8;">🏡 스마트홈 IoT 허브</h2>
+    <div style="font-size:12px; color:#94a3b8; margin-top:2px;">타일을 길게 눌러 위치를 이동하거나 다이얼을 돌리세요.</div>
+  </div>
+</div>
+
+<div class="tile-grid" id="grid">
+  <div class="dash-tile" id="tile1">
+    <div style="display:flex; justify-content:space-between;">
+      <span style="font-size:20px;">💡</span>
+      <span style="color:#22c55e; font-size:11px; font-weight:700;">ON</span>
+    </div>
+    <div class="mini-knob" id="knob1">
+      <div class="knob-dot"></div>
+      <span id="txtBright">80%</span>
+    </div>
+    <div style="font-weight:700; font-size:13px;">거실 메인 조명</div>
+  </div>
+
+  <div class="dash-tile" id="tile2">
+    <div style="display:flex; justify-content:space-between;">
+      <span style="font-size:20px;">❄️</span>
+      <span style="color:#38bdf8; font-size:11px; font-weight:700;">22°C</span>
+    </div>
+    <div style="font-size:24px; text-align:center; font-weight:800; color:#38bdf8; margin:10px 0;">쾌적 모드</div>
+    <div style="font-weight:700; font-size:13px;">스마트 에어컨</div>
+  </div>
+
+  <div class="dash-tile" id="tile3">
+    <div style="font-size:20px;">🔒</div>
+    <div style="font-size:16px; text-align:center; font-weight:700; color:#22c55e; margin:16px 0;">현관문 잠김</div>
+    <div style="font-weight:700; font-size:13px;">스마트 도어락</div>
+  </div>
+
+  <div class="dash-tile" id="tile4">
+    <div style="font-size:20px;">📹</div>
+    <div style="font-size:16px; text-align:center; font-weight:700; color:#cbd5e1; margin:16px 0;">실시간 스트리밍</div>
+    <div style="font-weight:700; font-size:13px;">거실 홈캠</div>
+  </div>
+</div>
+
+<script>
+  // 조명 다이얼 제스처 격리
+  const knob = document.getElementById('knob1');
+  const txtBright = document.getElementById('txtBright');
+  let kPointerId = null;
+  let kStartX = 0;
+  let curBright = 80;
+
+  knob.addEventListener('pointerdown', (e) => {
+    e.stopPropagation(); // 타일 드래그로 전파 차단
+    if (kPointerId !== null) return;
+    kPointerId = e.pointerId;
+    kStartX = e.clientX;
+    try { knob.setPointerCapture(e.pointerId); } catch(err) {}
+  });
+
+  knob.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== kPointerId) return;
+    const dx = e.clientX - kStartX;
+    const nextVal = Math.max(0, Math.min(100, curBright + Math.round(dx * 0.5)));
+    txtBright.textContent = `${nextVal}%`;
+    knob.style.transform = `rotate(${(nextVal / 100) * 270}deg)`;
+  });
+
+  const releaseKnob = (e) => {
+    if (e.pointerId !== kPointerId) return;
+    kPointerId = null;
+    curBright = parseInt(txtBright.textContent, 10);
+    try { knob.releasePointerCapture(e.pointerId); } catch(err) {}
+    if (navigator.vibrate) navigator.vibrate(20);
+  };
+  knob.addEventListener('pointerup', releaseKnob);
+  knob.addEventListener('pointercancel', releaseKnob);
+</script>
+</body>
+</html>

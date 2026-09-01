@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Range Picker (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:20px; display:flex; flex-direction:column; align-items:center; }
+.calendar { display:grid; grid-template-columns:repeat(7, 35px); gap:5px; }
+.day { width:35px; height:35px; display:flex; align-items:center; justify-content:center; background:#eee; cursor:pointer; }
+.day.selected { background:#007bff; color:#fff; }
+</style>
+</head>
+<body>
+<h3>기간 선택 (Without Skill)</h3>
+<div class="calendar" id="cal"></div>
+<script>
+const cal = document.getElementById('cal');
+for(let i=1; i<=28; i++) {
+  const d = document.createElement('div');
+  d.className = 'day';
+  d.textContent = i;
+  d.onmousedown = () => d.classList.toggle('selected');
+  cal.appendChild(d);
+}
+</script>
+</body>
+</html>

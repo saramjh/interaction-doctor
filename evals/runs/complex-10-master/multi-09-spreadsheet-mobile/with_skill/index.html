@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Spreadsheet (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    background: #090d16;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .grid-header {
+    height: 48px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+  .table-scroll-container {
+    flex: 1;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y;
+  }
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #0f172a;
+    font-size: 13px;
+  }
+  th, td {
+    width: 80px;
+    min-width: 80px;
+    height: 40px;
+    border-right: 1px solid #334155;
+    border-bottom: 1px solid #334155;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    touch-action: pan-x pan-y;
+  }
+  /* 2D 교차 고정 */
+  th.corner {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: #090d16;
+    z-index: 10;
+    width: 44px;
+    min-width: 44px;
+  }
+  th.top-header {
+    position: sticky;
+    top: 0;
+    background: #131d2e;
+    color: #94a3b8;
+    z-index: 5;
+  }
+  th.row-header {
+    position: sticky;
+    left: 0;
+    background: #131d2e;
+    color: #94a3b8;
+    z-index: 5;
+    width: 44px;
+    min-width: 44px;
+  }
+  td.selected {
+    background: rgba(56, 189, 248, 0.25);
+    outline: 2px solid #38bdf8;
+    outline-offset: -2px;
+  }
+</style>
+</head>
+<body>
+
+<header class="grid-header">
+  <span>📊 모바일 데이터 그리드</span>
+  <span style="font-size:12px; color:#94a3b8;" id="status">셀을 드래그하여 선택</span>
+</header>
+
+<div class="table-scroll-container" id="scrollBox">
+  <table id="sheetTable">
+    <thead>
+      <tr>
+        <th class="corner">#</th>
+        <th class="top-header">A</th>
+        <th class="top-header">B</th>
+        <th class="top-header">C</th>
+        <th class="top-header">D</th>
+        <th class="top-header">E</th>
+        <th class="top-header">F</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<script>
+  const tbody = document.getElementById('tbody');
+  const status = document.getElementById('status');
+
+  // 15행 생성
+  for (let r = 1; r <= 15; r++) {
+    const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    th.className = 'row-header';
+    th.textContent = r;
+    tr.appendChild(th);
+
+    for (let c = 0; c < 6; c++) {
+      const td = document.createElement('td');
+      td.textContent = Math.floor(Math.random() * 80 + 10);
+      td.dataset.row = r;
+      td.dataset.col = c;
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+
+  // 셀 선택 인터랙션
+  document.querySelectorAll('td').forEach(td => {
+    td.addEventListener('pointerdown', () => {
+      document.querySelectorAll('td').forEach(x => x.classList.remove('selected'));
+      td.classList.add('selected');
+      const colLetter = String.fromCharCode(65 + parseInt(td.dataset.col, 10));
+      status.textContent = `선택 셀: ${colLetter}${td.dataset.row} (${td.textContent})`;
+      if (navigator.vibrate) navigator.vibrate(15);
+    });
+  });
+</script>
+</body>
+</html>

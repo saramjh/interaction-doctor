@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaction Doctor — 완전히 새로운 10대 인터랙션 A/B 실증 러너</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    background: #161b22;
+    padding: 10px 16px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  h1 { font-size: 15px; font-weight: 600; color: #58a6ff; }
+  .tabs-container {
+    background: #161b22;
+    padding: 6px 16px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .tab-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b949e;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+  }
+  .tab-btn {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: #1f6feb;
+    color: #fff;
+    border-color: #388bfd;
+  }
+  .container {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+    background: #090d13;
+    overflow: hidden;
+  }
+  .panel {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+  }
+  .badge-noskill {
+    background: #f8514922;
+    color: #f85149;
+    border: 1px solid #f8514944;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  .badge-withskill {
+    background: #2ea04322;
+    color: #3fb950;
+    border: 1px solid #2ea04344;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  iframe {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #ffffff;
+  }
+  .prompt-bar {
+    padding: 6px 14px;
+    background: #13171f;
+    font-size: 12px;
+    color: #8b949e;
+    border-bottom: 1px solid #21262d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 완전히 새로운 10대 인터랙션 A/B 실증 러너</h1>
+  <div style="font-size:12px; color:#8b949e;">좌우 패널에서 실시간 터치/드래그 테스트 가능</div>
+</header>
+
+<div class="tabs-container">
+  <div class="tab-group-title">신규 5:</div>
+  <button class="tab-btn active" onclick="loadScenario('fresh-create-1-rangeslider-vertical', 0)">1. 세로 EQ 슬라이더</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-create-2-signature-pad', 1)">2. 전자 서명 패드</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-create-3-colorpicker', 2)">3. 2D 색상 피커</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-create-4-swipe-actions', 3)">4. 스와이프 삭제</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-create-5-virtual-joystick', 4)">5. 가상 조이스틱</button>
+
+  <div class="tab-group-title" style="margin-left:10px;">개선 5:</div>
+  <button class="tab-btn" onclick="loadScenario('fresh-refactor-1-modal-scroll', 5)">6. 모달 스크롤 체이닝</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-refactor-2-image-slider', 6)">7. 이미지 비교 슬라이더</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-refactor-3-tree-view', 7)">8. 파일 트리 롱터치</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-refactor-4-sticky-header', 8)">9. 스마트 고정 헤더</button>
+  <button class="tab-btn" onclick="loadScenario('fresh-refactor-5-dropdown-select', 9)">10. 커스텀 드롭다운</button>
+</div>
+
+<div class="prompt-bar" id="promptBar">
+  시나리오 목표 로딩 중...
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-header">
+      <span>❌ Without Skill (스킬 미주입 Baseline)</span>
+      <span class="badge-noskill">Without Skill</span>
+    </div>
+    <iframe id="frameLeft"></iframe>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <span>✅ With Skill (interaction-doctor Treatment)</span>
+      <span class="badge-withskill">With Skill</span>
+    </div>
+    <iframe id="frameRight"></iframe>
+  </div>
+</div>
+
+<script>
+  const scenarioPrompts = {
+    'fresh-create-1-rangeslider-vertical': '세로형 볼륨/EQ 슬라이더 (세로 스크롤 간섭 방지, 1:1 밀착 드래그, 48dp 터치 타겟)',
+    'fresh-create-2-signature-pad': '전자 서명 캔버스 (화면 바운스/스크롤 락, DPR 레티나 보정, 베지에 곡선 스무딩)',
+    'fresh-create-3-colorpicker': '2D 원형 색상 팔레트 피커 (두 축 동시 드래그, 원형 림 클램핑, 텍스트 선택 억제)',
+    'fresh-create-4-swipe-actions': 'iOS 리스트 스와이프 삭제 액션 (8px 축 잠금으로 세로 스크롤과 가로 스와이프 완벽 분리)',
+    'fresh-create-5-virtual-joystick': '모바일 게임 가상 조이스틱 (원형 벡터 클램핑, 멀티터치 격리, 1:1 즉시 반응)',
+    'fresh-refactor-1-modal-scroll': '모달 내부 스크롤 시 뒷배경 스크롤 누수(Scroll Chaining) 수정 및 바운스 가드',
+    'fresh-refactor-2-image-slider': 'Before/After 이미지 비교 슬라이더 (48dp 터치 타겟, 바깥 드래그 시 포인터 캡처 유지)',
+    'fresh-refactor-3-tree-view': '파일 탐색기 (450ms 롱터치 컨텍스트 메뉴 발동 시 폴더 열림 클릭 억제 및 외부 닫기)',
+    'fresh-refactor-4-sticky-header': '스마트 스크롤 고정 헤더 (높이 변경 대신 transform 사용으로 레이아웃 시프트 CLS 0.00 달성)',
+    'fresh-refactor-5-dropdown-select': '커스텀 셀렉트 드롭다운 (300ms 탭 딜레이 제거, 바깥 터치 시 안전한 디스미스)'
+  };
+
+  function loadScenario(scId, tabIdx) {
+    document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', idx === tabIdx);
+    });
+
+    document.getElementById('promptBar').textContent = `📋 목표: ${scenarioPrompts[scId] || scId}`;
+
+    const frameLeft = document.getElementById('frameLeft');
+    const frameRight = document.getElementById('frameRight');
+
+    frameLeft.src = `../evals/runs/fresh-eval-master/${scId}/without_skill/index.html`;
+    frameRight.src = `../evals/runs/fresh-eval-master/${scId}/with_skill/index.html`;
+  }
+
+  window.onload = () => loadScenario('fresh-create-1-rangeslider-vertical', 0);
+</script>
+</body>
+</html>

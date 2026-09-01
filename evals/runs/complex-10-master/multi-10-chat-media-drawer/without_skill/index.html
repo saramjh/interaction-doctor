@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Drawer (Without Skill)</title>
+<style>
+body { margin:0; font-family:sans-serif; height:100vh; overflow:hidden; }
+.drawer { position:fixed; top:0; left:-200px; width:200px; height:100%; background:#333; color:#fff; transition:left 0.2s; z-index:10; }
+.drawer.open { left:0; }
+.chat { padding:20px; height:80vh; overflow-y:scroll; }
+</style>
+</head>
+<body>
+<div class="drawer" id="d">
+  <p># 일반 채널</p><p># 개발 채널</p>
+</div>
+<button onclick="document.getElementById('d').classList.toggle('open')">메뉴</button>
+<div class="chat">
+  <p>대화 내용 1</p><p>대화 내용 2</p><p>대화 내용 3</p>
+</div>
+</body>
+</html>

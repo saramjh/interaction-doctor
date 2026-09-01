@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi Filter (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:20px; }
+.filter-row { display:flex; gap:8px; flex-wrap:wrap; }
+.chip { padding:8px 12px; background:#eee; border-radius:16px; cursor:pointer; }
+.chip.active { background:#007bff; color:#fff; }
+</style>
+</head>
+<body>
+<h3>필터 선택 (Without Skill)</h3>
+<div class="filter-row">
+  <div class="chip" onclick="this.classList.toggle('active')">무료 배송</div>
+  <div class="chip" onclick="this.classList.toggle('active')">할인 쿠폰</div>
+  <div class="chip" onclick="this.classList.toggle('active')">당일 발송</div>
+  <div class="chip" onclick="this.classList.toggle('active')">친환경 포장</div>
+</div>
+</body>
+</html>

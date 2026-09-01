@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Multipointer gate — retrofit onto recipe 1 (long-press triple conflict)</title>
+<style>
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: system-ui, sans-serif;
+		background: #222;
+		color: #eee;
+	}
+	#status {
+		padding: 8px 10px;
+		font-size: 12px;
+		line-height: 1.5;
+		background: #111;
+		white-space: pre-wrap;
+		min-height: 220px;
+	}
+	#target {
+		margin: 20px;
+		height: 200px;
+		background: #fff;
+		color: #111;
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		user-select: none;
+		touch-action: none;
+	}
+</style>
+</head>
+<body>
+<div id="status">status: idle</div>
+<div id="target">press-and-hold target (no visible UI change on callbacks — read #status / window.__log)</div>
+
+<script>
+// common-pitfalls.md §7 3단계 — 사례 A(long-press-triple-conflict.md §4,
+// tools/nested/long-press-triple-conflict-verify.html)에 §7-4의
+// withSinglePointerGate를 얹은 재검증 페이지. armed 플래그(규칙1 수정,
+// 기존 페이지에 이미 있던 것)는 그대로 두고, 규칙2 게이트만 추가한다 —
+// 다른 로직은 한 줄도 바꾸지 않는다("게이트 추가만으로 고쳐지는가"가
+// 이번 검증의 질문이므로, 게이트 이외의 변화를 섞으면 그 질문에 답할 수
+// 없다).
+//
+// ?buggy=1 이면 게이트 없이(기존 long-press-triple-conflict-verify.html과
+// 동일하게) 동작해서, 같은 재현 절차로 결함이 여전히 있다는 것도 같은
+// 페이지에서 대조할 수 있게 한다.
+
+const MOVE_THRESHOLD_PX = 8;
+const CONTEXT_MENU_DELAY_MS = 500;
+const ESCALATE_DELAY_MS = 1000;
+const REPRODUCE_ORIGINAL_BUG = new URLSearchParams(location.search).has("buggy");
+
+window.__log = [];
+window.__gestureStart = null;
+
+function record(cbName) {
+	const t = performance.now();
+	window.__log.push({ cb: cbName, t, sinceGestureStart: window.__gestureStart == null ? null : t - window.__gestureStart });
+	render();
+}
+
+// ---- common-pitfalls.md §7-4 공용 패턴 (그대로 옮김, 수정 없음) ----
+function withSinglePointerGate(el, { onStart, onMove, onEnd } = {}) {
+	let activePointerId = null; // 스코프 축 — 이 el 하나에만 속한 클로저 변수
+
+	el.addEventListener("pointerdown", (e) => {
+		if (!REPRODUCE_ORIGINAL_BUG && activePointerId !== null) return; // 게이트 축
+		activePointerId = e.pointerId;
+		onStart?.(e);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (!REPRODUCE_ORIGINAL_BUG && e.pointerId !== activePointerId) return; // 게이트 축
+		onMove?.(e);
+	});
+
+	function release(e, cancelled) {
+		if (!REPRODUCE_ORIGINAL_BUG && e.pointerId !== activePointerId) return; // 게이트 축
+		activePointerId = null;
+		onEnd?.(e, { cancelled });
+	}
+	el.addEventListener("pointerup", (e) => release(e, false));
+	el.addEventListener("pointercancel", (e) => release(e, true));
+}
+
+// ---- 사례 A(레시피1) 로직 — armed 플래그를 포함해 원본 그대로,
+// 리스너 등록만 withSinglePointerGate로 옮김 ----
+function attachTripleConflictResolverGated(el, { onReorder, onContextMenu, onMultiSelect }) {
+	let startX = 0, startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+
+	withSinglePointerGate(el, {
+		onStart(e) {
+			startX = e.clientX;
+			startY = e.clientY;
+			moved = false;
+			contextMenuFired = false;
+			window.__gestureStart = performance.now();
+
+			contextMenuTimer = setTimeout(() => {
+				if (!moved) {
+					contextMenuFired = true;
+					onContextMenu(e);
+					escalateTimer = setTimeout(() => {
+						if (!moved) onMultiSelect(e);
+					}, ESCALATE_DELAY_MS - CONTEXT_MENU_DELAY_MS);
+				}
+			}, CONTEXT_MENU_DELAY_MS);
+		},
+		onMove(e) {
+			if (moved) return;
+			const dx = e.clientX - startX;
+			const dy = e.clientY - startY;
+			if (Math.hypot(dx, dy) > MOVE_THRESHOLD_PX) {
+				moved = true;
+				clearTimeout(contextMenuTimer);
+				clearTimeout(escalateTimer);
+				if (!contextMenuFired) onReorder(e);
+			}
+		},
+		onEnd() {
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+		},
+	});
+}
+
+// ---- page wiring ----
+
+const target = document.getElementById("target");
+const statusEl = document.getElementById("status");
+const counts = { onReorder: 0, onContextMenu: 0, onMultiSelect: 0 };
+
+function render() {
+	statusEl.textContent =
+		"status: idle (mode=" + (REPRODUCE_ORIGINAL_BUG ? "buggy (no gate)" : "gated") + ")\n" +
+		"counts: onReorder=" + counts.onReorder +
+		" onContextMenu=" + counts.onContextMenu +
+		" onMultiSelect=" + counts.onMultiSelect + "\n" +
+		"log (cb, ms since this gesture's pointerdown):\n" +
+		window.__log.map((e) => "  " + e.cb + " @ " + e.sinceGestureStart?.toFixed(1) + "ms").join("\n");
+}
+
+attachTripleConflictResolverGated(target, {
+	onReorder(e) { counts.onReorder++; record("onReorder"); },
+	onContextMenu(e) { counts.onContextMenu++; record("onContextMenu"); },
+	onMultiSelect(e) { counts.onMultiSelect++; record("onMultiSelect"); },
+});
+
+window.__resetLog = function () {
+	window.__log.length = 0;
+	counts.onReorder = 0;
+	counts.onContextMenu = 0;
+	counts.onMultiSelect = 0;
+	window.__gestureStart = null;
+	render();
+};
+
+render();
+</script>
+</body>
+</html>

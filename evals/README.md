@@ -14,7 +14,7 @@
 | 1. `evals/subjects/` 제작 | **Claude Code(이 세션)** | 결함이 심어진 실제 프로젝트(`project/`) + 사용자 요청문(`request.txt`) 작성까지 |
 | 2. `evals/graders/` 제작 | **Claude Code(이 세션)** | 시나리오별 Playwright 채점 스크립트 작성까지 |
 | 3. Gemini/Antigravity 세션 실행 | **사용자** | `evals/subjects/*/project/` + `request.txt`를 Gemini CLI/Antigravity에 수동으로 넣고 직접 실행한다. **이 저장소 안의 어떤 스크립트도 Gemini/Antigravity를 자동으로 호출하지 않는다** — 이번 작업 지시 범위 밖이며, 앞으로도 별도 명시적 요청 없이는 만들지 않는다. |
-| 4. 결과 채점 | **Claude Code(이 세션), 재개** | 사용자가 3단계 결과물(Gemini가 만든 코드)을 가져오면 그때 `evals/graders/`로 채점하고 `evals/RESULTS.md`를 채운다. **이번 지시 범위 밖** — 별도 요청 시 진행한다. |
+| 4. 결과 채점 | **Claude Code(이 세션), 재개** | 사용자가 3단계 결과물(Gemini가 만든 코드)을 가져오면 그때 `evals/graders/`로 채점하고 `evals/RESULTS.md`를 채운다. **이번 지시 범위 밖** — 별도 요청 시 진행한다. **채점 결과를 적을 때 `ux-standards-architecture.md` §0-1을 먼저 확인한다** — 이 채점이 증명하는 건 §0-1의 처음 세 줄(물리 법칙·플랫폼 표준·입력 도달성 일치 여부)까지이지, "사용자가 만족했다"가 아니다. RESULTS.md에 만족도류 표현을 쓰지 않는다. |
 
 1~2단계만 지금 순서대로(1→2→3, "3"은 이 README 자체 포함 전체
 `evals/` 스캐폴딩의 3번째 산출물인 `RESULTS.md` 템플릿을 가리킨다)

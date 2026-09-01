@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dual Thumb Range Slider (Without Skill)</title>
+<style>
+  body { font-family: sans-serif; padding: 40px 20px; background: #fafafa; }
+  .slider-container { position: relative; width: 100%; height: 40px; margin-top: 30px; }
+  .slider-track { position: absolute; top: 18px; left: 0; width: 100%; height: 6px; background: #ddd; border-radius: 3px; }
+  .slider-highlight { position: absolute; top: 18px; height: 6px; background: #007bff; border-radius: 3px; }
+  .thumb { position: absolute; top: 6px; width: 30px; height: 30px; background: #fff; border: 2px solid #007bff; border-radius: 50%; cursor: pointer; transform: translateX(-50%); }
+  .values { font-size: 18px; font-weight: bold; color: #333; }
+</style>
+</head>
+<body>
+  <div class="values">가격: <span id="valMin">20</span>만원 ~ <span id="valMax">80</span>만원</div>
+  <div class="slider-container" id="container">
+    <div class="slider-track"></div>
+    <div class="slider-highlight" id="highlight"></div>
+    <div class="thumb" id="thumbMin" style="left: 20%;"></div>
+    <div class="thumb" id="thumbMax" style="left: 80%;"></div>
+  </div>
+<script>
+  let activeThumb = null;
+  const container = document.getElementById('container');
+  const thumbMin = document.getElementById('thumbMin');
+  const thumbMax = document.getElementById('thumbMax');
+  const highlight = document.getElementById('highlight');
+  let minPct = 20, maxPct = 80;
+
+  function update() {
+    thumbMin.style.left = minPct + '%';
+    thumbMax.style.left = maxPct + '%';
+    highlight.style.left = minPct + '%';
+    highlight.style.width = (maxPct - minPct) + '%';
+    document.getElementById('valMin').textContent = Math.round(minPct);
+    document.getElementById('valMax').textContent = Math.round(maxPct);
+  }
+  update();
+
+  thumbMin.onmousedown = () => activeThumb = 'min';
+  thumbMax.onmousedown = () => activeThumb = 'max';
+  thumbMin.ontouchstart = () => activeThumb = 'min';
+  thumbMax.ontouchstart = () => activeThumb = 'max';
+
+  window.onmousemove = (e) => handleMove(e.clientX);
+  window.ontouchmove = (e) => { if (e.touches[0]) handleMove(e.touches[0].clientX); };
+  window.onmouseup = () => activeThumb = null;
+  window.ontouchend = () => activeThumb = null;
+
+  function handleMove(clientX) {
+    if (!activeThumb) return;
+    const rect = container.getBoundingClientRect();
+    let pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    if (activeThumb === 'min') minPct = Math.min(pct, maxPct - 5);
+    else maxPct = Math.max(pct, minPct + 5);
+    update();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Swipe action (recipe 5) — runtime verification</title>
+<style>
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: system-ui, sans-serif;
+		background: #222;
+		color: #eee;
+	}
+	#status {
+		padding: 8px 10px;
+		font-size: 12px;
+		line-height: 1.5;
+		background: #111;
+		white-space: pre-wrap;
+	}
+	.row {
+		position: relative;
+		height: 60px;
+		margin: 10px;
+		overflow: hidden;
+		background: #444;
+	}
+	.item {
+		position: absolute;
+		inset: 0;
+		background: #fff;
+		color: #111;
+		display: flex;
+		align-items: center;
+		padding: 0 12px;
+		user-select: none;
+	}
+</style>
+</head>
+<body>
+<div id="status">status: idle</div>
+<div class="row"><div class="item" id="item">swipe me</div></div>
+
+<script>
+// recipes.md 레시피 5 — 코드 그대로 옮김(수정 없음). 검증용 wiring만 아래에 덧붙인다.
+
+const HORIZONTAL_INTENT_PX = 8;
+const ANDROID_SWIPE_THRESHOLD_FRACTION = 0.5;
+const IOS_FULL_SWIPE_FRACTION = 0.9;
+
+function detectPlatform() {
+	const uaDataPlatform = navigator.userAgentData?.platform;
+	if (uaDataPlatform === "iOS") return "ios";
+	const ua = navigator.userAgent;
+	const looksLikeIPadOS = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+	if (/iPhone|iPad|iPod/.test(ua) || looksLikeIPadOS) return "ios";
+	return "android";
+}
+
+function withSinglePointerGate(el, { onStart, onMove, onEnd } = {}) {
+	let activePointerId = null;
+
+	el.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return;
+		activePointerId = e.pointerId;
+		onStart?.(e);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (e.pointerId !== activePointerId) return;
+		onMove?.(e);
+	});
+
+	function release(e, cancelled) {
+		if (e.pointerId !== activePointerId) return;
+		activePointerId = null;
+		onEnd?.(e, { cancelled });
+	}
+	el.addEventListener("pointerup", (e) => release(e, false));
+	el.addEventListener("pointercancel", (e) => release(e, true));
+}
+
+function attachSwipeAction(item, { onCommit, itemWidthPx, platform }) {
+	let startX = 0, startY = 0;
+	let horizontalIntentConfirmed = false;
+	const threshold = itemWidthPx * (platform === "ios" ? IOS_FULL_SWIPE_FRACTION : ANDROID_SWIPE_THRESHOLD_FRACTION);
+
+	withSinglePointerGate(item, {
+		onStart(e) {
+			startX = e.clientX;
+			startY = e.clientY;
+			horizontalIntentConfirmed = false;
+		},
+		onMove(e) {
+			const dx = e.clientX - startX;
+			const dy = e.clientY - startY;
+			if (!horizontalIntentConfirmed) {
+				if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > HORIZONTAL_INTENT_PX) {
+					horizontalIntentConfirmed = true;
+				} else {
+					return;
+				}
+			}
+			item.style.transform = `translateX(${Math.min(0, dx)}px)`;
+		},
+		onEnd(e, { cancelled }) {
+			if (cancelled || !horizontalIntentConfirmed) {
+				item.style.transform = "";
+				return;
+			}
+			const dx = e.clientX - startX;
+			if (Math.abs(dx) > threshold) {
+				onCommit();
+			} else {
+				item.style.transform = "";
+			}
+		},
+	});
+}
+
+// ---- page wiring (검증용, 레시피 원문의 일부가 아님) ----
+
+const itemEl = document.getElementById("item");
+const statusEl = document.getElementById("status");
+window.__commitCount = 0;
+window.__detectedPlatform = detectPlatform();
+window.__usedThreshold = null;
+
+function render() {
+	statusEl.textContent =
+		"status: idle\n" +
+		"detectPlatform() = " + window.__detectedPlatform + "\n" +
+		"commitCount = " + window.__commitCount + "\n" +
+		"transform = " + (itemEl.style.transform || "(none)");
+}
+
+const ITEM_WIDTH_PX = 300; // 테스트 페이지 고정폭 — Playwright에서 실제 rect로도 재확인함
+
+attachSwipeAction(itemEl, {
+	itemWidthPx: ITEM_WIDTH_PX,
+	platform: window.__detectedPlatform,
+	onCommit() {
+		window.__commitCount++;
+		itemEl.remove();
+		render();
+	},
+});
+window.__usedThreshold = ITEM_WIDTH_PX * (window.__detectedPlatform === "ios" ? IOS_FULL_SWIPE_FRACTION : ANDROID_SWIPE_THRESHOLD_FRACTION);
+
+render();
+</script>
+</body>
+</html>

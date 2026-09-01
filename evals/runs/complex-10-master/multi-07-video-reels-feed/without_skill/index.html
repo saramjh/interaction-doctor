@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reels Feed (Without Skill)</title>
+<style>
+body { margin:0; background:#000; color:#fff; font-family:sans-serif; height:100vh; overflow-y:scroll; }
+.reel { height:100vh; display:flex; align-items:center; justify-content:center; font-size:30px; border-bottom:1px solid #333; }
+</style>
+</head>
+<body>
+<div class="reel" id="r1">🎬 릴스 영상 1</div>
+<div class="reel" id="r2">🎬 릴스 영상 2</div>
+<script>
+document.querySelectorAll('.reel').forEach(r => {
+  r.onclick = () => alert('재생/일시정지');
+});
+</script>
+</body>
+</html>

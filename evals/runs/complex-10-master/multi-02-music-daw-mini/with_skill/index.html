@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mini DAW (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    background: #090d16;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .daw-header {
+    height: 52px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .tracks-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .track-row {
+    display: flex;
+    height: 80px;
+    border-bottom: 1px solid #334155;
+  }
+  .track-header {
+    width: 100px;
+    background: #131d2e;
+    border-right: 1px solid #334155;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .vol-slider-wrap {
+    height: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .vol-input {
+    width: 100%;
+    height: 4px;
+    touch-action: none;
+  }
+  .track-timeline {
+    flex: 1;
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x; /* 평소 가로 스크롤 전용 */
+    background-image: linear-gradient(90deg, #1e293b 1px, transparent 1px);
+    background-size: 40px 100%;
+  }
+  .timeline-inner {
+    width: 800px;
+    height: 100%;
+    position: relative;
+  }
+  .audio-clip {
+    position: absolute;
+    top: 14px;
+    height: 52px;
+    background: linear-gradient(135deg, #0284c7, #38bdf8);
+    border: 1px solid #7dd3fc;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    cursor: grab;
+    touch-action: pan-x;
+    will-change: left;
+    transition: transform 0.15s;
+  }
+  .audio-clip.dragging {
+    cursor: grabbing;
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.7);
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<header class="daw-header">
+  <div style="font-weight:700; font-size:15px; color:#38bdf8;">🎹 모바일 오디오 시퀀서</div>
+  <button style="background:#22c55e; color:#0f172a; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:12px; touch-action:manipulation;">▶ PLAY</button>
+</header>
+
+<div class="tracks-container">
+  <div class="track-row">
+    <div class="track-header">
+      <div style="font-size:12px; font-weight:700; color:#38bdf8;">🥁 Track 1 (Beat)</div>
+      <div class="vol-slider-wrap"><input type="range" class="vol-input" value="80"></div>
+    </div>
+    <div class="track-timeline">
+      <div class="timeline-inner">
+        <div class="audio-clip" style="left: 40px; width: 160px;" data-snap="40">
+          <span>🥁 Kick/Snare Loop (4 Bar)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="track-row">
+    <div class="track-header">
+      <div style="font-size:12px; font-weight:700; color:#a78bfa;">🎸 Track 2 (Bass)</div>
+      <div class="vol-slider-wrap"><input type="range" class="vol-input" value="70"></div>
+    </div>
+    <div class="track-timeline">
+      <div class="timeline-inner">
+        <div class="audio-clip" style="left: 120px; width: 200px;" data-snap="40">
+          <span>🎸 Synth Bass Groove</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.audio-clip').forEach(clip => {
+    let activePointerId = null;
+    let startX = 0;
+    let initialLeft = 0;
+    let isDragging = false;
+    const SNAP_PX = 40; // 40px 단위 그리드 스냅
+
+    clip.addEventListener('pointerdown', (e) => {
+      if (activePointerId !== null) return;
+      activePointerId = e.pointerId;
+      startX = e.clientX;
+      initialLeft = parseInt(clip.style.left, 10) || 0;
+      isDragging = false;
+    });
+
+    clip.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== activePointerId) return;
+      const dx = e.clientX - startX;
+
+      if (!isDragging && Math.abs(dx) > 8) {
+        isDragging = true;
+        clip.classList.add('dragging');
+        clip.style.touchAction = 'none'; // 드래그 모드로 승격하여 타임라인 스크롤 차단
+        try { clip.setPointerCapture(e.pointerId); } catch(err) {}
+      }
+
+      if (isDragging) {
+        const rawLeft = initialLeft + dx;
+        const snappedLeft = Math.max(0, Math.round(rawLeft / SNAP_PX) * SNAP_PX);
+        clip.style.left = `${snappedLeft}px`;
+      }
+    });
+
+    const release = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      clip.classList.remove('dragging');
+      clip.style.touchAction = 'pan-x';
+      try { clip.releasePointerCapture(e.pointerId); } catch(err) {}
+      activePointerId = null;
+      isDragging = false;
+    };
+
+    clip.addEventListener('pointerup', release);
+    clip.addEventListener('pointercancel', release);
+  });
+</script>
+</body>
+</html>

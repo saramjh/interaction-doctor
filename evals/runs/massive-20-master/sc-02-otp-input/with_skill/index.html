@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OTP Input (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 28px 20px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+  }
+  .otp-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0;
+  }
+  .otp-slot {
+    width: 48px;
+    height: 56px;
+    background: #090d16;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    color: #38bdf8;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    touch-action: manipulation;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    caret-color: #38bdf8;
+  }
+  .otp-slot:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    transform: scale(1.05);
+  }
+  .otp-slot.filled {
+    border-color: #818cf8;
+    background: #1e293b;
+  }
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: #38bdf8;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:18px; margin-bottom:6px;">🔐 SMS 인증번호 입력</h3>
+  <p style="font-size:13px; color:#94a3b8;">전송된 6자리 번호를 입력하거나 붙여넣으세요.</p>
+
+  <div class="otp-container" id="otpBox">
+    <input class="otp-slot" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="one-time-code" autofocus>
+    <input class="otp-slot" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+    <input class="otp-slot" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+    <input class="otp-slot" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+    <input class="otp-slot" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+    <input class="otp-slot" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+  </div>
+
+  <button class="btn-submit" id="btnSubmit">인증 완료</button>
+</div>
+
+<script>
+  const slots = Array.from(document.querySelectorAll('.otp-slot'));
+
+  slots.forEach((slot, index) => {
+    slot.addEventListener('input', (e) => {
+      const val = e.target.value;
+      slot.classList.toggle('filled', val.length > 0);
+
+      if (val && index < slots.length - 1) {
+        slots[index + 1].focus();
+      }
+    });
+
+    slot.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !slot.value && index > 0) {
+        slots[index - 1].focus();
+        slots[index - 1].value = '';
+        slots[index - 1].classList.remove('filled');
+      }
+    });
+
+    slot.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+      const digits = pasteData.replace(/\D/g, '').slice(0, 6);
+
+      digits.split('').forEach((d, i) => {
+        if (slots[i]) {
+          slots[i].value = d;
+          slots[i].classList.add('filled');
+        }
+      });
+
+      const nextFocus = Math.min(digits.length, 5);
+      slots[nextFocus].focus();
+    });
+  });
+
+  document.getElementById('btnSubmit').onclick = () => {
+    const code = slots.map(s => s.value).join('');
+    if (code.length === 6) alert(`인증 성공! 번호: ${code}`);
+    else alert('6자리를 모두 입력해주세요.');
+  };
+</script>
+</body>
+</html>

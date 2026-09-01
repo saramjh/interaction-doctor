@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sticky Tabs (Without Skill)</title>
+<style>
+body { margin:0; font-family:sans-serif; height:200vh; background:#f0f0f0; }
+.hero { height:150px; background:#4a90e2; color:#fff; display:flex; align-items:center; justify-content:center; }
+.tabs { position:sticky; top:0; background:#fff; display:flex; border-bottom:1px solid #ccc; }
+.tab { flex:1; padding:12px; text-align:center; cursor:pointer; }
+.tab.active { border-bottom:2px solid #007bff; color:#007bff; }
+.section { height:300px; padding:20px; border-bottom:1px solid #ddd; }
+</style>
+</head>
+<body>
+<div class="hero">상단 배너</div>
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="go(0)">소개</div>
+  <div class="tab" onclick="go(1)">메뉴</div>
+  <div class="tab" onclick="go(2)">리뷰</div>
+</div>
+<div class="section" id="s0">소개 섹션</div>
+<div class="section" id="s1">메뉴 섹션</div>
+<div class="section" id="s2">리뷰 섹션</div>
+<script>
+function go(n) { document.getElementById('s' + n).scrollIntoView(); }
+</script>
+</body>
+</html>

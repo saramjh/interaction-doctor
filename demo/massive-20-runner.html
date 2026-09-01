@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaction Doctor — 완전히 새로운 20대 인터랙션 대화형 실증 러너</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    background: #161b22;
+    padding: 10px 16px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  h1 { font-size: 15px; font-weight: 600; color: #58a6ff; }
+  .tabs-container {
+    background: #161b22;
+    padding: 6px 16px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .tab-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b949e;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    white-space: nowrap;
+  }
+  .tab-btn {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: #1f6feb;
+    color: #fff;
+    border-color: #388bfd;
+  }
+  .container {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+    background: #090d13;
+    overflow: hidden;
+  }
+  .panel {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+  }
+  .badge-noskill {
+    background: #f8514922;
+    color: #f85149;
+    border: 1px solid #f8514944;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  .badge-withskill {
+    background: #2ea04322;
+    color: #3fb950;
+    border: 1px solid #2ea04344;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+  iframe {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #ffffff;
+  }
+  .prompt-bar {
+    padding: 6px 14px;
+    background: #13171f;
+    font-size: 12px;
+    color: #8b949e;
+    border-bottom: 1px solid #21262d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 완전히 새로운 20대 실무 인터랙션 A/B 실증 러너</h1>
+  <div style="font-size:12px; color:#8b949e;">좌우 패널에서 실시간 터치/드래그 테스트 가능</div>
+</header>
+
+<div class="tabs-container" id="tabsBox">
+  <div class="tab-group-title">신규 10:</div>
+  <button class="tab-btn active" onclick="loadScenario('sc-01-audio-scrubber', 0)">1. 오디오 스크러버</button>
+  <button class="tab-btn" onclick="loadScenario('sc-02-otp-input', 1)">2. 6자리 OTP 입력</button>
+  <button class="tab-btn" onclick="loadScenario('sc-03-rating-star', 2)">3. 별점 드래그 평점</button>
+  <button class="tab-btn" onclick="loadScenario('sc-04-speed-dial', 3)">4. FAB 스피드 다이얼</button>
+  <button class="tab-btn" onclick="loadScenario('sc-05-date-range-picker', 4)">5. 기간 범위 선택</button>
+  <button class="tab-btn" onclick="loadScenario('sc-06-card-stack-swipe', 5)">6. 카드 스택 플릭</button>
+  <button class="tab-btn" onclick="loadScenario('sc-07-color-gradient-slider', 6)">7. 그라데이션 슬라이더</button>
+  <button class="tab-btn" onclick="loadScenario('sc-08-split-view-resizer', 7)">8. 스플릿 뷰 리사이저</button>
+  <button class="tab-btn" onclick="loadScenario('sc-09-circular-progress-knob', 8)">9. 로터리 노브 다이얼</button>
+  <button class="tab-btn" onclick="loadScenario('sc-10-drag-drop-tags', 9)">10. 태그 드래그 분류</button>
+
+  <div class="tab-group-title" style="margin-left:8px;">개선 10:</div>
+  <button class="tab-btn" onclick="loadScenario('sc-11-video-player-controls', 10)">11. 비디오 컨트롤 숨김</button>
+  <button class="tab-btn" onclick="loadScenario('sc-12-chat-keyboard-scroll', 11)">12. 채팅창 키보드 밀착</button>
+  <button class="tab-btn" onclick="loadScenario('sc-13-nested-horizontal-scroll', 12)">13. 가로/세로 중첩 스크롤</button>
+  <button class="tab-btn" onclick="loadScenario('sc-14-time-picker-wheel', 13)">14. 롤링 타임피커 스냅</button>
+  <button class="tab-btn" onclick="loadScenario('sc-15-gallery-lightbox-strip', 14)">15. 갤러리 라이트박스</button>
+  <button class="tab-btn" onclick="loadScenario('sc-16-table-column-drag', 15)">16. 테이블 고정 컬럼</button>
+  <button class="tab-btn" onclick="loadScenario('sc-17-stepper-touch-counter', 16)">17. 수량 연속 증감</button>
+  <button class="tab-btn" onclick="loadScenario('sc-18-collapsible-sticky-tabs', 17)">18. 스티키 탭 스크롤스파이</button>
+  <button class="tab-btn" onclick="loadScenario('sc-19-segmented-multi-filter', 18)">19. 다중 필터 칩 연타</button>
+  <button class="tab-btn" onclick="loadScenario('sc-20-interactive-map-overlay', 19)">20. 지도 패닝 vs 드로어</button>
+</div>
+
+<div class="prompt-bar" id="promptBar">
+  시나리오 목표 로딩 중...
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-header">
+      <span>❌ Without Skill (스킬 미주입 Baseline)</span>
+      <span class="badge-noskill">Without Skill</span>
+    </div>
+    <iframe id="frameLeft"></iframe>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <span>✅ With Skill (interaction-doctor Treatment)</span>
+      <span class="badge-withskill">With Skill</span>
+    </div>
+    <iframe id="frameRight"></iframe>
+  </div>
+</div>
+
+<script>
+  const scenarioTitles = {
+    'sc-01-audio-scrubber': '오디오 파형 스크러버 (파형 드래그 시 세로 스크롤 간섭 차단 및 1:1 타임스탬프 밀착)',
+    'sc-02-otp-input': '6자리 모바일 OTP 인증번호 입력 (자동 포커스 전진, 백스페이스 후진, 붙여넣기 분할 분배)',
+    'sc-03-rating-star': '0.5점 단위 정밀 별점 드래그 평점 (가로 드래그 시 실시간 별 채움 및 햅틱 진동 피드백)',
+    'sc-04-speed-dial': 'FAB 플로팅 확장 스피드 다이얼 (외부 터치 즉시 디스미스 및 48dp 터치 타겟)',
+    'sc-05-date-range-picker': '캘린더 날짜 기간 드래그 선택 (시작일~종료일 터치 끌기 시 실시간 범위 하이라이트)',
+    'sc-06-card-stack-swipe': '카드 스택 좌우 스와이프 플릭 (비례 회전 각도 및 100px 플릭 아웃 애니메이션)',
+    'sc-07-color-gradient-slider': '멀티 스톱 그라데이션 슬라이더 (복수 핀 독립 드래그 및 실시간 CSS 프리뷰)',
+    'sc-08-split-view-resizer': '듀얼 패널 스플릿 리사이저 (32px 히트박스, 포인터 캡처, 20~80% 안전 클램핑)',
+    'sc-09-circular-progress-knob': '스마트홈 원형 온도 조절 노브 (270도 각도 클램핑 및 SVG 프로그레스 링 연동)',
+    'sc-10-drag-drop-tags': '키워드 태그 드래그 분류 (PointerEvents 기반 모바일 드래그앤드롭 및 타겟 하이라이트)',
+    'sc-11-video-player-controls': '비디오 컨트롤 바 (3초 자동 페이드아웃 및 컨트롤 조작 중 타이머 갱신)',
+    'sc-12-chat-keyboard-scroll': '모바일 채팅창 (Visual Viewport API로 가상 키보드 가림 완벽 방어 및 자동 스크롤)',
+    'sc-13-nested-horizontal-scroll': '가로/세로 중첩 스크롤 (touch-action: pan-x 축 격리 및 CSS 스냅)',
+    'sc-14-time-picker-wheel': 'iOS 스타일 롤링 타임피커 (중앙 렌즈 스냅 및 overscroll-behavior: contain)',
+    'sc-15-gallery-lightbox-strip': '포토 갤러리 라이트박스 (상단 메인 뷰어 스와이프 및 하단 썸네일 중앙 정렬)',
+    'sc-16-table-column-drag': '데이터 테이블 고정 컬럼 (가로 스크롤 시 sticky 컬럼 떨림 0 및 그림자 구분선)',
+    'sc-17-stepper-touch-counter': '수량 증감 스텝퍼 (더블탭 줌 억제 및 길게 누를 때 75ms 초고속 자동 증감)',
+    'sc-18-collapsible-sticky-tabs': '스티키 탭바 (scroll-margin-top 52px 오프셋으로 점프 시 제목 가림 0건)',
+    'sc-19-segmented-multi-filter': '다중 선택 필터 칩 (300ms 탭 딜레이 0 및 빠른 연타 선택 씹힘 방지)',
+    'sc-20-interactive-map-overlay': '지도 오버레이 (지도 2D 패닝과 하단 장소 카드 드로어 제스처 완벽 격리)'
+  };
+
+  function loadScenario(scId, tabIdx) {
+    document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', idx === tabIdx);
+    });
+
+    document.getElementById('promptBar').textContent = `📋 목표: ${scenarioTitles[scId] || scId}`;
+
+    const frameLeft = document.getElementById('frameLeft');
+    const frameRight = document.getElementById('frameRight');
+
+    frameLeft.src = `../evals/runs/massive-20-master/${scId}/without_skill/index.html`;
+    frameRight.src = `../evals/runs/massive-20-master/${scId}/with_skill/index.html`;
+  }
+
+  window.onload = () => loadScenario('sc-01-audio-scrubber', 0);
+</script>
+</body>
+</html>

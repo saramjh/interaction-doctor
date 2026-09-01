@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Card Stack Swipe (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-deck {
+    position: relative;
+    width: 280px;
+    height: 380px;
+    margin-top: 20px;
+  }
+  .card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+    will-change: transform;
+    touch-action: none; /* 브라우저 제스처 완전 차단 */
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s;
+    cursor: grab;
+  }
+  .card.dragging {
+    transition: none; /* 조작 중 1:1 즉각 밀착 */
+    cursor: grabbing;
+  }
+  .card-stamp {
+    position: absolute;
+    top: 30px;
+    font-size: 24px;
+    font-weight: 800;
+    border: 3px solid;
+    padding: 4px 12px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+  .stamp-like { right: 24px; border-color: #22c55e; color: #22c55e; transform: rotate(15deg); }
+  .stamp-nope { left: 24px; border-color: #ef4444; color: #ef4444; transform: rotate(-15deg); }
+</style>
+</head>
+<body>
+
+<h3 style="font-size:18px;">🔥 피드 카드 스와이프</h3>
+<p style="font-size:12px; color:#94a3b8; margin-top:4px;">좌우로 스와이프하여 넘기세요 (LIKE / PASS)</p>
+
+<div class="card-deck" id="deck">
+  <div class="card" style="transform: scale(0.92) translate3d(0, 16px, 0); z-index: 1;">
+    <div style="font-size:32px; margin-bottom:8px;">🎨</div>
+    <div style="font-weight:700; font-size:18px;">디자인 시스템 아키텍처</div>
+    <div style="font-size:13px; color:#94a3b8; margin-top:4px;">Figma와 코드의 일치화 전략</div>
+  </div>
+
+  <div class="card" id="topCard" style="z-index: 2;">
+    <div class="card-stamp stamp-like" id="stampLike">LIKE</div>
+    <div class="card-stamp stamp-nope" id="stampNope">PASS</div>
+    <div style="font-size:32px; margin-bottom:8px;">🚀</div>
+    <div style="font-weight:700; font-size:18px;">차세대 모바일 웹 인터랙션</div>
+    <div style="font-size:13px; color:#94a3b8; margin-top:4px;">손끝에 착 붙는 1:1 조작감 완성하기</div>
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('topCard');
+  const stampLike = document.getElementById('stampLike');
+  const stampNope = document.getElementById('stampNope');
+
+  let activePointerId = null;
+  let startX = 0, startY = 0;
+  const THRESHOLD = 100;
+
+  card.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    try { card.setPointerCapture(e.pointerId); } catch(err) {}
+    startX = e.clientX;
+    startY = e.clientY;
+    card.classList.add('dragging');
+  });
+
+  card.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const rot = dx * 0.08;
+
+    card.style.transform = `translate3d(${dx}px, ${dy}px, 0) rotate(${rot}deg)`;
+
+    // 스탬프 투명도 실시간 제어
+    if (dx > 20) {
+      stampLike.style.opacity = Math.min(1, (dx - 20) / 60);
+      stampNope.style.opacity = 0;
+    } else if (dx < -20) {
+      stampNope.style.opacity = Math.min(1, (-dx - 20) / 60);
+      stampLike.style.opacity = 0;
+    } else {
+      stampLike.style.opacity = 0;
+      stampNope.style.opacity = 0;
+    }
+  });
+
+  const release = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    activePointerId = null;
+    card.classList.remove('dragging');
+    try { card.releasePointerCapture(e.pointerId); } catch(err) {}
+
+    const dx = e.clientX - startX;
+
+    if (Math.abs(dx) > THRESHOLD) {
+      // 플릭 아웃 날리기
+      const flyX = dx > 0 ? window.innerWidth + 200 : -window.innerWidth - 200;
+      card.style.transform = `translate3d(${flyX}px, 0, 0) rotate(${dx * 0.15}deg)`;
+      card.style.opacity = '0';
+      if (navigator.vibrate) navigator.vibrate(30);
+      setTimeout(() => alert(dx > 0 ? "❤️ LIKE 완료" : "❌ PASS 완료"), 200);
+    } else {
+      // 원위치 스냅백
+      card.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+      stampLike.style.opacity = 0;
+      stampNope.style.opacity = 0;
+    }
+  };
+
+  card.addEventListener('pointerup', release);
+  card.addEventListener('pointercancel', release);
+</script>
+</body>
+</html>

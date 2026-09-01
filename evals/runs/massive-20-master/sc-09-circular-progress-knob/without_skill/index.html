@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotary Knob (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:30px; display:flex; flex-direction:column; align-items:center; }
+.knob { width:120px; height:120px; border-radius:50%; background:#ddd; position:relative; cursor:pointer; }
+.dot { position:absolute; top:10px; left:55px; width:10px; height:10px; background:#000; border-radius:50%; }
+</style>
+</head>
+<body>
+<h3>스마트 노브 (Without Skill)</h3>
+<div class="knob" id="knob"><div class="dot"></div></div>
+<p id="deg">0°</p>
+<script>
+const knob = document.getElementById('knob');
+let isDown = false;
+knob.onmousedown = () => isDown = true;
+knob.ontouchstart = () => isDown = true;
+window.onmouseup = () => isDown = false;
+window.ontouchend = () => isDown = false;
+window.addEventListener('touchmove', (e) => {
+  if (!isDown) return;
+  const rect = knob.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  const rad = Math.atan2(e.touches[0].clientY - cy, e.touches[0].clientX - cx);
+  const deg = Math.round(rad * (180 / Math.PI));
+  knob.style.transform = `rotate(${deg}deg)`;
+  document.getElementById('deg').textContent = deg + '°';
+});
+</script>
+</body>
+</html>

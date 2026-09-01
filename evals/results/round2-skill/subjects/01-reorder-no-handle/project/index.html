@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>내 재생목록</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #0f0f13;
+		color: #eee;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		border-bottom: 1px solid #26262e;
+	}
+	#playlist {
+		overflow-y: auto;
+		height: calc(100% - 56px);
+		padding: 8px;
+	}
+	.track {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px;
+		margin-bottom: 6px;
+		background: #1b1b22;
+		border-radius: 10px;
+		user-select: none;
+		position: relative;
+		touch-action: none; /* C10 실측: pan-y는 세로 드래그를 취소하고(6/6·5/5·5/5),
+		                       none만 항상 이긴다(16/16). 제스처 도중 동적으로 바꾸지
+		                       않고 정적으로 고정한다 — touch-action은 제스처 시작
+		                       시점에 확정되고 이후 변경은 적용되지 않는다. */
+	}
+	.track.dragging {
+		background: #2a2a36;
+		z-index: 10;
+	}
+	.cover {
+		width: 44px;
+		height: 44px;
+		border-radius: 6px;
+		background: linear-gradient(135deg, #6a5acd, #ff6b9a);
+		flex-shrink: 0;
+	}
+	.meta { flex: 1; min-width: 0; }
+	.title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+	.artist { font-size: 12px; color: #9a9aa5; }
+	.duration { font-size: 12px; color: #9a9aa5; }
+</style>
+</head>
+<body>
+<header>내 재생목록 · 24곡</header>
+<div id="playlist"></div>
+
+<script>
+// 재생목록 순서를 손가락으로 눌러서 드래그하면 바꿀 수 있어야 한다.
+// (핸들 아이콘 없음 — 항목 전체가 드래그 타겟)
+
+const TRACKS = [
+	["Midnight City", "M83", "4:03"],
+	["Take On Me", "a-ha", "3:46"],
+	["Circles", "Post Malone", "3:35"],
+	["Blinding Lights", "The Weeknd", "3:20"],
+	["Levitating", "Dua Lipa", "3:23"],
+	["As It Was", "Harry Styles", "2:47"],
+	["Heat Waves", "Glass Animals", "3:58"],
+	["Stay", "The Kid LAROI", "2:21"],
+	["good 4 u", "Olivia Rodrigo", "2:58"],
+	["Watermelon Sugar", "Harry Styles", "2:54"],
+];
+
+const listEl = document.getElementById("playlist");
+
+function render() {
+	listEl.innerHTML = "";
+	TRACKS.forEach((t, i) => {
+		const row = document.createElement("div");
+		row.className = "track";
+		row.dataset.index = String(i);
+		row.innerHTML =
+			'<div class="cover"></div>' +
+			'<div class="meta"><div class="title">' + t[0] + '</div><div class="artist">' + t[1] + '</div></div>' +
+			'<div class="duration">' + t[2] + '</div>';
+		listEl.appendChild(row);
+		attachDrag(row);
+	});
+}
+
+// 드래그 구현: 항목을 누른 채로 옮기면 그 위치로 순서가 바뀐다.
+// 핸들이 없는(항목 전체가 드래그 타겟인) 세로 리스트라, 세로 드래그와
+// 리스트 스크롤을 구분하려면 hold-delay(500ms) + 이동취소임계값(8px)이
+// 필요하다 — CONFLICTS.md#C10, Apple `UILongPressGestureRecognizer.
+// allowableMovement`, dnd-kit `activationConstraint.tolerance` 근거.
+const REORDER_HOLD_DELAY_MS = 500;
+const MOVE_CANCEL_THRESHOLD_PX = 8;
+
+function attachDrag(row) {
+	let armed = false;          // pointerdown 여부 명시적 확인
+	let activePointerId = null; // 다른 포인터가 끼어들면 무시
+	let startY = 0;
+	let holdTimer = null;
+	let dragging = false;
+
+	row.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return;
+		activePointerId = e.pointerId;
+		armed = true;
+		dragging = false;
+		startY = e.clientY;
+
+		holdTimer = setTimeout(() => {
+			if (armed && activePointerId === e.pointerId) {
+				dragging = true;
+				row.classList.add("dragging");
+			}
+		}, REORDER_HOLD_DELAY_MS);
+	});
+
+	row.addEventListener("pointermove", (e) => {
+		if (!armed || e.pointerId !== activePointerId) return;
+		if (dragging) {
+			row.style.transform = "translateY(" + (e.clientY - startY) + "px)";
+			return;
+		}
+		// hold-delay가 아직 안 끝났는데 임계값 넘게 움직이면 진입 자체를
+		// 취소한다 (Apple allowableMovement / dnd-kit tolerance와 동일 설계).
+		if (Math.abs(e.clientY - startY) > MOVE_CANCEL_THRESHOLD_PX) {
+			clearTimeout(holdTimer);
+			armed = false;
+			activePointerId = null;
+		}
+	});
+
+	function release(e) {
+		if (e.pointerId !== activePointerId) return;
+		clearTimeout(holdTimer);
+
+		if (dragging) {
+			row.classList.remove("dragging");
+			row.style.transform = "";
+
+			const dy = e.clientY - startY;
+			const idx = Number(row.dataset.index);
+			const rowHeight = row.getBoundingClientRect().height + 6;
+			const shift = Math.round(dy / rowHeight);
+			const newIdx = Math.min(TRACKS.length - 1, Math.max(0, idx + shift));
+			if (newIdx !== idx) {
+				const [moved] = TRACKS.splice(idx, 1);
+				TRACKS.splice(newIdx, 0, moved);
+				render();
+			}
+		}
+
+		armed = false;
+		dragging = false;
+		activePointerId = null;
+	}
+
+	// pointercancel: 브라우저가 스크롤로 제스처를 가져가면 pointerup이
+	// 아니라 이 이벤트만 온다. 이걸 처리하지 않으면 .dragging이 안
+	// 지워지고 순서 변경 로직도 실행되지 않는다 — touch-action: none을
+	// 걸어 애초에 브라우저가 가져가지 못하게 막았지만, 방어적으로 계속
+	// 처리한다("It is the only signal you get when the browser wins,
+	// and pointerup will not follow." — CONFLICTS.md#C10).
+	row.addEventListener("pointerup", release);
+	row.addEventListener("pointercancel", release);
+}
+
+render();
+</script>
+</body>
+</html>

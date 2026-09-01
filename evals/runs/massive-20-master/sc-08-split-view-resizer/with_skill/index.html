@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Split View Resizer (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+  }
+  .split-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 220px;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    overflow: hidden;
+    touch-action: none; /* 브라우저 스크롤 차단 */
+  }
+  .panel-left {
+    width: 45%;
+    min-width: 60px;
+    background: #131d2e;
+    padding: 16px;
+    border-right: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .panel-right {
+    flex: 1;
+    min-width: 60px;
+    background: #0f172a;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .gutter-hitbox {
+    position: absolute;
+    top: 0;
+    left: 45%;
+    width: 32px; /* 32px 넉넉한 터치 히트박스 */
+    height: 100%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 10;
+  }
+  .gutter-bar {
+    width: 4px;
+    height: 100%;
+    background: #334155;
+    border-radius: 2px;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .gutter-hitbox.active .gutter-bar {
+    background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px;">💻 듀얼 패널 스플릿 리사이저</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">가운데 바를 좌우로 드래그하여 패널 크기를 조절하세요.</p>
+
+  <div class="split-container" id="container">
+    <div class="panel-left" id="panelLeft">
+      <div style="font-weight:700; font-size:14px; color:#38bdf8;">📝 에디터</div>
+      <div style="font-size:11px; color:#94a3b8;">width: <span id="leftPct">45%</span></div>
+    </div>
+
+    <div class="gutter-hitbox" id="gutter">
+      <div class="gutter-bar"></div>
+    </div>
+
+    <div class="panel-right">
+      <div style="font-weight:700; font-size:14px; color:#a78bfa;">👁️ 프리뷰</div>
+      <div style="font-size:11px; color:#94a3b8;">width: <span id="rightPct">55%</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const container = document.getElementById('container');
+  const panelLeft = document.getElementById('panelLeft');
+  const gutter = document.getElementById('gutter');
+  const leftPct = document.getElementById('leftPct');
+  const rightPct = document.getElementById('rightPct');
+
+  let activePointerId = null;
+
+  function updateSplit(clientX) {
+    const rect = container.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const rawPct = (x / rect.width) * 100;
+    // 20% ~ 80% 안전 클램핑
+    const clampedPct = Math.max(20, Math.min(80, Math.round(rawPct)));
+
+    panelLeft.style.width = `${clampedPct}%`;
+    gutter.style.left = `${clampedPct}%`;
+    leftPct.textContent = `${clampedPct}%`;
+    rightPct.textContent = `${100 - clampedPct}%`;
+  }
+
+  gutter.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    try { gutter.setPointerCapture(e.pointerId); } catch(err) {}
+    gutter.classList.add('active');
+  });
+
+  gutter.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId) return;
+    updateSplit(e.clientX);
+  });
+
+  const release = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    activePointerId = null;
+    gutter.classList.remove('active');
+    try { gutter.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+
+  gutter.addEventListener('pointerup', release);
+  gutter.addEventListener('pointercancel', release);
+</script>
+</body>
+</html>

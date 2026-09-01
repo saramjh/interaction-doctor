@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Video Controls (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .player-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    height: 250px;
+    background: #000000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+  .video-screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #94a3b8;
+  }
+  .controls-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+    pointer-events: auto;
+  }
+  .controls-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .center-play-btn {
+    align-self: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.8);
+    color: #0f172a;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-rail {
+    flex: 1;
+    height: 24px; /* 넉넉한 터치 타겟 */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    position: relative;
+  }
+  .progress-fill {
+    width: 45%;
+    height: 100%;
+    background: #38bdf8;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<h3 style="font-size:16px; margin-bottom:4px;">🎬 모바일 스마트 비디오 플레이어</h3>
+<p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">화면을 탭하면 컨트롤 바가 나타나며, 3초 동안 조작이 없으면 부드럽게 숨겨집니다.</p>
+
+<div class="player-wrapper" id="player">
+  <div class="video-screen">동영상 재생 화면 (4K HDR)</div>
+
+  <div class="controls-overlay" id="controls">
+    <div style="font-size:13px; font-weight:600;">에피소드 1: 인터랙션의 비밀</div>
+
+    <button class="center-play-btn" id="btnPlay">▶</button>
+
+    <div class="bottom-bar">
+      <div class="progress-rail" id="rail">
+        <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+      </div>
+      <span style="font-size:12px; font-family:monospace;">01:24 / 03:00</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const player = document.getElementById('player');
+  const controls = document.getElementById('controls');
+  const btnPlay = document.getElementById('btnPlay');
+  const rail = document.getElementById('rail');
+  const fill = document.getElementById('fill');
+
+  let hideTimer = null;
+  let isPlaying = false;
+
+  function resetHideTimer() {
+    clearTimeout(hideTimer);
+    controls.classList.remove('hidden');
+    hideTimer = setTimeout(() => {
+      if (isPlaying) controls.classList.add('hidden');
+    }, 3000);
+  }
+
+  player.addEventListener('pointerdown', (e) => {
+    // 컨트롤 바 내부 버튼 클릭이 아닐 때만 토글
+    if (e.target === player || e.target.classList.contains('video-screen')) {
+      if (controls.classList.contains('hidden')) {
+        resetHideTimer();
+      } else {
+        controls.classList.add('hidden');
+        clearTimeout(hideTimer);
+      }
+    } else {
+      resetHideTimer();
+    }
+  });
+
+  btnPlay.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isPlaying = !isPlaying;
+    btnPlay.textContent = isPlaying ? '❚❚' : '▶';
+    resetHideTimer();
+  });
+
+  rail.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+    const rect = rail.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    fill.style.width = `${pct}%`;
+    resetHideTimer();
+  });
+
+  resetHideTimer();
+</script>
+</body>
+</html>

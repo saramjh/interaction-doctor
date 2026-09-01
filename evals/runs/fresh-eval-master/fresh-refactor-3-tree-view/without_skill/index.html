@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tree View (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:20px; background:#f8f9fa; }
+.tree-node { padding:10px; border-bottom:1px solid #ddd; cursor:pointer; }
+.context-menu { position:fixed; background:#333; color:#fff; padding:10px; border-radius:6px; display:none; }
+</style>
+</head>
+<body>
+<h3>파일 탐색기 (Without Skill)</h3>
+<p style="font-size:12px; color:#666;">폴더를 롱터치하면 폴더가 열리면서 컨텍스트 메뉴까지 동시에 뜨거나 텍스트가 선택되는 충돌이 있습니다.</p>
+<div class="tree-node" id="node1">📁 프로젝트 폴더 A</div>
+<div class="tree-node" id="node2">📁 다운로드 폴더 B</div>
+<div class="context-menu" id="menu">
+  <div>이름 바꾸기</div>
+  <div>삭제</div>
+</div>
+<script>
+const menu = document.getElementById('menu');
+document.querySelectorAll('.tree-node').forEach(node => {
+  let timer;
+  node.ontouchstart = (e) => {
+    timer = setTimeout(() => {
+      menu.style.left = e.touches[0].clientX + 'px';
+      menu.style.top = e.touches[0].clientY + 'px';
+      menu.style.display = 'block';
+    }, 500);
+  };
+  node.ontouchend = () => clearTimeout(timer);
+  node.onclick = () => alert('폴더 열림');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+### 진단 및 원인 분석
+
+**확신도 라벨**: **[이 프로젝트의 설계 판단]** (구조 [표준] 상속, `scrollTop === 0` 대칭 적용 및 8px 임계값) / 런타임 검증 통과
+
+기존 코드에서는 바텀시트 전체(`sheet`) 요소에 `pointerdown` 핸들러가 일괄 등록되어 있어, 내부 리스트(`scrollContent`)를 아래로 드래그할 때 리스트의 스크롤 위치(`scrollTop`)와 관계없이 바텀시트 드래그 로직이 즉시 점유되는 현상이 발생했습니다.
+
+---
+
+### 상호작용 계약 (3축 UX Contract)
+
+1. **입력 (Input)**:
+   - **리스트 스크롤 동작 지키기**: `scrollContent.scrollTop > 0`일 때는 바텀시트가 드래그되지 않고 내부 콘텐츠 스크롤이 우선 동작합니다.
+   - **시트 닫기 소유권 이양**: `scrollContent.scrollTop <= 0`인 상단 경계 상태에서 아래 방향으로 이동 거리(`dy`)가 임계값 **8px**(`COLLAPSE_ACTIVATION_PX`)을 초과할 때만 바텀시트 드래그 소유권으로 전환합니다.
+   - **터치/포인터 상태 보호**: `pointerdown` 감지 플래그(`isDown`) 및 단일 포인터 추적을 통해 호버나 오작동을 차단합니다.
+2. **출력 (Output)**:
+   - 드래그 소유권 확보 즉시 `.dragging` 클래스를 추가하여 transition을 제거, 손가락 궤적을 1:1로 실시간 추종합니다.
+   - 손가락을 뗐을 때 뷰포트 높이의 25% 이상 내려간 경우 바텀시트를 닫고(`translateY(100%)`), 그렇지 않은 경우 원위치(`translateY(0)`)로 스냅합니다.
+3. **속도 (Speed)**:
+   - 반응 지연(Input Latency): 드래그 및 위치 전환 반응 지연 0ms
+   - 스냅 애니메이션 재생 시간: 200ms (`transition: transform 0.2s ease-out`)
+
+---
+
+### 수정 내용
+
+1. **소유권 이양 구조 적용**:
+   - `scrollContent` 내 스크롤 위치(`scrollTop`)가 최상단(`<= 0`)이고, 아래로 당기는 이동량(`dy`)이 **8px**을 넘어서는 시점에만 `ownedBySheet = true` 상태로 전환되도록 보장했습니다.
+2. **상단 핸들 바 처리**:
+   - `.handle-bar` 영역을 직접 터치/드래그할 때는 스크롤 여부와 상관없이 즉시 바텀시트 드래그가 시작되도록 최우선 처리했습니다.
+3. **`pointerdown` 활성화 게이트 설정**:
+   - 터치 시작(`pointerdown`)이 없었던 상태에서 들어오는 `pointermove` 이벤트 오작동을 차단하는 플래그(`isDown`)를 명시했습니다.
+
+---
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BottomSheet</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .header-area { padding: 20px; }
+  .sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: #1e1e1e;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid #333;
+    transform: translateY(0);
+    transition: transform 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    touch-action: none;
+  }
+  .sheet.dragging {
+    transition: none;
+  }
+  .handle-bar {
+    width: 40px;
+    height: 5px;
+    background: #555;
+    border-radius: 999px;
+    margin: 10px auto;
+    flex: 0 0 auto;
+    cursor: grab;
+    padding: 10px 0;
+    background-clip: content-box;
+  }
+  .scroll-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px 20px 40px;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .item {
+    padding: 15px;
+    border-bottom: 1px solid #2a2a2a;
+    color: #ddd;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-area">
+  <h1>상세 정보</h1>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="handle-bar" id="handleBar"></div>
+  <div class="scroll-content" id="scrollContent">
+    <div class="item">📜 List Item 1</div>
+    <div class="item">📜 List Item 2</div>
+    <div class="item">📜 List Item 3</div>
+    <div class="item">📜 List Item 4</div>
+    <div class="item">📜 List Item 5</div>
+    <div class="item">📜 List Item 6</div>
+    <div class="item">📜 List Item 7</div>
+    <div class="item">📜 List Item 8</div>
+    <div class="item">📜 List Item 9</div>
+    <div class="item">📜 List Item 10</div>
+    <div class="item">📜 List Item 11</div>
+    <div class="item">📜 List Item 12</div>
+    <div class="item">📜 List Item 13</div>
+    <div class="item">📜 List Item 14</div>
+    <div class="item">📜 List Item 15</div>
+  </div>
+</div>
+
+<script>
+  const sheet = document.getElementById('sheet');
+  const handleBar = document.getElementById('handleBar');
+  const scrollContent = document.getElementById('scrollContent');
+
+  const COLLAPSE_ACTIVATION_PX = 8; // 시트 닫기 소유권 전환 임계값 (8px)
+
+  let startY = 0;
+  let currentTranslateY = 0;
+  let isDown = false;
+  let ownedBySheet = false;
+  let activePointerId = null;
+
+  // 1. 핸들 바 직접 드래그 (즉시 시트 소유권 점유)
+  handleBar.addEventListener('pointerdown', (e) => {
+    activePointerId = e.pointerId;
+    isDown = true;
+    ownedBySheet = true;
+    startY = e.clientY;
+    sheet.classList.add('dragging');
+  });
+
+  // 2. 리스트 영역 터치 처리 (경계 조건 기반 소유권 전환)
+  scrollContent.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    isDown = true;
+    ownedBySheet = false;
+    startY = e.clientY;
+    currentTranslateY = 0;
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown || e.pointerId !== activePointerId) return;
+
+    const dy = e.clientY - startY;
+    const draggingDown = dy > 0;
+    const atTop = scrollContent.scrollTop <= 0;
+
+    // 이미 바텀시트 드래그 상태인 경우
+    if (ownedBySheet) {
+      if (e.cancelable) e.preventDefault();
+      const moveY = Math.max(0, dy);
+      currentTranslateY = moveY;
+      sheet.style.transform = `translateY(${moveY}px)`;
+      return;
+    }
+
+    // 리스트 상단(scrollTop === 0)에서 아래로 8px 이상 당길 때 시트 드래그 소유권 전환
+    if (draggingDown && atTop && dy > COLLAPSE_ACTIVATION_PX) {
+      ownedBySheet = true;
+      sheet.classList.add('dragging');
+      if (e.cancelable) e.preventDefault();
+      const moveY = dy - COLLAPSE_ACTIVATION_PX;
+      currentTranslateY = moveY;
+      sheet.style.transform = `translateY(${moveY}px)`;
+    }
+  });
+
+  const handlePointerRelease = (e) => {
+    if (!isDown || e.pointerId !== activePointerId) return;
+
+    isDown = false;
+    activePointerId = null;
+    sheet.classList.remove('dragging');
+
+    if (ownedBySheet) {
+      ownedBySheet = false;
+      // 뷰포트 높이의 25% 이상 내렸으면 시트 닫기, 미달 시 복구
+      if (currentTranslateY > window.innerHeight * 0.25) {
+        sheet.style.transform = 'translateY(100%)';
+      } else {
+        sheet.style.transform = 'translateY(0)';
+      }
+    }
+    currentTranslateY = 0;
+  };
+
+  window.addEventListener('pointerup', handlePointerRelease);
+  window.addEventListener('pointercancel', handlePointerRelease);
+</script>
+</body>
+</html>
+```

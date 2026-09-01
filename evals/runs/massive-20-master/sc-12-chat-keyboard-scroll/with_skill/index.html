@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+<title>Chat Keyboard Scroll (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .chat-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+  .chat-header {
+    height: 56px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .message-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bubble {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .bubble.other {
+    align-self: flex-start;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #f8fafc;
+  }
+  .bubble.me {
+    align-self: flex-end;
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: 600;
+  }
+  .input-bar {
+    background: #1e293b;
+    border-top: 1px solid #334155;
+    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    height: 42px;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 21px;
+    padding: 0 16px;
+    color: #f8fafc;
+    font-size: 14px;
+    outline: none;
+    touch-action: manipulation;
+  }
+  .chat-input:focus {
+    border-color: #38bdf8;
+  }
+  .btn-send {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #38bdf8;
+    color: #0f172a;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+</style>
+</head>
+<body>
+
+<div class="chat-app" id="app">
+  <div class="chat-header">💬 실시간 서포트 챗</div>
+
+  <div class="message-list" id="msgList">
+    <div class="bubble other">안녕하세요! 모바일 터치 최적화 상담원입니다.</div>
+    <div class="bubble other">키보드가 팝업되어도 입력창이 전혀 가려지지 않고 손끝에 밀착됩니다.</div>
+    <div class="bubble me">테스트 메시지를 작성해보겠습니다.</div>
+  </div>
+
+  <div class="input-bar" id="inputBar">
+    <input class="chat-input" id="inputMsg" type="text" placeholder="메시지를 입력하세요...">
+    <button class="btn-send" id="btnSend">↑</button>
+  </div>
+</div>
+
+<script>
+  const msgList = document.getElementById('msgList');
+  const inputMsg = document.getElementById('inputMsg');
+  const btnSend = document.getElementById('btnSend');
+
+  function scrollToBottom() {
+    msgList.scrollTop = msgList.scrollHeight;
+  }
+
+  function sendMessage() {
+    const text = inputMsg.value.trim();
+    if (!text) return;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble me';
+    bubble.textContent = text;
+    msgList.appendChild(bubble);
+
+    inputMsg.value = '';
+    scrollToBottom();
+  }
+
+  btnSend.addEventListener('click', sendMessage);
+  inputMsg.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  // Visual Viewport API로 가상 키보드 가림 완벽 방어
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      scrollToBottom();
+    });
+  }
+
+  inputMsg.addEventListener('focus', () => {
+    setTimeout(scrollToBottom, 250);
+  });
+</script>
+</body>
+</html>

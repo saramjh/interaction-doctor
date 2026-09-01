@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag Cloud (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:20px; }
+.zone { min-height:80px; background:#eee; border:1px dashed #999; margin-bottom:20px; padding:10px; display:flex; gap:8px; flex-wrap:wrap; }
+.tag { padding:6px 12px; background:#007bff; color:#fff; border-radius:16px; cursor:move; }
+</style>
+</head>
+<body>
+<h3>태그 이동 (Without Skill)</h3>
+<div class="zone" id="z1"><div class="tag" draggable="true" id="t1">JavaScript</div><div class="tag" draggable="true" id="t2">React</div></div>
+<div class="zone" id="z2"></div>
+<script>
+document.querySelectorAll('.tag').forEach(t => {
+  t.ondragstart = (e) => e.dataTransfer.setData('text', t.id);
+});
+document.querySelectorAll('.zone').forEach(z => {
+  z.ondragover = (e) => e.preventDefault();
+  z.ondrop = (e) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData('text');
+    z.appendChild(document.getElementById(id));
+  };
+});
+</script>
+</body>
+</html>

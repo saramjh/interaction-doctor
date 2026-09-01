@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>오늘 할 일</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.row {
+		position: relative;
+		overflow: hidden;
+		border-radius: 10px;
+		margin-bottom: 8px;
+	}
+	.delete-bg {
+		position: absolute;
+		inset: 0;
+		background: #ff3b30;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 18px;
+		color: #fff;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.item {
+		position: relative;
+		background: #fff;
+		padding: 14px 16px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		touch-action: pan-y;
+		user-select: none;
+	}
+	.item input { width: 18px; height: 18px; }
+	.label { font-size: 15px; }
+</style>
+</head>
+<body>
+<header>오늘 할 일</header>
+<div id="list"></div>
+
+<script>
+// 할 일 항목을 왼쪽으로 밀면 빨간 삭제 배경이 드러나고, 충분히 밀면 삭제된다.
+//
+// treatment-v2: common-pitfalls.md §7-4 withSinglePointerGate를 적용했다.
+// evals/subjects/02-swipe-delete-todo/project/index.html(원본 결함)에서
+// 시작해서, attachSwipe의 리스너 등록만 게이트로 바꿨다 — 삭제 임계값
+// (SWIPE_DELETE_PX), dx 계산은 원본 그대로.
+//
+// 게이트 하나로 규칙 1과 규칙 2가 동시에 해소된다: activePointerId가
+// null인 동안은 어떤 pointerId로도 onMove/onEnd가 호출되지 않으므로
+// (pointerdown 없이 들어온 pointermove/pointerup 무시 = 규칙 1),
+// 그리고 이미 활성 포인터가 있으면 새 pointerdown 자체를 거부하므로
+// (같은 요소에 겹쳐 들어온 두 번째 포인터 무시 = 규칙 2), 두 규칙을
+// 각각 따로 처리하는 코드를 안 써도 된다.
+
+const TODOS = [
+	"우유 사기",
+	"치과 예약",
+	"보고서 초안 검토",
+	"운동 30분",
+	"엄마한테 전화",
+	"세탁물 찾기",
+];
+
+const listEl = document.getElementById("list");
+
+function render() {
+	listEl.innerHTML = "";
+	TODOS.forEach((text, i) => {
+		const row = document.createElement("div");
+		row.className = "row";
+		row.innerHTML =
+			'<div class="delete-bg">삭제</div>' +
+			'<div class="item"><input type="checkbox" /><div class="label">' + text + "</div></div>";
+		listEl.appendChild(row);
+		attachSwipe(row.querySelector(".item"), row, i);
+	});
+}
+
+const SWIPE_DELETE_PX = 80;
+
+// common-pitfalls.md §7-4 — 단일 활성 포인터 게이트. 그대로 옮김, 수정 없음.
+function withSinglePointerGate(el, { onStart, onMove, onEnd } = {}) {
+	let activePointerId = null; // 스코프 축 — attachSwipe가 항목마다 새로 호출되므로 항목당 독립 클로저
+
+	el.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return; // 게이트 축
+		activePointerId = e.pointerId;
+		onStart?.(e);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (e.pointerId !== activePointerId) return; // 게이트 축
+		onMove?.(e);
+	});
+
+	function release(e, cancelled) {
+		if (e.pointerId !== activePointerId) return; // 게이트 축
+		activePointerId = null;
+		onEnd?.(e, { cancelled });
+	}
+	el.addEventListener("pointerup", (e) => release(e, false));
+	el.addEventListener("pointercancel", (e) => release(e, true));
+}
+
+// 스와이프 구현: 항목을 눌러서 옆으로 밀면 그만큼 따라 움직이고,
+// 충분히 밀면 삭제된다. (원본과 동일 — 리스너 등록만 게이트로 바뀜)
+function attachSwipe(item, row, index) {
+	let startX = 0;
+
+	withSinglePointerGate(item, {
+		onStart(e) {
+			startX = e.clientX;
+		},
+		onMove(e) {
+			const dx = e.clientX - startX;
+			if (Math.abs(dx) > 8) {
+				item.style.transform = "translateX(" + Math.min(0, dx) + "px)";
+			}
+		},
+		onEnd(e, { cancelled }) {
+			if (cancelled) {
+				item.style.transform = "";
+				return;
+			}
+			const dx = e.clientX - startX;
+			if (Math.abs(dx) > SWIPE_DELETE_PX) {
+				TODOS.splice(index, 1);
+				render();
+			} else {
+				item.style.transform = "";
+			}
+		},
+	});
+}
+
+render();
+</script>
+</body>
+</html>

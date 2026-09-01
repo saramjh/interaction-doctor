@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pinch Zoom & Pan (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #020617;
+    color: #f8fafc;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    touch-action: none;
+    overscroll-behavior: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    padding: 14px 20px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+  .viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+  }
+  .target-image {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    will-change: transform;
+    cursor: grab;
+    transform-origin: center center;
+    touch-action: none;
+  }
+  .info-badge {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #e2e8f0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span style="font-weight:600; font-size:14px;">📸 정밀 핀치 줌 & 팬 뷰어</span>
+  <span class="info-badge" id="zoomBadge">1.00x</span>
+</div>
+
+<div class="viewport" id="viewport">
+  <div class="target-image" id="targetImg">
+    <div style="font-size:40px; margin-bottom:10px;">🌌</div>
+    <div style="font-weight:700; font-size:16px;">두 손가락으로 핀치 확대</div>
+    <div style="font-size:12px; opacity:0.8; margin-top:4px;">더블탭 시 1.0x로 리셋</div>
+  </div>
+</div>
+
+<script>
+  const viewport = document.getElementById('viewport');
+  const target = document.getElementById('targetImg');
+  const badge = document.getElementById('zoomBadge');
+
+  let scale = 1;
+  let posX = 0, posY = 0;
+  let prevScale = 1;
+  let startDistance = 0;
+  let startPos = { x: 0, y: 0 };
+  let lastTap = 0;
+
+  // 좌표 스냅샷 보존을 위한 포인터 맵
+  const pointerMap = new Map();
+
+  function updateTransform(withTransition = false) {
+    target.style.transition = withTransition ? 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+    target.style.transform = `translate3d(${posX}px, ${posY}px, 0) scale(${scale})`;
+    badge.textContent = `${scale.toFixed(2)}x`;
+  }
+
+  function getDistance(p1, p2) {
+    return Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+  }
+
+  viewport.addEventListener('pointerdown', (e) => {
+    // 더블탭 리셋 검사
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      scale = 1;
+      posX = 0;
+      posY = 0;
+      updateTransform(true);
+      lastTap = 0;
+      pointerMap.clear();
+      return;
+    }
+    lastTap = now;
+
+    pointerMap.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+    if (pointerMap.size === 1) {
+      startPos = { x: e.clientX - posX, y: e.clientY - posY };
+    } else if (pointerMap.size === 2) {
+      const [p1, p2] = Array.from(pointerMap.values());
+      startDistance = getDistance(p1, p2);
+      prevScale = scale;
+    }
+  });
+
+  viewport.addEventListener('pointermove', (e) => {
+    if (!pointerMap.has(e.pointerId)) return;
+    pointerMap.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+    if (pointerMap.size === 1 && scale > 1.02) {
+      // 1손가락 팬 이동
+      posX = e.clientX - startPos.x;
+      posY = e.clientY - startPos.y;
+      updateTransform(false);
+    } else if (pointerMap.size === 2) {
+      // 2손가락 핀치 줌
+      const [p1, p2] = Array.from(pointerMap.values());
+      const dist = getDistance(p1, p2);
+      if (startDistance > 0) {
+        const factor = dist / startDistance;
+        scale = Math.max(0.7, Math.min(5.0, prevScale * factor));
+        updateTransform(false);
+      }
+    }
+  });
+
+  const onPointerUp = (e) => {
+    pointerMap.delete(e.pointerId);
+
+    if (pointerMap.size === 0) {
+      if (scale < 1) {
+        scale = 1;
+        posX = 0;
+        posY = 0;
+        updateTransform(true);
+      }
+    } else if (pointerMap.size === 1) {
+      // 두 손가락 중 하나를 뗐을 때 남은 한 손가락으로 팬 위치 재동기화
+      const remaining = Array.from(pointerMap.values())[0];
+      startPos = { x: remaining.clientX - posX, y: remaining.clientY - posY };
+    }
+  };
+
+  viewport.addEventListener('pointerup', onPointerUp);
+  viewport.addEventListener('pointercancel', onPointerUp);
+
+  // 브라우저 기본 제스처 줌 방어
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
+  document.addEventListener('gesturechange', (e) => e.preventDefault());
+  document.addEventListener('gestureend', (e) => e.preventDefault());
+</script>
+</body>
+</html>

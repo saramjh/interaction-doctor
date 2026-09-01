@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>즐겨찾는 연락처</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0;
+		height: 100%;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		background: #f5f5f7;
+		color: #1c1c1e;
+	}
+	header {
+		padding: 16px;
+		font-size: 18px;
+		font-weight: 700;
+		background: #fff;
+		border-bottom: 1px solid #e2e2e6;
+	}
+	#list { padding: 12px; }
+	.contact {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		background: #fff;
+		border-radius: 10px;
+		padding: 12px 14px;
+		margin-bottom: 8px;
+		/* 네이티브 롱프레스 UI 억제 4종 세트 중 CSS 3개(CONFLICTS.md#C6) —
+		   플랫폼 분기 아님, 넷 다 무조건 같이 있어야 한다. 나머지 1개
+		   (contextmenu preventDefault)는 attachTripleGesture() 안에 있다. */
+		user-select: none;
+		-webkit-user-select: none;
+		-webkit-touch-callout: none; /* iOS 콜아웃 억제 — 없으면 콜아웃이 다음 터치를 삼킴 */
+		position: relative;
+	}
+	.contact.selected { outline: 2px solid #007aff; }
+	.avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #667eea, #764ba2);
+		flex-shrink: 0;
+	}
+	.name { font-size: 15px; font-weight: 600; }
+	#context-menu {
+		position: fixed;
+		background: #2c2c2c;
+		color: #fff;
+		border-radius: 10px;
+		overflow: hidden;
+		display: none;
+		z-index: 100;
+		min-width: 130px;
+	}
+	#context-menu button {
+		display: block;
+		width: 100%;
+		padding: 12px 16px;
+		background: none;
+		border: none;
+		color: inherit;
+		font-size: 14px;
+		text-align: left;
+	}
+</style>
+</head>
+<body>
+<header id="header">즐겨찾는 연락처</header>
+<div id="list"></div>
+<div id="context-menu">
+	<button>전화</button>
+	<button>메시지</button>
+	<button>삭제</button>
+</div>
+
+<script>
+// 즐겨찾는 연락처를 길게 누르면:
+//   - 그대로 누르고 있으면(움직이지 않으면) 500ms에 메뉴(전화/메시지/삭제)가 뜬다.
+//   - 메뉴가 뜬 뒤 계속 누르고 있으면 1000ms에 여러 개 고르는 모드로 바뀐다.
+//   - 누른 채로 위아래로 옮기면(8px 이상) 그 자리에서 순서가 바뀐다.
+//
+// treatment-v2: common-pitfalls.md §7-4 withSinglePointerGate를 적용했다.
+// evals/subjects/09-longpress-triple-favorites/project/index.html(원본
+// 결함)에서 시작해서, attachTripleGesture의 리스너 등록만 게이트로
+// 바꿨다 — 500ms/1000ms 타이머, 8px 이동 판정, 재정렬 표시 로직은
+// 원본 그대로.
+//
+// 이전(원래 treatment)도 이미 activePointerId를 attachTripleGesture
+// 함수 안(행별 클로저)에 두고 진입 게이트를 직접 구현해서, 문서 밖
+// 관찰(다른 행 동시 조작)까지 충족했었다 — 이번 treatment-v2는 같은
+// 결과를 공용 패턴(withSinglePointerGate)으로 재현하는 것이지,
+// 원래 treatment가 못 하던 걸 새로 되게 하는 게 아니다.
+//
+// 세 번째 갱신: CONFLICTS.md#C6가 요구하는 네이티브 억제 4종
+// (user-select, -webkit-user-select, -webkit-touch-callout,
+// contextmenu preventDefault)을 추가했다 — recipes.md 레시피1에
+// 이 넷이 전부 빠져 있었던 걸 재확인하고 고친 것과 동일한 수정을
+// 여기 반영한다. 500ms/1000ms 타이머, 8px 판정 로직은 무수정.
+
+const CONTACTS = ["김민준", "이서연", "박도윤", "최하늘", "정예린"];
+const listEl = document.getElementById("list");
+const headerEl = document.getElementById("header");
+const menuEl = document.getElementById("context-menu");
+
+let selectMode = false;
+const selected = new Set();
+
+function updateHeader() {
+	headerEl.textContent = selectMode ? selected.size + "명 선택됨" : "즐겨찾는 연락처";
+}
+
+function render() {
+	listEl.innerHTML = "";
+	CONTACTS.forEach((name, i) => {
+		const row = document.createElement("div");
+		row.className = "contact";
+		row.dataset.index = String(i);
+		row.innerHTML = '<div class="avatar"></div><div class="name">' + name + "</div>";
+		listEl.appendChild(row);
+		attachTripleGesture(row, i);
+	});
+}
+
+function openContextMenu(x, y) {
+	menuEl.style.left = x + "px";
+	menuEl.style.top = y + "px";
+	menuEl.style.display = "block";
+}
+
+function enterSelectMode(row, index) {
+	selectMode = true;
+	selected.add(index);
+	row.classList.add("selected");
+	updateHeader();
+}
+
+// common-pitfalls.md §7-4 — 단일 활성 포인터 게이트. 그대로 옮김, 수정 없음.
+function withSinglePointerGate(el, { onStart, onMove, onEnd } = {}) {
+	let activePointerId = null; // 스코프 축 — attachTripleGesture가 행마다 새로 호출되므로 행마다 독립 클로저
+
+	el.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return; // 게이트 축
+		activePointerId = e.pointerId;
+		onStart?.(e);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (e.pointerId !== activePointerId) return; // 게이트 축
+		onMove?.(e);
+	});
+
+	function release(e, cancelled) {
+		if (e.pointerId !== activePointerId) return; // 게이트 축
+		activePointerId = null;
+		onEnd?.(e, { cancelled });
+	}
+	el.addEventListener("pointerup", (e) => release(e, false));
+	el.addEventListener("pointercancel", (e) => release(e, true));
+}
+
+// 롱프레스 3중 분기: 이동하면 재정렬, 안 움직이면 500ms에 메뉴,
+// 메뉴 뜨고도 계속 누르고 있으면 1000ms에 다중 선택. (원본과 동일 —
+// 리스너 등록만 게이트로 바뀜)
+function attachTripleGesture(row, index) {
+	let startX = 0;
+	let startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+
+	// 네이티브 억제 4종 중 마지막 1개(Android) — user-select만으론 Android의
+	// contextmenu를 못 막는다(CONFLICTS.md#C6, 17/17 실측). CSS 3개(위 스타일)와
+	// 이 한 줄이 항상 같이 있어야 한다 — 플랫폼 분기가 아니라 조합이다.
+	row.addEventListener("contextmenu", (e) => e.preventDefault());
+
+	withSinglePointerGate(row, {
+		onStart(e) {
+			startX = e.clientX;
+			startY = e.clientY;
+			moved = false;
+			contextMenuFired = false;
+
+			contextMenuTimer = setTimeout(() => {
+				if (!moved) {
+					contextMenuFired = true;
+					openContextMenu(e.clientX, e.clientY);
+					escalateTimer = setTimeout(() => {
+						if (!moved) enterSelectMode(row, index);
+					}, 500);
+				}
+			}, 500);
+		},
+		onMove(e) {
+			if (moved) return;
+			const dx = e.clientX - startX;
+			const dy = e.clientY - startY;
+			if (Math.hypot(dx, dy) > 8) {
+				moved = true;
+				clearTimeout(contextMenuTimer);
+				clearTimeout(escalateTimer);
+				if (!contextMenuFired) {
+					row.style.opacity = "0.6"; // 재정렬 시작 표시(단순화된 데모)
+				}
+			}
+		},
+		onEnd() {
+			clearTimeout(contextMenuTimer);
+			clearTimeout(escalateTimer);
+			row.style.opacity = "";
+		},
+	});
+}
+
+document.addEventListener("click", (e) => {
+	if (!menuEl.contains(e.target)) menuEl.style.display = "none";
+});
+
+render();
+</script>
+</body>
+</html>

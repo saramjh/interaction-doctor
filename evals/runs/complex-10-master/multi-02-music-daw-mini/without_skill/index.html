@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini DAW (Without Skill)</title>
+<style>
+body { margin:0; font-family:sans-serif; background:#222; color:#fff; }
+.track { display:flex; height:60px; border-bottom:1px solid #444; }
+.fader-box { width:80px; background:#333; display:flex; align-items:center; justify-content:center; }
+.timeline { flex:1; overflow-x:scroll; display:flex; background:#111; position:relative; }
+.clip { position:absolute; width:100px; height:40px; top:10px; background:#007bff; border-radius:4px; }
+</style>
+</head>
+<body>
+<h3>모바일 DAW (Without Skill)</h3>
+<div class="track">
+  <div class="fader-box"><input type="range" style="width:60px;"></div>
+  <div class="timeline" id="tl">
+    <div class="clip" id="clip" style="left:20px;">Drums</div>
+  </div>
+</div>
+<script>
+const clip = document.getElementById('clip');
+clip.ontouchstart = (e) => startX = e.touches[0].clientX - clip.offsetLeft;
+clip.ontouchmove = (e) => clip.style.left = (e.touches[0].clientX - startX) + 'px';
+</script>
+</body>
+</html>

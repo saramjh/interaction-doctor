@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crop Studio (Without Skill)</title>
+<style>
+body { margin:0; background:#222; color:#fff; font-family:sans-serif; }
+.crop-area { position:relative; width:300px; height:200px; background:#444; margin:20px auto; }
+.crop-box { position:absolute; top:20px; left:20px; width:150px; height:100px; border:2px solid #fff; }
+.handle { position:absolute; width:15px; height:15px; background:#007bff; bottom:-7px; right:-7px; }
+.controls { padding:20px; }
+</style>
+</head>
+<body>
+<h3>사진 크롭 & 필터 (Without Skill)</h3>
+<div class="crop-area">
+  <div class="crop-box" id="box">
+    <div class="handle" id="handle"></div>
+  </div>
+</div>
+<div class="controls">
+  <label>밝기</label><input type="range" id="bRange">
+</div>
+<script>
+const handle = document.getElementById('handle');
+const box = document.getElementById('box');
+let isDown = false;
+handle.ontouchstart = () => isDown = true;
+window.ontouchend = () => isDown = false;
+window.addEventListener('touchmove', (e) => {
+  if (!isDown) return;
+  box.style.width = (e.touches[0].clientX - box.offsetLeft) + 'px';
+  box.style.height = (e.touches[0].clientY - box.offsetTop) + 'px';
+});
+</script>
+</body>
+</html>

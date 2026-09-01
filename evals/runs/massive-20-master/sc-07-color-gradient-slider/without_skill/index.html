@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gradient Slider (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:30px; display:flex; flex-direction:column; align-items:center; }
+.track { position:relative; width:300px; height:24px; background:linear-gradient(to right, red, blue); border-radius:12px; }
+.stop { position:absolute; top:-4px; width:16px; height:32px; background:#fff; border:1px solid #000; cursor:ew-resize; }
+</style>
+</head>
+<body>
+<h3>그라데이션 슬라이더 (Without Skill)</h3>
+<div class="track" id="track">
+  <div class="stop" id="stop" style="left:50%;"></div>
+</div>
+<script>
+const track = document.getElementById('track');
+const stop = document.getElementById('stop');
+let isDown = false;
+stop.onmousedown = () => isDown = true;
+stop.ontouchstart = () => isDown = true;
+window.onmouseup = () => isDown = false;
+window.ontouchend = () => isDown = false;
+window.addEventListener('touchmove', (e) => {
+  if (!isDown) return;
+  const rect = track.getBoundingClientRect();
+  const x = e.touches[0].clientX - rect.left;
+  stop.style.left = x + 'px';
+});
+</script>
+</body>
+</html>

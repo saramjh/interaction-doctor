@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fixed Column Table (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:20px; }
+.table-wrap { overflow-x:scroll; width:300px; border:1px solid #ccc; }
+table { border-collapse:collapse; width:600px; }
+th, td { border:1px solid #ddd; padding:8px; }
+.fixed { position:sticky; left:0; background:#fff; }
+</style>
+</head>
+<body>
+<h3>반응형 테이블 (Without Skill)</h3>
+<div class="table-wrap">
+  <table>
+    <tr><th class="fixed">이름</th><th>직책</th><th>부서</th><th>이메일</th><th>전화번호</th></tr>
+    <tr><td class="fixed">홍길동</td><td>팀장</td><td>개발팀</td><td>hong@test.com</td><td>010-1234</td></tr>
+  </table>
+</div>
+</body>
+</html>

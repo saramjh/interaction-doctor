@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover" />
+  <title>모바일 1:1 채팅</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --primary: #ff6f0f;
+      --primary-hover: #e55e00;
+      --primary-light: #fff3eb;
+      --bg-page: #2b2e33;
+      --bg-chat: #f8f9fa;
+      --bubble-sent: #ff6f0f;
+      --bubble-sent-text: #ffffff;
+      --bubble-recv: #ffffff;
+      --bubble-recv-text: #212529;
+      --text-muted: #868e96;
+      --border-color: #e9ecef;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --app-height: 100dvh;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: var(--app-height);
+      max-height: var(--app-height);
+      overflow: hidden;
+      background-color: var(--bg-page);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      height: 100%;
+      height: var(--app-height);
+      max-height: var(--app-height);
+      background-color: var(--bg-chat);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 480px) {
+      .app-container {
+        max-width: 100%;
+        box-shadow: none;
+      }
+    }
+
+    /* Header */
+    .chat-header {
+      flex-shrink: 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding-top: var(--safe-top);
+      z-index: 30;
+    }
+
+    .header-main {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      min-height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #343a40;
+      transition: background 0.15s, transform 0.1s;
+      touch-action: manipulation;
+    }
+
+    .icon-btn:active {
+      background: rgba(0,0,0,0.06);
+      transform: scale(0.94);
+    }
+
+    .header-user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .user-avatar-wrap {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ffe8d6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .online-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: #20c997;
+      border: 2px solid #ffffff;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #212529;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .manner-temp {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 1px 5px;
+      border-radius: 8px;
+    }
+
+    .user-subtext {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Product Trade Bar */
+    .product-bar {
+      padding: 9px 12px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .product-info-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .product-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      background: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .product-meta {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .product-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #212529;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-price-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 1px;
+    }
+
+    .trade-status {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .product-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #212529;
+    }
+
+    .btn-trade-action {
+      background: #f1f3f5;
+      border: none;
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #495057;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .btn-trade-action:active {
+      background: #e9ecef;
+    }
+
+    /* Chat Messages Body */
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: var(--bg-chat);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      position: relative;
+    }
+
+    .date-divider {
+      display: flex;
+      justify-content: center;
+      margin: 4px 0;
+    }
+
+    .date-divider-pill {
+      background: rgba(0, 0, 0, 0.05);
+      color: #495057;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+
+    .message-group {
+      display: flex;
+      width: 100%;
+      position: relative;
+    }
+
+    .message-group.received {
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .message-group.sent {
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffe8d6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .message-content-wrap {
+      display: flex;
+      flex-direction: column;
+      max-width: 72%;
+    }
+
+    .message-group.sent .message-content-wrap {
+      align-items: flex-end;
+    }
+
+    .sender-name {
+      font-size: 11px;
+      color: #495057;
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+
+    .bubble-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      position: relative;
+    }
+
+    .message-group.sent .bubble-row {
+      flex-direction: row-reverse;
+    }
+
+    .message-bubble {
+      padding: 9px 13px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+      position: relative;
+      transition: transform 0.15s, filter 0.15s;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .message-group.received .message-bubble {
+      background: var(--bubble-recv);
+      color: var(--bubble-recv-text);
+      border-top-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .message-group.sent .message-bubble {
+      background: var(--bubble-sent);
+      color: var(--bubble-sent-text);
+      border-top-right-radius: 4px;
+      box-shadow: 0 1px 2px rgba(255, 111, 15, 0.25);
+    }
+
+    .message-bubble.pressed {
+      transform: scale(0.96);
+      filter: brightness(0.92);
+    }
+
+    .message-bubble.highlighted {
+      outline: 2px solid var(--primary);
+      box-shadow: 0 0 10px rgba(255, 111, 15, 0.35);
+    }
+
+    .image-bubble {
+      padding: 3px;
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 190px;
+    }
+
+    .image-bubble img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 9px;
+      display: block;
+    }
+
+    .emoticon-bubble {
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      padding: 2px 4px;
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .msg-meta {
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-bottom: 2px;
+    }
+
+    .message-group.sent .msg-meta {
+      align-items: flex-end;
+    }
+
+    .unread-indicator {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 10px;
+      margin-bottom: 1px;
+    }
+
+    .msg-time {
+      white-space: nowrap;
+      letter-spacing: -0.2px;
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .typing-indicator.active {
+      display: flex;
+    }
+
+    .typing-bubble {
+      background: #ffffff;
+      padding: 7px 12px;
+      border-radius: 14px;
+      border-top-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .typing-dot {
+      width: 5px;
+      height: 5px;
+      background: #adb5bd;
+      border-radius: 50%;
+      animation: typingBounce 1.3s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-3px); background: var(--primary); }
+    }
+
+    /* Quick Reply Chips */
+    .quick-replies-bar {
+      flex-shrink: 0;
+      padding: 6px 12px;
+      background: #ffffff;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+
+    .quick-replies-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .quick-chip {
+      padding: 5px 11px;
+      border-radius: 14px;
+      background: #f1f3f5;
+      color: #495057;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .quick-chip:active {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+      transform: scale(0.95);
+    }
+
+    /* Image Attachment Preview */
+    .attachment-preview-bar {
+      display: none;
+      padding: 6px 12px;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      align-items: center;
+      gap: 8px;
+    }
+
+    .attachment-preview-bar.active {
+      display: flex;
+    }
+
+    .preview-img-box {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .preview-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-remove-btn {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      width: 16px;
+      height: 16px;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      border-radius: 50%;
+      border: none;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .preview-info {
+      font-size: 12px;
+      color: #495057;
+    }
+
+    /* Bottom Input Bar */
+    .input-bar-container {
+      flex-shrink: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 7px 10px;
+      padding-bottom: calc(7px + var(--safe-bottom));
+      z-index: 40;
+      position: relative;
+    }
+
+    .input-bar-main {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .input-actions-left {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding-bottom: 1px;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: #f1f3f5;
+      border-radius: 18px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      max-height: 110px;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 111, 15, 0.1);
+    }
+
+    .chat-textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      resize: none;
+      outline: none;
+      font-size: 14px;
+      line-height: 1.35;
+      max-height: 90px;
+      color: #212529;
+      padding: 1px 0;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .chat-textarea::placeholder {
+      color: #adb5bd;
+      font-size: 13.5px;
+    }
+
+    .btn-send {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+
+    .btn-send:disabled {
+      background: #e9ecef;
+      color: #adb5bd;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-send:not(:disabled):active {
+      background: var(--primary-hover);
+      transform: scale(0.92);
+    }
+
+    /* Emoticon Drawer */
+    .drawer-panel {
+      display: none;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 10px 12px;
+      padding-bottom: calc(10px + var(--safe-bottom));
+      height: 220px;
+      overflow-y: auto;
+      flex-shrink: 0;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    .drawer-panel.active {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .drawer-tabs {
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .drawer-tab-btn {
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px 4px;
+      position: relative;
+    }
+
+    .drawer-tab-btn.active {
+      color: var(--primary);
+    }
+
+    .drawer-tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      text-align: center;
+    }
+
+    .emoji-item {
+      font-size: 24px;
+      padding: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .emoji-item:active {
+      transform: scale(1.2);
+    }
+
+    .sticker-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .sticker-item {
+      background: #f8f9fa;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 6px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: transform 0.15s;
+    }
+
+    .sticker-item span {
+      font-size: 11px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .sticker-item:active {
+      transform: scale(0.94);
+      background: var(--primary-light);
+    }
+
+    /* Photo Modal Sheet */
+    .photo-modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .photo-modal-overlay.active {
+      display: flex;
+    }
+
+    .photo-sheet {
+      width: 100%;
+      background: #ffffff;
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+      padding: 16px 18px;
+      padding-bottom: calc(18px + var(--safe-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    .sheet-handle {
+      width: 32px;
+      height: 4px;
+      background: #dee2e6;
+      border-radius: 4px;
+      align-self: center;
+    }
+
+    .sheet-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #212529;
+    }
+
+    .photo-options-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .photo-opt-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: #f8f9fa;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: #343a40;
+    }
+
+    .photo-opt-btn:active {
+      background: #e9ecef;
+      transform: scale(0.95);
+    }
+
+    .photo-opt-icon {
+      font-size: 22px;
+    }
+
+    .preset-photos-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #495057;
+      margin-top: 2px;
+    }
+
+    .preset-photos-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .preset-photo-card {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .preset-photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preset-photo-card:active {
+      transform: scale(0.92);
+    }
+
+    /* Long-press Context Menu */
+    .context-menu-backdrop {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 150;
+    }
+
+    .context-menu-backdrop.active {
+      display: block;
+    }
+
+    .context-floating-menu {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 4px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: row;
+      gap: 2px;
+      z-index: 160;
+      animation: popIn 0.16s ease-out;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .context-menu-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 7px 11px;
+      min-width: 48px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #343a40;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .context-menu-btn:active {
+      background: #f1f3f5;
+    }
+
+    .context-menu-btn.delete {
+      color: #fa5252;
+    }
+
+    .context-menu-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: absolute;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-15px);
+      background: rgba(33, 37, 41, 0.92);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 18px;
+      font-size: 12.5px;
+      font-weight: 500;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Floating Scroll-down Button */
+    .scroll-bottom-btn {
+      display: none;
+      position: absolute;
+      right: 14px;
+      bottom: 74px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      color: #495057;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 35;
+    }
+
+    .scroll-bottom-btn.active {
+      display: flex;
+    }
+
+    .scroll-bottom-btn:active {
+      transform: scale(0.9);
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 250;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: calc(14px + var(--safe-top));
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      color: #ffffff;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container" id="appContainer">
+    <!-- Header -->
+    <header class="chat-header">
+      <div class="header-main">
+        <div class="header-left">
+          <button class="icon-btn" id="btnBack" aria-label="뒤로가기">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <div class="header-user-info" id="btnUserProfile">
+            <div class="user-avatar-wrap">
+              🥕
+              <div class="online-badge"></div>
+            </div>
+            <div class="user-details">
+              <div class="user-name">
+                당근이
+                <span class="manner-temp">37.5℃</span>
+              </div>
+              <div class="user-subtext">보통 10분 이내 응답</div>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn" id="btnCall" aria-label="전화">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="btnMore" aria-label="더보기">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="1"/>
+              <circle cx="12" cy="5" r="1"/>
+              <circle cx="12" cy="19" r="1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Trade Product Bar -->
+      <div class="product-bar">
+        <div class="product-info-left">
+          <div class="product-thumb">📱</div>
+          <div class="product-meta">
+            <div class="product-title">아이패드 에어 5세대 64GB Wi-Fi 풀박스</div>
+            <div class="product-price-row">
+              <span class="trade-status">판매중</span>
+              <span class="product-price">550,000원</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn-trade-action" id="btnMakeDeal">거래 약속</button>
+      </div>
+    </header>
+
+    <!-- Chat Messages Scroll Area -->
+    <main class="chat-body" id="chatBody">
+      <div class="date-divider">
+        <span class="date-divider-pill">2026년 9월 1일 화요일</span>
+      </div>
+
+      <!-- Received Message -->
+      <div class="message-group received" data-id="msg-1" data-text="안녕하세요! 아이패드 에어 5세대 아직 판매 중이신가요?">
+        <div class="msg-avatar">🥕</div>
+        <div class="message-content-wrap">
+          <span class="sender-name">당근이</span>
+          <div class="bubble-row">
+            <div class="message-bubble" tabindex="0">
+              안녕하세요! 아이패드 에어 5세대 아직 판매 중이신가요?
+            </div>
+            <div class="msg-meta">
+              <span class="msg-time">오후 12:15</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sent Message -->
+      <div class="message-group sent" data-id="msg-2" data-text="네 안녕하세요! 아직 판매 중입니다 :) 상태 아주 깨끗해요.">
+        <div class="message-content-wrap">
+          <div class="bubble-row">
+            <div class="message-bubble" tabindex="0">
+              네 안녕하세요! 아직 판매 중입니다 :) 상태 아주 깨끗해요.
+            </div>
+            <div class="msg-meta">
+              <span class="unread-indicator">1</span>
+              <span class="msg-time">오후 12:16</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Received Message -->
+      <div class="message-group received" data-id="msg-3" data-text="혹시 기스나 찍힘 같은 하자는 없나요? 배터리 효율도 궁금합니다!">
+        <div class="msg-avatar">🥕</div>
+        <div class="message-content-wrap">
+          <span class="sender-name">당근이</span>
+          <div class="bubble-row">
+            <div class="message-bubble" tabindex="0">
+              혹시 기스나 찍힘 같은 하자는 없나요? 배터리 효율도 궁금합니다!
+            </div>
+            <div class="msg-meta">
+              <span class="msg-time">오후 12:18</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sent Photo Message -->
+      <div class="message-group sent" data-id="msg-4" data-type="image" data-text="[사진]">
+        <div class="message-content-wrap">
+          <div class="bubble-row">
+            <div class="message-bubble image-bubble" tabindex="0">
+              <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=80" alt="아이패드 상태 사진" />
+            </div>
+            <div class="msg-meta">
+              <span class="msg-time">오후 12:20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sent Text Message -->
+      <div class="message-group sent" data-id="msg-5" data-text="실물 사진 방금 찍어보냅니다! 케이스랑 강화유리 항상 붙여둬서 찍힘 전혀 없고 배터리 효율 94%입니다.">
+        <div class="message-content-wrap">
+          <div class="bubble-row">
+            <div class="message-bubble" tabindex="0">
+              실물 사진 방금 찍어보냅니다! 케이스랑 강화유리 항상 붙여둬서 찍힘 전혀 없고 배터리 효율 94%입니다.
+            </div>
+            <div class="msg-meta">
+              <span class="msg-time">오후 12:20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Received Message -->
+      <div class="message-group received" data-id="msg-6" data-text="오 상태 정말 좋네요! 오늘 저녁 7시쯤 역 근처에서 직거래 가능할까요?">
+        <div class="msg-avatar">🥕</div>
+        <div class="message-content-wrap">
+          <span class="sender-name">당근이</span>
+          <div class="bubble-row">
+            <div class="message-bubble" tabindex="0">
+              오 상태 정말 좋네요! 오늘 저녁 7시쯤 역 근처에서 직거래 가능할까요?
+            </div>
+            <div class="msg-meta">
+              <span class="msg-time">오후 12:22</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Partner Typing Indicator -->
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="msg-avatar">🥕</div>
+        <div class="typing-bubble">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Scroll-to-bottom Floating Button -->
+    <button class="scroll-bottom-btn" id="btnScrollBottom" aria-label="맨 아래로 이동">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M19 12l-7 7-7-7"/>
+      </svg>
+    </button>
+
+    <!-- Quick Replies Bar -->
+    <div class="quick-replies-bar" id="quickRepliesBar">
+      <button class="quick-chip" data-reply="네, 7시에 뵐게요!">네, 7시에 뵐게요!</button>
+      <button class="quick-chip" data-reply="어디 출구 쪽이 편하신가요?">어디 출구 쪽이 편하신가요?</button>
+      <button class="quick-chip" data-reply="현금 또는 계좌이체 둘 다 가능합니다.">계좌이체 가능합니다</button>
+      <button class="quick-chip" data-reply="도착하시면 메시지 주세요!">도착하시면 메시지 주세요!</button>
+    </div>
+
+    <!-- Attached Image Preview Bar -->
+    <div class="attachment-preview-bar" id="attachmentPreviewBar">
+      <div class="preview-img-box">
+        <img id="previewImg" src="" alt="첨부 이미지 미리보기" />
+        <button class="preview-remove-btn" id="btnRemoveAttachment" aria-label="첨부 취소">✕</button>
+      </div>
+      <div class="preview-info">
+        <div>사진이 첨부되었습니다.</div>
+      </div>
+    </div>
+
+    <!-- Bottom Input Bar -->
+    <footer class="input-bar-container" id="inputBarContainer">
+      <div class="input-bar-main">
+        <div class="input-actions-left">
+          <button class="icon-btn" id="btnPhoto" aria-label="사진 첨부" title="사진 전송">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3" ry="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="btnEmoticon" aria-label="이모티콘" title="이모티콘">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+              <line x1="9" y1="9" x2="9.01" y2="9"/>
+              <line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="input-wrapper">
+          <textarea
+            id="messageInput"
+            class="chat-textarea"
+            rows="1"
+            placeholder="메시지를 입력하세요..."
+            autocomplete="off"
+            autocorrect="off"
+            enterkeyhint="send"
+          ></textarea>
+        </div>
+
+        <button class="btn-send" id="btnSend" aria-label="전송" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+
+      <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+    </footer>
+
+    <!-- Emoticon / Sticker Drawer -->
+    <div class="drawer-panel" id="emoticonDrawer">
+      <div class="drawer-tabs">
+        <button class="drawer-tab-btn active" data-tab="emoji">이모지</button>
+        <button class="drawer-tab-btn" data-tab="sticker">당근 스티커</button>
+      </div>
+      <div class="drawer-content" id="emojiContent">
+        <div class="emoji-grid">
+          <div class="emoji-item">😊</div>
+          <div class="emoji-item">🥕</div>
+          <div class="emoji-item">👍</div>
+          <div class="emoji-item">🙏</div>
+          <div class="emoji-item">❤️</div>
+          <div class="emoji-item">🙌</div>
+          <div class="emoji-item">🎉</div>
+          <div class="emoji-item">🔥</div>
+          <div class="emoji-item">✨</div>
+          <div class="emoji-item">🥰</div>
+          <div class="emoji-item">🤝</div>
+          <div class="emoji-item">😂</div>
+          <div class="emoji-item">👀</div>
+          <div class="emoji-item">👋</div>
+          <div class="emoji-item">💯</div>
+          <div class="emoji-item">😍</div>
+          <div class="emoji-item">😎</div>
+          <div class="emoji-item">🤗</div>
+          <div class="emoji-item">👌</div>
+          <div class="emoji-item">💡</div>
+          <div class="emoji-item">⏰</div>
+        </div>
+      </div>
+      <div class="drawer-content" id="stickerContent" style="display: none;">
+        <div class="sticker-grid">
+          <div class="sticker-item" data-sticker="🥕">
+            <div>🥕</div>
+            <span>당근해요</span>
+          </div>
+          <div class="sticker-item" data-sticker="🤝">
+            <div>🤝</div>
+            <span>거래완료</span>
+          </div>
+          <div class="sticker-item" data-sticker="🏃">
+            <div>🏃</div>
+            <span>가는중!</span>
+          </div>
+          <div class="sticker-item" data-sticker="❤️">
+            <div>❤️</div>
+            <span>감사합니다</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo Selection Sheet -->
+    <div class="photo-modal-overlay" id="photoModal">
+      <div class="photo-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">사진 첨부</div>
+        <div class="photo-options-grid">
+          <button class="photo-opt-btn" id="btnSelectGallery">
+            <div class="photo-opt-icon">🖼️</div>
+            <span>앨범 선택</span>
+          </button>
+          <button class="photo-opt-btn" id="btnSelectCamera">
+            <div class="photo-opt-icon">📷</div>
+            <span>카메라 촬영</span>
+          </button>
+          <button class="photo-opt-btn" id="btnSampleIpad">
+            <div class="photo-opt-icon">📱</div>
+            <span>아이패드 사진</span>
+          </button>
+          <button class="photo-opt-btn" id="btnSampleReceipt">
+            <div class="photo-opt-icon">🧾</div>
+            <span>영수증 인증</span>
+          </button>
+        </div>
+
+        <div class="preset-photos-title">샘플 상품 사진 즉시 전송</div>
+        <div class="preset-photos-row">
+          <div class="preset-photo-card" data-url="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=80">
+            <img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=200&auto=format&fit=crop&q=80" alt="아이패드 1" />
+          </div>
+          <div class="preset-photo-card" data-url="https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=600&auto=format&fit=crop&q=80">
+            <img src="https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=200&auto=format&fit=crop&q=80" alt="아이패드 2" />
+          </div>
+          <div class="preset-photo-card" data-url="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&auto=format&fit=crop&q=80" alt="맥북" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Long Press Context Menu -->
+    <div class="context-menu-backdrop" id="contextMenuBackdrop">
+      <div class="context-floating-menu" id="contextFloatingMenu">
+        <button class="context-menu-btn" id="btnContextCopy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>복사</span>
+        </button>
+        <button class="context-menu-btn" id="btnContextReply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 17 4 12 9 7"/>
+            <path d="M20 18v-2a4 4 0 0 0-4-4H4"/>
+          </svg>
+          <span>답장</span>
+        </button>
+        <button class="context-menu-btn delete" id="btnContextDelete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            <line x1="10" y1="11" x2="10" y2="17"/>
+            <line x1="14" y1="11" x2="14" y2="17"/>
+          </svg>
+          <span>삭제</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal">
+      <button class="lightbox-close" id="btnLightboxClose" aria-label="닫기">✕</button>
+      <img class="lightbox-img" id="lightboxImg" src="" alt="확대 이미지" />
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-msg" id="toastMsg">메시지가 복사되었습니다.</div>
+  </div>
+
+  <script>
+    (function() {
+      const appContainer = document.getElementById('appContainer');
+      const chatBody = document.getElementById('chatBody');
+      const messageInput = document.getElementById('messageInput');
+      const btnSend = document.getElementById('btnSend');
+      const btnPhoto = document.getElementById('btnPhoto');
+      const btnEmoticon = document.getElementById('btnEmoticon');
+      const fileInput = document.getElementById('fileInput');
+      const emoticonDrawer = document.getElementById('emoticonDrawer');
+      const photoModal = document.getElementById('photoModal');
+      const contextMenuBackdrop = document.getElementById('contextMenuBackdrop');
+      const contextFloatingMenu = document.getElementById('contextFloatingMenu');
+      const btnContextCopy = document.getElementById('btnContextCopy');
+      const btnContextDelete = document.getElementById('btnContextDelete');
+      const btnContextReply = document.getElementById('btnContextReply');
+      const toastMsg = document.getElementById('toastMsg');
+      const typingIndicator = document.getElementById('typingIndicator');
+      const btnScrollBottom = document.getElementById('btnScrollBottom');
+      const attachmentPreviewBar = document.getElementById('attachmentPreviewBar');
+      const previewImg = document.getElementById('previewImg');
+      const btnRemoveAttachment = document.getElementById('btnRemoveAttachment');
+      const lightboxModal = document.getElementById('lightboxModal');
+      const lightboxImg = document.getElementById('lightboxImg');
+      const btnLightboxClose = document.getElementById('btnLightboxClose');
+
+      let currentAttachment = null;
+      let targetMessageElement = null;
+      let isDrawerOpen = false;
+
+      // 1. Viewport & Virtual Keyboard dynamics
+      function updateViewportHeight() {
+        if (window.visualViewport) {
+          const vh = window.visualViewport.height;
+          document.documentElement.style.setProperty('--app-height', `${vh}px`);
+          appContainer.style.height = `${vh}px`;
+          
+          if (document.activeElement === messageInput) {
+            scrollToBottom(false);
+          }
+        } else {
+          const vh = window.innerHeight;
+          document.documentElement.style.setProperty('--app-height', `${vh}px`);
+          appContainer.style.height = `${vh}px`;
+        }
+      }
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateViewportHeight);
+        window.visualViewport.addEventListener('scroll', updateViewportHeight);
+      }
+      window.addEventListener('resize', updateViewportHeight);
+      window.addEventListener('orientationchange', () => {
+        setTimeout(updateViewportHeight, 200);
+      });
+      updateViewportHeight();
+
+      function getFormattedTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const period = hours >= 12 ? '오후' : '오전';
+        if (hours > 12) hours -= 12;
+        if (hours === 0) hours = 12;
+        return `${period} ${hours}:${minutes}`;
+      }
+
+      let toastTimer = null;
+      function showToast(text) {
+        toastMsg.textContent = text;
+        toastMsg.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastMsg.classList.remove('show');
+        }, 2000);
+      }
+
+      function scrollToBottom(smooth = true) {
+        requestAnimationFrame(() => {
+          chatBody.scrollTo({
+            top: chatBody.scrollHeight,
+            behavior: smooth ? 'smooth' : 'auto'
+          });
+        });
+      }
+
+      chatBody.addEventListener('scroll', () => {
+        const distanceToBottom = chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight;
+        if (distanceToBottom > 150) {
+          btnScrollBottom.classList.add('active');
+        } else {
+          btnScrollBottom.classList.remove('active');
+        }
+      });
+
+      btnScrollBottom.addEventListener('click', () => {
+        scrollToBottom(true);
+      });
+
+      function adjustTextareaHeight() {
+        messageInput.style.height = 'auto';
+        const newHeight = Math.min(messageInput.scrollHeight, 90);
+        messageInput.style.height = `${newHeight}px`;
+
+        const hasText = messageInput.value.trim().length > 0;
+        const hasAttach = currentAttachment !== null;
+        btnSend.disabled = !(hasText || hasAttach);
+      }
+
+      messageInput.addEventListener('input', adjustTextareaHeight);
+
+      messageInput.addEventListener('focus', () => {
+        closeEmoticonDrawer();
+        setTimeout(() => scrollToBottom(true), 150);
+      });
+
+      messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          if (!window.matchMedia('(max-width: 768px)').matches) {
+            e.preventDefault();
+            sendMessage();
+          }
+        }
+      });
+
+      // 2. Long Press with 8px Touch Slop
+      let longPressTimer = null;
+      let startX = 0;
+      let startY = 0;
+      let activeBubble = null;
+      const TOUCH_SLOP = 8;
+      const LONG_PRESS_DURATION = 400;
+
+      function clearLongPress() {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+        if (activeBubble) {
+          activeBubble.classList.remove('pressed');
+          activeBubble = null;
+        }
+      }
+
+      function handleLongPressTrigger(element, clientX, clientY) {
+        if (navigator.vibrate) {
+          navigator.vibrate(35);
+        }
+        targetMessageElement = element.closest('.message-group');
+        element.classList.remove('pressed');
+        element.classList.add('highlighted');
+        openContextMenu(element, clientX, clientY);
+      }
+
+      function attachLongPressHandlers(bubble) {
+        bubble.addEventListener('pointerdown', (e) => {
+          if (e.button !== 0 && e.pointerType === 'mouse') return;
+          clearLongPress();
+          activeBubble = bubble;
+          startX = e.clientX;
+          startY = e.clientY;
+          bubble.classList.add('pressed');
+          longPressTimer = setTimeout(() => {
+            handleLongPressTrigger(bubble, e.clientX, e.clientY);
+          }, LONG_PRESS_DURATION);
+        });
+
+        bubble.addEventListener('pointermove', (e) => {
+          if (!longPressTimer) return;
+          const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+          if (dist > TOUCH_SLOP) {
+            clearLongPress();
+          }
+        });
+
+        bubble.addEventListener('pointerup', clearLongPress);
+        bubble.addEventListener('pointercancel', clearLongPress);
+        bubble.addEventListener('pointerleave', clearLongPress);
+
+        bubble.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+
+        if (bubble.classList.contains('image-bubble')) {
+          bubble.addEventListener('click', () => {
+            const img = bubble.querySelector('img');
+            if (img) {
+              lightboxImg.src = img.src;
+              lightboxModal.classList.add('active');
+            }
+          });
+        }
+      }
+
+      document.querySelectorAll('.message-bubble').forEach(attachLongPressHandlers);
+
+      function openContextMenu(bubble, clickX, clickY) {
+        const bubbleRect = bubble.getBoundingClientRect();
+        const containerRect = appContainer.getBoundingClientRect();
+
+        contextMenuBackdrop.classList.add('active');
+        contextFloatingMenu.style.display = 'flex';
+
+        const menuWidth = 160;
+        const menuHeight = 52;
+
+        let left = bubbleRect.left - containerRect.left + (bubbleRect.width / 2) - (menuWidth / 2);
+        let top = bubbleRect.top - containerRect.top - menuHeight - 6;
+
+        if (left < 8) left = 8;
+        if (left + menuWidth > containerRect.width - 8) {
+          left = containerRect.width - menuWidth - 8;
+        }
+
+        if (top < 54) {
+          top = bubbleRect.bottom - containerRect.top + 6;
+        }
+
+        contextFloatingMenu.style.left = `${left}px`;
+        contextFloatingMenu.style.top = `${top}px`;
+      }
+
+      function closeContextMenu() {
+        contextMenuBackdrop.classList.remove('active');
+        if (targetMessageElement) {
+          const bubble = targetMessageElement.querySelector('.message-bubble');
+          if (bubble) bubble.classList.remove('highlighted');
+        }
+      }
+
+      contextMenuBackdrop.addEventListener('click', (e) => {
+        if (e.target === contextMenuBackdrop) {
+          closeContextMenu();
+        }
+      });
+
+      btnContextCopy.addEventListener('click', () => {
+        if (targetMessageElement) {
+          const text = targetMessageElement.getAttribute('data-text') || targetMessageElement.textContent.trim();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+              showToast('메시지가 복사되었습니다.');
+            }).catch(() => {
+              fallbackCopy(text);
+            });
+          } else {
+            fallbackCopy(text);
+          }
+        }
+        closeContextMenu();
+      });
+
+      function fallbackCopy(text) {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        showToast('메시지가 복사되었습니다.');
+      }
+
+      btnContextDelete.addEventListener('click', () => {
+        if (targetMessageElement) {
+          targetMessageElement.style.transition = 'all 0.22s ease';
+          targetMessageElement.style.opacity = '0';
+          targetMessageElement.style.transform = 'scale(0.85)';
+          setTimeout(() => {
+            if (targetMessageElement && targetMessageElement.parentNode) {
+              targetMessageElement.parentNode.removeChild(targetMessageElement);
+              showToast('메시지가 삭제되었습니다.');
+            }
+          }, 220);
+        }
+        closeContextMenu();
+      });
+
+      btnContextReply.addEventListener('click', () => {
+        if (targetMessageElement) {
+          const text = targetMessageElement.getAttribute('data-text');
+          messageInput.value = `> ${text}\n`;
+          messageInput.focus();
+          adjustTextareaHeight();
+        }
+        closeContextMenu();
+      });
+
+      // 3. Emoticon Drawer
+      function toggleEmoticonDrawer() {
+        isDrawerOpen = !isDrawerOpen;
+        if (isDrawerOpen) {
+          emoticonDrawer.classList.add('active');
+          btnEmoticon.style.color = 'var(--primary)';
+          messageInput.blur();
+        } else {
+          closeEmoticonDrawer();
+        }
+        updateViewportHeight();
+        scrollToBottom(true);
+      }
+
+      function closeEmoticonDrawer() {
+        isDrawerOpen = false;
+        emoticonDrawer.classList.remove('active');
+        btnEmoticon.style.color = '';
+      }
+
+      btnEmoticon.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleEmoticonDrawer();
+      });
+
+      const drawerTabs = document.querySelectorAll('.drawer-tab-btn');
+      const emojiContent = document.getElementById('emojiContent');
+      const stickerContent = document.getElementById('stickerContent');
+
+      drawerTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          drawerTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const target = tab.getAttribute('data-tab');
+          if (target === 'emoji') {
+            emojiContent.style.display = 'block';
+            stickerContent.style.display = 'none';
+          } else {
+            emojiContent.style.display = 'none';
+            stickerContent.style.display = 'block';
+          }
+        });
+      });
+
+      document.querySelectorAll('.emoji-item').forEach(item => {
+        item.addEventListener('click', () => {
+          messageInput.value += item.textContent;
+          adjustTextareaHeight();
+        });
+      });
+
+      document.querySelectorAll('.sticker-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const stickerEmoji = item.getAttribute('data-sticker');
+          sendStickerMessage(stickerEmoji);
+          closeEmoticonDrawer();
+        });
+      });
+
+      function sendStickerMessage(sticker) {
+        const timeStr = getFormattedTime();
+        const msgGroup = document.createElement('div');
+        msgGroup.className = 'message-group sent';
+        msgGroup.setAttribute('data-id', 'msg-' + Date.now());
+        msgGroup.setAttribute('data-text', sticker);
+
+        msgGroup.innerHTML = `
+          <div class="message-content-wrap">
+            <div class="bubble-row">
+              <div class="message-bubble emoticon-bubble" tabindex="0">
+                ${sticker}
+              </div>
+              <div class="msg-meta">
+                <span class="unread-indicator">1</span>
+                <span class="msg-time">${timeStr}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        chatBody.insertBefore(msgGroup, typingIndicator);
+        attachLongPressHandlers(msgGroup.querySelector('.message-bubble'));
+        scrollToBottom(true);
+        triggerPartnerReply("이모티콘 감사합니다!");
+      }
+
+      // 4. Photo Picker
+      btnPhoto.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeEmoticonDrawer();
+        photoModal.classList.add('active');
+      });
+
+      photoModal.addEventListener('click', (e) => {
+        if (e.target === photoModal) {
+          photoModal.classList.remove('active');
+        }
+      });
+
+      document.getElementById('btnSelectGallery').addEventListener('click', () => {
+        photoModal.classList.remove('active');
+        fileInput.click();
+      });
+
+      document.getElementById('btnSelectCamera').addEventListener('click', () => {
+        photoModal.classList.remove('active');
+        fileInput.setAttribute('capture', 'environment');
+        fileInput.click();
+      });
+
+      document.getElementById('btnSampleIpad').addEventListener('click', () => {
+        setAttachment('https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=80');
+        photoModal.classList.remove('active');
+      });
+
+      document.getElementById('btnSampleReceipt').addEventListener('click', () => {
+        setAttachment('https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=600&auto=format&fit=crop&q=80');
+        photoModal.classList.remove('active');
+      });
+
+      document.querySelectorAll('.preset-photo-card').forEach(card => {
+        card.addEventListener('click', () => {
+          setAttachment(card.getAttribute('data-url'));
+          photoModal.classList.remove('active');
+        });
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            setAttachment(event.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      function setAttachment(url) {
+        currentAttachment = url;
+        previewImg.src = url;
+        attachmentPreviewBar.classList.add('active');
+        btnSend.disabled = false;
+        scrollToBottom(true);
+      }
+
+      btnRemoveAttachment.addEventListener('click', () => {
+        currentAttachment = null;
+        attachmentPreviewBar.classList.remove('active');
+        fileInput.value = '';
+        adjustTextareaHeight();
+      });
+
+      document.querySelectorAll('.quick-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          sendCustomMessage(chip.getAttribute('data-reply'));
+        });
+      });
+
+      // 5. Send Message
+      function sendMessage() {
+        const text = messageInput.value.trim();
+        const hasAttach = currentAttachment !== null;
+        if (!text && !hasAttach) return;
+
+        const timeStr = getFormattedTime();
+
+        if (hasAttach) {
+          const photoMsgGroup = document.createElement('div');
+          photoMsgGroup.className = 'message-group sent';
+          photoMsgGroup.setAttribute('data-id', 'msg-' + Date.now());
+          photoMsgGroup.setAttribute('data-text', '[사진]');
+
+          photoMsgGroup.innerHTML = `
+            <div class="message-content-wrap">
+              <div class="bubble-row">
+                <div class="message-bubble image-bubble" tabindex="0">
+                  <img src="${currentAttachment}" alt="첨부 사진" />
+                </div>
+                <div class="msg-meta">
+                  <span class="unread-indicator">1</span>
+                  <span class="msg-time">${timeStr}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          chatBody.insertBefore(photoMsgGroup, typingIndicator);
+          attachLongPressHandlers(photoMsgGroup.querySelector('.message-bubble'));
+
+          currentAttachment = null;
+          attachmentPreviewBar.classList.remove('active');
+          fileInput.value = '';
+        }
+
+        if (text) {
+          const textMsgGroup = document.createElement('div');
+          textMsgGroup.className = 'message-group sent';
+          textMsgGroup.setAttribute('data-id', 'msg-' + Date.now());
+          textMsgGroup.setAttribute('data-text', text);
+
+          textMsgGroup.innerHTML = `
+            <div class="message-content-wrap">
+              <div class="bubble-row">
+                <div class="message-bubble" tabindex="0">
+                  ${escapeHtml(text)}
+                </div>
+                <div class="msg-meta">
+                  <span class="unread-indicator">1</span>
+                  <span class="msg-time">${timeStr}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          chatBody.insertBefore(textMsgGroup, typingIndicator);
+          attachLongPressHandlers(textMsgGroup.querySelector('.message-bubble'));
+        }
+
+        messageInput.value = '';
+        adjustTextareaHeight();
+        scrollToBottom(true);
+        triggerPartnerReply(text);
+      }
+
+      function sendCustomMessage(text) {
+        messageInput.value = text;
+        sendMessage();
+      }
+
+      btnSend.addEventListener('click', sendMessage);
+
+      function triggerPartnerReply(userText) {
+        typingIndicator.classList.add('active');
+        scrollToBottom(true);
+
+        setTimeout(() => {
+          typingIndicator.classList.remove('active');
+          const replyText = generateReply(userText);
+          const timeStr = getFormattedTime();
+
+          const receivedGroup = document.createElement('div');
+          receivedGroup.className = 'message-group received';
+          receivedGroup.setAttribute('data-id', 'msg-' + Date.now());
+          receivedGroup.setAttribute('data-text', replyText);
+
+          receivedGroup.innerHTML = `
+            <div class="msg-avatar">🥕</div>
+            <div class="message-content-wrap">
+              <span class="sender-name">당근이</span>
+              <div class="bubble-row">
+                <div class="message-bubble" tabindex="0">
+                  ${escapeHtml(replyText)}
+                </div>
+                <div class="msg-meta">
+                  <span class="msg-time">${timeStr}</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          chatBody.insertBefore(receivedGroup, typingIndicator);
+          attachLongPressHandlers(receivedGroup.querySelector('.message-bubble'));
+          scrollToBottom(true);
+
+          document.querySelectorAll('.unread-indicator').forEach(el => el.remove());
+        }, 1100 + Math.random() * 600);
+      }
+
+      function generateReply(input) {
+        if (!input) return "네, 사진 잘 확인했습니다!";
+        if (input.includes('7시') || input.includes('시간') || input.includes('뵐게요')) {
+          return "좋습니다! 7시에 강남역 4번 출구 앞 카페에서 봬요. 도착하면 연락드리겠습니다 :)";
+        }
+        if (input.includes('출구') || input.includes('어디') || input.includes('위치')) {
+          return "강남역 4번 출구 바로 앞 스타벅스 앞에서 뵈면 좋을 것 같습니다!";
+        }
+        if (input.includes('계좌') || input.includes('현금') || input.includes('송금')) {
+          return "현장에서 물건 확인 후 당근페이나 계좌이체로 바로 보내드릴게요!";
+        }
+        if (input.includes('도착')) {
+          return "저도 지금 출발합니다! 5분 내로 도착해요~";
+        }
+        return "네 알겠습니다! 꼼꼼하게 챙겨서 나갈게요. 감사합니다!";
+      }
+
+      function escapeHtml(string) {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '/': '&#x2F;' };
+        return String(string).replace(/[&<>"'\/]/g, s => map[s]);
+      }
+
+      btnLightboxClose.addEventListener('click', () => {
+        lightboxModal.classList.remove('active');
+      });
+      lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal) lightboxModal.classList.remove('active');
+      });
+
+      document.getElementById('btnMakeDeal').addEventListener('click', () => {
+        showToast('오늘 저녁 7:00 직거래 약속이 설정되었습니다.');
+      });
+
+      document.getElementById('btnUserProfile').addEventListener('click', () => {
+        showToast('당근이 님의 프로필을 조회합니다.');
+      });
+    })();
+  </script>
+</body>
+</html>

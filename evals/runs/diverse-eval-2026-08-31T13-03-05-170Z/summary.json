@@ -1,0 +1,162 @@
+[
+  {
+    "scenario": "create-1-tabs",
+    "title": "모바일 스와이프 탭 뷰",
+    "category": "신규 생성",
+    "condition": "without_skill",
+    "ok": true,
+    "codeLength": 10616
+  },
+  {
+    "scenario": "create-1-tabs",
+    "title": "모바일 스와이프 탭 뷰",
+    "category": "신규 생성",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 500): {\"error\":{\"message\":\"gemini-3.6-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.\",\"code\":\"api_error\"}}"
+  },
+  {
+    "scenario": "create-2-rangeslider",
+    "title": "듀얼 썸 가격 범위 슬라이더",
+    "category": "신규 생성",
+    "condition": "without_skill",
+    "ok": true,
+    "codeLength": 13312
+  },
+  {
+    "scenario": "create-2-rangeslider",
+    "title": "듀얼 썸 가격 범위 슬라이더",
+    "category": "신규 생성",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 500): {\"error\":{\"message\":\"gemini-3.6-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.\",\"code\":\"api_error\"}}"
+  },
+  {
+    "scenario": "create-3-imagezoom",
+    "title": "두 손가락 핀치 줌 이미지 뷰어",
+    "category": "신규 생성",
+    "condition": "without_skill",
+    "ok": true,
+    "codeLength": 13955
+  },
+  {
+    "scenario": "create-3-imagezoom",
+    "title": "두 손가락 핀치 줌 이미지 뷰어",
+    "category": "신규 생성",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 500): {\"error\":{\"message\":\"gemini-3.6-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.\",\"code\":\"api_error\"}}"
+  },
+  {
+    "scenario": "create-4-pullrefresh",
+    "title": "당겨서 새로고침 (Pull-to-Refresh)",
+    "category": "신규 생성",
+    "condition": "without_skill",
+    "ok": true,
+    "codeLength": 11100
+  },
+  {
+    "scenario": "create-4-pullrefresh",
+    "title": "당겨서 새로고침 (Pull-to-Refresh)",
+    "category": "신규 생성",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 51.576665316s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "create-5-sortablegrid",
+    "title": "갤러리 사진 그리드 터치 재배치",
+    "category": "신규 생성",
+    "condition": "without_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 45.015861539s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "create-5-sortablegrid",
+    "title": "갤러리 사진 그리드 터치 재배치",
+    "category": "신규 생성",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 38.385556609s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-1-drawer",
+    "title": "사이드 드로어 메뉴 제스처 충돌 수정",
+    "category": "코드 개선",
+    "condition": "without_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 31.918069295s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-1-drawer",
+    "title": "사이드 드로어 메뉴 제스처 충돌 수정",
+    "category": "코드 개선",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 25.328804855s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-2-carousel",
+    "title": "무한 캐러셀 터치 스냅 및 간섭 수정",
+    "category": "코드 개선",
+    "condition": "without_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 18.73364216s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-2-carousel",
+    "title": "무한 캐러셀 터치 스냅 및 간섭 수정",
+    "category": "코드 개선",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 12.136647038s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-3-segmented",
+    "title": "iOS 스타일 세그먼트 컨트롤 터치 개선",
+    "category": "코드 개선",
+    "condition": "without_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 5.650093048s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-3-segmented",
+    "title": "iOS 스타일 세그먼트 컨트롤 터치 개선",
+    "category": "코드 개선",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 59.079419915s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-4-tooltip",
+    "title": "모바일 툴팁/팝오버 바깥 터치 닫기 충돌 수정",
+    "category": "코드 개선",
+    "condition": "without_skill",
+    "ok": true,
+    "codeLength": 3350
+  },
+  {
+    "scenario": "refactor-4-tooltip",
+    "title": "모바일 툴팁/팝오버 바깥 터치 닫기 충돌 수정",
+    "category": "코드 개선",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 51.526753105s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-5-accordion",
+    "title": "FAQ 아코디언 터치 딜레이 및 텍스트 선택 간섭 수정",
+    "category": "코드 개선",
+    "condition": "without_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 44.915028904s.\",\"code\":\"too_many_requests\"}}"
+  },
+  {
+    "scenario": "refactor-5-accordion",
+    "title": "FAQ 아코디언 터치 딜레이 및 텍스트 선택 간섭 수정",
+    "category": "코드 개선",
+    "condition": "with_skill",
+    "ok": false,
+    "error": "Gemini API Error (HTTP 429): {\"error\":{\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 38.022482463s.\",\"code\":\"too_many_requests\"}}"
+  }
+]

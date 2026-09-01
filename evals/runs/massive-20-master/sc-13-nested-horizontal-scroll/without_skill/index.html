@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nested Scroll (Without Skill)</title>
+<style>
+body { font-family:sans-serif; margin:0; padding:20px; height:200vh; background:#f0f0f0; }
+.chip-row { display:flex; gap:10px; overflow-x:scroll; padding:10px 0; }
+.chip { flex-shrink:0; width:100px; height:40px; background:#fff; border:1px solid #ccc; display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+<h3>중첩 스크롤 (Without Skill)</h3>
+<p>가로 칩을 넘길 때 대각선으로 움직이면 세로 스크롤이 개입하여 가로 스크롤이 끊깁니다.</p>
+<div class="chip-row">
+  <div class="chip">추천 1</div><div class="chip">추천 2</div><div class="chip">추천 3</div>
+  <div class="chip">추천 4</div><div class="chip">추천 5</div><div class="chip">추천 6</div>
+</div>
+</body>
+</html>

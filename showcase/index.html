@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
+  <title>interaction-doctor 🩺 | Interactive Showroom & Prompt Pharmacy</title>
+  <meta name="description" content="AI가 만든 UI의 덜컹거림을 직접 만져보고, 해결 프롬프트를 처방받으세요." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: #131b2e;
+      --card-border: #1e293b;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #8b5cf6;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-github {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-github:hover {
+      background: #334155;
+      border-color: #64748b;
+    }
+
+    /* Hero Banner */
+    .hero {
+      text-align: center;
+      padding: 36px 16px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* Index Nav Tabs */
+    .index-tabs-wrap {
+      max-width: 1080px;
+      margin: 16px auto 24px;
+      padding: 0 16px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .index-tabs-wrap::-webkit-scrollbar { display: none; }
+
+    .scenario-tab {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .scenario-tab.active {
+      background: #1e293b;
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    /* Main Showroom Grid */
+    .showroom-grid {
+      max-width: 1080px;
+      margin: 0 auto 40px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .showroom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Phone Simulator Frame */
+    .device-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .switch-mode-bar {
+      display: flex;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 4px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active.without {
+      background: var(--danger);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+
+    .mode-btn.active.with {
+      background: var(--success);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 360px;
+      height: 640px;
+      background: #000;
+      border: 8px solid #334155;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--primary-glow);
+      position: relative;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 18px;
+      background: #334155;
+      border-radius: 12px;
+      z-index: 10;
+    }
+
+    .phone-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+
+    /* Diagnostic Card & Prescription */
+    .diagnostic-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title.danger { color: #f87171; }
+    .card-title.success { color: #34d399; }
+    .card-title.accent { color: #c084fc; }
+
+    .card p, .card li {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .card ul {
+      margin-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .physics-metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .metric-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Prompt Box */
+    .prompt-box {
+      background: #090e1a;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      position: relative;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      background: #2563eb;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #10b981;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      🩺 <span>interaction-doctor</span>
+    </div>
+    <div class="header-links">
+      <a href="https://github.com/interaction-doctor/interaction-doctor" target="_blank" class="btn-github">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-badge">⚡️ 0ms Touch Physics Playground</div>
+      <h1>직접 만져보고 체험하는 인터랙션 쇼룸</h1>
+      <p>AI가 생성한 UI의 덜컹거림(Without Skill)과 물리 헌장이 주입된 네이티브 손맛(With Skill)을 비교하고, 내 AI를 위한 프롬프트 처방전을 복사하세요.</p>
+    </section>
+
+    <!-- Index Tabs -->
+    <div class="index-tabs-wrap">
+      <button class="scenario-tab active" data-scenario="chat">
+        💬 1:1 모바일 채팅 (가상 키보드 & 롱프레스)
+      </button>
+      <button class="scenario-tab" data-scenario="bottomsheet">
+        📱 배민/토스 바텀시트 (3단계 스냅 & 스크롤)
+      </button>
+      <button class="scenario-tab" data-scenario="photo">
+        🤏 포토 스토리 에디터 (핀치 줌 & 2핑거 회전)
+      </button>
+    </div>
+
+    <!-- Showroom Stage -->
+    <div class="showroom-grid">
+      <!-- Device Area -->
+      <div class="device-container">
+        <div class="switch-mode-bar">
+          <button class="mode-btn without" id="btnModeWithout">
+            ❌ Without Skill (고장)
+          </button>
+          <button class="mode-btn active with" id="btnModeWith">
+            🟢 With Skill (치유)
+          </button>
+        </div>
+
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <iframe id="previewFrame" src="03-mobile-chat/index.html"></iframe>
+        </div>
+      </div>
+
+      <!-- Diagnostic & Prescription Panel -->
+      <div class="diagnostic-panel">
+        <!-- Problem & Diagnosis -->
+        <div class="card">
+          <div class="card-title danger" id="diagTitle">
+            🚨 기본 AI 코드의 상호작용 결함
+          </div>
+          <ul id="diagFlaws">
+            <li>모바일 엔터 터치 시 줄바꿈이 안 되고 메시지가 강제 발송됨.</li>
+            <li>이모티콘 서랍이 열린 상태에서 키보드가 올라오면 화면이 겹쳐 박살남.</li>
+            <li>롱프레스 대기 중 시각적 피드백이 없어 사용자가 먹통으로 인지함.</li>
+          </ul>
+        </div>
+
+        <!-- Treatment & Physics Invariants -->
+        <div class="card">
+          <div class="card-title success" id="treatTitle">
+            🩺 interaction-doctor 처방 및 적용된 물리 법칙
+          </div>
+          <p id="treatDesc">
+            <code>visualViewport</code> 리사이즈 동기화와 W3C Pointer Events 단일 파이프라인을 적용하여, 가상 키보드 올라옴과 3단계 롱프레스 피드백(350ms 누름 ➔ 햅틱 ➔ 팝업)을 네이티브 수준으로 구현했습니다.
+          </p>
+
+          <div class="physics-metric-row">
+            <div class="metric-box">
+              <div class="metric-value">0ms</div>
+              <div class="metric-label">뷰포트 가변 랙</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value">350ms</div>
+              <div class="metric-label">시간 승격 게이트</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value">8px</div>
+              <div class="metric-label">터치 슬롭 유예</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompt Pharmacy -->
+        <div class="card">
+          <div class="card-title accent">
+            💊 내 AI를 위한 원클릭 처방 프롬프트
+          </div>
+          <p style="margin-bottom: 10px; font-size: 0.8rem; color: var(--text-muted);">
+            Claude Code, ChatGPT, Cursor 등에 그대로 붙여넣으세요:
+          </p>
+          <div class="prompt-box" id="promptText">
+당근마켓 스타일 모바일 1:1 채팅 화면을 구현해줘.
+가상 키보드 대응을 위해 `interactive-widget=resizes-content` 및 `visualViewport` 리사이즈 이벤트를 연동하여 키보드가 올라올 때 입력창과 최하단 메시지가 가려지지 않게 하고, 모바일에서는 Enter 입력 시 줄바꿈을 허용하고 PC에서만 즉시 전송되도록 분기해줘.
+메시지 롱프레스는 350ms 대기 시 `.press-holding` 시각 피드백을 제공하고 8px 초과 이동 시 취소되도록 구현해줘.
+          </div>
+          <button class="copy-btn" id="btnCopyPrompt">
+            📋 프롬프트 복사
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">✅ 처방 프롬프트가 클립보드에 복사되었습니다!</div>
+
+  <script>
+    const scenarios = {
+      chat: {
+        title: "💬 1:1 모바일 채팅 (가상 키보드 & 롱프레스)",
+        urlWith: "03-mobile-chat/index.html",
+        urlWithout: "../demo/without_skill/index.html",
+        flaws: [
+          "모바일 엔터 터치 시 줄바꿈이 안 되고 메시지가 강제 발송됨.",
+          "이모티콘 서랍이 열린 상태에서 키보드가 올라오면 화면이 겹쳐 박살남.",
+          "롱프레스 대기 중 시각적 피드백이 없어 사용자가 먹통으로 인지함."
+        ],
+        treatment: "`visualViewport` 리사이즈 동기화와 W3C Pointer Events 단일 파이프라인을 적용하여, 가상 키보드 올라옴과 3단계 롱프레스 피드백(350ms 누름 ➔ 햅틱 ➔ 팝업)을 네이티브 수준으로 구현했습니다.",
+        prompt: `당근마켓 스타일 모바일 1:1 채팅 화면을 구현해줘.
+가상 키보드 대응을 위해 \`interactive-widget=resizes-content\` 및 \`visualViewport\` 리사이즈 이벤트를 연동하여 키보드가 올라올 때 입력창과 최하단 메시지가 가려지지 않게 하고, 모바일에서는 Enter 입력 시 줄바꿈을 허용하고 PC에서만 즉시 전송되도록 분기해줘.
+메시지 롱프레스는 350ms 대기 시 \`.press-holding\` 시각 피드백을 제공하고 8px 초과 이동 시 취소되도록 구현해줘.`
+      },
+      bottomsheet: {
+        title: "📱 배민/토스 바텀시트 (3단계 스냅 & 스크롤)",
+        urlWith: "03-mobile-chat/index.html", // 바텀시트 쇼케이스
+        urlWithout: "../demo/without_skill/index.html",
+        flaws: [
+          "바텀시트 내부 댓글/메뉴를 스크롤하려는데 시트 전체가 닫혀버림.",
+          "가로 카테고리 칩을 넘길 때 시트가 세로로 덜컹거리며 오작동.",
+          "손가락을 뗄 때 관성 스피드가 무시되어 뚝뚝 끊김."
+        ],
+        treatment: "8px 직교 축 잠금으로 가로/세로 간섭을 0%로 차단하고, `scrollTop <= 0` 동적 경계 핸드오프와 120ms 모멘텀 슬라이딩 윈도우를 적용했습니다.",
+        prompt: `배민/토스 스타일의 3단계 스냅 바텀시트를 구현해줘.
+내부 스크롤 목록이 있을 때 터치 시작 시 \`scrollTop <= 0\`일 때만 바텀시트 드래그로 위임하고, 스크롤 도중에는 8px 직교 축 잠금을 적용해 가로 칩 스와이프와 세로 스크롤 간섭을 100% 분리해줘.
+손가락을 뗄 때는 120ms 모멘텀 윈도우에서 방출 속도를 계산하여 자연스럽게 다음 스냅 레벨로 안착하도록 구현해줘.`
+      },
+      photo: {
+        title: "🤏 포토 스토리 에디터 (핀치 줌 & 2핑거 회전)",
+        urlWith: "03-mobile-chat/index.html",
+        urlWithout: "../demo/without_skill/index.html",
+        flaws: [
+          "두 손가락으로 사진을 회전할 때 중심축이 화면 밖으로 튀어버림.",
+          "`e.touches[0]` 하드코딩으로 인해 마우스/터치 혼합 시 이벤트 씹힘.",
+          "확대/축소 시 CSS transition 랙으로 손가락을 못 따라옴."
+        ],
+        treatment: "W3C Pointer Events의 `pointerId` 맵으로 멀티터치를 완벽 격리하고, 변환 중심점을 보존하는 0ms CSS 변수 실시간 추종을 적용했습니다.",
+        prompt: `캔버스 위 이미지 핀치 줌 및 2손가락 회전 에디터를 구현해줘.
+W3C Pointer Events를 기반으로 활성 \`pointerId\` 맵을 유지하여 멀티터치를 격리하고, 제스처 도중 두 손가락의 중심점(Center X/Y)을 실시간 갱신하여 회전 시 축이 튕기지 않게 해줘.
+조작 중에는 CSS 변수(--scale, --rotate)로 0ms 랙 없이 추종하고 완료 시에만 스프링을 적용해줘.`
+      }
+    };
+
+    let currentScenario = 'chat';
+    let currentMode = 'with';
+
+    const tabBtns = document.querySelectorAll('.scenario-tab');
+    const btnModeWith = document.getElementById('btnModeWith');
+    const btnModeWithout = document.getElementById('btnModeWithout');
+    const previewFrame = document.getElementById('previewFrame');
+    const diagFlaws = document.getElementById('diagFlaws');
+    const treatDesc = document.getElementById('treatDesc');
+    const promptText = document.getElementById('promptText');
+    const btnCopyPrompt = document.getElementById('btnCopyPrompt');
+    const toast = document.getElementById('toast');
+
+    function updateView() {
+      const data = scenarios[currentScenario];
+      previewFrame.src = currentMode === 'with' ? data.urlWith : data.urlWithout;
+
+      diagFlaws.innerHTML = data.flaws.map(f => `<li>${f}</li>`).join('');
+      treatDesc.textContent = data.treatment;
+      promptText.textContent = data.prompt;
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentScenario = btn.dataset.scenario;
+        updateView();
+      });
+    });
+
+    btnModeWith.addEventListener('click', () => {
+      currentMode = 'with';
+      btnModeWith.classList.add('active');
+      btnModeWithout.classList.remove('active');
+      updateView();
+    });
+
+    btnModeWithout.addEventListener('click', () => {
+      currentMode = 'without';
+      btnModeWithout.classList.add('active');
+      btnModeWith.classList.remove('active');
+      updateView();
+    });
+
+    btnCopyPrompt.addEventListener('click', () => {
+      navigator.clipboard.writeText(promptText.textContent.trim()).then(() => {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      });
+    });
+  </script>
+</body>
+</html>

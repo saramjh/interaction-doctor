@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rating Star (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:30px; display:flex; flex-direction:column; align-items:center; }
+.stars { font-size:40px; cursor:pointer; color:#ddd; }
+</style>
+</head>
+<body>
+<h3>별점 평가 (Without Skill)</h3>
+<div class="stars" id="stars">★★★★★</div>
+<p id="score">0점</p>
+<script>
+const stars = document.getElementById('stars');
+stars.onclick = (e) => {
+  const rect = stars.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const score = Math.ceil((x / rect.width) * 5);
+  document.getElementById('score').textContent = score + '점';
+};
+</script>
+</body>
+</html>

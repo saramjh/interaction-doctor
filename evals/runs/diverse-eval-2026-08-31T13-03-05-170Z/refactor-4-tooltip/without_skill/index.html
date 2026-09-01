@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>툴팁 컴포넌트</title>
+<style>
+  body { 
+    padding: 40px; 
+    height: 150vh; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+  }
+
+  /* 툴팁 컨테이너 */
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* 도움말 버튼 */
+  .btn-help {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-help:active {
+    background-color: #e0e0e0;
+  }
+
+  /* 툴팁 본체 */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    width: 180px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    
+    /* 숨김 및 트랜지션 처리 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none; /* 닫혀있을 땐 클릭 방해 금지 */
+  }
+
+  /* 말풍선 화살표 */
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+  }
+
+  /* 활성화 상태 */
+  .tooltip.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* 열려있을 때 툴팁 내 텍스트 드래그/클릭 허용 */
+  }
+</style>
+</head>
+<body>
+
+<div class="tooltip-container" id="tooltipContainer">
+  <button type="button" class="btn-help" id="btnHelp" aria-expanded="false" aria-describedby="tooltip">
+    도움말 ℹ️
+  </button>
+  <div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true">
+    여기에 상세한 안내 문구가 표시됩니다.
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('btnHelp');
+  const tt = document.getElementById('tooltip');
+  const container = document.getElementById('tooltipContainer');
+
+  function openTooltip() {
+    tt.classList.add('show');
+    btn.setAttribute('aria-expanded', 'true');
+    tt.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeTooltip() {
+    tt.classList.remove('show');
+    btn.setAttribute('aria-expanded', 'false');
+    tt.setAttribute('aria-hidden', 'true');
+  }
+
+  // 1. 버튼 토글 (클릭 및 터치)
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (tt.classList.contains('show')) {
+      closeTooltip();
+    } else {
+      openTooltip();
+    }
+  });
+
+  // 2. 툴팁 자체 터치/클릭 시 닫히지 않고 이벤트 전파만 차단
+  tt.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+  });
+
+  // 3. 외부 영역 터치/클릭 시 닫기 (pointerdown이 mobile touch 대응에 최적)
+  document.addEventListener('pointerdown', (e) => {
+    if (tt.classList.contains('show') && !container.contains(e.target)) {
+      closeTooltip();
+    }
+  });
+
+  // 4. 모바일 스크롤 시 툴팁 닫기
+  window.addEventListener('scroll', () => {
+    if (tt.classList.contains('show')) {
+      closeTooltip();
+    }
+  }, { passive: true });
+
+  // 5. ESC 키 입력 시 닫기 (웹 접근성)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && tt.classList.contains('show')) {
+      closeTooltip();
+    }
+  });
+</script>
+
+</body>
+</html>

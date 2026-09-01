@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Custom Dropdown (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 40px 20px;
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: 150vh;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 24px;
+    border-radius: 16px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+  .dropdown-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 14px;
+  }
+  .dropdown-trigger {
+    width: 100%;
+    padding: 14px 16px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    touch-action: manipulation; /* 300ms 탭 딜레이 완전 0 */
+    transition: border-color 0.15s;
+  }
+  .dropdown-trigger:focus, .dropdown-trigger.open {
+    border-color: #38bdf8;
+    outline: none;
+  }
+  .arrow-icon {
+    font-size: 12px;
+    color: #94a3b8;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dropdown-trigger.open .arrow-icon {
+    transform: rotate(180deg);
+    color: #38bdf8;
+  }
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #38bdf8;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, -6px, 0);
+    transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+    z-index: 100;
+  }
+  .dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+  .option-item {
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #cbd5e1;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    touch-action: manipulation;
+  }
+  .option-item:hover, .option-item.active {
+    background: #1e293b;
+    color: #38bdf8;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px;">🌐 결제 통화 선택</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-top:4px;">300ms 탭 딜레이 없이 즉시 열리며, 바깥 터치 시 안전하게 닫힙니다.</p>
+
+  <div class="dropdown-wrapper" id="dropdown">
+    <button class="dropdown-trigger" id="trigger" aria-haspopup="listbox" aria-expanded="false">
+      <span id="selectedText">KRW (대한민국 원)</span>
+      <span class="arrow-icon">▼</span>
+    </button>
+    <div class="dropdown-menu" id="menu" role="listbox">
+      <div class="option-item active" data-val="KRW"><span>🇰🇷 KRW (원화)</span><span>✓</span></div>
+      <div class="option-item" data-val="USD"><span>🇺🇸 USD (달러)</span></div>
+      <div class="option-item" data-val="EUR"><span>🇪🇺 EUR (유로)</span></div>
+      <div class="option-item" data-val="JPY"><span>🇯🇵 JPY (엔화)</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const dropdown = document.getElementById('dropdown');
+  const trigger = document.getElementById('trigger');
+  const menu = document.getElementById('menu');
+  const selectedText = document.getElementById('selectedText');
+  const options = document.querySelectorAll('.option-item');
+
+  function toggleDropdown() {
+    const isOpen = menu.classList.toggle('open');
+    trigger.classList.toggle('open', isOpen);
+    trigger.setAttribute('aria-expanded', isOpen);
+  }
+
+  function closeDropdown() {
+    menu.classList.remove('open');
+    trigger.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDropdown();
+  });
+
+  options.forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      options.forEach(o => {
+        o.classList.remove('active');
+        const check = o.querySelector('span:last-child');
+        if (check && check.textContent === '✓') check.remove();
+      });
+
+      opt.classList.add('active');
+      const spanCheck = document.createElement('span');
+      spanCheck.textContent = '✓';
+      opt.appendChild(spanCheck);
+
+      selectedText.textContent = opt.querySelector('span:first-child').textContent;
+      closeDropdown();
+    });
+  });
+
+  document.addEventListener('pointerdown', (e) => {
+    if (!dropdown.contains(e.target)) {
+      closeDropdown();
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+<title>Chat Drawer (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    background: #090d16;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chat-header {
+    height: 52px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s, visibility 0.25s;
+    z-index: 90;
+    touch-action: none;
+  }
+  .drawer-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .side-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: #1e293b;
+    border-right: 1px solid #334155;
+    transform: translate3d(-100%, 0, 0);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    touch-action: pan-y;
+  }
+  .side-drawer.open {
+    transform: translate3d(0, 0, 0);
+  }
+  .channel-item {
+    padding: 12px 14px;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .message-area {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+  .bubble.other {
+    background: #1e293b;
+    border: 1px solid #334155;
+    align-self: flex-start;
+  }
+  .bubble.me {
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: 600;
+    align-self: flex-end;
+  }
+  .input-bar {
+    background: #1e293b;
+    border-top: 1px solid #334155;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-plus {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #334155;
+    color: #f8fafc;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .text-input {
+    flex: 1;
+    height: 38px;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 19px;
+    padding: 0 16px;
+    color: #f8fafc;
+    font-size: 14px;
+    outline: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="drawer-overlay" id="overlay"></div>
+
+<div class="side-drawer" id="drawer">
+  <h3 style="font-size:16px; color:#38bdf8; margin-bottom:8px;">📌 프로젝트 채널</h3>
+  <div class="channel-item" onclick="closeDrawer()"># 01-기획-디자인</div>
+  <div class="channel-item" onclick="closeDrawer()"># 02-프론트엔드-개발</div>
+  <div class="channel-item" onclick="closeDrawer()"># 03-인터랙션-QA</div>
+</div>
+
+<header class="chat-header">
+  <button id="btnMenu" style="background:transparent; border:none; color:#38bdf8; font-size:20px; cursor:pointer; touch-action:manipulation;">☰</button>
+  <span># 02-프론트엔드-개발</span>
+</header>
+
+<div class="message-area" id="msgArea">
+  <div class="bubble other">모바일에서 좌측 상단 메뉴를 누르면 부드러운 채널 드로어가 열립니다.</div>
+  <div class="bubble other">키보드가 올라와도 레이아웃이 찌그러지지 않고 입력창이 안전하게 유지됩니다.</div>
+  <div class="bubble me">복합적인 제스처가 겹쳐도 충돌이 없네요! 👍</div>
+</div>
+
+<div class="input-bar">
+  <button class="btn-plus" id="btnPlus">+</button>
+  <input class="text-input" id="inp" placeholder="메시지 입력...">
+</div>
+
+<script>
+  const overlay = document.getElementById('overlay');
+  const drawer = document.getElementById('drawer');
+  const btnMenu = document.getElementById('btnMenu');
+  const btnPlus = document.getElementById('btnPlus');
+
+  function openDrawer() {
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+  }
+
+  function closeDrawer() {
+    overlay.classList.remove('open');
+    drawer.classList.remove('open');
+  }
+
+  btnMenu.addEventListener('click', openDrawer);
+  overlay.addEventListener('pointerdown', closeDrawer);
+  btnPlus.addEventListener('click', () => alert('📷 사진 / 📁 파일 첨부 시트 열림'));
+</script>
+</body>
+</html>

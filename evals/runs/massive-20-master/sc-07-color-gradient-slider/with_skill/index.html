@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gradient Slider (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 24px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .preview-box {
+    width: 100%;
+    height: 100px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    border: 1px solid #334155;
+  }
+  .track-wrapper {
+    position: relative;
+    width: 100%;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    touch-action: none; /* 브라우저 스크롤 차단 */
+  }
+  .gradient-track {
+    width: 100%;
+    height: 16px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+  }
+  .color-stop {
+    position: absolute;
+    top: 50%;
+    width: 44px; /* 44dp 터치 타겟 */
+    height: 44px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: ew-resize;
+    touch-action: none;
+  }
+  .stop-pin {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .color-stop.active .stop-pin {
+    transform: scale(1.3);
+    box-shadow: 0 0 12px #38bdf8;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px;">🎨 멀티 스톱 그라데이션</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:20px;">색상 스톱 핀을 좌우로 드래그하여 그라데이션 범위를 조절하세요.</p>
+
+  <div class="preview-box" id="preview"></div>
+
+  <div class="track-wrapper" id="trackWrapper">
+    <div class="gradient-track" id="track"></div>
+    <div class="color-stop" id="stop1" style="left:20%;" data-color="#38bdf8">
+      <div class="stop-pin" style="background:#38bdf8;"></div>
+    </div>
+    <div class="color-stop" id="stop2" style="left:80%;" data-color="#ec4899">
+      <div class="stop-pin" style="background:#ec4899;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const trackWrapper = document.getElementById('trackWrapper');
+  const track = document.getElementById('track');
+  const preview = document.getElementById('preview');
+  const stops = [
+    { el: document.getElementById('stop1'), color: '#38bdf8', pct: 20 },
+    { el: document.getElementById('stop2'), color: '#ec4899', pct: 80 }
+  ];
+
+  function updateGradient() {
+    const s1 = stops[0].pct;
+    const s2 = stops[1].pct;
+    const gradStr = `linear-gradient(to right, ${stops[0].color} ${s1}%, ${stops[1].color} ${s2}%)`;
+    track.style.background = gradStr;
+    preview.style.background = gradStr;
+  }
+
+  stops.forEach(item => {
+    let activePointerId = null;
+
+    item.el.addEventListener('pointerdown', (e) => {
+      if (activePointerId !== null) return;
+      activePointerId = e.pointerId;
+      try { item.el.setPointerCapture(e.pointerId); } catch(err) {}
+      item.el.classList.add('active');
+    });
+
+    item.el.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== activePointerId) return;
+      const rect = trackWrapper.getBoundingClientRect();
+      const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+      const pct = Math.round((x / rect.width) * 100);
+
+      item.pct = pct;
+      item.el.style.left = `${pct}%`;
+      updateGradient();
+    });
+
+    const release = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      activePointerId = null;
+      item.el.classList.remove('active');
+      try { item.el.releasePointerCapture(e.pointerId); } catch(err) {}
+    };
+
+    item.el.addEventListener('pointerup', release);
+    item.el.addEventListener('pointercancel', release);
+  });
+
+  updateGradient();
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>모바일 캔버스 박스 드래그</title>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			background-color: #f4f6f8;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+			/* 브라우저 기본 화면 당김/체인 스크롤 차단 */
+			overscroll-behavior: none;
+		}
+
+		.canvas-container {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		/* 드래그 대상 박스 */
+		#dragBox {
+			position: absolute;
+			width: 130px;
+			height: 130px;
+			background: linear-gradient(135deg, #4f46e5, #6366f1);
+			color: #ffffff;
+			font-weight: 600;
+			font-size: 15px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 20px;
+			box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4), 0 8px 10px -6px rgba(79, 70, 229, 0.2);
+			cursor: grab;
+			will-change: transform;
+			transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+
+			/* 네이티브 억제 4종 세트 필수 선언 */
+			touch-action: none;              /* 브라우저 기본 스크롤/줌 완전 억제 */
+			user-select: none;               /* 텍스트 선택 방지 */
+			-webkit-user-select: none;       /* Safari 텍스트 선택 방지 */
+			-webkit-touch-callout: none;     /* iOS 롱프레스 팝업 Callout 억제 */
+		}
+
+		/* 터치/드래그 활성화 상태 (출력 가시성 피드백) */
+		#dragBox.grabbing {
+			cursor: grabbing;
+			transform: scale(1.08);
+			box-shadow: 0 20px 35px -10px rgba(79, 70, 229, 0.5), 0 12px 15px -8px rgba(79, 70, 229, 0.3);
+			transition: transform 0ms, box-shadow 0.1s ease; /* 드래그 중에는 지연 없이 1:1 반응 */
+		}
+
+		.info-text {
+			position: absolute;
+			bottom: 40px;
+			color: #6b7280;
+			font-size: 14px;
+			pointer-events: none;
+			user-select: none;
+			-webkit-user-select: none;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="canvas-container">
+		<div id="dragBox">드래그 하세요</div>
+		<p class="info-text">손가락으로 박스를 잡고 움직여보세요</p>
+	</div>
+
+	<script>
+		(function () {
+			const dragBox = document.getElementById('dragBox');
+
+			// 위치 상태
+			let posX = 0;
+			let posY = 0;
+			let startX = 0;
+			let startY = 0;
+			let initialPosX = 0;
+			let initialPosY = 0;
+
+			// 단일 활성 포인터 게이트 (Rule 2: 멀티터치 상태 오염 방지)
+			let activePointerId = null;
+
+			// Android contextmenu 억제 (네이티브 억제 4종 중 필수 1종)
+			dragBox.addEventListener('contextmenu', (e) => e.preventDefault());
+
+			// 초기 위치 화면 중앙 설정
+			function initPosition() {
+				const container = dragBox.parentElement;
+				const containerRect = container.getBoundingClientRect();
+				const boxRect = dragBox.getBoundingClientRect();
+
+				posX = (containerRect.width - boxRect.width) / 2;
+				posY = (containerRect.height - boxRect.height) / 2;
+
+				updateTransform();
+			}
+
+			function updateTransform() {
+				dragBox.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
+			}
+
+			// pointerdown: 터치 시작 (Rule 1: pointerdown 확인)
+			dragBox.addEventListener('pointerdown', (e) => {
+				// 이미 다른 포인터가 활성화된 경우 추가 입력 무시
+				if (activePointerId !== null) return;
+
+				activePointerId = e.pointerId;
+
+				// 포인터 캡처 등록 (요소 밖으로 포인터가 나가도 이벤트를 수신)
+				try {
+					dragBox.setPointerCapture(e.pointerId);
+				} catch (err) {}
+
+				startX = e.clientX;
+				startY = e.clientY;
+				initialPosX = posX;
+				initialPosY = posY;
+
+				// visual feedback (눌림/들림 피드백)
+				dragBox.classList.add('grabbing');
+			});
+
+			// pointermove: 1:1 드래그 추종
+			dragBox.addEventListener('pointermove', (e) => {
+				if (e.pointerId !== activePointerId) return;
+
+				const dx = e.clientX - startX;
+				const dy = e.clientY - startY;
+
+				posX = initialPosX + dx;
+				posY = initialPosY + dy;
+
+				updateTransform();
+			});
+
+			// 제스처 종료 및 해제 처리
+			function releaseGesture(e) {
+				if (e.pointerId !== activePointerId) return;
+
+				activePointerId = null;
+				dragBox.classList.remove('grabbing');
+
+				try {
+					dragBox.releasePointerCapture(e.pointerId);
+				} catch (err) {}
+
+				// 트랜지션 복구
+				dragBox.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
+			}
+
+			dragBox.addEventListener('pointerup', releaseGesture);
+			dragBox.addEventListener('pointercancel', releaseGesture);
+
+			// 화면 크기 변경 시 중앙 위치 재계산 (최초 1회)
+			window.addEventListener('DOMContentLoaded', initPosition);
+		})();
+	</script>
+</body>
+</html>

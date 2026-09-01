@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Segmented Control (Without Skill)</title>
+<style>
+body { padding:40px; background:#f5f5f7; display:flex; flex-direction:column; align-items:center; font-family:sans-serif; }
+.segmented { display:flex; background:#e3e3e8; border-radius:9px; padding:2px; width:300px; position:relative; }
+.segment { flex:1; text-align:center; padding:8px 0; font-size:14px; z-index:2; cursor:pointer; }
+.indicator { position:absolute; top:2px; left:2px; width:33.33%; height:calc(100% - 4px); background:#fff; border-radius:7px; box-shadow:0 1px 3px rgba(0,0,0,0.15); transition:transform 0.2s; z-index:1; }
+</style>
+</head>
+<body>
+<h3>세그먼트 컨트롤 (Without Skill)</h3>
+<div class="segmented" id="seg">
+  <div class="indicator" id="ind"></div>
+  <div class="segment" data-idx="0">일간</div>
+  <div class="segment" data-idx="1">주간</div>
+  <div class="segment" data-idx="2">월간</div>
+</div>
+<script>
+  const ind = document.getElementById('ind');
+  document.querySelectorAll('.segment').forEach(s => {
+    s.onclick = () => {
+      const idx = s.dataset.idx;
+      ind.style.transform = `translateX(${idx * 100}%)`;
+    };
+  });
+</script>
+</body>
+</html>

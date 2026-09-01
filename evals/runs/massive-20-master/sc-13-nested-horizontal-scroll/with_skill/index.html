@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nested Scroll (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: 250vh;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px 0 20px 20px;
+    border-radius: 20px;
+    max-width: 440px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .scroll-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain; /* 가로 체이닝 방지 */
+    touch-action: pan-x; /* 가로 스크롤 전용 축 격리 */
+    padding: 12px 20px 12px 0;
+  }
+  .product-card {
+    flex: 0 0 140px;
+    height: 160px;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    scroll-snap-align: start;
+    cursor: pointer;
+    touch-action: pan-x;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .product-card:active {
+    transform: scale(0.96);
+    border-color: #38bdf8;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px; padding-right:20px;">🔥 인기 추천 상품</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:14px; padding-right:20px;">
+    가로로 스크롤해도 세로 본문 스크롤과 대각선 충돌이 발생하지 않고 부드럽게 스냅됩니다.
+  </p>
+
+  <div class="scroll-row">
+    <div class="product-card">
+      <div style="font-size:28px;">🎧</div>
+      <div>
+        <div style="font-weight:700; font-size:13px;">노이즈 캔슬링</div>
+        <div style="font-size:11px; color:#38bdf8;">₩289,000</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div style="font-size:28px;">⌚</div>
+      <div>
+        <div style="font-weight:700; font-size:13px;">스마트 워치</div>
+        <div style="font-size:11px; color:#38bdf8;">₩199,000</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div style="font-size:28px;">💻</div>
+      <div>
+        <div style="font-weight:700; font-size:13px;">울트라북 Pro</div>
+        <div style="font-size:11px; color:#38bdf8;">₩1,450,000</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div style="font-size:28px;">📱</div>
+      <div>
+        <div style="font-weight:700; font-size:13px;">플래그십 폰</div>
+        <div style="font-size:11px; color:#38bdf8;">₩1,120,000</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div style="font-size:28px;">📷</div>
+      <div>
+        <div style="font-weight:700; font-size:13px;">미러리스 카메라</div>
+        <div style="font-size:11px; color:#38bdf8;">₩980,000</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center; color:#64748b; font-size:13px; margin-top:30px;">
+  (아래로 본문 세로 스크롤 가능)
+</p>
+</body>
+</html>

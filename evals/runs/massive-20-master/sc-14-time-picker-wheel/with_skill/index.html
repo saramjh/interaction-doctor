@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Time Picker (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 24px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 360px;
+  }
+  .picker-wrapper {
+    position: relative;
+    height: 180px;
+    background: #090d16;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    overflow: hidden;
+  }
+  .lens-bar {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    right: 12px;
+    height: 44px;
+    transform: translateY(-50%);
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid #38bdf8;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #090d16 0%, transparent 35%, transparent 65%, #090d16 100%);
+    pointer-events: none;
+    z-index: 6;
+  }
+  .wheel-column {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+    padding: 68px 0; /* 중앙 정렬용 패딩 (180 - 44)/2 */
+    scrollbar-width: none;
+    width: 70px;
+  }
+  .wheel-column::-webkit-scrollbar { display: none; }
+  .wheel-item {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #64748b;
+    scroll-snap-align: center;
+    transition: color 0.15s, transform 0.15s;
+  }
+  .wheel-item.selected {
+    color: #38bdf8;
+    transform: scale(1.15);
+  }
+  .colon {
+    font-size: 24px;
+    font-weight: 800;
+    color: #38bdf8;
+    z-index: 7;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px; text-align:center;">⏰ 스마트 타임 롤러</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:16px; text-align:center;">
+    손가락으로 굴리면 중앙 렌즈에 정확히 스냅됩니다.
+  </p>
+
+  <div class="picker-wrapper">
+    <div class="lens-bar"></div>
+    <div class="gradient-overlay"></div>
+
+    <div class="wheel-column" id="wheelHour"></div>
+    <div class="colon">:</div>
+    <div class="wheel-column" id="wheelMin"></div>
+  </div>
+
+  <div style="text-align:center; margin-top:16px; font-weight:700; color:#38bdf8;" id="readout">
+    선택 시간: 09:30
+  </div>
+</div>
+
+<script>
+  const wheelHour = document.getElementById('wheelHour');
+  const wheelMin = document.getElementById('wheelMin');
+  const readout = document.getElementById('readout');
+
+  let curH = '09', curM = '30';
+
+  function buildColumn(container, max, initial) {
+    for (let i = 0; i <= max; i++) {
+      const val = String(i).padStart(2, '0');
+      const item = document.createElement('div');
+      item.className = 'wheel-item' + (val === initial ? ' selected' : '');
+      item.textContent = val;
+      item.dataset.val = val;
+      container.appendChild(item);
+    }
+  }
+
+  buildColumn(wheelHour, 23, '09');
+  buildColumn(wheelMin, 59, '30');
+
+  function initWheel(wheel, isHour) {
+    // 초기 스크롤 위치 맞춤
+    const initialIdx = isHour ? 9 : 30;
+    wheel.scrollTop = initialIdx * 44;
+
+    wheel.addEventListener('scroll', () => {
+      const idx = Math.round(wheel.scrollTop / 44);
+      const items = wheel.querySelectorAll('.wheel-item');
+      items.forEach((it, i) => it.classList.toggle('selected', i === idx));
+
+      if (items[idx]) {
+        if (isHour) curH = items[idx].dataset.val;
+        else curM = items[idx].dataset.val;
+        readout.textContent = `선택 시간: ${curH}:${curM}`;
+      }
+    }, { passive: true });
+  }
+
+  initWheel(wheelHour, true);
+  initWheel(wheelMin, false);
+</script>
+</body>
+</html>

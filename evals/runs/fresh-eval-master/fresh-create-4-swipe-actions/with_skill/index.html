@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Swipe Actions (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .swipe-item {
+    position: relative;
+    height: 72px;
+    border-radius: 12px;
+    overflow: hidden;
+    touch-action: pan-y;
+    background: #ef4444;
+  }
+  .action-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: #ef4444;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 14px;
+  }
+  .item-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 12px;
+    z-index: 2;
+    will-change: transform;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    touch-action: pan-y;
+  }
+  .item-card.swiping {
+    transition: none; /* 스와이프 중 1:1 즉각 밀착 */
+  }
+  .item-avatar {
+    width: 40px;
+    height: 40px;
+    background: #334155;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px;">받은 편지함 (스와이프 삭제)</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-top:4px;">세로 스크롤을 방해하지 않으며, 왼쪽으로 밀면 삭제 액션이 나타납니다.</p>
+
+  <div class="list-wrapper">
+    <div class="swipe-item">
+      <div class="action-bg">🗑️ 삭제</div>
+      <div class="item-card">
+        <div class="item-avatar">📩</div>
+        <div>
+          <div style="font-weight:600; font-size:14px;">결제 완료 안내</div>
+          <div style="font-size:12px; color:#94a3b8;">주문하신 상품의 결제가 완료되었습니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swipe-item">
+      <div class="action-bg">🗑️ 삭제</div>
+      <div class="item-card">
+        <div class="item-avatar">🔒</div>
+        <div>
+          <div style="font-weight:600; font-size:14px;">보안 로그인 알림</div>
+          <div style="font-size:12px; color:#94a3b8;">새로운 기기에서 로그인이 감지되었습니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.swipe-item').forEach(wrapper => {
+    const card = wrapper.querySelector('.item-card');
+    let startX = 0, startY = 0;
+    let activePointerId = null;
+    let isSwiping = false;
+    let axisLocked = null; // 'x' | 'y'
+    const SLOP_PX = 8;
+    const ACTION_WIDTH = 90;
+
+    wrapper.addEventListener('pointerdown', (e) => {
+      if (activePointerId !== null) return;
+      activePointerId = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      axisLocked = null;
+      isSwiping = false;
+    });
+
+    wrapper.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== activePointerId) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      if (!axisLocked) {
+        if (Math.abs(dx) > SLOP_PX || Math.abs(dy) > SLOP_PX) {
+          axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        }
+      }
+
+      if (axisLocked === 'x' && dx < 0) {
+        isSwiping = true;
+        card.classList.add('swiping');
+        card.style.touchAction = 'none';
+        const clampedX = Math.max(-wrapper.clientWidth, dx);
+        card.style.transform = `translate3d(${clampedX}px, 0, 0)`;
+      }
+    });
+
+    const endSwipe = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      card.classList.remove('swiping');
+      card.style.touchAction = 'pan-y';
+
+      if (isSwiping) {
+        const dx = e.clientX - startX;
+        if (dx < -wrapper.clientWidth * 0.45) {
+          // 풀 스와이프 삭제
+          card.style.transform = `translate3d(-100%, 0, 0)`;
+          setTimeout(() => wrapper.remove(), 250);
+        } else if (dx < -ACTION_WIDTH * 0.5) {
+          card.style.transform = `translate3d(-${ACTION_WIDTH}px, 0, 0)`;
+        } else {
+          card.style.transform = `translate3d(0, 0, 0)`;
+        }
+      }
+      activePointerId = null;
+      isSwiping = false;
+      axisLocked = null;
+    };
+
+    wrapper.addEventListener('pointerup', endSwipe);
+    wrapper.addEventListener('pointercancel', endSwipe);
+  });
+</script>
+</body>
+</html>

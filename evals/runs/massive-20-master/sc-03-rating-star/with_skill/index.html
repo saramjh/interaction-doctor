@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rating Star (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 28px 24px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  .rating-area {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    touch-action: none; /* 브라우저 스크롤 차단 */
+    padding: 12px 0;
+  }
+  .stars-bg, .stars-fg {
+    display: flex;
+    gap: 8px;
+    font-size: 36px;
+  }
+  .stars-bg {
+    color: #334155;
+  }
+  .stars-fg-wrapper {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    overflow: hidden;
+    width: 0%;
+    pointer-events: none;
+    will-change: width;
+    transition: width 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rating-area.dragging .stars-fg-wrapper {
+    transition: none; /* 조작 중 1:1 즉시 밀착 */
+  }
+  .stars-fg {
+    color: #fbbf24;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+  }
+  .score-badge {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fbbf24;
+    margin-top: 10px;
+  }
+  .score-desc {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-top: 4px;
+    min-height: 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <h3 style="font-size:16px; margin-bottom:4px;">⭐ 서비스 만족도 평가</h3>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">별을 탭하거나 좌우로 부드럽게 드래그하여 0.5점 단위로 평가하세요.</p>
+
+  <div class="rating-area" id="ratingArea">
+    <div class="stars-bg">
+      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+    </div>
+    <div class="stars-fg-wrapper" id="fgWrapper">
+      <div class="stars-fg">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-badge" id="scoreBadge">0.0</div>
+  <div class="score-desc" id="scoreDesc">별점을 선택해주세요</div>
+</div>
+
+<script>
+  const ratingArea = document.getElementById('ratingArea');
+  const fgWrapper = document.getElementById('fgWrapper');
+  const scoreBadge = document.getElementById('scoreBadge');
+  const scoreDesc = document.getElementById('scoreDesc');
+
+  const descs = {
+    0.5: "매우 불만족스러워요 😞", 1.0: "불만족스러워요 🙁",
+    1.5: "조금 아쉬워요 😐", 2.0: "보통이에요 🙂",
+    2.5: "무난해요 😊", 3.0: "괜찮아요 👍",
+    3.5: "좋아요! 😄", 4.0: "매우 만족해요! 🌟",
+    4.5: "정말 훌륭해요! 🔥", 5.0: "완벽해요! 최고입니다! 🎉"
+  };
+
+  let activePointerId = null;
+  let lastScore = 0;
+
+  function updateRating(clientX) {
+    const rect = ratingArea.getBoundingClientRect();
+    const rawX = clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, rawX / rect.width));
+
+    // 0.5점 단위 스냅 (0.5 ~ 5.0)
+    let score = Math.round(pct * 10) / 2;
+    score = Math.max(0.5, Math.min(5.0, score));
+
+    const snapPct = (score / 5.0) * 100;
+    fgWrapper.style.width = `${snapPct}%`;
+    scoreBadge.textContent = score.toFixed(1);
+    scoreDesc.textContent = descs[score] || '';
+
+    if (score !== lastScore) {
+      if (navigator.vibrate) navigator.vibrate(20);
+      lastScore = score;
+    }
+  }
+
+  ratingArea.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    try { ratingArea.setPointerCapture(e.pointerId); } catch(err) {}
+    ratingArea.classList.add('dragging');
+    updateRating(e.clientX);
+  });
+
+  ratingArea.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== activePointerId) return;
+    updateRating(e.clientX);
+  });
+
+  const release = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    activePointerId = null;
+    ratingArea.classList.remove('dragging');
+    try { ratingArea.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+
+  ratingArea.addEventListener('pointerup', release);
+  ratingArea.addEventListener('pointercancel', release);
+</script>
+</body>
+</html>

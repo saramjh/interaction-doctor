@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinch Zoom (Without Skill)</title>
+<style>
+  body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+  .img-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  img { max-width: 90%; max-height: 80%; transition: transform 0.1s; }
+</style>
+</head>
+<body>
+  <div class="img-container" id="container">
+    <img id="img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23334155'/><circle cx='200' cy='150' r='80' fill='%2338bdf8'/><text x='200' y='160' fill='white' font-size='20' text-anchor='middle'>Pinch Me</text></svg>">
+  </div>
+<script>
+  const img = document.getElementById('img');
+  let scale = 1, startDist = 0;
+
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      startDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      scale *= dist / startDist;
+      startDist = dist;
+      img.style.transform = `scale(${scale})`;
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BottomSheet</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .header-area { padding: 20px; }
+  .sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: #1e1e1e;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid #333;
+    transform: translateY(0);
+    transition: transform 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    touch-action: none;
+  }
+  .sheet.dragging {
+    transition: none;
+  }
+  .handle-bar {
+    width: 40px;
+    height: 5px;
+    background: #555;
+    border-radius: 999px;
+    margin: 10px auto;
+    flex: 0 0 auto;
+    cursor: grab;
+    padding: 10px 0;
+    background-clip: content-box;
+  }
+  .scroll-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px 20px 40px;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .item {
+    padding: 15px;
+    border-bottom: 1px solid #2a2a2a;
+    color: #ddd;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-area">
+  <h1>상세 정보</h1>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="handle-bar" id="handleBar"></div>
+  <div class="scroll-content" id="scrollContent">
+    <div class="item">📜 List Item 1</div>
+    <div class="item">📜 List Item 2</div>
+    <div class="item">📜 List Item 3</div>
+    <div class="item">📜 List Item 4</div>
+    <div class="item">📜 List Item 5</div>
+    <div class="item">📜 List Item 6</div>
+    <div class="item">📜 List Item 7</div>
+    <div class="item">📜 List Item 8</div>
+    <div class="item">📜 List Item 9</div>
+    <div class="item">📜 List Item 10</div>
+    <div class="item">📜 List Item 11</div>
+    <div class="item">📜 List Item 12</div>
+    <div class="item">📜 List Item 13</div>
+    <div class="item">📜 List Item 14</div>
+    <div class="item">📜 List Item 15</div>
+  </div>
+</div>
+
+<script>
+  const sheet = document.getElementById('sheet');
+  const handleBar = document.getElementById('handleBar');
+  const scrollContent = document.getElementById('scrollContent');
+
+  const COLLAPSE_ACTIVATION_PX = 8; // 시트 닫기 소유권 전환 임계값 (8px)
+
+  let startY = 0;
+  let currentTranslateY = 0;
+  let isDown = false;
+  let ownedBySheet = false;
+  let activePointerId = null;
+
+  // 1. 핸들 바 직접 드래그 (즉시 시트 소유권 점유)
+  handleBar.addEventListener('pointerdown', (e) => {
+    activePointerId = e.pointerId;
+    isDown = true;
+    ownedBySheet = true;
+    startY = e.clientY;
+    sheet.classList.add('dragging');
+  });
+
+  // 2. 리스트 영역 터치 처리 (경계 조건 기반 소유권 전환)
+  scrollContent.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    activePointerId = e.pointerId;
+    isDown = true;
+    ownedBySheet = false;
+    startY = e.clientY;
+    currentTranslateY = 0;
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown || e.pointerId !== activePointerId) return;
+
+    const dy = e.clientY - startY;
+    const draggingDown = dy > 0;
+    const atTop = scrollContent.scrollTop <= 0;
+
+    // 이미 바텀시트 드래그 상태인 경우
+    if (ownedBySheet) {
+      if (e.cancelable) e.preventDefault();
+      const moveY = Math.max(0, dy);
+      currentTranslateY = moveY;
+      sheet.style.transform = `translateY(${moveY}px)`;
+      return;
+    }
+
+    // 리스트 상단(scrollTop === 0)에서 아래로 8px 이상 당길 때 시트 드래그 소유권 전환
+    if (draggingDown && atTop && dy > COLLAPSE_ACTIVATION_PX) {
+      ownedBySheet = true;
+      sheet.classList.add('dragging');
+      if (e.cancelable) e.preventDefault();
+      const moveY = dy - COLLAPSE_ACTIVATION_PX;
+      currentTranslateY = moveY;
+      sheet.style.transform = `translateY(${moveY}px)`;
+    }
+  });
+
+  const handlePointerRelease = (e) => {
+    if (!isDown || e.pointerId !== activePointerId) return;
+
+    isDown = false;
+    activePointerId = null;
+    sheet.classList.remove('dragging');
+
+    if (ownedBySheet) {
+      ownedBySheet = false;
+      // 뷰포트 높이의 25% 이상 내렸으면 시트 닫기, 미달 시 복구
+      if (currentTranslateY > window.innerHeight * 0.25) {
+        sheet.style.transform = 'translateY(100%)';
+      } else {
+        sheet.style.transform = 'translateY(0)';
+      }
+    }
+    currentTranslateY = 0;
+  };
+
+  window.addEventListener('pointerup', handlePointerRelease);
+  window.addEventListener('pointercancel', handlePointerRelease);
+</script>
+</body>
+</html>

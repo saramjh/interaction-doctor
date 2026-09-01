@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Date Range Picker (With Skill - Interaction Doctor)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 30px 16px;
+    background: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .card-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 24px 20px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #38bdf8;
+  }
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px 0;
+    touch-action: none; /* 브라우저 스크롤 완전 억제 */
+  }
+  .day-cell {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    touch-action: none;
+  }
+  .day-cell.range-start {
+    background: #38bdf8;
+    color: #0f172a;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+  }
+  .day-cell.range-end {
+    background: #38bdf8;
+    color: #0f172a;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+  }
+  .day-cell.range-start.range-end {
+    border-radius: 50%;
+  }
+  .day-cell.in-range {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+  }
+  .range-readout {
+    margin-top: 18px;
+    padding: 12px;
+    background: #090d16;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #cbd5e1;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="card-box">
+  <div class="calendar-header">
+    <span>2026년 9월</span>
+    <span style="font-size:12px; color:#94a3b8;">날짜를 드래그하세요</span>
+  </div>
+
+  <div class="weekdays">
+    <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+  </div>
+
+  <div class="calendar-grid" id="grid"></div>
+
+  <div class="range-readout" id="readout">시작일과 종료일을 드래그하여 선택하세요.</div>
+</div>
+
+<script>
+  const grid = document.getElementById('grid');
+  const readout = document.getElementById('readout');
+
+  let startDay = null;
+  let endDay = null;
+  let isDragging = false;
+  let activePointerId = null;
+
+  // 1일 ~ 30일 생성 (화요일 시작 가정: 빈 칸 2개)
+  for (let i = 0; i < 2; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'day-cell';
+    grid.appendChild(empty);
+  }
+
+  for (let day = 1; day <= 30; day++) {
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+    cell.dataset.day = day;
+    cell.textContent = day;
+    grid.appendChild(cell);
+  }
+
+  function renderRange() {
+    const cells = grid.querySelectorAll('.day-cell[data-day]');
+    const minD = Math.min(startDay || 0, endDay || 0);
+    const maxD = Math.max(startDay || 0, endDay || 0);
+
+    cells.forEach(c => {
+      const d = parseInt(c.dataset.day, 10);
+      c.className = 'day-cell';
+
+      if (startDay && endDay) {
+        if (d === minD) c.classList.add('range-start');
+        if (d === maxD) c.classList.add('range-end');
+        if (d > minD && d < maxD) c.classList.add('in-range');
+      } else if (startDay && d === startDay) {
+        c.classList.add('range-start', 'range-end');
+      }
+    });
+
+    if (startDay && endDay) {
+      readout.innerHTML = `선택 기간: <strong>9월 ${minD}일 ~ 9월 ${maxD}일</strong> (${maxD - minD + 1}일간)`;
+    } else if (startDay) {
+      readout.innerHTML = `시작일: <strong>9월 ${startDay}일</strong> (종료일을 드래그하세요)`;
+    }
+  }
+
+  function getDayFromPoint(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (el && el.classList.contains('day-cell') && el.dataset.day) {
+      return parseInt(el.dataset.day, 10);
+    }
+    return null;
+  }
+
+  grid.addEventListener('pointerdown', (e) => {
+    if (activePointerId !== null) return;
+    const day = getDayFromPoint(e.clientX, e.clientY);
+    if (!day) return;
+
+    activePointerId = e.pointerId;
+    try { grid.setPointerCapture(e.pointerId); } catch(err) {}
+    isDragging = true;
+    startDay = day;
+    endDay = day;
+    renderRange();
+    if (navigator.vibrate) navigator.vibrate(20);
+  });
+
+  grid.addEventListener('pointermove', (e) => {
+    if (!isDragging || e.pointerId !== activePointerId) return;
+    const day = getDayFromPoint(e.clientX, e.clientY);
+    if (day && day !== endDay) {
+      endDay = day;
+      renderRange();
+    }
+  });
+
+  const release = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    isDragging = false;
+    activePointerId = null;
+    try { grid.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+
+  grid.addEventListener('pointerup', release);
+  grid.addEventListener('pointercancel', release);
+</script>
+</body>
+</html>

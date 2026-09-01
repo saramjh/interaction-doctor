@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>모바일 터치 이미지 뷰어</title>
+  <style>
+    :root {
+      --bg-color: #0d0d0d;
+      --ui-bg: rgba(30, 30, 30, 0.75);
+      --ui-color: #ffffff;
+      --accent-color: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      touch-action: none; /* 브라우저 기본 스크롤/줌 방지 */
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 뷰어 컨테이너 */
+    .viewer-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .viewer-container:active {
+      cursor: grabbing;
+    }
+
+    /* 이미지 엘리먼트 */
+    .viewer-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transform-origin: 0 0; /* JS 계산 편의성을 위해 좌상단 기준 */
+      will-change: transform;
+      pointer-events: auto;
+    }
+
+    /* 상단 / 하단 UI 오버레이 */
+    .ui-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* 이미지가 터치를 받도록 통과 */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    .header, .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .badge {
+      background: var(--ui-bg);
+      color: var(--ui-color);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      background: var(--ui-bg);
+      color: var(--ui-color);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+      background: rgba(50, 50, 50, 0.9);
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    /* 애니메이션 클래스 (더블탭/리셋 시 유연한 전환) */
+    .smooth-transition {
+      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewer-container" id="container">
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop" 
+         alt="Zoomable Target" 
+         class="viewer-image" 
+         id="targetImage"
+         draggable="false">
+  </div>
+
+  <div class="ui-layer">
+    <div class="header">
+      <div class="badge" id="zoomBadge">100%</div>
+      <div class="btn-group">
+        <label for="fileInput" class="btn">사진 선택</label>
+        <input type="file" id="fileInput" accept="image/*">
+        <button class="btn" id="resetBtn">원래대로</button>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <button class="btn" id="sampleBtn">다른 샘플</button>
+      <div class="badge" style="font-weight: 400; font-size: 12px; opacity: 0.8;">
+        두 손가락 줌 / 드래그 이동 / 더블탭 줌
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('container');
+    const img = document.getElementById('targetImage');
+    const zoomBadge = document.getElementById('zoomBadge');
+    const resetBtn = document.getElementById('resetBtn');
+    const sampleBtn = document.getElementById('sampleBtn');
+    const fileInput = document.getElementById('fileInput');
+
+    // 변환 상태 값
+    let scale = 1;
+    let pointX = 0;
+    let pointY = 0;
+
+    // 최소 / 최대 확대 배율
+    const MIN_SCALE = 1;
+    const MAX_SCALE = 6;
+
+    // 터치 제어 관련 변수
+    let startTouchesDistance = 0;
+    let startScale = 1;
+    let startClientX = 0;
+    let startClientY = 0;
+    let startPointX = 0;
+    let startPointY = 0;
+    let isDragging = false;
+    let isPinching = false;
+
+    // 더블 탭 감지용
+    let lastTapTime = 0;
+
+    // 샘플 이미지 목록
+    const sampleImages = [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1600&auto=format&fit=crop"
+    ];
+    let sampleIndex = 0;
+
+    // 초기 이미지 배치 (중앙 정렬)
+    function initImagePosition() {
+      const containerRect = container.getBoundingClientRect();
+      const imgWidth = img.naturalWidth || containerRect.width;
+      const imgHeight = img.naturalHeight || containerRect.height;
+      
+      // 컨테이너 크기에 맞는 초기 알맞은 비율 계산
+      const scaleX = containerRect.width / imgWidth;
+      const scaleY = containerRect.height / imgHeight;
+      const initialFitScale = Math.min(scaleX, scaleY, 1);
+
+      const renderWidth = imgWidth * initialFitScale;
+      const renderHeight = imgHeight * initialFitScale;
+
+      scale = 1;
+      pointX = (containerRect.width - renderWidth) / 2;
+      pointY = (containerRect.height - renderHeight) / 2;
+      
+      updateTransform(false);
+    }
+
+    // 화면 변환 업데이트 함수
+    function updateTransform(animated = false) {
+      if (animated) {
+        img.classList.add('smooth-transition');
+      } else {
+        img.classList.remove('smooth-transition');
+      }
+
+      // Transform 적용 (translate -> scale)
+      img.style.transform = `translate3d(${pointX}px, ${pointY}px, 0px) scale(${scale})`;
+      zoomBadge.textContent = `${Math.round(scale * 100)}%`;
+    }
+
+    // 경계 제한 계산 (이미지가 화면 밖으로 완전히 벗어나지 않도록 clamp)
+    function clampBounds() {
+      const containerRect = container.getBoundingClientRect();
+      const imgRect = img.getBoundingClientRect();
+
+      // 현재 scale 기준 이미지의 가로/세로 크기
+      const currentWidth = imgRect.width;
+      const currentHeight = imgRect.height;
+
+      // X축 제한
+      if (currentWidth <= containerRect.width) {
+        pointX = (containerRect.width - currentWidth) / 2;
+      } else {
+        const minX = containerRect.width - currentWidth;
+        const maxX = 0;
+        pointX = Math.min(Math.max(pointX, minX), maxX);
+      }
+
+      // Y축 제한
+      if (currentHeight <= containerRect.height) {
+        pointY = (containerRect.height - currentHeight) / 2;
+      } else {
+        const minY = containerRect.height - currentHeight;
+        const maxY = 0;
+        pointY = Math.min(Math.max(pointY, minY), maxY);
+      }
+    }
+
+    // 두 터치 점 사이의 거리 계산
+    function getDistance(touch1, touch2) {
+      const dx = touch1.clientX - touch2.clientX;
+      const dy = touch1.clientY - touch2.clientY;
+      return Math.hypot(dx, dy);
+    }
+
+    // 두 터치 점의 중심점 계산
+    function getCenter(touch1, touch2) {
+      return {
+        x: (touch1.clientX + touch2.clientX) / 2,
+        y: (touch1.clientY + touch2.clientY) / 2
+      };
+    }
+
+    /* ================= 터치 이벤트 처리 ================= */
+
+    container.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // 기본 터치 행동 (페이지 스크롤/줌) 차단
+
+      const touches = e.touches;
+
+      // 더블 탭 감지 (손가락 1개일 때만)
+      if (touches.length === 1) {
+        const now = Date.now();
+        if (now - lastTapTime < 300) {
+          handleDoubleTap(touches[0]);
+          lastTapTime = 0;
+          return;
+        }
+        lastTapTime = now;
+      }
+
+      if (touches.length === 1) {
+        // 단일 터치: 드래그 시작
+        isDragging = true;
+        isPinching = false;
+        startClientX = touches[0].clientX;
+        startClientY = touches[0].clientY;
+        startPointX = pointX;
+        startPointY = pointY;
+      } else if (touches.length === 2) {
+        // 멀티 터치: 핀치 줌 시작
+        isPinching = true;
+        isDragging = false;
+        startTouchesDistance = getDistance(touches[0], touches[1]);
+        startScale = scale;
+        startPointX = pointX;
+        startPointY = pointY;
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const touches = e.touches;
+
+      if (isPinching && touches.length === 2) {
+        // --- 핀치 줌 동작 ---
+        const currentDistance = getDistance(touches[0], touches[1]);
+        if (startTouchesDistance === 0) return;
+
+        // 새로운 확대율 계산
+        let newScale = startScale * (currentDistance / startTouchesDistance);
+        newScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+
+        // 손가락 중심점을 기준으로 Zoom 수행
+        const center = getCenter(touches[0], touches[1]);
+        const containerRect = container.getBoundingClientRect();
+        
+        // 중심점 좌표 (컨테이너 기준)
+        const touchCenterX = center.x - containerRect.left;
+        const touchCenterY = center.y - containerRect.top;
+
+        // Zoom에 따른 위치 보정
+        const factor = newScale / scale;
+        pointX = touchCenterX - factor * (touchCenterX - pointX);
+        pointY = touchCenterY - factor * (touchCenterY - pointY);
+        scale = newScale;
+
+        clampBounds();
+        updateTransform(false);
+
+      } else if (isDragging && touches.length === 1) {
+        // --- 드래그 이동 동작 ---
+        const deltaX = touches[0].clientX - startClientX;
+        const deltaY = touches[0].clientY - startClientY;
+
+        pointX = startPointX + deltaX;
+        pointY = startPointY + deltaY;
+
+        clampBounds();
+        updateTransform(false);
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchend', (e) => {
+      const touches = e.touches;
+
+      if (touches.length === 0) {
+        isDragging = false;
+        isPinching = false;
+        
+        // 최소 배율 미만으로 줄어들었을 때 복원 (스냅 애니메이션)
+        if (scale < MIN_SCALE) {
+          scale = MIN_SCALE;
+          clampBounds();
+          updateTransform(true);
+        }
+      } else if (touches.length === 1) {
+        // 손가락 하나가 떨어져도 남은 손가락으로 자연스럽게 드래그 전환
+        isPinching = false;
+        isDragging = true;
+        startClientX = touches[0].clientX;
+        startClientY = touches[0].clientY;
+        startPointX = pointX;
+        startPointY = pointY;
+      }
+    });
+
+    container.addEventListener('touchcancel', () => {
+      isDragging = false;
+      isPinching = false;
+    });
+
+    // 더블 탭 처리 함수
+    function handleDoubleTap(touch) {
+      const containerRect = container.getBoundingClientRect();
+      const touchX = touch.clientX - containerRect.left;
+      const touchY = touch.clientY - containerRect.top;
+
+      if (scale > 1.5) {
+        // 이미 확대되어 있으면 리셋 (1x)
+        scale = 1;
+        clampBounds();
+      } else {
+        // 터치한 지점 중심으로 2.5배 확대
+        const targetScale = 2.5;
+        const factor = targetScale / scale;
+        pointX = touchX - factor * (touchX - pointX);
+        pointY = touchY - factor * (touchY - pointY);
+        scale = targetScale;
+        clampBounds();
+      }
+      updateTransform(true);
+    }
+
+    /* ================= 데스크톱 지원 (마우스 & 휠) ================= */
+
+    // 마우스 휠 줌
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      let newScale = scale * zoomFactor;
+      newScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+
+      const containerRect = container.getBoundingClientRect();
+      const mouseX = e.clientX - containerRect.left;
+      const mouseY = e.clientY - containerRect.top;
+
+      const factor = newScale / scale;
+      pointX = mouseX - factor * (mouseX - pointX);
+      pointY = mouseY - factor * (mouseY - pointY);
+      scale = newScale;
+
+      clampBounds();
+      updateTransform(false);
+    }, { passive: false });
+
+    // 마우스 드래그
+    let isMouseDown = false;
+    let mouseStartX = 0, mouseStartY = 0;
+
+    container.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return; // 좌클릭만
+      isMouseDown = true;
+      mouseStartX = e.clientX;
+      mouseStartY = e.clientY;
+      startPointX = pointX;
+      startPointY = pointY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isMouseDown) return;
+      const deltaX = e.clientX - mouseStartX;
+      const deltaY = e.clientY - mouseStartY;
+
+      pointX = startPointX + deltaX;
+      pointY = startPointY + deltaY;
+
+      clampBounds();
+      updateTransform(false);
+    });
+
+    window.addEventListener('mouseup', () => {
+      isMouseDown = false;
+    });
+
+    /* ================= 버튼 & UI 이벤트 ================= */
+
+    // 리셋 버튼
+    resetBtn.addEventListener('click', () => {
+      initImagePosition();
+    });
+
+    // 샘플 이미지 교체
+    sampleBtn.addEventListener('click', () => {
+      sampleIndex = (sampleIndex + 1) % sampleImages.length;
+      img.src = sampleImages[sampleIndex];
+    });
+
+    // 파일 로드 (내 사진 보기)
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 이미지 로드가 완료되면 중앙 위치 재계산
+    img.addEventListener('load', () => {
+      initImagePosition();
+    });
+
+    // 화면 리사이즈 시 대응
+    window.addEventListener('resize', () => {
+      clampBounds();
+      updateTransform(false);
+    });
+
+    // 초기화 실행
+    if (img.complete) {
+      initImagePosition();
+    }
+  </script>
+</body>
+</html>

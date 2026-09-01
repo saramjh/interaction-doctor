@@ -400,3 +400,457 @@ multi-select 전용 코드 레시피는 없다 — `research/ux-standards/patter
 다른 헬퍼도 같이 점검한다.** 하나만 고치고 넘어가면, 안 고친 쪽이
 나중에 "새 결함을 발견한 것"처럼 보이는 오탐을 다시 만든다 —
 바로 이번이 그 경우였다.
+
+---
+
+## 7. 공용 해법: 멀티포인터 격리
+
+**목적**: 규칙 2(멀티포인터 미처리)가 컴포넌트마다 개별로 등장할
+때마다 각자 다르게 땜질하지 않고, 재사용 가능한 표준 패턴 하나로
+정의한다. 이 절은 진행 중이다 — 아래는 1단계(원장 정리)만 완료된
+상태다. 새로 조사하지 않고, 이미 이 프로젝트에 있는 코드만 모았다.
+
+### 7-1. 원장 — 규칙 2가 등장한 모든 사례
+
+| # | 출처 | 무엇을 보여주는가 | 결과 |
+|---|---|---|---|
+| A | `nested-interactions/long-press-triple-conflict.md` §5-5 | 규칙 2 결함을 **최초로 발견**한 곳. `pointerId`를 전혀 추적하지 않는 원본 §4 코드에서, 첫 포인터가 해제되기 전 두 번째 `pointerId`가 들어오면 `contextMenuTimer`/`escalateTimer` 참조가 덮어써져 콜백이 2회씩 발동함 | 발견만 됨, **고치지 않고 관찰만** 남김(§5-5 원문: "tasks a–e에 필요하지 않았고, 고치는 순간 새로운 설계 판단이 필요해진다") |
+| B | `tools/nested/reorder-hold-delay-verify.html`(레시피 4) | `armed`(boolean) + `activePointerId`(단일 변수) 조합으로 규칙 1+2를 함께 통과시킨 가드 패턴. `pointerdown`에서 `activePointerId !== null`이면 새 포인터를 아예 무시, 이후 모든 리스너가 `e.pointerId === activePointerId`를 먼저 확인 | §5 런타임 검증 통과(규칙 1+2 둘 다) — 단, **단일 요소 하나**에 대해서만 검증됨(리스트/여러 행 상황 아님) |
+| C | `evals/results/{baseline,treatment}/subjects/09-longpress-triple-favorites/project/index.html` | 실제 diff로 확인: baseline은 `let activePointerId = null;`을 `attachTripleGesture` 함수 **밖**(모듈 전역, 리스트의 모든 행이 공유)에 선언하고 `pointerdown`에서 "이미 다른 포인터가 활성화돼 있으면 무시"로 **행 구분 없이** 차단. treatment는 같은 변수를 함수 **안**(행마다 독립된 클로저)에 선언하고 `armed && activePointerId === e.pointerId` 비교 가드를 씀 | `evals/RESULTS.md` 09번 채점: baseline은 같은 행 안의 규칙 2는 통과하지만 **다른 행을 동시에 조작하면 두 번째 행이 통째로 무시됨**(문서 밖 관찰, §5 범위 밖의 새 결함). treatment는 같은 행 규칙 2와 다른 행 독립성을 **둘 다** 통과 |
+| D | `evals/RESULTS.md` 01(reorder-no-handle)·02(swipe-delete-todo) | baseline·treatment **둘 다** 규칙 2 실패. 원인: `activePointerId` 같은 가드 변수 자체가 없고, 공유 `startY`(01)/`startX`(02)만 있어서 두 번째 `pointerdown`이 비교 없이 그냥 덮어씀 | 두 조건 다 미충족 — 스킬 적용 여부와 무관하게 남은 공통 결함으로 `RESULTS.md`에 이미 기록됨 |
+
+### 7-2. 코드 인용 — B와 C의 핵심 차이
+
+**B(레시피 4, 단일 요소)** — `tools/nested/reorder-hold-delay-verify.html:63-83`:
+
+```js
+function attachVerticalReorderResolver(el, { onReorderStart, onReorderMove, onReorderEnd }) {
+	let armed = false;          // 결함 방지: pointerdown 여부를 명시적으로 확인 (규칙 1)
+	let activePointerId = null; // 결함 방지: 다른 포인터가 끼어들면 무시 (규칙 2)
+	...
+	el.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return; // 이미 진행 중인 다른 포인터 — 무시
+		activePointerId = e.pointerId;
+		armed = true;
+		...
+	});
+```
+
+호출부(`reorder-hold-delay-verify.html:148`)는 `attachVerticalReorderResolver(target, ...)`를 **단 한 번**만 부른다 — 리스트 상황에서 이 클로저 스코프가 행마다 독립되는지는 이 파일만으로는 확인되지 않는다.
+
+**C-baseline(09번, 리스트, 전역 변수)** — `evals/results/baseline/.../index.html:118-134`:
+
+```js
+// 글로벌 활성 포인터 트래커
+let activePointerId = null;
+
+function attachTripleGesture(row, index) {
+	...
+	row.addEventListener("pointerdown", (e) => {
+		// 이미 다른 포인터가 활성화되어 있다면 무시 (멀티터치 방어)
+		if (activePointerId !== null) return;
+		activePointerId = e.pointerId;
+		...
+```
+
+**C-treatment(09번, 리스트, 행별 클로저)** — `evals/results/treatment/.../index.html:128-133`:
+
+```js
+function attachTripleGesture(row, index) {
+	let startX = 0;
+	let startY = 0;
+	let moved = false;
+	let contextMenuTimer = null;
+	let escalateTimer = null;
+	let contextMenuFired = false;
+	let armed = false;
+	let activePointerId = null;
+
+	row.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return; // 진입 게이트 — B와 동일한 형태
+		activePointerId = e.pointerId;
+		...
+		armed = true;
+		...
+	});
+```
+
+`attachTripleGesture(row, i)`가 각 행마다 새로 호출되므로, `activePointerId`가 함수 안에 선언된 treatment는 행마다 독립된 클로저를 얻는다 — baseline은 같은 변수를 함수 밖에 선언해서 모든 행이 공유한다. **이 한 줄의 위치(함수 안/밖) 차이가 09번 채점의 "같은 행 규칙2는 둘 다 통과, 다른 행 독립성은 treatment만 통과"라는 결과와 정확히 대응한다.**
+
+원장은 여기까지다. 구조적 차이를 "성공 패턴 vs 실패 패턴"으로 일반화하는 건 2단계에서 한다.
+
+---
+
+### 7-3. 구조적 비교(2단계) — 스코프 축과 게이트 축은 서로 다른 축이다
+
+**작업 지시대로 A, B, D의 실제 코드를 다시 열어 C에서 나온 가설("함수
+밖 선언 vs 함수 안 선언")이 그대로 반복되는지 확인했다.** 결과:
+**반복되지 않는다.** A와 D는 스코프가 아니라 다른 원인으로 실패한다
+— 아래는 그 재확인 과정과, 그 결과로 나온 2축 모델이다.
+
+**D(01/02 baseline) 재확인 — 스코프는 맞다, 게이트가 없다**
+
+`evals/results/baseline/subjects/01-reorder-no-handle/project/index.html:95-104`:
+
+```js
+function attachDrag(row) {
+	let startY = 0;
+	let originY = 0;
+
+	row.addEventListener("pointerdown", (e) => {
+		startY = e.clientY;              // 진행 중인 제스처가 있는지 확인 없이 무조건 덮어씀
+		originY = row.getBoundingClientRect().top;
+		row.classList.add("dragging");
+		row.setPointerCapture(e.pointerId);
+	});
+```
+
+`startY`는 `attachDrag(row)` 함수 **안**에 선언돼 있다 — C-treatment와
+똑같은 클로저 스코프다. `evals/results/baseline/subjects/02-swipe-delete-todo/project/index.html:91-99`도 동일 구조(`startX`/`isDragging`이
+`attachSwipe(item, row, index)` 안에 선언됨). **그런데도 실패한다** —
+`pointerdown`이 "이미 이 행에서 제스처가 진행 중인가"를 확인하는 코드
+자체가 없어서, 같은 행에 두 번째 `pointerId`가 들어오면 무조건
+`startY`/`startX`를 덮어쓴다. 스코프는 옳고, **진입 게이트가 통째로
+없다.**
+
+**A(레시피 1 원본 §4) 재확인 — 같은 실패 모드**
+
+`nested-interactions/long-press-triple-conflict.md` §4(위 인용,
+211-236행)의 `attachTripleConflictResolver`도 `startX/startY/moved/
+contextMenuFired`를 함수 안에 정확히 클로저로 선언한다. 그런데도
+`pointerdown`이 `activePointerId` 같은 변수 자체를 두지 않고 무조건
+상태를 리셋한다 — **D와 정확히 같은 실패 모드**(스코프 문제 아님,
+게이트 부재).
+
+**B/C-treatment(성공) 재확인 — 둘 다 갖췄다**
+
+B(`reorder-hold-delay-verify.html:71`)와 C-treatment(위 인용)는 둘 다
+`pointerdown` 맨 앞에 `if (activePointerId !== null) return;` 형태의
+**진입 게이트**를 갖고 있다 — 새 포인터가 들어와도 이미 활성 포인터가
+있으면 상태를 건드리지 않고 그냥 무시한다. C-baseline도 이 게이트
+**자체는** 갖고 있다(451행, "이미 다른 포인터가 활성화되어 있다면
+무시") — 다만 그 게이트가 지키는 변수(`activePointerId`)가 전역이라
+게이트가 적용되는 범위가 "이 행"이 아니라 "전체 리스트"로 잘못
+넓어진 것이다.
+
+**2축 모델**
+
+| | 스코프(변수가 어디 선언됐는가) | 게이트(`pointerdown`에 진입 확인이 있는가) | 결과 |
+|---|---|---|---|
+| A(레시피1 원본) | 클로저(정상) | **없음** | 같은 요소 안에서도 실패 |
+| B(레시피4) | 클로저(정상, 단일 요소만 확인) | 있음 | 통과 |
+| C-baseline | **전역**(잘못됨) | 있음 | 같은 행은 통과, **다른 행까지 차단**(과잉 격리) |
+| C-treatment | 클로저(정상, 행별) | 있음 | 통과(같은 행 + 다른 행 독립 둘 다) |
+| D-01 | 클로저(정상) | **없음** | 같은 요소 안에서도 실패 |
+| D-02 | 클로저(정상) | **없음** | 같은 요소 안에서도 실패 |
+
+**두 축은 서로 다른 실패를 만든다**: 스코프가 틀리면(C-baseline, 1
+사례) 무관한 다른 요소까지 서로 막는 **과잉 격리**가 생긴다. 게이트가
+없으면(A, D-01, D-02 — 독립 3사례) 같은 요소 안에서 두 번째 포인터가
+첫 번째의 상태를 그냥 덮어쓰는 **격리 실패**가 생긴다. 성공한 두
+사례(B, C-treatment)는 이 둘을 **동시에** 만족한 경우뿐이다 — 스코프만
+맞고 게이트가 없어도(D 유형), 게이트만 있고 스코프가 틀려도(C-baseline
+유형) 규칙 2는 부분적으로만 통과한다.
+
+**확신도**: 게이트 부재 실패 모드는 A/D-01/D-02 **3개의 독립 사례**에서
+반복됐다(같은 프로젝트 안이지만 서로 다른 컴포넌트·서로 다른 시점에
+작성된 코드) — 높음. 스코프 실패 모드는 C-baseline **1개 사례**뿐이다
+— 중간, 추가 사례가 나오면 격상한다. (규칙 1/2의 확신도 표기 방식과
+동일하게 맞췄다.)
+
+2단계는 여기까지다. 이 2축 모델을 3단계(공용 패턴 작성)의 근거로
+쓸 수 있을지는 승인 후 진행한다.
+
+---
+
+### 7-4. 공용 패턴 — `withSinglePointerGate` [이 프로젝트의 설계 판단]
+
+**이 패턴 전체가 [이 프로젝트의 설계 판단]이다.** 표준(W3C/HIG/
+Material)도 관행(주요 제품 3개 이상 관찰)도 아니다 — 7-1~7-3에서
+이 프로젝트 자신의 코드를 비교해서 나온 결론이다. "포인터 하나가
+겹치면 두 번째는 거부한다"는 설계도 하나의 선택이다 — 여러 포인터를
+`Map<pointerId, state>`로 동시에 추적하는 대안도 있을 수 있지만,
+B/C-treatment 어느 쪽도 그렇게 하지 않았고 그 대안이 필요한 사례가
+이 원장에 없어서 채택하지 않았다.
+
+**게이트 축을 먼저 쓴다** [확신도: 높음 — 독립 사례 3건, A·D-01·D-02].
+이게 01/02번을 실제로 고치는 핵심이다 — 아래 7-5에서 실측으로
+확인한다.
+
+```js
+// common-pitfalls.md §7-4 — 단일 활성 포인터 게이트
+// [이 프로젝트의 설계 판단]
+function withSinglePointerGate(el, { onStart, onMove, onEnd } = {}) {
+	let activePointerId = null; // 스코프 축 — 반드시 "요소 하나" 단위 클로저에 둔다
+
+	el.addEventListener("pointerdown", (e) => {
+		if (activePointerId !== null) return; // 게이트 축 [확신도: 높음, 독립 사례 3건]
+		activePointerId = e.pointerId;
+		onStart?.(e);
+	});
+
+	el.addEventListener("pointermove", (e) => {
+		if (e.pointerId !== activePointerId) return; // 게이트 축
+		onMove?.(e);
+	});
+
+	function release(e, cancelled) {
+		if (e.pointerId !== activePointerId) return; // 게이트 축
+		activePointerId = null;
+		onEnd?.(e, { cancelled });
+	}
+	el.addEventListener("pointerup", (e) => release(e, false));
+	el.addEventListener("pointercancel", (e) => release(e, true));
+}
+```
+
+**스코프 축은 게이트와 별개로 명시한다** [확신도: 중간 — 독립 사례
+1건, C-baseline뿐. 추가 사례가 나오면 격상한다]: `activePointerId`
+선언 위치가 이 패턴이 지켜지는 범위를 결정한다.
+
+```js
+// 리스트에 적용할 때 — 요소(행)마다 새로 호출해서 각자 독립된
+// 클로저를 갖게 한다. 이게 스코프 축이다.
+items.forEach((row) => {
+	withSinglePointerGate(row, {
+		onStart(e) { /* 이 행의 제스처 로직 */ },
+		onMove(e) { /* ... */ },
+		onEnd(e, { cancelled }) { /* ... */ },
+	});
+});
+
+// 금지 — activePointerId를 반복문 밖(모듈/전역 스코프)에 두면
+// 09번 baseline과 똑같이 무관한 다른 행까지 서로 차단한다.
+```
+
+**게이트만 있고 스코프가 틀리면(C-baseline 유형), 또는 스코프만
+맞고 게이트가 없으면(D 유형) 규칙 2는 부분적으로만 통과한다** — 이
+패턴은 두 축을 동시에 충족시켜야 완전하다는 7-3의 결론을 그대로
+코드로 옮긴 것이다.
+
+---
+
+### 7-5. 런타임 검증 — 레시피1(A)과 evals 02번(D-02)에 적용
+
+**§5.5 기준 런타임 검증.** 자체 점검이 아니라 Playwright로 실제
+포인터 이벤트를 흘려 확인했다. 두 사례 모두 **게이트 코드 이외에는
+한 줄도 바꾸지 않았다** — 타이머 상수, dx 계산, 삭제 임계값(80px)
+전부 원본 그대로다. "게이트 추가만으로 고쳐지는가"가 이번 검증의
+유일한 질문이기 때문이다.
+
+**재현 페이지**: `tools/nested/multipointer-gate-verify-longpress.html`
+(A 재검증, `?buggy=1`로 게이트 없는 원본 재현 모드),
+`tools/nested/multipointer-gate-verify-swipe.html`(D-02 재검증, 동일).
+
+**A — 사례 A(레시피1)에 게이트만 추가**
+
+재현 절차는 `long-press-triple-conflict.md` §5-5와 동일: `pointerId=1`
+`pointerdown`(해제 안 함) → 200ms 후 `pointerId=2` `pointerdown`(첫
+번째 해제 안 함, 같은 요소) → 1100ms 대기.
+
+| | `onContextMenu` 호출 횟수 | `onMultiSelect` 호출 횟수 |
+|---|---|---|
+| 게이트 없음(`?buggy=1`, §5-5 원본 재현) | **2** | **2** |
+| 게이트 적용 | **1** | **1** |
+
+**검증됨**: 게이트 없는 쪽은 §5-5가 발견했던 결함(콜백 2회 중복
+발동)을 그대로 재현한다. 게이트를 추가하자(다른 로직은 무수정)
+의도한 대로 각 콜백이 정확히 1회씩만 발동한다.
+
+**D-02 — 사례 D-02(evals 02번 baseline)에 게이트만 추가**
+
+재현 절차는 `RESULTS.md` 02번 "규칙 2 재현 방법"과 동일: `pointerId=1`을
+오른쪽 끝에서 눌러 왼쪽으로 90px(삭제 임계값 80px 초과) 이동 완료 →
+200ms 후 `pointerId=2`가 도착 지점 근처(+5px)를 누름(첫 번째 해제 안
+함) → `pointerId=1`이 손을 뗌.
+
+| | 최종 `dx` | 삭제 여부 |
+|---|---|---|
+| 게이트 없음(`?buggy=1`, baseline 원본 재현) | **-5.0px** | 삭제 안 됨 |
+| 게이트 적용 | **-90.0px** | **삭제됨**("우유 사기") |
+
+**검증됨**: 게이트 없는 쪽은 `RESULTS.md`가 기록한 정확한 실패(두
+번째 포인터가 `startX`를 덮어써서 -90px가 -5px로 쪼그라듦)를 그대로
+재현한다. 게이트를 추가하자(삭제 임계값·dx 계산 무수정) `pointerId=2`의
+`pointerdown`이 게이트에서 거부되어 `startX`가 보존되고, 최종 dx가
+의도한 -90px 그대로 나와 삭제가 정상적으로 일어난다.
+
+**결론**: "게이트 추가만으로 D가 실제로 고쳐지는가"라는 이번 작업의
+핵심 질문에 **그렇다**로 답한다 — 서로 다른 컴포넌트(3중 분기
+제스처, 스와이프 삭제)에 같은 6줄짜리 게이트를 얹는 것만으로 각자의
+규칙 2 결함이 사라졌다. 스코프 축(요소당 클로저)은 이번 두 사례
+모두 원래도 정상이었어서 이번 검증이 스코프 축까지 새로 확인하지는
+않는다 — 그건 이미 7-3에서 C 하나로만 확인된 채로 남아 있다
+(확신도 중간).
+
+---
+
+## 8. 상숫값 [Guess] 금지
+
+**원인**: activation delay(ms)나 activation distance(px) 같은 수치는
+코드를 짜는 그 순간 "이 정도면 되겠지"로 즉석에서 채워 넣기가
+제일 쉽다 — 컴파일도 되고 눈으로 보기에도 그럴듯하게 동작한다.
+그런데 이렇게 채운 숫자는 나중에 [표준]/[관성]/[관행] 중 어느
+것도 아니면서 코드에는 마치 근거가 있는 것처럼 상수 이름을 달고
+박제된다. `.claude/CLAUDE.md` 절대 규칙 1이 반면교사로 드는
+사고("핸들이 있는데 근거 없이 롱프레스를 강제했던 사고")가 바로
+이 실패 모드다 — 근거 없는 판단이 라벨 없이 코드에 들어간 것.
+
+**근거**: 이 프로젝트에는 이미 이 규율을 지킨 사례와, 지키지 않으면
+어떻게 되는지를 보여주는 반면교사가 둘 다 있다.
+- 지킨 사례: `long-press-triple-conflict.md` §2-2의
+  `ESCALATE_DELAY_MS = 1000`은 "🚧 [이 프로젝트의 설계 판단],
+  실기기 미검증"으로 명시적으로 라벨돼 있다 — 코드 주석
+  (`recipes.md` 레시피1)에도 "🚧 이 프로젝트의 설계 판단, 실기기
+  미검증"이 그대로 따라간다. §5-6이 "타이머가 맞게 도는가"(검증
+  가능)와 "1000ms가 맞는 값인가"(검증 불가, UX 판단)를 명시적으로
+  분리해서, 전자가 [검증됨]이 됐다고 후자까지 검증된 것처럼 말하지
+  않는다.
+- 반면교사: CLAUDE.md가 프로젝트 최상단에 못박아 둔 그 사고 —
+  레퍼런스에 핸들이 있었는데도(탭↔드래그 충돌이 구조적으로 이미
+  분리된 상황) 근거 없이 롱프레스를 강제해서 만들어졌다. 근거를
+  먼저 찾지 않고 "표준이겠지"로 짠 판단이 라벨 없이 코드에 들어간
+  전형이다.
+
+**금지 사항(구체적으로)**: 새 컴포넌트의 activation delay/distance
+같은 수치를 정할 때, 아래 순서를 거치지 않고 즉석에서 숫자를
+채워 넣는 것을 금지한다.
+1. 먼저 기존 실측값(CONFLICTS.md의 C1~C13, `patterns/*.md`의 판정
+   표)에서 같은 종류의 값을 찾는다 — 8px(터치 슬롭), 500ms(Android
+   `contextmenu` 실측) 같은 값은 이미 이 프로젝트 안에 있다. 새로
+   재는 게 아니라 재사용한다.
+2. 찾지 못했으면, 그 값을 코드에 넣기 **전에** 라벨을 먼저 정한다
+   — 플랫폼 공식 문서/실기기 관찰로 뒷받침되면 [표준]/[관성]/[관행]
+   중 해당하는 것을, 아무 근거 없이 이 프로젝트가 처음 정하는
+   값이면 **[이 프로젝트의 설계 판단]**을 코드 주석과 서술 양쪽에
+   붙인다.
+3. 근거 없이 상수를 만들어 놓고 라벨을 아예 안 붙이는 것 — 이게
+   금지 대상이다. **[이 프로젝트의 설계 판단]이라는 라벨 자체는
+   허용된다**(§7 전체가 이 라벨로 작성됐다) — 금지되는 건 라벨을
+   생략한 채 "이미 확인된 값"인 것처럼 코드에 넣는 행위다.
+
+**재발 방지책**: 인터랙션 코드에 새 ms/px 상수를 추가할 때는
+`common-pitfalls.md` §4.5 체크리스트를 통과시키는 시점에 이 상수의
+출처(C번호, patterns 문서, 또는 [이 프로젝트의 설계 판단])도 같이
+적는다 — 규칙 1·2 체크리스트 항목 옆에 "상수 출처 확인"을 추가
+항목으로 취급한다.
+
+---
+
+## 9. 실측이 예상과 다를 때의 조사 순서 — 코드보다 그레이더를 먼저 의심한다
+
+**원인**: Playwright로 합성 포인터 이벤트를 던지는 그레이더/검증
+스크립트는 실제 브라우저의 네이티브 입력 처리를 **흉내**낼 뿐이다
+— `pointerdown`→`pointerup`만 던지고 뒤따르는 `click`을 안 던기거나
+(함정 4), `setPointerCapture`가 예외를 던지거나(함정 2), 이런 흉내의
+불완전함은 컴포넌트 코드와 무관하게 채점 결과를 오염시킬 수 있다.
+결과가 "이 조건에서만 결함이 있다"처럼 예상과 다르게 나왔을 때,
+바로 컴포넌트 코드를 의심하고 고치려 들면 **그레이더 자체의 결함을
+컴포넌트 결함으로 오진**할 위험이 있다.
+
+**근거**: 05번(multi-select-photos) 사례를 인용한다(전체 서술은 §6
+함정 4 참조, 여기서는 "조사 순서"라는 원칙만 추출한다). Gemini
+skill 조건이 "0번 롱프레스 진입 → 3번 탭" 테스트에서 3번 선택에
+실패하는 것처럼 보였다. 코드부터 의심했다면 "Gemini가
+`multi-select.md`의 클로저 캡처 결함을 재현했다"거나 "스킬 콘텐츠를
+오용했다"는 잘못된 결론으로 갔을 것이다. 실제로는 그레이더의
+`longPress()` 헬퍼가 `pointerdown`/`pointerup`만 던지고 `click`은
+안 던지는 옛날 버전으로 남아 있었던 게 원인이었다 — 컴포넌트의
+전역 플래그(`justEnteredByLongPress`)가 트레일링 클릭을 못 받아
+계속 `true`로 남았고, 그게 다음 타일의 진짜 클릭을 대신 삼켰다.
+`longPress()`에 `click`을 추가하자(그레이더만 수정, 컴포넌트 코드는
+무수정) 문제가 완전히 사라졌다.
+
+**재발 방지책 — 조사 순서**: 실측 결과가 기대와 어긋나면(baseline/
+treatment 중 한쪽만 실패, 또는 이전 실측과 다른 결과) 아래 순서로
+확인한다 — 순서를 바꾸지 않는다.
+1. **그레이더의 이벤트 시퀀스가 실제 브라우저의 네이티브 입력과
+   같은 모양인가**부터 확인한다. 같은 시나리오 파일 안에 비슷한
+   합성 이벤트를 던지는 다른 헬퍼(§6 함정4처럼 `tap()`/`longPress()`
+   같은 짝)가 있으면 서로 일관된 시퀀스를 던지는지 대조한다.
+2. 그레이더가 맞다고 확인된 뒤에야, 실제 생성된 코드(`project/
+   index.html`)를 열어 컴포넌트 자체의 로직을 의심한다.
+3. 컴포넌트 결함으로 확정하기 전에, 그게 이 프로젝트가 이미 원장에
+   올려둔 알려진 결함 패턴(§1 원장, §7-1 원장)과 같은 종류인지,
+   아니면 새로운 것인지 구분한다 — 05번처럼 "같은 결함의 재현"이라고
+   성급히 단정하지 않는다.
+4. 원인을 확정하지 못하면 [정황]으로, 확정되면 [검증됨]으로
+   표시한다 — 코드를 읽고 논리적으로 그럴듯하다고 결론 내리는 건
+   [정황]이지 [검증됨]이 아니다.
+
+---
+
+## 10. 이 문서(와 §4.5·§7)가 검증하는 층, 그리고 검증하지 않는 층
+
+**지금까지 §4.5·§7·evals 전체가 잰 건 전부 "물리 정확성"이다** —
+타이머가 선언한 시간에 도는가, 좌표 계산이 맞는가, 멀티포인터가
+격리되는가, 게이트가 두 번째 포인터를 거부하는가. `perception-
+parameters.md`는 여기에 **다른 층 하나**를 추가한다 — 3축으로
+조사했다:
+
+- **입력(Input Fidelity)**: 사용자의 액션이 의도된 요소에 실제로
+  도달하는가. `getBoundingClientRect()`+`elementFromPoint()`로
+  가려짐(occlusion)을 판정할 수 있다는 것, 그리고 규칙1·2가 사실
+  "요소 오식별"이 아니라 "액션 종류/입력 소유권 오판정"이라는
+  다른 경로의 방해였다는 재해석(§1).
+- **출력(Output Visibility)**: 시스템 반응이 실제로 보이는가 —
+  가려짐/뷰포트 이탈(구조적으로 안 보임)과 대비 부족(구조적으로는
+  보이는데 지각적으로 구분 안 됨) 둘 다 포함. 핸들 아이콘 대비
+  1.21:1(WCAG 3:1 기준의 40%)이라는 신규 결함을 여기서 찾았다(§2).
+- **속도(Response Latency vs Animation Duration)**: "처리 시작
+  지연"(NN/G 0.1/1/10초)과 "애니메이션 재생 길이"(Material 3
+  duration 토큰)는 다른 기준이고, 이 프로젝트의 500ms/8px류 값은
+  둘 중 어느 것도 아닌 "제스처 판정 시간"이라는 제3의 범주라는 걸
+  구분했다(§3).
+
+**이 문서(common-pitfalls.md) §4.5·§7과 `perception-parameters.md`는
+서로 다른 층을 잰다 — 섞지 않는다.**
+
+| | 무엇을 확인하는가 | 통과해도 보장하는 것 |
+|---|---|---|
+| §4.5·§7 (물리 정확성) | 코드가 선언한 타이밍/좌표/포인터 격리대로 실제로 동작하는가 | "코드가 자기 자신의 명세를 지킨다" |
+| `perception-parameters.md` (지각 파라미터) | 입력이 도달 가능한가, 출력이 보이는가, 속도가 인간 지각 한계 안에 있는가 | "물리적으로 맞는 동작이 사람에게도 인지·조작 가능한 형태로 도달한다" |
+
+**그리고 이 프로젝트 어느 것도 증명하지 않는 것**: 물리 정확성도,
+지각 파라미터 충족도 **"사용자가 실제로 이 상호작용을 만족스럽다고
+느끼는가"를 증명하지 않는다.** 이 프로젝트에는 사용성 테스트
+참가자가 없다(`perception-parameters.md` §0) — 만족도는 HCI
+연구·접근성 표준으로 대리 측정한 파라미터의 집합일 뿐, 실제
+사용자 반응 그 자체가 아니다. 이 구분은
+`ux-standards-architecture.md` 최상단에도 명시했다(§0-1 "이
+프로젝트가 증명하는 것과 증명하지 않는 것") — 두 문서가 같은
+경계선을 두 번 다른 각도로 그은 것이다.
+
+### 10-1. §4.5를 지금 강제 게이트로 승격할지 — 결정: 승격하지 않는다
+
+**질문**: `perception-parameters.md`(입력 도달성, 속도 분류)를
+§4.5처럼 "통과 전에는 자체 점검 완료라고 표시하지 않는다"는 강제
+게이트로 승격할지.
+
+**결정: 지금은 승격하지 않는다. 참고 문서로 유지한다.**
+
+**근거**:
+- §4.5의 규칙 1·2는 **거의 모든** pointer 이벤트 코드에 기계적으로
+  적용 가능하다(pointerdown 확인 여부, pointerId 비교 — 코드를
+  보면 있다/없다가 바로 판정된다) — 그래서 예외 없이 강제해도
+  비용이 낮고 신호가 명확하다.
+- `perception-parameters.md`의 항목은 그 정도로 균일하지 않다.
+  "속도 분류"(처리 지연/재생 길이/제스처 판정 시간 중 어느
+  것인지)는 판단이 필요하고, "입력 도달성"(`elementFromPoint`
+  히트테스트)은 겹침·z-index 위험이 실제로 있는 컴포넌트에서만
+  의미가 있다 — 위험이 없는 곳에도 기계적으로 강제하면 §8이 금지한
+  것과 같은 종류의 문제(근거 없이 형식만 채우는 것)가 될 수 있다.
+- `perception-parameters.md` 자체가 아직 소수 사례(핸들 대비 1건,
+  재정렬 undo 부재 1건)에서만 실제 결함을 잡았다 — `common-
+  pitfalls.md` §2가 규칙 1·2에 적용하는 것과 같은 원칙("확신도는
+  독립 사례 개수로만 매긴다")을 이 문서에도 그대로 적용하면, 아직
+  강제 게이트로 승격할 만큼 사례가 쌓이지 않았다.
+
+**재검토 조건**: 이후 다른 레시피(5, 6 등)에 이 파라미터를 적용해
+독립적으로 실제 결함을 잡는 사례가 몇 건 더 쌓이면(§2가 규칙
+2를 "확신도: 중간, 1건 → 추가 사례 시 격상"이라고 열어둔 것과
+같은 방식으로) 재검토한다. 그 전까지는 레시피 작성 시 "참고했는가"
+정도로만 다루고, §4.5처럼 응답을 막는 하드 게이트로는 쓰지 않는다.
+
+**상세**: `research/ux-standards/perception-parameters.md`(전체),
+`ux-standards-architecture.md` §0-1

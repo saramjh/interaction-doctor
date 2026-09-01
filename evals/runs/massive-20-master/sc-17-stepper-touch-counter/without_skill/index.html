@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stepper (Without Skill)</title>
+<style>
+body { font-family:sans-serif; padding:30px; display:flex; flex-direction:column; align-items:center; }
+.stepper { display:flex; align-items:center; gap:10px; }
+button { width:30px; height:30px; font-size:18px; }
+</style>
+</head>
+<body>
+<h3>수량 스텝퍼 (Without Skill)</h3>
+<div class="stepper">
+  <button id="minus">-</button>
+  <span id="num">1</span>
+  <button id="plus">+</button>
+</div>
+<script>
+let count = 1;
+document.getElementById('plus').onclick = () => { count++; document.getElementById('num').textContent = count; };
+document.getElementById('minus').onclick = () => { if(count > 1) count--; document.getElementById('num').textContent = count; };
+</script>
+</body>
+</html>

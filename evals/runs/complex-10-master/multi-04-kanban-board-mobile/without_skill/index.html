@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban (Without Skill)</title>
+<style>
+body { margin:0; font-family:sans-serif; background:#f0f0f0; }
+.board { display:flex; gap:10px; overflow-x:scroll; padding:10px; height:100vh; }
+.col { flex:0 0 250px; background:#ebecf0; border-radius:8px; padding:10px; }
+.card { background:#fff; padding:10px; border-radius:4px; margin-bottom:8px; cursor:move; }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="col" id="col1">
+    <h4>할 일</h4>
+    <div class="card" draggable="true" id="c1">기획서 작성</div>
+    <div class="card" draggable="true" id="c2">디자인 시안</div>
+  </div>
+  <div class="col" id="col2">
+    <h4>진행 중</h4>
+    <div class="card" draggable="true" id="c3">API 개발</div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.card').forEach(c => {
+  c.ondragstart = (e) => e.dataTransfer.setData('text', c.id);
+});
+document.querySelectorAll('.col').forEach(col => {
+  col.ondragover = (e) => e.preventDefault();
+  col.ondrop = (e) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData('text');
+    col.appendChild(document.getElementById(id));
+  };
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Picker (Without Skill)</title>
+<style>
+  body { font-family: sans-serif; padding: 30px; display: flex; flex-direction: column; align-items: center; }
+  .palette { width: 220px; height: 220px; border-radius: 50%; background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); position: relative; }
+  .cursor { width: 20px; height: 20px; border: 2px solid #fff; border-radius: 50%; position: absolute; top: 100px; left: 100px; transform: translate(-50%, -50%); box-shadow: 0 0 4px #000; }
+  .preview { width: 60px; height: 30px; border: 1px solid #ccc; margin-top: 20px; }
+</style>
+</head>
+<body>
+  <h3>색상 피커 (Without Skill)</h3>
+  <div class="palette" id="palette">
+    <div class="cursor" id="cursor"></div>
+  </div>
+  <div class="preview" id="preview" style="background: red;"></div>
+<script>
+  const palette = document.getElementById('palette');
+  const cursor = document.getElementById('cursor');
+  const preview = document.getElementById('preview');
+  let isDown = false;
+
+  palette.onmousedown = () => isDown = true;
+  palette.ontouchstart = () => isDown = true;
+  window.onmouseup = () => isDown = false;
+  window.ontouchend = () => isDown = false;
+
+  window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+  window.addEventListener('touchmove', (e) => { if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY); });
+
+  function handleMove(clientX, clientY) {
+    if (!isDown) return;
+    const rect = palette.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    cursor.style.left = x + 'px';
+    cursor.style.top = y + 'px';
+    const angle = Math.atan2(y - 110, x - 110) * (180 / Math.PI);
+    const hue = (angle + 360) % 360;
+    preview.style.background = `hsl(${hue}, 100%, 50%)`;
+  }
+</script>
+</body>
+</html>
