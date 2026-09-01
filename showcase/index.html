@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
-  <title>interaction-doctor 🩺 | Interactive Showroom & Prompt Pharmacy</title>
-  <meta name="description" content="Feel the difference between broken AI-generated interactions and native touch physics, and copy prescribed AI prompts." />
+  <title>interaction-doctor 🩺 | Interactive Showroom & Prompt Generator</title>
+  <meta name="description" content="Compare baseline AI-generated UI with optimized touch physics, and copy verified SWE prompts." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -45,6 +45,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
     }
 
     .brand {
@@ -54,6 +55,7 @@
       font-weight: 800;
       font-size: 1.15rem;
       letter-spacing: -0.5px;
+      white-space: nowrap;
     }
 
     .brand span {
@@ -68,30 +70,17 @@
       gap: 10px;
     }
 
-    /* Language Switcher */
-    .lang-switcher {
-      display: flex;
+    /* 5-Language Switcher */
+    .lang-select {
       background: #0f172a;
       border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
       border-radius: 8px;
-      padding: 2px;
-    }
-
-    .lang-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 4px 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .lang-btn.active {
-      background: var(--primary);
-      color: #fff;
+      outline: none;
     }
 
     .btn-github {
@@ -107,6 +96,7 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .btn-github:hover {
       background: #334155;
@@ -411,10 +401,13 @@
       🩺 <span>interaction-doctor</span>
     </div>
     <div class="header-links">
-      <div class="lang-switcher">
-        <button class="lang-btn active" id="btnLangEn">EN</button>
-        <button class="lang-btn" id="btnLangKo">KO</button>
-      </div>
+      <select class="lang-select" id="langSelect" aria-label="Language Select">
+        <option value="en">🇺🇸 English</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="zh">🇨🇳 简体中文</option>
+        <option value="es">🇪🇸 Español</option>
+      </select>
       <a href="https://github.com/saramjh/interaction-doctor" target="_blank" class="btn-github">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         GitHub
@@ -424,9 +417,9 @@
 
   <main>
     <section class="hero">
-      <div class="hero-badge" id="heroBadge">⚡️ 0ms Touch Physics Playground</div>
-      <h1 id="heroTitle">Feel the Touch Difference & Copy AI Prescriptions</h1>
-      <p id="heroSubtitle">Compare broken AI-generated UI (Without Skill) with butter-smooth native physics (With Skill), and copy verified prompts for your AI agents.</p>
+      <div class="hero-badge" id="heroBadge">⚡️ 0ms Touch Physics Engine</div>
+      <h1 id="heroTitle">Interactive Interaction Benchmarks & SWE Prompts</h1>
+      <p id="heroSubtitle">Compare baseline AI code defects with optimized touch physics implementations, and copy verified SWE engineering prompts.</p>
     </section>
 
     <!-- Index Tabs -->
@@ -435,7 +428,7 @@
         💬 Mobile Chat (Keyboard & Long-Press)
       </button>
       <button class="scenario-tab" data-scenario="bottomsheet" id="tabSheet">
-        📱 Bottom Sheet (Nested Scroll & 3-Snap)
+        📱 Bottom Sheet (Nested Scroll & Snap)
       </button>
       <button class="scenario-tab" data-scenario="photo" id="tabPhoto">
         🤏 Canvas Editor (Pinch-Zoom & Rotation)
@@ -448,10 +441,10 @@
       <div class="device-container">
         <div class="switch-mode-bar">
           <button class="mode-btn without" id="btnModeWithout">
-            ❌ Without Skill (Broken)
+            ❌ Without Skill (Baseline)
           </button>
           <button class="mode-btn active with" id="btnModeWith">
-            🟢 With Skill (Treated)
+            🟢 With Skill (Optimized)
           </button>
         </div>
 
@@ -466,22 +459,22 @@
         <!-- Problem & Diagnosis -->
         <div class="card">
           <div class="card-title danger" id="diagTitle">
-            🚨 Flaws in Default AI Generation
+            🚨 Baseline AI Code Defects
           </div>
           <ul id="diagFlaws">
-            <li>Pressing Enter on mobile forces message send instead of a newline.</li>
-            <li>Virtual keyboard obscures input and overlaps open emoticon drawer.</li>
-            <li>Zero visual feedback during long-press hold leaves users confused.</li>
+            <li>Pressing Enter on mobile forces message dispatch instead of multiline break.</li>
+            <li>Virtual keyboard causes viewport overlap and obscures open sub-drawers.</li>
+            <li>Absence of press-state visual feedback causes interaction ambiguity.</li>
           </ul>
         </div>
 
         <!-- Treatment & Physics Invariants -->
         <div class="card">
           <div class="card-title success" id="treatTitle">
-            🩺 Interaction Doctor Prescription & Applied Laws
+            🩺 Applied Physics & Architecture Optimization
           </div>
           <p id="treatDesc">
-            Applied <code>visualViewport</code> dynamic resizing and unified W3C Pointer Events pipeline to deliver native on-screen keyboard avoidance and a 3-tier long-press feedback loop (350ms compression ➔ haptic ➔ popup).
+            Integrated <code>visualViewport</code> dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine (350ms compression ➔ haptic ➔ context menu).
           </p>
 
           <div class="physics-metric-row">
@@ -491,7 +484,7 @@
             </div>
             <div class="metric-box">
               <div class="metric-value">350ms</div>
-              <div class="metric-label" id="metricLabel2">Temporal Promotion Gate</div>
+              <div class="metric-label" id="metricLabel2">Temporal Gate</div>
             </div>
             <div class="metric-box">
               <div class="metric-value">8px</div>
@@ -503,10 +496,10 @@
         <!-- Prompt Pharmacy -->
         <div class="card">
           <div class="card-title accent" id="promptTitle">
-            💊 1-Click Prompt Prescription for Your AI
+            💊 Production SWE Prompt Specification
           </div>
           <p style="margin-bottom: 10px; font-size: 0.8rem; color: var(--text-muted);" id="promptSub">
-            Copy and paste directly into Claude Code, ChatGPT, Cursor, or Gemini:
+            Engineered prompt for Claude Code, ChatGPT, Cursor, or Gemini:
           </p>
           <div class="prompt-box" id="promptText"></div>
           <button class="copy-btn" id="btnCopyPrompt">
@@ -517,129 +510,304 @@
     </div>
   </main>
 
-  <div class="toast" id="toast">✅ Prescription prompt copied to clipboard!</div>
+  <div class="toast" id="toast">✅ Prompt specification copied to clipboard!</div>
 
   <script>
     const i18n = {
       en: {
-        heroBadge: "⚡️ 0ms Touch Physics Playground",
-        heroTitle: "Feel the Touch Difference & Copy AI Prescriptions",
-        heroSubtitle: "Compare broken AI-generated UI (Without Skill) with butter-smooth native physics (With Skill), and copy verified prompts for your AI agents.",
-        modeWithout: "❌ Without Skill (Broken)",
-        modeWith: "🟢 With Skill (Treated)",
+        heroBadge: "⚡️ 0ms Touch Physics Engine",
+        heroTitle: "Interactive Interaction Benchmarks & SWE Prompts",
+        heroSubtitle: "Compare baseline AI code defects with optimized touch physics implementations, and copy verified SWE engineering prompts.",
+        modeWithout: "❌ Without Skill (Baseline)",
+        modeWith: "🟢 With Skill (Optimized)",
         tabChat: "💬 Mobile Chat (Keyboard & Long-Press)",
-        tabSheet: "📱 Bottom Sheet (Nested Scroll & 3-Snap)",
+        tabSheet: "📱 Bottom Sheet (Nested Scroll & Snap)",
         tabPhoto: "🤏 Canvas Editor (Pinch-Zoom & Rotation)",
-        diagTitle: "🚨 Flaws in Default AI Generation",
-        treatTitle: "🩺 Interaction Doctor Prescription & Applied Laws",
+        diagTitle: "🚨 Baseline AI Code Defects",
+        treatTitle: "🩺 Applied Physics & Architecture Optimization",
         metric1: "Viewport Resizing Lag",
-        metric2: "Temporal Promotion Gate",
+        metric2: "Temporal Gate",
         metric3: "Touch Slop Hysteresis",
-        promptTitle: "💊 1-Click Prompt Prescription for Your AI",
-        promptSub: "Copy and paste directly into Claude Code, ChatGPT, Cursor, or Gemini:",
+        promptTitle: "💊 Production SWE Prompt Specification",
+        promptSub: "Engineered prompt for Claude Code, ChatGPT, Cursor, or Gemini:",
         copyBtn: "Copy Prompt",
-        toast: "✅ Prescription prompt copied to clipboard!",
+        toast: "✅ Prompt specification copied to clipboard!",
         scenarios: {
           chat: {
             flaws: [
-              "Pressing Enter on mobile forces message send instead of a newline.",
-              "Virtual keyboard obscures input and overlaps open emoticon drawer.",
-              "Zero visual feedback during long-press hold leaves users confused."
+              "Pressing Enter on mobile forces message dispatch instead of multiline break.",
+              "Virtual keyboard causes viewport overlap and obscures open sub-drawers.",
+              "Absence of press-state visual feedback causes interaction ambiguity."
             ],
-            treatment: "Applied `visualViewport` dynamic resizing and unified W3C Pointer Events pipeline to deliver native on-screen keyboard avoidance and a 3-tier long-press feedback loop (350ms compression ➔ haptic ➔ popup).",
-            prompt: `Build a mobile 1:1 chat interface.
-For virtual keyboard avoidance, link \`interactive-widget=resizes-content\` and \`visualViewport\` resize listeners so that opening the on-screen keyboard never obscures the input bar or newest messages.
-Allow Enter key for newlines on mobile while reserving Enter for immediate send on desktop.
-For message long-press, enforce a 350ms hold gate with \`.press-holding\` visual compression feedback, cancelled immediately if touch movement exceeds 8px.`
+            treatment: "Integrated `visualViewport` dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine (350ms compression ➔ haptic ➔ context menu).",
+            prompt: `Implement a production mobile 1:1 chat interface.
+Integrate \`interactive-widget=resizes-content\` and \`visualViewport\` resize event listeners to synchronously align container height with the virtual keyboard offset.
+Differentiate input key handling: allow Enter for newline insertion on touch devices while reserving Enter for message dispatch on desktop pointers.
+For context menus, bind a 350ms temporal gate with \`.press-holding\` scale transformation, aborting immediately upon gesture travel exceeding 8px.`
           },
           bottomsheet: {
             flaws: [
-              "Scrolling nested menu list accidentally drags and collapses the entire sheet.",
-              "Horizontal category chip swipes jitter and cross-talk with vertical sheet gestures.",
-              "Inertia speed is discarded upon release, causing abrupt gesture freezes."
+              "Nested list scrolling triggers container drag collapse unintentionally.",
+              "Horizontal category chip swipes introduce diagonal cross-talk.",
+              "Kinetic release velocity is discarded, producing abrupt animation halts."
             ],
-            treatment: "Enforced 8px Orthogonal Axis Lock to eliminate horizontal/vertical cross-talk with 0% jitter, combined with dynamic boundary hand-off (`scrollTop <= 0`) and 120ms momentum sliding window.",
-            prompt: `Implement a 3-snap level bottom sheet with nested scrolling lists.
-Delegate gesture ownership to sheet dragging only when \`scrollTop <= 0\` at touch start; otherwise let the nested list scroll freely.
-Apply an 8px Orthogonal Axis Lock during initial movement to isolate horizontal category chips from vertical sheet motion.
-On pointer release, compute release velocity over a 120ms trailing window to smoothly animate to the nearest snap level.`
+            treatment: "Enforced 8px Orthogonal Axis Lock to eliminate directional cross-talk, combined with dynamic boundary hand-off (`scrollTop <= 0`) and 120ms velocity regression queue.",
+            prompt: `Implement a 3-snap level bottom sheet with nested scrollable views.
+Enforce dynamic boundary hand-off: delegate pointer events to sheet displacement strictly when \`scrollTop <= 0\` at pointer down; otherwise preserve internal view scrolling.
+Enforce an 8px Orthogonal Axis Lock during initial displacement to isolate horizontal sub-carousels from vertical sheet transforms.
+On pointer release, compute release velocity across a 120ms trailing window to execute momentum-driven snap convergence.`
           },
           photo: {
             flaws: [
-              "Two-finger rotation wildly teleports the center transformation axis.",
-              "Hardcoded \`e.touches[0]\` ignores secondary pointers and loses events.",
-              "CSS transition latency creates noticeable lag behind fingers during pinch."
+              "Two-finger rotation leads to transformation center axis drift.",
+              "Hardcoded legacy \`e.touches[0]\` indexing causes pointer dropped events.",
+              "CSS transition latency introduces phase delay relative to physical touch points."
             ],
-            treatment: "Maintained an active W3C Pointer map (`pointerId`) to isolate multi-touch tracking, dynamically recalculating the invariant center point with 0ms CSS variable manipulation.",
-            prompt: `Build a canvas image editor supporting pinch-zoom and 2-finger rotation.
-Use W3C Pointer Events with an active \`pointerId\` map to track pointers independently. Dynamically maintain the multi-touch center point (Center X/Y) so rotation axis never jumps.
-Apply 0ms direct manipulation via CSS variables (--scale, --rotate) during gesture and only apply spring easing upon release.`
+            treatment: "Maintained active W3C Pointer map (`pointerId`) for isolated multi-touch tracking, dynamically calculating invariant transform centroid with zero-latency CSS variable clamping.",
+            prompt: `Build a 2D canvas editor supporting simultaneous pinch-zoom and rotation.
+Utilize W3C Pointer Events with an active \`pointerId\` Map for discrete pointer tracking. Dynamically preserve the multi-pointer centroid (Center X/Y) across gesture frames to eliminate axis drift.
+Apply zero-latency direct transformation via CSS variables (--scale, --rotate) during active gestures, enabling spring easing only upon pointer release.`
           }
         }
       },
       ko: {
-        heroBadge: "⚡️ 0ms 터치 물리 인터랙티브 플레이그라운드",
-        heroTitle: "직접 만져보고 체험하는 인터랙션 쇼룸",
-        heroSubtitle: "AI가 생성한 UI의 덜컹거림(Without Skill)과 물리 헌장이 주입된 네이티브 손맛(With Skill)을 비교하고, 내 AI를 위한 프롬프트 처방전을 복사하세요.",
-        modeWithout: "❌ Without Skill (고장)",
-        modeWith: "🟢 With Skill (치유)",
+        heroBadge: "⚡️ 0ms 터치 물리 엔진",
+        heroTitle: "상호작용 벤치마크 및 SWE 프롬프트 생성기",
+        heroSubtitle: "기본 AI 코드의 결함과 물리 헌장이 적용된 최적화 코드를 실시간 비교하고, 검증된 소프트웨어 엔지니어링 프롬프트를 복사하세요.",
+        modeWithout: "❌ Without Skill (기본 결함)",
+        modeWith: "🟢 With Skill (최적화 개선)",
         tabChat: "💬 1:1 모바일 채팅 (가상 키보드 & 롱프레스)",
-        tabSheet: "📱 배민/토스 바텀시트 (3단계 스냅 & 스크롤)",
-        tabPhoto: "🤏 포토 스토리 에디터 (핀치 줌 & 2핑거 회전)",
-        diagTitle: "🚨 기본 AI 코드의 상호작용 결함",
-        treatTitle: "🩺 interaction-doctor 처방 및 적용된 물리 법칙",
-        metric1: "뷰포트 가변 랙",
+        tabSheet: "📱 바텀시트 (중첩 스크롤 & 3단 스냅)",
+        tabPhoto: "🤏 캔버스 에디터 (핀치 줌 & 2핑거 회전)",
+        diagTitle: "🚨 기본 AI 코드의 결함 분석",
+        treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선",
+        metric1: "뷰포트 리사이징 랙",
         metric2: "시간 승격 게이트",
         metric3: "터치 슬롭 유예",
-        promptTitle: "💊 내 AI를 위한 원클릭 처방 프롬프트",
-        promptSub: "Claude Code, ChatGPT, Cursor 등에 그대로 붙여넣으세요:",
+        promptTitle: "💊 프로덕션 SWE 엔지니어링 프롬프트",
+        promptSub: "Claude Code, ChatGPT, Cursor, Gemini에 바로 붙여넣는 프롬프트:",
         copyBtn: "프롬프트 복사",
-        toast: "✅ 처방 프롬프트가 클립보드에 복사되었습니다!",
+        toast: "✅ 엔지니어링 프롬프트가 클립보드에 복사되었습니다!",
         scenarios: {
           chat: {
             flaws: [
-              "모바일 엔터 터치 시 줄바꿈이 안 되고 메시지가 강제 발송됨.",
-              "이모티콘 서랍이 열린 상태에서 키보드가 올라오면 화면이 겹쳐 박살남.",
-              "롱프레스 대기 중 시각적 피드백이 없어 사용자가 먹통으로 인지함."
+              "모바일 터치 환경에서 엔터 입력 시 줄바꿈이 안 되고 메시지가 강제 전송됨.",
+              "가상 키보드 활성화 시 입력창이 가려지고 하위 서랍장과 뷰포트가 충돌함.",
+              "롱프레스 대기 중 시각적 피드백이 누락되어 인터랙션 모호성 발생."
             ],
-            treatment: "`visualViewport` 리사이즈 동기화와 W3C Pointer Events 단일 파이프라인을 적용하여, 가상 키보드 올라옴과 3단계 롱프레스 피드백(350ms 누름 ➔ 햅틱 ➔ 팝업)을 네이티브 수준으로 구현했습니다.",
-            prompt: `당근마켓 스타일 모바일 1:1 채팅 화면을 구현해줘.
-가상 키보드 대응을 위해 \`interactive-widget=resizes-content\` 및 \`visualViewport\` 리사이즈 이벤트를 연동하여 키보드가 올라올 때 입력창과 최하단 메시지가 가려지지 않게 하고, 모바일에서는 Enter 입력 시 줄바꿈을 허용하고 PC에서만 즉시 전송되도록 분기해줘.
-메시지 롱프레스는 350ms 대기 시 \`.press-holding\` 시각 피드백을 제공하고 8px 초과 이동 시 취소되도록 구현해줘.`
+            treatment: "`visualViewport` 리사이즈 이벤트 동기화와 W3C Pointer Events 단일 파이프라인을 적용하여, 키보드 높이 실시간 보정 및 3단계 롱프레스 상태 머신(350ms 압축 ➔ 햅틱 ➔ 메뉴)을 최적화했습니다.",
+            prompt: `모바일 1:1 채팅 인터페이스를 구현해줘.
+가상 키보드 오프셋 대응을 위해 \`interactive-widget=resizes-content\` 및 \`visualViewport\` 리사이즈 이벤트를 연동하여 컨테이너 높이를 0ms로 동기화해줘.
+입력키 핸들링을 분기하여 모바일 터치 기기에서는 Enter를 줄바꿈으로 처리하고, 데스크톱 포인터에서만 메시지를 즉시 발송하도록 구현해줘.
+컨텍스트 메뉴는 350ms 시간 게이트와 \`.press-holding\` 스케일 변환을 적용하고, 8px 초과 이동 시 즉시 타이머를 해제해줘.`
           },
           bottomsheet: {
             flaws: [
-              "바텀시트 내부 댓글/메뉴를 스크롤하려는데 시트 전체가 닫혀버림.",
-              "가로 카테고리 칩을 넘길 때 시트가 세로로 덜컹거리며 오작동.",
-              "손가락을 뗄 때 관성 스피드가 무시되어 뚝뚝 끊김."
+              "중첩 리스트 스크롤 시 컨테이너 드래그가 동시 발생하여 시트가 접혀버림.",
+              "가로 칩 스와이프 시 대각선 벡터 간섭으로 세로 스크롤 오작동.",
+              "포인터 해제 시 관성 속도(Momentum)가 무시되어 애니메이션이 뚝 끊김."
             ],
-            treatment: "8px 직교 축 잠금으로 가로/세로 간섭을 0%로 차단하고, `scrollTop <= 0` 동적 경계 핸드오프와 120ms 모멘텀 슬라이딩 윈도우를 적용했습니다.",
-            prompt: `배민/토스 스타일의 3단계 스냅 바텀시트를 구현해줘.
-내부 스크롤 목록이 있을 때 터치 시작 시 \`scrollTop <= 0\`일 때만 바텀시트 드래그로 위임하고, 스크롤 도중에는 8px 직교 축 잠금을 적용해 가로 칩 스와이프와 세로 스크롤 간섭을 100% 분리해줘.
-손가락을 뗄 때는 120ms 모멘텀 윈도우에서 방출 속도를 계산하여 자연스럽게 다음 스냅 레벨로 안착하도록 구현해줘.`
+            treatment: "8px 직교 축 잠금(Orthogonal Axis Lock)으로 방향성 간섭을 차단하고, `scrollTop <= 0` 동적 경계 핸드오프와 120ms 속도 회귀 큐를 적용했습니다.",
+            prompt: `중첩 스크롤 뷰를 포함하는 3단계 스냅 바텀시트를 구현해줘.
+동적 경계 핸드오프를 적용하여 터치 시작 시 \`scrollTop <= 0\`일 때만 바텀시트 변위로 위임하고, 그 외에는 내부 뷰 스크롤을 유지해줘.
+초기 변위 8px 동안 직교 축 잠금을 적용하여 가로 서브 카테고리와 세로 시트 변위 간섭을 100% 분리해줘.
+포인터 릴리즈 시점에는 직전 120ms 윈도우의 속도를 계산하여 자연스러운 관성 스냅 애니메이션을 수행해줘.`
           },
           photo: {
             flaws: [
-              "두 손가락으로 사진을 회전할 때 중심축이 화면 밖으로 튀어버림.",
-              "`e.touches[0]` 하드코딩으로 인해 마우스/터치 혼합 시 이벤트 씹힘.",
-              "확대/축소 시 CSS transition 랙으로 손가락을 못 따라옴."
+              "2손가락 회전 시 변환 중심점(Center X/Y)이 요동쳐 축이 튕겨나감.",
+              "레거시 \`e.touches[0]\` 인덱싱으로 멀티포인터 이벤트 유실 발생.",
+              "CSS transition 지연으로 인해 물리 터치 좌표 대비 프레임 레이턴시 발생."
             ],
-            treatment: "W3C Pointer Events의 `pointerId` 맵으로 멀티터치를 완벽 격리하고, 변환 중심점을 보존하는 0ms CSS 변수 실시간 추종을 적용했습니다.",
-            prompt: `캔버스 위 이미지 핀치 줌 및 2손가락 회전 에디터를 구현해줘.
-W3C Pointer Events를 기반으로 활성 \`pointerId\` 맵을 유지하여 멀티터치를 격리하고, 제스처 도중 두 손가락의 중심점(Center X/Y)을 실시간 갱신하여 회전 시 축이 튕기지 않게 해줘.
-조작 중에는 CSS 변수(--scale, --rotate)로 0ms 랙 없이 추종하고 완료 시에만 스프링을 적용해줘.`
+            treatment: "W3C Pointer Events의 `pointerId` 맵으로 멀티터치를 격리하고, 변환 중심점을 보존하며 CSS 변수를 활용한 0ms 실시간 추종을 적용했습니다.",
+            prompt: `핀치 줌과 2손가락 회전을 지원하는 2D 캔버스 에디터를 구현해줘.
+W3C Pointer Events와 활성 \`pointerId\` Map을 사용하여 포인터를 독립 추적하고, 멀티터치 중심점(Center X/Y)을 실시간 보존하여 회전 축이 튀지 않도록 해줘.
+제스처 진행 중에는 CSS 변수(--scale, --rotate)로 0ms 직접 조작을 수행하고, 포인터 릴리즈 시점에만 스프링 완화를 적용해줘.`
+          }
+        }
+      },
+      ja: {
+        heroBadge: "⚡️ 0ms タッチ物理エンジン",
+        heroTitle: "インタラクティブベンチマーク & SWE プロンプト",
+        heroSubtitle: "ベースラインAIコードの欠陥と最適化されたタッチ物理実装を比較し、検証済みのSWEプロンプトをコピーできます。",
+        modeWithout: "❌ Without Skill (ベースライン欠陥)",
+        modeWith: "🟢 With Skill (最適化改善)",
+        tabChat: "💬 チャット (仮想キーボード & 長押し)",
+        tabSheet: "📱 ボトムシート (入れ子スクロール & スナップ)",
+        tabPhoto: "🤏 2Dキャンバス (ピンチズーム & 回転)",
+        diagTitle: "🚨 ベースラインAIコードの欠陥分析",
+        treatTitle: "🩺 適用された物理法則とアーキテクチャ最適化",
+        metric1: "ビューポート遅延",
+        metric2: "時間昇格ゲート",
+        metric3: "タッチスロップ許容値",
+        promptTitle: "💊 プロダクション SWE プロンプト仕様",
+        promptSub: "Claude Code、ChatGPT、Cursor、Gemini用プロンプト:",
+        copyBtn: "プロンプトをコピー",
+        toast: "✅ プロンプト仕様をクリップボードにコピーしました！",
+        scenarios: {
+          chat: {
+            flaws: [
+              "モバイル環境でEnterを押すと改行されずメッセージが強制送信される。",
+              "仮想キーボードが入力欄を覆い、ドロワーと競合してレイアウトが崩れる。",
+              "長押し待機中の視覚フィードバックがなく、操作の不確実性が生じる。"
+            ],
+            treatment: "`visualViewport`リサイズ同期とW3C Pointer Eventsパイプラインを統合し、0msキーボード追従と確定的な3段階長押しステートマシン（350ms圧縮 ➔ 触覚 ➔ メニュー）を実装しました。",
+            prompt: `モバイル向け1:1チャットインターフェースを実装してください。
+仮想キーボード対応として\`interactive-widget=resizes-content\`および\`visualViewport\`リサイズリスナーを連携し、高さを0msで同期してください。
+入力キーを分岐し、タッチ端末ではEnterを改行とし、デスクトップのみEnterで即時送信してください。
+長押しメニューは350msの時間ゲートと\`.press-holding\`変形を適用し、8px以上の移動で即時キャンセルしてください。`
+          },
+          bottomsheet: {
+            flaws: [
+              "入れ子リストのスクロール時にシート全体が意図せず閉じられる。",
+              "横方向のチップスワイプ時に斜めベクトルが干渉する。",
+              "指を離した瞬間に慣性速度（Momentum）が破棄され、アニメーションが停止する。"
+            ],
+            treatment: "8px直交軸ロック（Orthogonal Axis Lock）で干渉を排除し、`scrollTop <= 0`動的境界ハンドオフと120ms速度回帰キューを適用しました。",
+            prompt: `入れ子スクロールを含む3段階スナップボトムシートを実装してください。
+動的境界ハンドオフを適用し、タッチ開始時に\`scrollTop <= 0\`の場合のみシートドラッグに委譲し、それ以外は内部スクロールを維持してください。
+初期移動8pxの間、直交軸ロックを適用して横チップと縦シートの干渉を分離してください。
+リリース時は直前120msの速度を計算し、滑らかな慣性スナップを実行してください。`
+          },
+          photo: {
+            flaws: [
+              "2本指回転時に中心軸（Center X/Y）がブレて画像が飛ぶ。",
+              "古い\`e.touches[0]\`指定によりマルチポインタのイベントが欠落する。",
+              "CSS transitionの遅延により指の動きに追従しない。"
+            ],
+            treatment: "W3C Pointer Eventsの`pointerId`マップでマルチタッチを分離し、中心点を保持しながらCSS変数による0ms直接操作を適用しました。",
+            prompt: `ピンチズームと2本指回転をサポートする2Dキャンバスエディタを実装してください。
+W3C Pointer Eventsとアクティブな\`pointerId\` Mapを使用してポインタを個別に追跡し、中心点（Center X/Y）を維持して回転軸のブレを防いでください。
+操作中はCSS変数（--scale, --rotate）で0ms追従し、リリース時のみスプリングアニメーションを適用してください。`
+          }
+        }
+      },
+      zh: {
+        heroBadge: "⚡️ 0ms 触控物理引擎",
+        heroTitle: "交互基准测试与 SWE 提示词生成器",
+        heroSubtitle: "对比基线 AI 代码缺陷与优化触控物理实现，获取经过验证的生产级软件工程提示词。",
+        modeWithout: "❌ Without Skill (基线缺陷)",
+        modeWith: "🟢 With Skill (优化改进)",
+        tabChat: "💬 移动端聊天 (虚拟键盘与长按)",
+        tabSheet: "📱 抽屉组件 (嵌套滚动与吸附)",
+        tabPhoto: "🤏 画布编辑器 (双指缩放与旋转)",
+        diagTitle: "🚨 基线 AI 代码缺陷分析",
+        treatTitle: "🩺 应用物理定律与架构优化",
+        metric1: "视口调整延迟",
+        metric2: "时间判定门槛",
+        metric3: "触控死区裕度",
+        promptTitle: "💊 生产级 SWE 提示词规范",
+        promptSub: "适用于 Claude Code、ChatGPT、Cursor、Gemini 的提示词：",
+        copyBtn: "复制提示词",
+        toast: "✅ 提示词规范已复制到剪贴板！",
+        scenarios: {
+          chat: {
+            flaws: [
+              "移动端按下回车键直接发送消息而非换行。",
+              "虚拟键盘弹出时遮挡输入框并与表情抽屉冲突。",
+              "长按等待期间缺乏视觉反馈导致交互模糊。"
+            ],
+            treatment: "集成 `visualViewport` 动态尺寸监听器与 W3C Pointer Events 统一管道，实现 0ms 键盘偏移对齐与确定性三段式长按状态机（350ms 压缩 ➔ 触感 ➔ 菜单）。",
+            prompt: `实现生产级移动端 1:1 聊天界面。
+结合 \`interactive-widget=resizes-content\` 和 \`visualViewport\` 调整事件，实现容器高度与键盘偏移的 0ms 同步。
+区分按键逻辑：在触控设备上回车为换行，仅在桌面指针下回车直接发送消息。
+长按菜单绑定 350ms 时间门槛与 \`.press-holding\` 缩放反馈，手势移动超过 8px 时立即取消。`
+          },
+          bottomsheet: {
+            flaws: [
+              "嵌套列表滚动意外触发抽屉拖拽收起。",
+              "水平分类滑动引入对角线矢量干扰。",
+              "释放指针时惯性速度丢失导致动画骤停。"
+            ],
+            treatment: "执行 8px 正交轴锁定以消除交叉干扰，结合动态边界接管（`scrollTop <= 0`）与 120ms 速度回归队列。",
+            prompt: `实现包含嵌套滚动视图的三段吸附底部抽屉组件。
+应用动态边界接管：仅在指针按下时 \`scrollTop <= 0\` 才将手势委托给抽屉位移，否则保持内部列表滚动。
+在初始 8px 位移期间执行正交轴锁定，隔离水平分类与垂直抽屉手势。
+释放时基于最后 120ms 窗口计算释放速度，执行平滑的惯性吸附。`
+          },
+          photo: {
+            flaws: [
+              "双指旋转导致变换中心轴漂移跳跃。",
+              "硬编码遗留 \`e.touches[0]\` 导致多触点事件丢失。",
+              "CSS transition 延迟导致画面无法实时跟手。"
+            ],
+            treatment: "维护 W3C Pointer Events 的 `pointerId` 映射进行隔离追踪，动态保持中心点并通过 CSS 变量实现 0ms 直接操作。",
+            prompt: `构建支持双指缩放和旋转的 2D 画布编辑器。
+使用 W3C Pointer Events 和活动的 \`pointerId\` Map 进行独立指针追踪。在手势帧中动态保持质心（Center X/Y）以消除轴心漂移。
+在手势期间通过 CSS 变量（--scale, --rotate）实现 0ms 实时跟随，仅在释放时启用弹性缓动。`
+          }
+        }
+      },
+      es: {
+        heroBadge: "⚡️ Motor de Física Táctil de 0ms",
+        heroTitle: "Benchmarks Interactivos y Prompts de SWE",
+        heroSubtitle: "Compare defectos de IA base con implementaciones optimizadas de física táctil y copie especificaciones de ingeniería SWE verificadas.",
+        modeWithout: "❌ Without Skill (Defectos Base)",
+        modeWith: "🟢 With Skill (Optimizado)",
+        tabChat: "💬 Chat Móvil (Teclado y Pulsación Larga)",
+        tabSheet: "📱 Bottom Sheet (Scroll Anidado y Snap)",
+        tabPhoto: "🤏 Editor de Canvas (Pinch-Zoom y Rotación)",
+        diagTitle: "🚨 Análisis de Defectos de IA Base",
+        treatTitle: "🩺 Física Aplicada y Optimización de Arquitectura",
+        metric1: "Latencia de Viewport",
+        metric2: "Puerta Temporal",
+        metric3: "Tolerancia Touch Slop",
+        promptTitle: "💊 Especificación de Prompt SWE de Producción",
+        promptSub: "Prompt para Claude Code, ChatGPT, Cursor o Gemini:",
+        copyBtn: "Copiar Prompt",
+        toast: "✅ ¡Especificación de prompt copiada al portapapeles!",
+        scenarios: {
+          chat: {
+            flaws: [
+              "Pulsar Enter en móvil envía el mensaje en lugar de salto de línea.",
+              "El teclado virtual oculta el input y entra en conflicto con cajones abiertos.",
+              "La falta de retroalimentación visual durante la pulsación genera ambigüedad."
+            ],
+            treatment: "Integración de listeners de `visualViewport` con el pipeline unificado de W3C Pointer Events para sincronización de teclado a 0ms y máquina de estados de pulsación larga en 3 fases (350ms compresión ➔ háptico ➔ menú).",
+            prompt: `Implemente una interfaz de chat 1:1 móvil de producción.
+Integre \`interactive-widget=resizes-content\` y listeners de \`visualViewport\` para alinear la altura del contenedor con el teclado a 0ms.
+Diferencie la tecla Enter: salto de línea en móviles y envío inmediato solo en escritorio.
+Para pulsación larga, establezca una puerta de 350ms con animación \`.press-holding\`, cancelando si el movimiento supera 8px.`
+          },
+          bottomsheet: {
+            flaws: [
+              "El desplazamiento de la lista anidada colapsa el sheet accidentalmente.",
+              "El swipe horizontal de categorías introduce interferencia diagonal.",
+              "La velocidad cinética se descarta al soltar, frenando en seco."
+            ],
+            treatment: "Bloqueo de Eje Ortogonal de 8px para eliminar interferencias, combinado con traspaso de límite dinámico (`scrollTop <= 0`) y cola de regresión de 120ms.",
+            prompt: `Implemente un bottom sheet de 3 niveles con listas anidadas.
+Aplique traspaso de límite dinámico: delegue el arrastre al sheet estrictamente cuando \`scrollTop <= 0\` al iniciar; de lo contrario mantenga el scroll interno.
+Aplique bloqueo de eje ortogonal de 8px para aislar chips horizontales del movimiento vertical.
+Al soltar, calcule la velocidad de los últimos 120ms para ejecutar una animación de inercia suave.`
+          },
+          photo: {
+            flaws: [
+              "La rotación con dos dedos desvía el eje central de transformación.",
+              "El uso de \`e.touches[0]\` provoca pérdida de eventos multitáctiles.",
+              "La latencia de CSS transition impide que la imagen siga el dedo en tiempo real."
+            ],
+            treatment: "Mantenimiento de mapa de `pointerId` de W3C Pointer Events para rastreo aislado, conservando el centroide con variables CSS de 0ms.",
+            prompt: `Construya un editor 2D con soporte para pinch-zoom y rotación de 2 dedos.
+Utilice W3C Pointer Events con un mapa de \`pointerId\` activo. Mantenga dinámicamente el centroide (Center X/Y) para evitar desviaciones del eje.
+Aplique manipulación directa a 0ms con variables CSS (--scale, --rotate) y active la amortiguación solo al soltar.`
           }
         }
       }
     };
 
     // Auto-detect Language
-    let currentLang = navigator.language && navigator.language.startsWith('ko') ? 'ko' : 'en';
+    let currentLang = 'en';
+    const userLang = (navigator.language || '').toLowerCase();
+    if (userLang.startsWith('ko')) currentLang = 'ko';
+    else if (userLang.startsWith('ja')) currentLang = 'ja';
+    else if (userLang.startsWith('zh')) currentLang = 'zh';
+    else if (userLang.startsWith('es')) currentLang = 'es';
+
     let currentScenario = 'chat';
     let currentMode = 'with';
 
-    const btnLangEn = document.getElementById('btnLangEn');
-    const btnLangKo = document.getElementById('btnLangKo');
+    const langSelect = document.getElementById('langSelect');
     const heroBadge = document.getElementById('heroBadge');
     const heroTitle = document.getElementById('heroTitle');
     const heroSubtitle = document.getElementById('heroSubtitle');
@@ -664,7 +832,8 @@ W3C Pointer Events를 기반으로 활성 \`pointerId\` 맵을 유지하여 멀�
     const toast = document.getElementById('toast');
 
     function renderLanguage() {
-      const t = i18n[currentLang];
+      const t = i18n[currentLang] || i18n.en;
+      langSelect.value = currentLang;
       heroBadge.textContent = t.heroBadge;
       heroTitle.textContent = t.heroTitle;
       heroSubtitle.textContent = t.heroSubtitle;
@@ -682,14 +851,12 @@ W3C Pointer Events를 기반으로 활성 \`pointerId\` 맵을 유지하여 멀�
       promptSub.textContent = t.promptSub;
       copyBtnText.textContent = t.copyBtn;
 
-      btnLangEn.classList.toggle('active', currentLang === 'en');
-      btnLangKo.classList.toggle('active', currentLang === 'ko');
-
       renderScenario();
     }
 
     function renderScenario() {
-      const sc = i18n[currentLang].scenarios[currentScenario];
+      const t = i18n[currentLang] || i18n.en;
+      const sc = t.scenarios[currentScenario];
       diagFlaws.innerHTML = sc.flaws.map(f => `<li>${f}</li>`).join('');
       treatDesc.textContent = sc.treatment;
       promptText.textContent = sc.prompt;
@@ -699,8 +866,10 @@ W3C Pointer Events를 기반으로 활성 \`pointerId\` 맵을 유지하여 멀�
       previewFrame.src = currentMode === 'with' ? urlWith : urlWithout;
     }
 
-    btnLangEn.addEventListener('click', () => { currentLang = 'en'; renderLanguage(); });
-    btnLangKo.addEventListener('click', () => { currentLang = 'ko'; renderLanguage(); });
+    langSelect.addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      renderLanguage();
+    });
 
     document.querySelectorAll('.scenario-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -726,8 +895,9 @@ W3C Pointer Events를 기반으로 활성 \`pointerId\` 맵을 유지하여 멀�
     });
 
     btnCopyPrompt.addEventListener('click', () => {
+      const t = i18n[currentLang] || i18n.en;
       navigator.clipboard.writeText(promptText.textContent.trim()).then(() => {
-        toast.textContent = i18n[currentLang].toast;
+        toast.textContent = t.toast;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2200);
       });

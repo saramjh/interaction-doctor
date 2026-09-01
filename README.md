@@ -1,6 +1,6 @@
 # interaction-doctor 🩺
 
-[ English ] | [ [한국어](README.ko.md) ]
+[ English ] | [ [한국어](README.ko.md) ] | [ [Showroom (i18n: EN / KO / JA / ZH / ES)](showcase/index.html) ]
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tested on](https://img.shields.io/badge/Real_Devices-16_Hardware_Tested-orange.svg)](#-ground-truth-16-real-devices-benchmarked)
@@ -10,7 +10,7 @@
 > **"Other skills help AI *build* UI. This one gives AI the *physics* to make it feel native."**  
 > While other skills assist AI in drafting UI layouts, `interaction-doctor` injects **immutable touch physics** so that AI-generated web interfaces feel as responsive and buttery-smooth as native mobile apps with **zero jitter**.
 
-🎮 **[👉 Try Interactive Showroom & Prompt Pharmacy (GitHub Pages)](showcase/index.html)** — *Experience the Before vs After touch difference in your browser.*
+🎮 **[👉 Try Interactive Showroom & SWE Prompt Generator (GitHub Pages)](showcase/index.html)** — *Compare baseline AI defects with optimized physics implementations and copy verified prompts.*
 
 ---
 
