@@ -2573,6 +2573,125 @@
     // ========================================================
     // 5-LANGUAGE LOCALIZED ANIMATION HUD SUBTITLES & SCRIPTS
     // ========================================================
+    
+    function getAnimText(scenarioKey, stage, mode = 'without') {
+      const lang = animI18n[currentLang] ? currentLang : 'en';
+      const dict = animI18n[lang] || animI18n.en;
+      const scKey = (scenarioKey || '').toLowerCase();
+      const scObj = dict[scKey] || dict.generic || { step1: '', without: '', with: '' };
+
+      if (stage === 'step1') return scObj.step1 || '';
+      if (stage === 'without') return scObj.without || '';
+      if (stage === 'with') return scObj.with || '';
+      if (stage === 'result') return mode === 'with' ? scObj.with : scObj.without;
+      return scObj[stage] || '';
+    }
+
+    const SVG_PLAY_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    const SVG_STOP_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
+
+    function updateAnimPlayButtonState() {
+      if (!playIcon || !playText || !animStatusLabel) return;
+      const lang = animI18n[currentLang] ? currentLang : 'en';
+      const dict = animI18n[lang] || animI18n.en;
+      if (isAnimPlaying) {
+        playIcon.innerHTML = SVG_STOP_ICON;
+        playText.textContent = dict.stopBtn || 'Stop Demo';
+        animStatusLabel.textContent = currentMode === 'without' ? dict.replayingWithout : dict.replayingWith;
+      } else {
+        playIcon.innerHTML = SVG_PLAY_ICON;
+        playText.textContent = currentMode === 'without' ? dict.playBtnWithout : dict.playBtnWith;
+        animStatusLabel.textContent = dict.ready || 'Ready';
+      }
+    }
+
+    // ========================================================
+    // TACTILE INTERACTION FX CONTROLLER (FRICTION & SATISFACTION)
+    // ========================================================
+
+    function showIntentPill(x, y, text) {
+      let pill = sandboxStage.querySelector('.fx-intent-pill');
+      if (!pill) {
+        pill = document.createElement('div');
+        pill.className = 'fx-intent-pill';
+        sandboxStage.appendChild(pill);
+      }
+      pill.style.display = 'block';
+      pill.style.left = `${Math.min((sandboxStage.clientWidth || 300) - 120, Math.max(10, x + 24))}px`;
+      pill.style.top = `${Math.max(10, y - 24)}px`;
+      pill.textContent = text;
+    }
+
+    function hideIntentPill() {
+      const pill = sandboxStage.querySelector('.fx-intent-pill');
+      if (pill) pill.style.display = 'none';
+    }
+
+    function triggerCollisionFriction(x, y, targetEl = null) {
+      if (targetEl && targetEl.classList) {
+        targetEl.classList.remove('fx-glitch-shake');
+        void targetEl.offsetWidth;
+        targetEl.classList.add('fx-glitch-shake');
+      }
+
+      let marker = sandboxStage.querySelector('.fx-collision-marker');
+      if (!marker) {
+        marker = document.createElement('div');
+        marker.className = 'fx-collision-marker';
+        marker.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        sandboxStage.appendChild(marker);
+      }
+      marker.style.display = 'flex';
+      marker.style.left = `${x - 24}px`;
+      marker.style.top = `${y - 24}px`;
+
+      sandboxStage.style.boxShadow = 'inset 0 0 30px rgba(239, 68, 68, 0.45)';
+      setTimeout(() => {
+        sandboxStage.style.boxShadow = 'none';
+      }, 500);
+    }
+
+    function triggerSatisfactionGlow(x, y, targetEl = null) {
+      let glow = sandboxStage.querySelector('.fx-satisfaction-glow');
+      if (!glow) {
+        glow = document.createElement('div');
+        glow.className = 'fx-satisfaction-glow';
+        glow.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        sandboxStage.appendChild(glow);
+      }
+      glow.style.display = 'flex';
+      glow.style.left = `${x - 26}px`;
+      glow.style.top = `${y - 26}px`;
+
+      sandboxStage.style.boxShadow = 'inset 0 0 30px rgba(16, 185, 129, 0.35)';
+      setTimeout(() => {
+        sandboxStage.style.boxShadow = 'none';
+      }, 500);
+    }
+
+    function clearAllTactileFX() {
+      hideIntentPill();
+      const marker = sandboxStage.querySelector('.fx-collision-marker');
+      if (marker) marker.style.display = 'none';
+      const glow = sandboxStage.querySelector('.fx-satisfaction-glow');
+      if (glow) glow.style.display = 'none';
+      sandboxStage.style.boxShadow = 'none';
+    }
+
+    function stopAnimatedDemo() {
+      clearAllTactileFX();
+      if (currentAnimTimeline) {
+        currentAnimTimeline.forEach(t => clearTimeout(t));
+        currentAnimTimeline = null;
+      }
+      isAnimPlaying = false;
+      if (btnPlayDemo) btnPlayDemo.classList.remove('playing');
+      updateAnimPlayButtonState();
+      if (animProgressFill) animProgressFill.style.width = '0%';
+      hideGhostFinger();
+      hideHudSubtitle();
+    }
+
     const animI18n = {
   en: {
     playBtnWithout: 'Play Defect Demo', playBtnWith: 'Play Physics Demo', stopBtn: 'Stop Demo', ready: 'Ready',
