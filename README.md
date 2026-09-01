@@ -4,14 +4,14 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tested on](https://img.shields.io/badge/Real_Devices-16_Hardware_Tested-orange.svg)](#-ground-truth-16-real-devices-benchmarked)
-[![Cases Indexed](https://img.shields.io/badge/Production_Cases-24_Indexed-blue.svg)](#-proven-by-blind-evaluations-3-wins--0-losses)
-[![Live Showroom](https://img.shields.io/badge/Live_Showroom-24_Diagnostic_Cases-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white)](https://saramjh.github.io/interaction-doctor/)
+[![Cases Indexed](https://img.shields.io/badge/Production_Cases-36_Indexed-blue.svg)](#-proven-by-blind-evaluations-3-wins--0-losses)
+[![Live Showroom](https://img.shields.io/badge/Live_Showroom-36_Diagnostic_Cases-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white)](https://saramjh.github.io/interaction-doctor/)
 
 > **"Other skills help AI *build* UI. This one gives AI the *physics* to make it feel native."**  
 > While other skills assist AI in drafting UI layouts, `interaction-doctor` injects **immutable touch physics** so that AI-generated web interfaces feel as responsive and buttery-smooth as native mobile apps with **zero jitter**.
 
 🎮 **[👉 Open Live Interactive Diagnostic Hub & SWE Prescription Lab (GitHub Pages)](https://saramjh.github.io/interaction-doctor/)**  
-*Search 24 production interaction defect cases across 3 dimensions (UI Element, Physics Concept, Defect Class), test live physics demos, and copy verified SWE prompts.*
+*Search 36 production interaction defect cases across 3 dimensions & OS/Device environment badges, test live physics demos, and copy verified SWE prompts.*
 
 ---
 
