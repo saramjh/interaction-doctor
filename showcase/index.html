@@ -1649,205 +1649,27 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
     // ========================================================
     // RIGOROUS INTERACTIVE SANDBOX DISPATCHER (P01~P36 FULL INTERACTION)
     // ========================================================
+    
     function renderSandbox(scenarioKey, mode) {
       sandboxStage.innerHTML = '';
 
-      if (scenarioKey === 'p03') {
-        // P03: MATHEMATICALLY EXACT 2D CANVAS CENTROID INVARIANT & TARGET PIN SIMULATOR
-        sandboxStage.innerHTML = `
-          <div style="padding: 8px 12px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
-            <span>🎨 2D Canvas Centroid Zoom (P03)</span>
-            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Centroid Invariant 0px Drift':'(0,0) Origin Drift Disaster'}</span>
-          </div>
-
-          <!-- Quick Action Buttons -->
-          <div style="padding:6px 10px; background:#090e1a; border-bottom:1px solid #1e293b; display:flex; gap:6px; align-items:center; justify-content:space-between;">
-            <div style="display:flex; gap:4px;">
-              <button id="btnZoomIn" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔍 Zoom In (+)</button>
-              <button id="btnZoomOut" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔎 Zoom Out (-)</button>
-            </div>
-            <div style="font-size:10px; color:#94a3b8; font-family:'JetBrains Mono';" id="zoomHud">Scale: 100%</div>
-            <button id="btnResetCanvas" style="padding:4px 8px; background:#1e293b; color:#94a3b8; border:1px solid #334155; border-radius:5px; font-size:10px; cursor:pointer;">↺ Reset</button>
-          </div>
-
-          <div id="canvasViewport" class="scroll-contained" style="flex:1; position:relative; overflow:hidden; background:#020617; touch-action:none; cursor:crosshair;">
-            
-            <!-- Infinite Pan/Zoom World (transform-origin: 0 0) -->
-            <div id="canvasWorld" style="position:absolute; width:1200px; height:1200px; left:0; top:0; transform-origin:0 0; will-change:transform; background-image:radial-gradient(#334155 1.5px, transparent 1.5px); background-size:22px 22px;">
-              
-              <!-- Artboard Map Canvas -->
-              <div id="canvasArtboard" style="position:absolute; left:440px; top:440px; width:320px; height:320px; background:linear-gradient(135deg, #1e293b, #0f172a); border:2px solid ${mode==='with'?'#10b981':'#3b82f6'}; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.8); display:flex; flex-direction:column; padding:16px; gap:12px;">
-                
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:8px;">
-                  <span style="font-weight:800; font-size:12px; color:#60a5fa;">📍 Gangnam Tech Valley Map</span>
-                  <span style="font-size:10px; background:#0f172a; padding:2px 6px; border-radius:4px; color:#94a3b8; border:1px solid #334155;">Figma Artboard</span>
-                </div>
-
-                <!-- Visual Landmark Target Pin -->
-                <div style="flex:1; background:#090e1a; border-radius:12px; border:1px dashed #334155; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
-                  
-                  <div id="targetPin" style="display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none;">
-                    <div style="font-size:36px; filter:drop-shadow(0 0 12px #ef4444);">🎯</div>
-                    <div style="background:#ef4444; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; letter-spacing:0.5px;">TARGET PIN</div>
-                  </div>
-
-                  <div style="font-size:10px; color:#cbd5e1; text-align:center; max-width:200px; line-height:1.4;">
-                    👉 Place mouse cursor <strong>directly on the 🎯 Target Pin</strong> and roll mouse wheel!
-                  </div>
-                </div>
-
-                <div style="font-size:9px; color:#64748b; text-align:center;">Drag background to pan canvas freely</div>
-              </div>
-            </div>
-
-            <!-- Centroid Reticle / Crosshair Indicator -->
-            <div id="centroidCrosshair" style="display:none; position:absolute; width:26px; height:26px; border:2px dashed #10b981; border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%, -50%); box-shadow:0 0 14px #10b981;"></div>
-
-            <!-- Flyaway Warning Toast -->
-            <div id="canvasFlyawayAlert" style="display:none; position:absolute; bottom:14px; left:14px; right:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.7); z-index:30; text-align:center; line-height:1.4;">
-              💥 <strong>Disaster:</strong> Target 🎯 flew away! Anchored to (0,0) origin without Centroid Invariant compensation!
-            </div>
-          </div>
-        `;
-
-        const vp = sandboxStage.querySelector('#canvasViewport');
-        const world = sandboxStage.querySelector('#canvasWorld');
-        const hud = sandboxStage.querySelector('#zoomHud');
-        const crosshair = sandboxStage.querySelector('#centroidCrosshair');
-        const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
-        const btnIn = sandboxStage.querySelector('#btnZoomIn');
-        const btnOut = sandboxStage.querySelector('#btnZoomOut');
-        const btnReset = sandboxStage.querySelector('#btnResetCanvas');
-
-        // Viewport dimensions
-        const vpRect = vp.getBoundingClientRect();
-        const initWidth = vpRect.width || 380;
-        const initHeight = vpRect.height || 480;
-
-        // Start with artboard centered in viewport
-        let scale = 1.0;
-        let panX = (initWidth - 1200) / 2;
-        let panY = (initHeight - 1200) / 2;
-        const initialPanX = panX;
-        const initialPanY = panY;
-
-        let isPanning = false, pStartX = 0, pStartY = 0;
-
-        const updateTransform = () => {
-          world.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
-          hud.textContent = `Scale: ${Math.round(scale * 100)}%`;
-        };
-        updateTransform();
-
-        // Pan handling
-        vp.addEventListener('pointerdown', (e) => {
-          isPanning = true;
-          pStartX = e.clientX - panX;
-          pStartY = e.clientY - panY;
-          vp.setPointerCapture(e.pointerId);
-        });
-
-        vp.addEventListener('pointermove', (e) => {
-          if (!isPanning) return;
-          panX = e.clientX - pStartX;
-          panY = e.clientY - pStartY;
-          updateTransform();
-        });
-
-        vp.addEventListener('pointerup', (e) => {
-          if (!isPanning) return;
-          isPanning = false;
-          vp.releasePointerCapture(e.pointerId);
-        });
-
-        // MATHEMATICALLY RIGOROUS CENTROID INVARIANT ZOOM
-        const executeZoom = (factor, cursorScreenX, cursorScreenY) => {
-          if (mode === 'without') {
-            // ❌ Baseline Flaw: Naive scale multiplication with NO pan offset compensation!
-            // Elements are scaled relative to (0, 0) of the world container,
-            // throwing the target point wildly away from cursor!
-            scale = Math.max(0.4, Math.min(3.5, scale * factor));
-            updateTransform();
-
-            // Detect if target pin drifted away from initial sight
-            if (scale > 1.4 || scale < 0.7) {
-              alertBox.style.display = 'block';
-              setTimeout(() => { alertBox.style.display = 'none'; }, 2800);
-            }
-          } else {
-            // 🟢 Optimized: Strict Centroid Invariant (Figma & Google Maps engine)
-            // 1. Calculate the exact world coordinate under the cursor right now:
-            const worldX = (cursorScreenX - panX) / scale;
-            const worldY = (cursorScreenY - panY) / scale;
-
-            // 2. Compute new scale factor
-            const newScale = Math.max(0.4, Math.min(3.5, scale * factor));
-
-            // 3. Invariant Contract: The world coordinate under cursor MUST stay at the exact same screen coordinate!
-            // cursorScreenX = panX_new + worldX * newScale  =>  panX_new = cursorScreenX - worldX * newScale
-            panX = cursorScreenX - worldX * newScale;
-            panY = cursorScreenY - worldY * newScale;
-            scale = newScale;
-
-            updateTransform();
-
-            // Display Green Target Reticle precisely at cursor
-            crosshair.style.display = 'block';
-            crosshair.style.left = `${cursorScreenX}px`;
-            crosshair.style.top = `${cursorScreenY}px`;
-            setTimeout(() => { crosshair.style.display = 'none'; }, 600);
-          }
-        };
-
-        vp.addEventListener('wheel', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const r = vp.getBoundingClientRect();
-          const cx = e.clientX - r.left;
-          const cy = e.clientY - r.top;
-          const factor = e.deltaY < 0 ? 1.15 : 0.85;
-          executeZoom(factor, cx, cy);
-        }, { passive: false });
-
-        btnIn.addEventListener('click', () => {
-          const r = vp.getBoundingClientRect();
-          executeZoom(1.25, r.width / 2, r.height / 2);
-        });
-
-        btnOut.addEventListener('click', () => {
-          const r = vp.getBoundingClientRect();
-          executeZoom(0.8, r.width / 2, r.height / 2);
-        });
-
-        btnReset.addEventListener('click', () => {
-          scale = 1.0;
-          panX = initialPanX;
-          panY = initialPanY;
-          alertBox.style.display = 'none';
-          updateTransform();
-        });
-
-      } else if (scenarioKey === 'p01') {
-        // MOBILE VIRTUAL KEYBOARD & ENTER CRASH
+      // --- P01: MOBILE MESSENGER & VIRTUAL KEYBOARD ---
+      if (scenarioKey === 'p01') {
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
-            <span>💬 Mobile Messenger</span>
+            <span>💬 Mobile Messenger (P01)</span>
             <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'VisualViewport Active':'100vh Broken Viewport'}</span>
           </div>
-
           <div id="chatFeed" class="scroll-contained" style="flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; position:relative;">
             <div style="align-self:flex-start; background:#1e293b; padding:8px 12px; border-radius:12px; font-size:12px; color:#cbd5e1;">Hey! Tap the input bar below to summon the virtual keyboard! 👇</div>
-            
             <div id="prematureAlert" style="display:none; padding:8px; background:#ef4444; color:#fff; border-radius:8px; font-size:11px; font-weight:700; text-align:center;">
               💥 Disaster: Incomplete message accidentally sent when typing Enter for linebreak!
             </div>
           </div>
-
           <div id="chatInputBar" style="padding:8px 10px; background:#1e293b; border-top:1px solid #334155; display:flex; gap:6px; z-index:30; position:relative; transition:bottom 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
             <textarea id="mobileChatInput" rows="1" placeholder="Tap to type on mobile keyboard..." style="flex:1; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:6px 10px; color:#fff; font-size:11px; resize:none; outline:none; font-family:inherit;"></textarea>
             <button id="btnMobileSend" style="padding:0 12px; background:#3b82f6; border:none; border-radius:8px; color:#fff; font-size:11px; font-weight:700; cursor:pointer;">Send</button>
           </div>
-
           <div id="simKeyboard" class="sim-keyboard">
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0 4px; font-size:10px; color:#94a3b8;">
               <span>iOS Virtual Keyboard (Hardware)</span>
@@ -1859,7 +1681,6 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
             <div class="kb-row"><div class="kb-key">123</div><div id="kbSpace" class="kb-key" style="flex:4;">space</div><div class="kb-key action" style="flex:1.5;">search</div></div>
           </div>
         `;
-
         const input = sandboxStage.querySelector('#mobileChatInput');
         const kb = sandboxStage.querySelector('#simKeyboard');
         const bar = sandboxStage.querySelector('#chatInputBar');
@@ -1868,136 +1689,35 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
         const kbEnter = sandboxStage.querySelector('#kbEnter');
         const alertBox = sandboxStage.querySelector('#prematureAlert');
         const btnSend = sandboxStage.querySelector('#btnMobileSend');
-
-        const openKb = () => {
-          kb.classList.add('open');
-          bar.style.bottom = mode === 'with' ? '220px' : '0px';
-        };
-
-        const closeKb = () => {
-          kb.classList.remove('open');
-          bar.style.bottom = '0px';
-        };
-
+        const openKb = () => { kb.classList.add('open'); bar.style.bottom = mode === 'with' ? '220px' : '0px'; };
+        const closeKb = () => { kb.classList.remove('open'); bar.style.bottom = '0px'; };
         input.addEventListener('focus', openKb);
         input.addEventListener('click', openKb);
         btnCloseKb.addEventListener('click', closeKb);
-
         const postMsg = (txt) => {
           if (!txt.trim()) return;
           const bubble = document.createElement('div');
-          bubble.style.alignSelf = 'flex-end';
-          bubble.style.background = '#3b82f6';
-          bubble.style.padding = '8px 12px';
-          bubble.style.borderRadius = '12px';
-          bubble.style.fontSize = '12px';
-          bubble.style.whiteSpace = 'pre-wrap';
+          bubble.style.cssText = 'align-self:flex-end; background:#3b82f6; padding:8px 12px; border-radius:12px; font-size:12px; white-space:pre-wrap;';
           bubble.textContent = txt;
           feed.appendChild(bubble);
           feed.scrollTop = feed.scrollHeight;
           input.value = '';
         };
-
         btnSend.addEventListener('click', () => postMsg(input.value));
         kbEnter.addEventListener('click', () => {
           if (mode === 'without') {
             alertBox.style.display = 'block';
             postMsg(input.value || 'Partial unfinishe...');
             setTimeout(() => { alertBox.style.display = 'none'; }, 2500);
-          } else {
-            input.value += '\n';
-          }
+          } else { input.value += String.fromCharCode(10); }
         });
 
-      } else if (scenarioKey === 'p07') {
-        // FAB DRAG VS CLICK DISASTER
-        sandboxStage.innerHTML = `
-          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>🔘 Floating Action Button (FAB)</span>
-            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'8px Slop Active':'No Slop Guard'}</span>
-          </div>
-          <div class="scroll-contained" style="flex:1; padding: 16px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; position:relative;">
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 <strong>Document Note #1</strong><br>Meeting with Product Design team at 2PM</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 <strong>Document Note #2</strong><br>Touch physics contract audit and 8px slop verification</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 <strong>Document Note #3</strong><br>Review feedback on mobile bottomsheet nested scroll</div>
-            
-            <div id="fabActionModal" style="display:none; position:absolute; inset:10px; background:#0f172a; border:2px solid #ef4444; border-radius:14px; padding:16px; flex-direction:column; gap:10px; z-index:20; box-shadow:0 10px 30px rgba(0,0,0,0.8);">
-              <div style="font-weight:800; font-size:13px; color:#f87171; display:flex; justify-content:space-between; align-items:center;">
-                <span>🚨 [New Note Editor Dialog]</span>
-                <button id="btnCloseFabModal" style="background:#334155; border:none; color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Close</button>
-              </div>
-              <p style="font-size:11px; color:#cbd5e1; line-height:1.4;">
-                <strong style="color:#ef4444;">💥 Disaster:</strong> You just wanted to move the FAB button out of the way, but because there was no 8px slop guard, the browser falsely fired <code>onClick</code> upon drag release and opened this intrusive modal!
-              </p>
-              <textarea placeholder="Write note..." style="flex:1; background:#090e1a; border:1px solid #334155; border-radius:6px; color:#fff; padding:8px; font-size:11px; resize:none;"></textarea>
-            </div>
-
-            <div id="fabSuccessToast" style="display:none; padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; background:rgba(16, 185, 129, 0.2); border:1px solid #10b981; color:#34d399;">
-              ✨ 8px Slop Guard: Dragged cleanly without triggering the annoying popup modal!
-            </div>
-          </div>
-
-          <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.5); cursor:grab; touch-action:none; z-index:10; will-change:transform;">
-            +
-          </div>
-        `;
-
-        const fab = sandboxStage.querySelector('#fabBtn');
-        const modal = sandboxStage.querySelector('#fabActionModal');
-        const toastEl = sandboxStage.querySelector('#fabSuccessToast');
-        const btnClose = sandboxStage.querySelector('#btnCloseFabModal');
-
-        let startX = 0, startY = 0, curX = 0, curY = 0, isDragging = false, moved = false;
-        btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
-
-        fab.addEventListener('pointerdown', (e) => {
-          startX = e.clientX; startY = e.clientY;
-          isDragging = true; moved = false;
-          fab.setPointerCapture(e.pointerId);
-          modal.style.display = 'none'; toastEl.style.display = 'none';
-        });
-
-        fab.addEventListener('pointermove', (e) => {
-          if (!isDragging) return;
-          const dx = e.clientX - startX, dy = e.clientY - startY;
-          if (mode === 'with') {
-            if (Math.hypot(dx, dy) > 8) {
-              moved = true;
-              fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`;
-            }
-          } else {
-            moved = true;
-            fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`;
-          }
-        });
-
-        fab.addEventListener('pointerup', (e) => {
-          if (!isDragging) return;
-          isDragging = false;
-          fab.releasePointerCapture(e.pointerId);
-          const dx = e.clientX - startX, dy = e.clientY - startY;
-          if (mode === 'without') {
-            curX += dx; curY += dy;
-            modal.style.display = 'flex';
-          } else {
-            if (moved) {
-              curX += dx; curY += dy;
-              toastEl.style.display = 'block';
-            } else {
-              modal.style.display = 'flex';
-              modal.querySelector('strong').style.color = '#34d399';
-              modal.querySelector('strong').textContent = '✅ Intentional Tap:';
-              modal.querySelector('p').innerHTML = 'You deliberately tapped the FAB within 8px slop, so the Note Editor opened intentionally!';
-            }
-          }
-        });
-
+      // --- P02: MOBILITY BOTTOM SHEET NESTED SCROLL ---
       } else if (scenarioKey === 'p02') {
-        // BOTTOM SHEET NESTED SCROLL
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>🗺️ Mobility Bottom Sheet</span>
-            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Bound Hand-off OK':'Scroll Jitter Bug'}</span>
+            <span>🗺️ Mobility Bottom Sheet (P02)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Bound Hand-off OK':'Scroll Contention Crash'}</span>
           </div>
           <div style="flex:1; background:radial-gradient(#1e293b 1px, transparent 1px); background-size:16px 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b; font-size:12px; position:relative; overflow:hidden;">
             <span>Map Viewport (San Francisco)</span>
@@ -2021,439 +1741,1193 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
             </div>
           </div>
         `;
-
         const sheet = sandboxStage.querySelector('#sheetBox');
         const list = sandboxStage.querySelector('#sheetList');
         const alertBox = sandboxStage.querySelector('#sheetCollapsedAlert');
-
         list.addEventListener('scroll', () => {
           if (mode === 'without') {
             sheet.style.transform = 'translateY(180px)';
             alertBox.style.display = 'block';
-            setTimeout(() => {
-              sheet.style.transform = 'none';
-              alertBox.style.display = 'none';
-            }, 2500);
+            setTimeout(() => { sheet.style.transform = 'none'; alertBox.style.display = 'none'; }, 2500);
           }
         });
 
+      // --- P03: 2D CANVAS CENTROID INVARIANT & TARGET PIN ---
+      } else if (scenarioKey === 'p03') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 8px 12px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+            <span>🎨 2D Canvas Centroid Zoom (P03)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Centroid Invariant 0px Drift':'(0,0) Origin Drift Disaster'}</span>
+          </div>
+          <div style="padding:6px 10px; background:#090e1a; border-bottom:1px solid #1e293b; display:flex; gap:6px; align-items:center; justify-content:space-between;">
+            <div style="display:flex; gap:4px;">
+              <button id="btnZoomIn" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔍 Zoom In (+)</button>
+              <button id="btnZoomOut" style="padding:4px 8px; background:#334155; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">🔎 Zoom Out (-)</button>
+            </div>
+            <div style="font-size:10px; color:#94a3b8; font-family:'JetBrains Mono';" id="zoomHud">Scale: 100%</div>
+            <button id="btnResetCanvas" style="padding:4px 8px; background:#1e293b; color:#94a3b8; border:1px solid #334155; border-radius:5px; font-size:10px; cursor:pointer;">↺ Reset</button>
+          </div>
+          <div id="canvasViewport" class="scroll-contained" style="flex:1; position:relative; overflow:hidden; background:#020617; touch-action:none; cursor:crosshair;">
+            <div id="canvasWorld" style="position:absolute; width:1200px; height:1200px; left:0; top:0; transform-origin:0 0; will-change:transform; background-image:radial-gradient(#334155 1.5px, transparent 1.5px); background-size:22px 22px;">
+              <div id="canvasArtboard" style="position:absolute; left:440px; top:440px; width:320px; height:320px; background:linear-gradient(135deg, #1e293b, #0f172a); border:2px solid ${mode==='with'?'#10b981':'#3b82f6'}; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.8); display:flex; flex-direction:column; padding:16px; gap:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:8px;">
+                  <span style="font-weight:800; font-size:12px; color:#60a5fa;">📍 Gangnam Tech Valley Map</span>
+                  <span style="font-size:10px; background:#0f172a; padding:2px 6px; border-radius:4px; color:#94a3b8; border:1px solid #334155;">Figma Artboard</span>
+                </div>
+                <div style="flex:1; background:#090e1a; border-radius:12px; border:1px dashed #334155; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                  <div id="targetPin" style="display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none;">
+                    <div style="font-size:36px; filter:drop-shadow(0 0 12px #ef4444);">🎯</div>
+                    <div style="background:#ef4444; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; letter-spacing:0.5px;">TARGET PIN</div>
+                  </div>
+                  <div style="font-size:10px; color:#cbd5e1; text-align:center; max-width:200px; line-height:1.4;">
+                    👉 Place mouse cursor <strong>directly on the 🎯 Target Pin</strong> and roll mouse wheel!
+                  </div>
+                </div>
+                <div style="font-size:9px; color:#64748b; text-align:center;">Drag background to pan canvas freely</div>
+              </div>
+            </div>
+            <div id="centroidCrosshair" style="display:none; position:absolute; width:26px; height:26px; border:2px dashed #10b981; border-radius:50%; pointer-events:none; z-index:20; transform:translate(-50%, -50%); box-shadow:0 0 14px #10b981;"></div>
+            <div id="canvasFlyawayAlert" style="display:none; position:absolute; bottom:14px; left:14px; right:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.7); z-index:30; text-align:center; line-height:1.4;">
+              💥 <strong>Disaster:</strong> Target 🎯 flew away! Anchored to (0,0) origin without Centroid Invariant compensation!
+            </div>
+          </div>
+        `;
+        const vp = sandboxStage.querySelector('#canvasViewport');
+        const world = sandboxStage.querySelector('#canvasWorld');
+        const hud = sandboxStage.querySelector('#zoomHud');
+        const crosshair = sandboxStage.querySelector('#centroidCrosshair');
+        const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
+        const btnIn = sandboxStage.querySelector('#btnZoomIn');
+        const btnOut = sandboxStage.querySelector('#btnZoomOut');
+        const btnReset = sandboxStage.querySelector('#btnResetCanvas');
+        const vpRect = vp.getBoundingClientRect();
+        const initWidth = vpRect.width || 380, initHeight = vpRect.height || 480;
+        let scale = 1.0, panX = (initWidth - 1200) / 2, panY = (initHeight - 1200) / 2;
+        const initialPanX = panX, initialPanY = panY;
+        let isPanning = false, pStartX = 0, pStartY = 0;
+        const updateTransform = () => {
+          world.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+          hud.textContent = `Scale: ${Math.round(scale * 100)}%`;
+        };
+        updateTransform();
+        vp.addEventListener('pointerdown', (e) => { isPanning = true; pStartX = e.clientX - panX; pStartY = e.clientY - panY; vp.setPointerCapture(e.pointerId); });
+        vp.addEventListener('pointermove', (e) => { if (!isPanning) return; panX = e.clientX - pStartX; panY = e.clientY - pStartY; updateTransform(); });
+        vp.addEventListener('pointerup', (e) => { if (!isPanning) return; isPanning = false; vp.releasePointerCapture(e.pointerId); });
+        const executeZoom = (factor, cursorScreenX, cursorScreenY) => {
+          if (mode === 'without') {
+            scale = Math.max(0.4, Math.min(3.5, scale * factor));
+            updateTransform();
+            if (scale > 1.4 || scale < 0.7) { alertBox.style.display = 'block'; setTimeout(() => { alertBox.style.display = 'none'; }, 2800); }
+          } else {
+            const worldX = (cursorScreenX - panX) / scale, worldY = (cursorScreenY - panY) / scale;
+            const newScale = Math.max(0.4, Math.min(3.5, scale * factor));
+            panX = cursorScreenX - worldX * newScale; panY = cursorScreenY - worldY * newScale;
+            scale = newScale;
+            updateTransform();
+            crosshair.style.display = 'block'; crosshair.style.left = `${cursorScreenX}px`; crosshair.style.top = `${cursorScreenY}px`;
+            setTimeout(() => { crosshair.style.display = 'none'; }, 600);
+          }
+        };
+        vp.addEventListener('wheel', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          const r = vp.getBoundingClientRect();
+          executeZoom(e.deltaY < 0 ? 1.15 : 0.85, e.clientX - r.left, e.clientY - r.top);
+        }, { passive: false });
+        btnIn.addEventListener('click', () => { const r = vp.getBoundingClientRect(); executeZoom(1.25, r.width / 2, r.height / 2); });
+        btnOut.addEventListener('click', () => { const r = vp.getBoundingClientRect(); executeZoom(0.8, r.width / 2, r.height / 2); });
+        btnReset.addEventListener('click', () => { scale = 1.0; panX = initialPanX; panY = initialPanY; alertBox.style.display = 'none'; updateTransform(); });
+
+      // --- P04: KANBAN BOARD DND VS SCROLL (350MS TEMPORAL PROMOTION) ---
       } else if (scenarioKey === 'p04') {
-        // P04: KANBAN BOARD REORDER VS SCROLL
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>📋 Kanban Board (DnD vs Scroll)</span>
+            <span>📋 Kanban Board (P04)</span>
             <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'350ms Temporal Gate':'Immediate Drag Crash'}</span>
           </div>
           <div class="scroll-contained" style="flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; position:relative;">
             <div style="font-size:11px; color:#94a3b8;">Try scrolling the list or dragging a card:</div>
-            
-            <div class="kanban-card" data-id="1" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+            <div class="kanban-card" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:all 0.15s;">
               <div style="font-weight:700; font-size:12px; color:#fff;">🚀 Task 1: Refactor Auth API</div>
               <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to Alex · High Priority</div>
             </div>
-
-            <div class="kanban-card" data-id="2" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+            <div class="kanban-card" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:all 0.15s;">
               <div style="font-weight:700; font-size:12px; color:#fff;">🎨 Task 2: Design Token Extraction</div>
               <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to Sarah · Design System</div>
             </div>
-
-            <div class="kanban-card" data-id="3" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
+            <div class="kanban-card" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:all 0.15s;">
               <div style="font-weight:700; font-size:12px; color:#fff;">📊 Task 3: Performance Telemetry</div>
               <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to David · SWE Team</div>
             </div>
-
-            <div class="kanban-card" data-id="4" style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:14px; cursor:grab; touch-action:none; user-select:none; transition:transform 0.15s, box-shadow 0.15s;">
-              <div style="font-weight:700; font-size:12px; color:#fff;">🔒 Task 4: GDPR Compliance Audit</div>
-              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Assigned to Legal Tech Team</div>
+            <div id="kanbanDisasterAlert" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Card grabbed instantly on scroll without 350ms delay! Column broken!
             </div>
-
-            <div id="kanbanDisasterAlert" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center; box-shadow:0 6px 20px rgba(0,0,0,0.6);">
-              💥 Disaster: Card grabbed instantly on scroll without 350ms delay! Column order broken!
-            </div>
-
             <div id="kanbanSuccessAlert" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:rgba(16, 185, 129, 0.25); border:1px solid #10b981; color:#34d399; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
-              ✨ 350ms Temporal Gate: Normal scroll scrolls freely. Press & hold for 350ms to lift card!
+              ✨ 350ms Temporal Gate: Normal scroll scrolls freely. Press & hold 350ms to lift!
             </div>
           </div>
         `;
-
         const cards = sandboxStage.querySelectorAll('.kanban-card');
         const kDisaster = sandboxStage.querySelector('#kanbanDisasterAlert');
         const kSuccess = sandboxStage.querySelector('#kanbanSuccessAlert');
-
         cards.forEach(c => {
           let timer = null, isLifted = false;
-          c.addEventListener('pointerdown', (e) => {
+          c.addEventListener('pointerdown', () => {
             if (mode === 'without') {
-              // Immediate accidental drag on simple touch/scroll
-              c.style.transform = 'scale(1.05) rotate(2deg)';
-              c.style.borderColor = '#ef4444';
+              c.style.transform = 'scale(1.05) rotate(2deg)'; c.style.borderColor = '#ef4444';
               kDisaster.style.display = 'block';
-              setTimeout(() => {
-                c.style.transform = '';
-                c.style.borderColor = '#334155';
-                kDisaster.style.display = 'none';
-              }, 2500);
+              setTimeout(() => { c.style.transform = ''; c.style.borderColor = '#334155'; kDisaster.style.display = 'none'; }, 2500);
             } else {
-              // 350ms Temporal Gate
               timer = setTimeout(() => {
-                isLifted = true;
-                c.style.transform = 'scale(1.04)';
-                c.style.borderColor = '#10b981';
-                c.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.4)';
-                kSuccess.style.display = 'block';
+                isLifted = true; c.style.transform = 'scale(1.04)'; c.style.borderColor = '#10b981';
+                c.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.4)'; kSuccess.style.display = 'block';
               }, 350);
             }
           });
-
           c.addEventListener('pointerup', () => {
             clearTimeout(timer);
             if (isLifted) {
-              isLifted = false;
-              c.style.transform = '';
-              c.style.borderColor = '#334155';
-              c.style.boxShadow = '';
+              isLifted = false; c.style.transform = ''; c.style.borderColor = '#334155'; c.style.boxShadow = '';
               setTimeout(() => { kSuccess.style.display = 'none'; }, 2000);
             }
           });
         });
 
+      // --- P05: SWIPEABLE LIST (8PX ORTHOGONAL AXIS LOCK) ---
       } else if (scenarioKey === 'p05') {
-        // P05: SWIPEABLE LIST 8PX AXIS LOCK
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>✉️ Inbox (Swipe vs Vertical Scroll)</span>
+            <span>✉️ Inbox Swipe-to-Dismiss (P05)</span>
             <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'8px Axis Lock Active':'No Axis Lock Crash'}</span>
           </div>
           <div class="scroll-contained" style="flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; position:relative;">
-            <div style="font-size:11px; color:#94a3b8;">Swipe an item horizontally or scroll vertically:</div>
-            
+            <div style="font-size:11px; color:#94a3b8;">Swipe horizontally or scroll diagonally:</div>
             <div class="mail-row" style="position:relative; background:#1e293b; border-radius:10px; overflow:hidden; touch-action:none;">
-              <div class="mail-action-bg" style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
-              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s; will-change:transform;">
+              <div style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
+              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s;">
                 <div style="font-weight:700; font-size:12px; color:#fff;">Google Cloud Security Alert</div>
                 <div style="font-size:11px; color:#94a3b8; margin-top:2px;">New login detected from Safari on macOS</div>
               </div>
             </div>
-
             <div class="mail-row" style="position:relative; background:#1e293b; border-radius:10px; overflow:hidden; touch-action:none;">
-              <div class="mail-action-bg" style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
-              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s; will-change:transform;">
+              <div style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
+              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s;">
                 <div style="font-weight:700; font-size:12px; color:#fff;">Stripe Weekly Payout</div>
                 <div style="font-size:11px; color:#94a3b8; margin-top:2px;">$12,450.00 is on its way to your bank account</div>
               </div>
             </div>
-
-            <div class="mail-row" style="position:relative; background:#1e293b; border-radius:10px; overflow:hidden; touch-action:none;">
-              <div class="mail-action-bg" style="position:absolute; inset:0; background:#ef4444; display:flex; align-items:center; justify-content:flex-end; padding-right:16px; color:#fff; font-weight:700; font-size:12px;">🗑 Delete</div>
-              <div class="mail-content" style="position:relative; background:#1e293b; border:1px solid #334155; padding:14px; border-radius:10px; transition:transform 0.2s; will-change:transform;">
-                <div style="font-weight:700; font-size:12px; color:#fff;">GitHub: PR #42 Merged</div>
-                <div style="font-size:11px; color:#94a3b8; margin-top:2px;">feat: add 8.0px orthogonal axis lock</div>
-              </div>
-            </div>
-
             <div id="swipeAlertBox" style="display:none; position:absolute; bottom:12px; left:12px; right:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
               💥 Disaster: Diagonal scroll accidentally triggered item dismissal!
             </div>
           </div>
         `;
-
         const rows = sandboxStage.querySelectorAll('.mail-row');
         const alertEl = sandboxStage.querySelector('#swipeAlertBox');
-
         rows.forEach(r => {
           const content = r.querySelector('.mail-content');
           let sX = 0, sY = 0, lockedAxis = null;
-
-          content.addEventListener('pointerdown', (e) => {
-            sX = e.clientX; sY = e.clientY; lockedAxis = null;
-            content.setPointerCapture(e.pointerId);
-          });
-
+          content.addEventListener('pointerdown', (e) => { sX = e.clientX; sY = e.clientY; lockedAxis = null; content.setPointerCapture(e.pointerId); });
           content.addEventListener('pointermove', (e) => {
             const dx = e.clientX - sX, dy = e.clientY - sY;
             if (mode === 'without') {
-              // Diagonal cross-talk: tiny X motion triggers horizontal swipe
               if (Math.abs(dx) > 10) {
                 content.style.transform = `translateX(${dx}px)`;
-                if (dx < -70) {
-                  alertEl.style.display = 'block';
-                  setTimeout(() => { alertEl.style.display = 'none'; }, 2500);
-                }
+                if (dx < -70) { alertEl.style.display = 'block'; setTimeout(() => { alertEl.style.display = 'none'; }, 2500); }
               }
             } else {
-              // 8px Orthogonal Axis Lock
-              if (!lockedAxis && Math.hypot(dx, dy) > 8) {
-                lockedAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-              }
-              if (lockedAxis === 'x') {
-                content.style.transform = `translateX(${Math.min(0, dx)}px)`;
-              }
+              if (!lockedAxis && Math.hypot(dx, dy) > 8) lockedAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+              if (lockedAxis === 'x') content.style.transform = `translateX(${Math.min(0, dx)}px)`;
             }
           });
-
-          content.addEventListener('pointerup', (e) => {
-            content.releasePointerCapture(e.pointerId);
-            content.style.transform = 'none';
-          });
+          content.addEventListener('pointerup', (e) => { content.releasePointerCapture(e.pointerId); content.style.transform = 'none'; });
         });
 
-      } else if (scenarioKey === 'p09') {
-        // P09: MODAL OVERLAY DRAG LEAK
+      // --- P06: PULL-TO-REFRESH BOUNDARY DAMPING ---
+      } else if (scenarioKey === 'p06') {
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>🛡️ Modal Overlay (Backdrop Drag Leak)</span>
+            <span>🔄 News Feed (PTR vs Scroll - P06)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Boundary Damping Active':'Mid-Scroll Reload Crash'}</span>
+          </div>
+          <div id="ptrFeed" class="scroll-contained" style="flex:1; overflow-y:auto; position:relative; background:#090e1a;">
+            <div id="ptrSpinner" style="height:0px; overflow:hidden; background:#1e293b; display:flex; align-items:center; justify-content:center; color:#3b82f6; font-size:12px; font-weight:700; transition:height 0.2s;">
+              🔄 Release to Refresh...
+            </div>
+            <div style="padding:12px; display:flex; flex-direction:column; gap:8px;">
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px;">📰 Tech News: Antigravity releases Universal Touch Physics Engine</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px;">📰 Market: Global mobile touch benchmark standardized across 16 hardware devices</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px;">📰 Developer: Zero-slop touch triggers eliminated in production apps</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px;">📰 AI: Autonomous agents adopt Centroid Invariants for 2D graphics</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px;">📰 Hardware: High-polling 120Hz touch sampling audited for jitter</div>
+            </div>
+            <div id="ptrDisasterAlert" style="display:none; position:sticky; bottom:12px; margin:0 12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Pull-to-refresh fired in the MIDDLE of list scroll! Page reset!
+            </div>
+          </div>
+        `;
+        const feed = sandboxStage.querySelector('#ptrFeed');
+        const spinner = sandboxStage.querySelector('#ptrSpinner');
+        const alertEl = sandboxStage.querySelector('#ptrDisasterAlert');
+        let sY = 0, isPulling = false;
+        feed.addEventListener('pointerdown', (e) => { sY = e.clientY; isPulling = true; });
+        feed.addEventListener('pointermove', (e) => {
+          if (!isPulling) return;
+          const dy = e.clientY - sY;
+          if (dy > 30) {
+            if (mode === 'without') {
+              spinner.style.height = '40px';
+              alertEl.style.display = 'block';
+              setTimeout(() => { spinner.style.height = '0px'; alertEl.style.display = 'none'; }, 2200);
+            } else {
+              if (feed.scrollTop <= 0) spinner.style.height = `${Math.min(50, dy * 0.4)}px`;
+            }
+          }
+        });
+        feed.addEventListener('pointerup', () => { isPulling = false; spinner.style.height = '0px'; });
+
+      // --- P07: FLOATING ACTION BUTTON (FAB DRAG VS CLICK) ---
+      } else if (scenarioKey === 'p07') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🔘 Floating Action Button (P07)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'8px Slop Active':'No Slop Guard'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:16px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; position:relative;">
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 Meeting with Product Design team at 2PM</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px; color:#cbd5e1;">📄 Touch physics contract audit and 8px slop verification</div>
+            <div id="fabActionModal" style="display:none; position:absolute; inset:10px; background:#0f172a; border:2px solid #ef4444; border-radius:14px; padding:16px; flex-direction:column; gap:10px; z-index:20;">
+              <div style="font-weight:800; font-size:13px; color:#f87171; display:flex; justify-content:space-between;">
+                <span>🚨 [New Note Editor Dialog]</span>
+                <button id="btnCloseFabModal" style="background:#334155; border:none; color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Close</button>
+              </div>
+              <p style="font-size:11px; color:#cbd5e1;">💥 Disaster: Released drag outside slop, triggering unwanted popup!</p>
+            </div>
+            <div id="fabSuccessToast" style="display:none; padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; background:rgba(16, 185, 129, 0.2); border:1px solid #10b981; color:#34d399;">
+              ✨ 8px Slop Guard: Dragged cleanly without triggering popup modal!
+            </div>
+          </div>
+          <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; cursor:grab; touch-action:none; z-index:10;">+</div>
+        `;
+        const fab = sandboxStage.querySelector('#fabBtn');
+        const modal = sandboxStage.querySelector('#fabActionModal');
+        const toastEl = sandboxStage.querySelector('#fabSuccessToast');
+        const btnClose = sandboxStage.querySelector('#btnCloseFabModal');
+        let startX=0, startY=0, curX=0, curY=0, isDragging=false, moved=false;
+        btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
+        fab.addEventListener('pointerdown', (e) => { startX = e.clientX; startY = e.clientY; isDragging = true; moved = false; fab.setPointerCapture(e.pointerId); modal.style.display = 'none'; toastEl.style.display = 'none'; });
+        fab.addEventListener('pointermove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX, dy = e.clientY - startY;
+          if (mode === 'with') {
+            if (Math.hypot(dx, dy) > 8) { moved = true; fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`; }
+          } else { moved = true; fab.style.transform = `translate3d(${curX + dx}px, ${curY + dy}px, 0)`; }
+        });
+        fab.addEventListener('pointerup', (e) => {
+          if (!isDragging) return;
+          isDragging = false; fab.releasePointerCapture(e.pointerId);
+          const dx = e.clientX - startX, dy = e.clientY - startY;
+          if (mode === 'without') { curX += dx; curY += dy; modal.style.display = 'flex'; }
+          else {
+            if (moved) { curX += dx; curY += dy; toastEl.style.display = 'block'; }
+            else { modal.style.display = 'flex'; modal.querySelector('p').textContent = '✅ Deliberate Click: Opened intentionally within 8px slop!'; }
+          }
+        });
+
+      // --- P08: INFINITE SCROLL PREPEND JUMP (SCROLL ANCHORING) ---
+      } else if (scenarioKey === 'p08') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📜 Infinite Prepend Feed (P08)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Scroll Anchoring Active':'Scroll Jump Disaster'}</span>
+          </div>
+          <div id="prependFeed" class="scroll-contained" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; position:relative; background:#090e1a;">
+            <button id="btnPrependOlder" style="padding:8px; background:#334155; color:#60a5fa; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">
+              ⬆️ Load 5 Older Messages (Prepend)
+            </button>
+            <div id="prependContainer" style="display:flex; flex-direction:column; gap:8px;">
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#fff;" id="anchorTarget">📍 CURRENT READING POSITION (Post #10)</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Post #11: Reviewing design invariant specifications</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Post #12: Testing touch slop and boundary resistance</div>
+              <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Post #13: Verifying cross-platform OS Edge back protection</div>
+            </div>
+            <div id="prependAlert" style="display:none; position:sticky; bottom:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Scroll jumped to top! Lost current reading position!
+            </div>
+          </div>
+        `;
+        const pFeed = sandboxStage.querySelector('#prependFeed');
+        const pCont = sandboxStage.querySelector('#prependContainer');
+        const btnPrepend = sandboxStage.querySelector('#btnPrependOlder');
+        const alertEl = sandboxStage.querySelector('#prependAlert');
+        btnPrepend.addEventListener('click', () => {
+          const oldScrollHeight = pFeed.scrollHeight;
+          const oldScrollTop = pFeed.scrollTop;
+          const olderBatch = document.createElement('div');
+          olderBatch.style.cssText = 'display:flex; flex-direction:column; gap:8px; margin-bottom:8px;';
+          olderBatch.innerHTML = `
+            <div style="padding:10px; background:#0f172a; border:1px solid #334155; border-radius:6px; font-size:11px; color:#94a3b8;">Older Message #5</div>
+            <div style="padding:10px; background:#0f172a; border:1px solid #334155; border-radius:6px; font-size:11px; color:#94a3b8;">Older Message #6</div>
+            <div style="padding:10px; background:#0f172a; border:1px solid #334155; border-radius:6px; font-size:11px; color:#94a3b8;">Older Message #7</div>
+          `;
+          pCont.prepend(olderBatch);
+          if (mode === 'without') {
+            pFeed.scrollTop = 0; // Jump to top disaster
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2500);
+          } else {
+            const heightDelta = pFeed.scrollHeight - oldScrollHeight;
+            pFeed.scrollTop = oldScrollTop + heightDelta; // Perfect 0px anchoring
+          }
+        });
+
+      // --- P09: MODAL OVERLAY DRAG LEAK ---
+      } else if (scenarioKey === 'p09') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🛡️ Modal Dialog (Backdrop Drag Leak - P09)</span>
             <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Dual Target OK':'Backdrop Drag Leak'}</span>
           </div>
           <div id="modalStageArea" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; background:#090e1a;">
-            
-            <button id="btnOpenModal" style="padding:10px 16px; background:#3b82f6; border:none; border-radius:8px; color:#fff; font-weight:700; font-size:12px; cursor:pointer;">
-              Open Terms Modal
-            </button>
-
-            <!-- Full Backdrop Overlay -->
+            <button id="btnOpenModal" style="padding:10px 16px; background:#3b82f6; border:none; border-radius:8px; color:#fff; font-weight:700; font-size:12px; cursor:pointer;">Open Terms Modal</button>
             <div id="demoModalBackdrop" style="display:flex; position:absolute; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px; z-index:30;">
-              
               <div id="demoModalDialog" style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:18px; max-width:280px; display:flex; flex-direction:column; gap:10px; box-shadow:0 20px 40px rgba(0,0,0,0.8);">
                 <div style="font-weight:800; font-size:13px; color:#fff; display:flex; justify-content:space-between;">
                   <span>License Agreement</span>
                   <span id="btnCloseCross" style="cursor:pointer; color:#94a3b8;">✕</span>
                 </div>
                 <p id="selectableText" style="font-size:11px; line-height:1.5; color:#cbd5e1; user-select:text;">
-                  👉 <strong>Test Mission:</strong> Click and drag to select this text, but release your mouse <em>outside</em> this dialog box onto the dark backdrop!
+                  👉 <strong>Test Mission:</strong> Drag to select this text, then release outside on the dark backdrop!
                 </p>
-                <div style="display:flex; gap:6px; margin-top:4px;">
-                  <button id="btnAccept" style="flex:1; padding:6px; background:#10b981; border:none; border-radius:6px; color:#fff; font-size:11px; font-weight:700; cursor:pointer;">Accept</button>
-                </div>
+                <button id="btnAccept" style="padding:6px; background:#10b981; border:none; border-radius:6px; color:#fff; font-size:11px; font-weight:700; cursor:pointer;">Accept</button>
               </div>
             </div>
-
             <div id="modalLeakAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px; text-align:center; z-index:40;">
-              💥 Disaster: Releasing drag outside dialog closed the modal while selecting text!
+              💥 Disaster: Dragging text and releasing outside closed the modal!
             </div>
           </div>
         `;
-
         const backdrop = sandboxStage.querySelector('#demoModalBackdrop');
-        const dialog = sandboxStage.querySelector('#demoModalDialog');
         const btnOpen = sandboxStage.querySelector('#btnOpenModal');
         const alertEl = sandboxStage.querySelector('#modalLeakAlert');
         const btnClose = sandboxStage.querySelector('#btnCloseCross');
         const btnAccept = sandboxStage.querySelector('#btnAccept');
-
         btnOpen.addEventListener('click', () => { backdrop.style.display = 'flex'; });
         btnClose.addEventListener('click', () => { backdrop.style.display = 'none'; });
         btnAccept.addEventListener('click', () => { backdrop.style.display = 'none'; });
-
         let downTarget = null;
-        backdrop.addEventListener('pointerdown', (e) => {
-          downTarget = e.target;
-        });
-
+        backdrop.addEventListener('pointerdown', (e) => { downTarget = e.target; });
         backdrop.addEventListener('pointerup', (e) => {
-          const upTarget = e.target;
           if (mode === 'without') {
-            // Baseline flaw: if mouse released on backdrop, it closes modal!
-            if (upTarget === backdrop) {
+            if (e.target === backdrop) {
               backdrop.style.display = 'none';
               alertEl.style.display = 'block';
               setTimeout(() => { alertEl.style.display = 'none'; }, 2500);
             }
           } else {
-            // Dual Target Verification: Both down and up must be the backdrop!
-            if (downTarget === backdrop && upTarget === backdrop) {
-              backdrop.style.display = 'none';
-            }
+            if (downTarget === backdrop && e.target === backdrop) backdrop.style.display = 'none';
           }
         });
 
-      } else if (scenarioKey === 'p18') {
-        // P18: DUAL RANGE SLIDER THUMB OVERLAP
+      // --- P10: HORIZONTAL TABS VS VIEWPAGER ---
+      } else if (scenarioKey === 'p10') {
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>⚖️ Price Range Filter ($0 - $1,000)</span>
+            <span>📑 Horizontal Tabs vs ViewPager (P10)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Axis Isolation OK':'ViewPager Hijack Crash'}</span>
+          </div>
+          <!-- Horizontal Scroll Tabs Bar -->
+          <div id="tabsScroller" class="scroll-contained" style="display:flex; gap:6px; overflow-x:auto; padding:10px; background:#090e1a; border-bottom:1px solid #334155; touch-action:pan-x;">
+            <button class="t-btn active" style="padding:6px 14px; background:#3b82f6; color:#fff; border:none; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap;">Overview</button>
+            <button class="t-btn" style="padding:6px 14px; background:#1e293b; color:#94a3b8; border:none; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap;">Specifications</button>
+            <button class="t-btn" style="padding:6px 14px; background:#1e293b; color:#94a3b8; border:none; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap;">Performance</button>
+            <button class="t-btn" style="padding:6px 14px; background:#1e293b; color:#94a3b8; border:none; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap;">Invariants</button>
+            <button class="t-btn" style="padding:6px 14px; background:#1e293b; color:#94a3b8; border:none; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap;">Telemetry</button>
+            <button class="t-btn" style="padding:6px 14px; background:#1e293b; color:#94a3b8; border:none; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap;">Integrations</button>
+          </div>
+          <!-- Main ViewPager Content -->
+          <div id="viewPager" style="flex:1; padding:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#0f172a; text-align:center; position:relative;">
+            <div id="pagerContent" style="font-size:14px; font-weight:800; color:#fff;">PAGE 1: OVERVIEW</div>
+            <div style="font-size:11px; color:#94a3b8; margin-top:8px;">Try scrolling the top tab bar horizontally!</div>
+            <div id="pagerAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px;">
+              💥 Disaster: Scrolling the tab bar accidentally switched the entire ViewPager page!
+            </div>
+          </div>
+        `;
+        const scroller = sandboxStage.querySelector('#tabsScroller');
+        const pager = sandboxStage.querySelector('#pagerContent');
+        const alertEl = sandboxStage.querySelector('#pagerAlert');
+        scroller.addEventListener('scroll', () => {
+          if (mode === 'without') {
+            pager.textContent = 'PAGE 2: SPECIFICATIONS (HIJACKED!)';
+            pager.style.color = '#ef4444';
+            alertEl.style.display = 'block';
+            setTimeout(() => { pager.textContent = 'PAGE 1: OVERVIEW'; pager.style.color = '#fff'; alertEl.style.display = 'none'; }, 2200);
+          }
+        });
+
+      // --- P11: AUTO-GROW TEXTAREA (VIEWPORT HEIGHT JUMP) ---
+      } else if (scenarioKey === 'p11') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📝 Auto-grow Textarea (P11)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Height Synchronized':'Scroll Jump Glitch'}</span>
+          </div>
+          <div id="textareaContainer" class="scroll-contained" style="flex:1; padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; position:relative; background:#090e1a;">
+            <div style="font-size:11px; color:#94a3b8;">Type multiple newlines into the textarea below:</div>
+            <textarea id="growTextarea" rows="2" placeholder="Press Enter repeatedly..." style="width:100%; background:#1e293b; border:1px solid #334155; border-radius:8px; padding:10px; color:#fff; font-size:12px; resize:none; outline:none; font-family:inherit;"></textarea>
+            <div id="textareaJumpAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Textarea expansion caused the parent page to jump violently!
+            </div>
+          </div>
+        `;
+        const ta = sandboxStage.querySelector('#growTextarea');
+        const cont = sandboxStage.querySelector('#textareaContainer');
+        const alertEl = sandboxStage.querySelector('#textareaJumpAlert');
+        ta.addEventListener('input', () => {
+          if (mode === 'without') {
+            ta.style.height = `${ta.scrollHeight}px`;
+            cont.scrollTop = 0; // Jumps violently
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          } else {
+            ta.style.height = 'auto';
+            ta.style.height = `${ta.scrollHeight}px`;
+            cont.scrollTop = cont.scrollHeight; // Smooth follow
+          }
+        });
+
+      // --- P12: STICKY HOVER TOOLTIP ---
+      } else if (scenarioKey === 'p12') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>💡 Mobile Sticky Tooltip (P12)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Pointer Fine Gate Active':'Sticky Hover Glitch'}</span>
+          </div>
+          <div id="tooltipArea" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#090e1a; position:relative;">
+            <div style="position:relative;">
+              <button id="btnInfo" style="padding:10px 16px; background:#334155; border:none; border-radius:8px; color:#fff; font-weight:700; font-size:12px; cursor:pointer;">ℹ️ Tap / Hover for Info</button>
+              <div id="stickyBubble" style="display:none; position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:#3b82f6; color:#fff; padding:6px 12px; border-radius:6px; font-size:11px; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+                Touch Slop: 8.0px Threshold
+              </div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; text-align:center;">Tap the button, then tap anywhere outside to dismiss!</div>
+            <div id="stickyAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Tooltip stuck on mobile touchscreen! Tapping outside doesn't close it!
+            </div>
+          </div>
+        `;
+        const btn = sandboxStage.querySelector('#btnInfo');
+        const bubble = sandboxStage.querySelector('#stickyBubble');
+        const area = sandboxStage.querySelector('#tooltipArea');
+        const alertEl = sandboxStage.querySelector('#stickyAlert');
+        btn.addEventListener('click', (e) => { e.stopPropagation(); bubble.style.display = 'block'; });
+        area.addEventListener('click', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          } else { bubble.style.display = 'none'; }
+        });
+
+      // --- P13: VIDEO TIMELINE SCRUBBER (POINTER CAPTURE) ---
+      } else if (scenarioKey === 'p13') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🎬 Video Timeline Scrubber (P13)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Pointer Capture Active':'Slip Out Halt Crash'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; justify-content:center; gap:20px; background:#090e1a; position:relative;">
+            <div style="height:140px; background:#020617; border:1px solid #334155; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#60a5fa; font-weight:800; font-size:14px;">
+              ▶️ Playhead: <span id="timeLabel" style="margin-left:6px; font-family:'JetBrains Mono';">00:30</span>
+            </div>
+            <!-- Scrubber Bar -->
+            <div id="scrubTrack" style="height:10px; background:#1e293b; border-radius:5px; position:relative; cursor:pointer; touch-action:none;">
+              <div id="scrubProgress" style="width:30%; height:100%; background:#3b82f6; border-radius:5px;"></div>
+              <div id="scrubThumb" style="position:absolute; left:calc(30% - 10px); top:-5px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.6); cursor:grab;"></div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; text-align:center;">Drag the scrubber thumb far UP or DOWN outside the track!</div>
+            <div id="scrubAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Pointer slipped outside track! Seeking halted prematurely!
+            </div>
+          </div>
+        `;
+        const track = sandboxStage.querySelector('#scrubTrack');
+        const thumb = sandboxStage.querySelector('#scrubThumb');
+        const prog = sandboxStage.querySelector('#scrubProgress');
+        const time = sandboxStage.querySelector('#timeLabel');
+        const alertEl = sandboxStage.querySelector('#scrubAlert');
+        let isScrubbing = false;
+        thumb.addEventListener('pointerdown', (e) => {
+          isScrubbing = true;
+          if (mode === 'with') thumb.setPointerCapture(e.pointerId);
+        });
+        window.addEventListener('pointermove', (e) => {
+          if (!isScrubbing) return;
+          const r = track.getBoundingClientRect();
+          if (mode === 'without' && (e.clientY < r.top - 20 || e.clientY > r.bottom + 20)) {
+            isScrubbing = false;
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+            return;
+          }
+          const pct = Math.max(0, Math.min(100, Math.round(((e.clientX - r.left) / r.width) * 100)));
+          prog.style.width = `${pct}%`;
+          thumb.style.left = `calc(${pct}% - 10px)`;
+          time.textContent = `00:${pct < 10 ? '0' + pct : pct}`;
+        });
+        window.addEventListener('pointerup', (e) => {
+          if (isScrubbing && mode === 'with') thumb.releasePointerCapture(e.pointerId);
+          isScrubbing = false;
+        });
+
+      // --- P14: IMAGE CROPPER (44PX HIT TARGET EXTENSION) ---
+      } else if (scenarioKey === 'p14') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>✂️ Image Cropper Handles (P14)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'44px Hit Target Active':'10px Tiny Miss'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#090e1a; position:relative;">
+            <div style="width:200px; height:200px; border:2px dashed #3b82f6; position:relative; background:rgba(59,130,246,0.1); border-radius:12px;">
+              <!-- Corner Resize Handle -->
+              <div id="cropCornerHandle" style="position:absolute; right:-6px; bottom:-6px; width:${mode==='with'?'24px':'10px'}; height:${mode==='with'?'24px':'10px'}; background:#3b82f6; border-radius:50%; cursor:se-resize; display:flex; align-items:center; justify-content:center;">
+                ${mode==='with'?'<div style="width:10px; height:10px; background:#fff; border-radius:50%;"></div>':''}
+              </div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; margin-top:16px; text-align:center;">Try tapping the tiny corner handle on the bottom-right!</div>
+            <div id="cropAlert" style="display:none; margin-top:10px; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: 10px target missed by finger! Accidental tap passed to background!
+            </div>
+          </div>
+        `;
+        const h = sandboxStage.querySelector('#cropCornerHandle');
+        const alertEl = sandboxStage.querySelector('#cropAlert');
+        h.addEventListener('click', (e) => {
+          e.stopPropagation();
+          h.style.transform = 'scale(1.4)';
+          setTimeout(() => { h.style.transform = 'scale(1)'; }, 200);
+        });
+        sandboxStage.querySelector('.scroll-contained').addEventListener('click', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          }
+        });
+
+      // --- P15: TRACKPAD PINCH VS BROWSER ZOOM ---
+      } else if (scenarioKey === 'p15') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>💻 Trackpad Pinch (P15)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'CtrlKey Discriminated':'Window Zoom Conflict'}</span>
+          </div>
+          <div id="trackpadArea" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#020617; position:relative; touch-action:none;">
+            <div id="trackpadCard" style="width:160px; height:160px; background:linear-gradient(135deg, #8b5cf6, #ec4899); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:#fff; font-weight:800; box-shadow:0 10px 25px rgba(0,0,0,0.6);">
+              <span>🔍 Canvas Layer</span>
+              <span id="tScaleLabel" style="font-size:11px; font-family:'JetBrains Mono';">100%</span>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; margin-top:16px; text-align:center;">Pinch on your trackpad (or hold Ctrl + Wheel)!</div>
+            <div id="trackpadAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px;">
+              💥 Disaster: Entire browser window zoomed! Web page UI shattered!
+            </div>
+          </div>
+        `;
+        const tpArea = sandboxStage.querySelector('#trackpadArea');
+        const tpCard = sandboxStage.querySelector('#trackpadCard');
+        const tpLabel = sandboxStage.querySelector('#tScaleLabel');
+        const alertEl = sandboxStage.querySelector('#trackpadAlert');
+        let tScale = 1.0;
+        tpArea.addEventListener('wheel', (e) => {
+          if (e.ctrlKey) {
+            e.preventDefault();
+            if (mode === 'without') {
+              alertEl.style.display = 'block';
+              setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+            } else {
+              tScale = Math.max(0.5, Math.min(2.5, tScale * (e.deltaY < 0 ? 1.08 : 0.92)));
+              tpCard.style.transform = `scale(${tScale})`;
+              tpLabel.textContent = `${Math.round(tScale * 100)}%`;
+            }
+          }
+        }, { passive: false });
+
+      // --- P16: 120HZ FLING STOP TAP CATCH ---
+      } else if (scenarioKey === 'p16') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🛑 Fast Fling Catch (P16)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Momentum Interrupted':'Accidental Link Tap Crash'}</span>
+          </div>
+          <div id="flingFeed" class="scroll-contained" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; background:#090e1a; position:relative;">
+            <div style="font-size:11px; color:#94a3b8;">Fling rapidly, then tap to STOP the scroll:</div>
+            <div class="ad-link" style="padding:14px; background:#ef4444; border-radius:8px; font-size:12px; color:#fff; font-weight:700; cursor:pointer;">
+              🚨 [AD] BUY NOW - 50% OFF (Tap to Buy)
+            </div>
+            <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Article content item #1</div>
+            <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Article content item #2</div>
+            <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Article content item #3</div>
+            <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#cbd5e1;">Article content item #4</div>
+            <div id="flingAlert" style="display:none; position:sticky; bottom:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Tapped to stop fast scroll, but accidental link click opened ad!
+            </div>
+          </div>
+        `;
+        const ad = sandboxStage.querySelector('.ad-link');
+        const alertEl = sandboxStage.querySelector('#flingAlert');
+        ad.addEventListener('click', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          } else {
+            ad.textContent = '✅ Safely Stopped Scroll without firing Click!';
+            ad.style.background = '#10b981';
+          }
+        });
+
+      // --- P17: 2D COLOR PICKER SPECTRUM ---
+      } else if (scenarioKey === 'p17') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🎨 2D Color Spectrum Drag (P17)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Vector Clamping OK':'Page Scroll Conflict'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#090e1a; position:relative;">
+            <div id="colorSpectrum" style="width:220px; height:180px; background:linear-gradient(to right, #fff, #ef4444), linear-gradient(to top, #000, transparent); background-blend-mode:multiply; border-radius:12px; position:relative; cursor:crosshair; touch-action:${mode==='with'?'none':'auto'};">
+              <div id="colorReticle" style="position:absolute; left:50%; top:50%; width:16px; height:16px; border:2px solid #fff; border-radius:50%; transform:translate(-50%, -50%); box-shadow:0 0 4px #000;"></div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; text-align:center;">Drag the reticle in all directions across the spectrum!</div>
+            <div id="colorAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Dragging color palette triggered vertical parent page scroll!
+            </div>
+          </div>
+        `;
+        const spec = sandboxStage.querySelector('#colorSpectrum');
+        const ret = sandboxStage.querySelector('#colorReticle');
+        const alertEl = sandboxStage.querySelector('#colorAlert');
+        let isColorDrag = false;
+        spec.addEventListener('pointerdown', (e) => { isColorDrag = true; spec.setPointerCapture(e.pointerId); });
+        spec.addEventListener('pointermove', (e) => {
+          if (!isColorDrag) return;
+          const r = spec.getBoundingClientRect();
+          const x = Math.max(0, Math.min(r.width, e.clientX - r.left));
+          const y = Math.max(0, Math.min(r.height, e.clientY - r.top));
+          ret.style.left = `${x}px`; ret.style.top = `${y}px`;
+          if (mode === 'without' && Math.abs(e.movementY) > 5) {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          }
+        });
+        spec.addEventListener('pointerup', (e) => { isColorDrag = false; spec.releasePointerCapture(e.pointerId); });
+
+      // --- P18: DUAL RANGE SLIDER THUMB OVERLAP ---
+      } else if (scenarioKey === 'p18') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>⚖️ Price Range Filter (P18)</span>
             <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Z-Index Dynamic Elevation':'Thumb Overlap Lock'}</span>
           </div>
-          <div class="scroll-contained" style="flex:1; padding:30px 20px; display:flex; flex-direction:column; gap:24px; justify-content:center;">
-            
-            <div style="background:#090e1a; padding:16px; border-radius:12px; border:1px solid #334155; display:flex; flex-direction:column; gap:16px;">
+          <div class="scroll-contained" style="flex:1; padding:30px 20px; display:flex; flex-direction:column; gap:24px; justify-content:center; background:#090e1a;">
+            <div style="background:#1e293b; padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:16px;">
               <div style="display:flex; justify-content:space-between; font-weight:700; font-size:12px;">
                 <span id="priceLabelMin" style="color:#3b82f6;">Min: $500</span>
                 <span id="priceLabelMax" style="color:#8b5cf6;">Max: $500</span>
               </div>
-
-              <!-- Dual Slider Track -->
-              <div id="sliderTrack" style="height:8px; background:#1e293b; border-radius:4px; position:relative; touch-action:none;">
+              <div id="sliderTrack" style="height:8px; background:#090e1a; border-radius:4px; position:relative; touch-action:none;">
                 <div id="sliderHighlight" style="position:absolute; left:50%; width:0%; height:100%; background:linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius:4px;"></div>
-                
-                <!-- Thumb Min -->
-                <div id="thumbMin" style="position:absolute; left:calc(50% - 12px); top:-8px; width:24px; height:24px; background:#3b82f6; border:2px solid #fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:grab; z-index:2;"></div>
-                
-                <!-- Thumb Max -->
-                <div id="thumbMax" style="position:absolute; left:calc(50% - 12px); top:-8px; width:24px; height:24px; background:#8b5cf6; border:2px solid #fff; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:grab; z-index:3;"></div>
+                <div id="thumbMin" style="position:absolute; left:calc(50% - 12px); top:-8px; width:24px; height:24px; background:#3b82f6; border:2px solid #fff; border-radius:50%; cursor:grab; z-index:2;"></div>
+                <div id="thumbMax" style="position:absolute; left:calc(50% - 12px); top:-8px; width:24px; height:24px; background:#8b5cf6; border:2px solid #fff; border-radius:50%; cursor:grab; z-index:3;"></div>
               </div>
             </div>
-
-            <div id="sliderAlertBox" style="padding:10px; border-radius:8px; font-size:11px; line-height:1.4; text-align:center; background:${mode==='without'?'rgba(239, 68, 68, 0.2)':'rgba(16, 185, 129, 0.2)'}; border:1px solid ${mode==='without'?'#ef4444':'#10b981'}; color:${mode==='without'?'#f87171':'#34d399'}; font-weight:700;">
-              ${mode === 'without' ? '💥 Disaster: Thumbs are both at $500! Min thumb is trapped underneath Max thumb and cannot be dragged left!' : '✨ Z-Index Elevation: Dragging left dynamically brings Min thumb to top; dragging right elevates Max thumb!'}
-            </div>
+            <div style="font-size:11px; color:#cbd5e1; text-align:center;">Both thumbs are at $500! Drag the left Min thumb to the left!</div>
           </div>
         `;
-
         const tMin = sandboxStage.querySelector('#thumbMin');
         const tMax = sandboxStage.querySelector('#thumbMax');
         const track = sandboxStage.querySelector('#sliderTrack');
         const lMin = sandboxStage.querySelector('#priceLabelMin');
         const lMax = sandboxStage.querySelector('#priceLabelMax');
         const hl = sandboxStage.querySelector('#sliderHighlight');
-
         let minVal = 50, maxVal = 50;
-
         const updateSliders = () => {
-          tMin.style.left = `calc(${minVal}% - 12px)`;
-          tMax.style.left = `calc(${maxVal}% - 12px)`;
-          hl.style.left = `${Math.min(minVal, maxVal)}%`;
-          hl.style.width = `${Math.abs(maxVal - minVal)}%`;
-          lMin.textContent = `Min: $${minVal * 10}`;
-          lMax.textContent = `Max: $${maxVal * 10}`;
+          tMin.style.left = `calc(${minVal}% - 12px)`; tMax.style.left = `calc(${maxVal}% - 12px)`;
+          hl.style.left = `${Math.min(minVal, maxVal)}%`; hl.style.width = `${Math.abs(maxVal - minVal)}%`;
+          lMin.textContent = `Min: $${minVal * 10}`; lMax.textContent = `Max: $${maxVal * 10}`;
         };
-
         const attachDrag = (thumb, isMin) => {
           let isDragging = false;
           thumb.addEventListener('pointerdown', (e) => {
-            isDragging = true;
-            thumb.setPointerCapture(e.pointerId);
-            if (mode === 'with') {
-              thumb.style.zIndex = '10';
-              (isMin ? tMax : tMin).style.zIndex = '2';
-            }
+            isDragging = true; thumb.setPointerCapture(e.pointerId);
+            if (mode === 'with') { thumb.style.zIndex = '10'; (isMin ? tMax : tMin).style.zIndex = '2'; }
           });
-
           thumb.addEventListener('pointermove', (e) => {
             if (!isDragging) return;
             const rect = track.getBoundingClientRect();
             let pct = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
-            if (isMin) minVal = Math.min(pct, maxVal);
-            else maxVal = Math.max(pct, minVal);
+            if (isMin) minVal = Math.min(pct, maxVal); else maxVal = Math.max(pct, minVal);
             updateSliders();
           });
-
-          thumb.addEventListener('pointerup', (e) => {
-            isDragging = false;
-            thumb.releasePointerCapture(e.pointerId);
-          });
+          thumb.addEventListener('pointerup', (e) => { isDragging = false; thumb.releasePointerCapture(e.pointerId); });
         };
+        attachDrag(tMin, true); attachDrag(tMax, false);
 
-        attachDrag(tMin, true);
-        attachDrag(tMax, false);
-
-      } else if (scenarioKey === 'p23') {
-        // P23: SIDE DRAWER VS OS EDGE BACK
+      // --- P19: TABLE COLUMN RESIZE VS SCROLL ---
+      } else if (scenarioKey === 'p19') {
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>📲 Navigation Drawer (Edge Back Conflict)</span>
-            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'20px Edge Deadzone':'OS Back Hijack Crash'}</span>
+            <span>📊 Table Column Resize (P19)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Divider Capture OK':'Text Selection Conflict'}</span>
           </div>
-          <div id="drawerStage" class="scroll-contained" style="flex:1; position:relative; overflow:hidden; background:#090e1a; touch-action:none;">
-            
-            <div style="padding:20px; color:#cbd5e1; font-size:12px; line-height:1.6;">
-              <p>👉 <strong>Swipe Test:</strong> Swipe your cursor/finger from the very left edge (0 ~ 20px) inwards!</p>
-            </div>
-
-            <!-- Virtual OS Back Screen Fade -->
-            <div id="osBackFade" style="display:none; position:absolute; inset:0; background:#000; z-index:35; align-items:center; justify-content:center; color:#ef4444; font-size:13px; font-weight:800; text-align:center; padding:20px;">
-              💥 [OS Back Triggered!]<br><span style="font-size:11px; color:#94a3b8; font-weight:500;">Browser back gesture was hijacked by the edge touch. App closed!</span>
-            </div>
-
-            <!-- Side Drawer Panel -->
-            <div id="drawerPanel" style="position:absolute; top:0; bottom:0; left:0; width:220px; background:#1e293b; border-right:1px solid #334155; transform:translateX(-100%); transition:transform 0.25s ease; z-index:20; padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:5px 0 25px rgba(0,0,0,0.6);">
-              <div style="font-weight:800; font-size:14px; color:#fff;">Navigation Menu</div>
-              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">🏠 Dashboard</div>
-              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">📁 Projects</div>
-              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">⚙️ Settings</div>
-            </div>
-
-            <div id="drawerSuccessToast" style="display:none; position:absolute; bottom:14px; left:12px; right:12px; background:rgba(16, 185, 129, 0.25); border:1px solid #10b981; color:#34d399; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center; z-index:30;">
-              ✨ 20px Edge Deadzone: Safely ignored OS back gesture zone, opening drawer cleanly!
+          <div class="scroll-contained" style="flex:1; padding:16px; overflow-x:auto; background:#090e1a; position:relative;">
+            <table style="width:100%; border-collapse:collapse; color:#fff; font-size:11px;">
+              <thead>
+                <tr style="background:#1e293b;">
+                  <th id="col1" style="width:120px; padding:8px; border:1px solid #334155; text-align:left; position:relative;">
+                    Name
+                    <div id="divider1" style="position:absolute; right:-4px; top:0; bottom:0; width:8px; cursor:col-resize; background:#3b82f6; z-index:10;"></div>
+                  </th>
+                  <th style="padding:8px; border:1px solid #334155; text-align:left;">Status</th>
+                  <th style="padding:8px; border:1px solid #334155; text-align:left;">Latency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="padding:8px; border:1px solid #334155;">Auth Gateway</td><td style="padding:8px; border:1px solid #334155; color:#10b981;">Online</td><td style="padding:8px; border:1px solid #334155;">12ms</td></tr>
+                <tr><td style="padding:8px; border:1px solid #334155;">DB Cluster</td><td style="padding:8px; border:1px solid #334155; color:#10b981;">Healthy</td><td style="padding:8px; border:1px solid #334155;">4ms</td></tr>
+              </tbody>
+            </table>
+            <div id="colAlert" style="display:none; margin-top:16px; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Dragging resize handle triggered blue text selection glitch!
             </div>
           </div>
         `;
-
-        const st = sandboxStage.querySelector('#drawerStage');
-        const dr = sandboxStage.querySelector('#drawerPanel');
-        const osBack = sandboxStage.querySelector('#osBackFade');
-        const sToast = sandboxStage.querySelector('#drawerSuccessToast');
-
-        let sX = 0, isSwiping = false;
-        st.addEventListener('pointerdown', (e) => {
-          const rect = st.getBoundingClientRect();
-          sX = e.clientX - rect.left;
-          isSwiping = true;
+        const div = sandboxStage.querySelector('#divider1');
+        const col = sandboxStage.querySelector('#col1');
+        const alertEl = sandboxStage.querySelector('#colAlert');
+        let isResizing = false, sX = 0, initW = 120;
+        div.addEventListener('pointerdown', (e) => {
+          isResizing = true; sX = e.clientX; initW = col.offsetWidth;
+          if (mode === 'with') div.setPointerCapture(e.pointerId);
+        });
+        window.addEventListener('pointermove', (e) => {
+          if (!isResizing) return;
+          const dx = e.clientX - sX;
+          col.style.width = `${Math.max(60, initW + dx)}px`;
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          }
+        });
+        window.addEventListener('pointerup', (e) => {
+          if (isResizing && mode === 'with') div.releasePointerCapture(e.pointerId);
+          isResizing = false;
         });
 
-        st.addEventListener('pointerup', (e) => {
-          if (!isSwiping) return;
-          isSwiping = false;
-          const rect = st.getBoundingClientRect();
-          const endX = e.clientX - rect.left;
-
-          if (endX - sX > 40) {
-            if (mode === 'without') {
-              if (sX < 25) {
-                // OS Back Hijack
-                osBack.style.display = 'flex';
-                setTimeout(() => { osBack.style.display = 'none'; }, 2500);
-              } else {
-                dr.style.transform = 'translateX(0)';
-              }
-            } else {
-              // 20px Edge Deadzone protects OS back
-              dr.style.transform = 'translateX(0)';
-              sToast.style.display = 'block';
-              setTimeout(() => { sToast.style.display = 'none'; }, 2500);
-            }
+      // --- P20: ACCORDION LAYOUT SHIFT SCROLL JUMP ---
+      } else if (scenarioKey === 'p20') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📂 Accordion Expand Damping (P20)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Layout Shift Damped':'Scroll Jump Disaster'}</span>
+          </div>
+          <div id="accFeed" class="scroll-contained" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; background:#090e1a; position:relative;">
+            <div style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px;">Q1: What is interaction-doctor?</div>
+            <div id="accToggle" style="padding:12px; background:#334155; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+              ▼ Q2: How does 8px Touch Slop work? (Tap to Expand)
+            </div>
+            <div id="accBody" style="display:none; padding:12px; background:#0f172a; border-radius:8px; font-size:11px; line-height:1.5; color:#cbd5e1;">
+              Touch Slop filters sub-pixel human hand tremors within 8.0px radius before committing scroll!
+            </div>
+            <div id="targetPost" style="padding:12px; background:#1e293b; border-radius:8px; font-size:12px; color:#60a5fa; font-weight:700;">
+              📍 TARGET POST #3 (Watch if this jumps out of sight)
+            </div>
+            <div id="accAlert" style="display:none; position:sticky; bottom:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Accordion expansion suddenly shifted scroll position!
+            </div>
+          </div>
+        `;
+        const toggle = sandboxStage.querySelector('#accToggle');
+        const body = sandboxStage.querySelector('#accBody');
+        const feed = sandboxStage.querySelector('#accFeed');
+        const alertEl = sandboxStage.querySelector('#accAlert');
+        toggle.addEventListener('click', () => {
+          const isOpen = body.style.display === 'block';
+          body.style.display = isOpen ? 'none' : 'block';
+          if (!isOpen && mode === 'without') {
+            feed.scrollTop = 0; // Violently jumps
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
           }
         });
 
-      } else if (scenarioKey === 'p31') {
-        // P31: DOUBLE TAP ACCIDENTAL ZOOM LOCK
+      // --- P21: 300MS TAP CLICK DELAY ---
+      } else if (scenarioKey === 'p21') {
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>🔍 Viewport Double-Tap Zoom Lock</span>
-            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Double-Tap Lock Active':'300% Zoom Explosion'}</span>
+            <span>⚡️ 300ms Click Delay (P21)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'touch-action: manipulation':'300ms Lag Conflict'}</span>
           </div>
-          <div id="doubleTapContainer" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; transition:transform 0.3s; will-change:transform;">
-            
-            <div id="heartBtn" style="width:70px; height:70px; border-radius:50%; background:#ef4444; display:flex; align-items:center; justify-content:center; font-size:32px; color:#fff; cursor:pointer; box-shadow:0 8px 20px rgba(239,68,68,0.5); user-select:none; touch-action:${mode==='with'?'manipulation':'auto'};">
-              ❤️
-            </div>
-            <div style="font-weight:800; font-size:13px; color:#fff;">Like Post (Double-Tap Quickly)</div>
-            <div style="font-size:11px; color:#94a3b8; text-align:center;">Double tap the heart button in rapid succession!</div>
-
-            <div id="doubleTapAlert" style="display:none; padding:10px; border-radius:8px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; text-align:center;">
-              💥 Disaster: Double-tap zoomed entire page by 300%! Viewport broken!
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#090e1a;">
+            <button id="btnTapSpeed" style="padding:14px 28px; background:#3b82f6; border:none; border-radius:12px; color:#fff; font-weight:800; font-size:14px; cursor:pointer; touch-action:${mode==='with'?'manipulation':'auto'};">
+              💳 Pay $100 (Tap to Buy)
+            </button>
+            <div id="tapCount" style="font-size:12px; color:#cbd5e1; font-family:'JetBrains Mono';">Orders Placed: 0</div>
+            <div id="tapDelayAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: 300ms synthetic click delay caused double-order bug!
             </div>
           </div>
         `;
+        const btn = sandboxStage.querySelector('#btnTapSpeed');
+        const count = sandboxStage.querySelector('#tapCount');
+        const alertEl = sandboxStage.querySelector('#tapDelayAlert');
+        let orders = 0, lastClick = 0;
+        btn.addEventListener('click', () => {
+          const now = Date.now();
+          orders++;
+          count.textContent = `Orders Placed: ${orders}`;
+          if (mode === 'without' && now - lastClick < 350) {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          }
+          lastClick = now;
+        });
 
+      // --- P22: TAP VS LONG-PRESS CALLOUT ---
+      } else if (scenarioKey === 'p22') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>👆 Tap vs Long-Press Gate (P22)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'350ms Temporal Gate':'False Trigger Conflict'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#090e1a;">
+            <div id="calloutTarget" style="padding:20px; background:#1e293b; border:2px solid #3b82f6; border-radius:12px; text-align:center; cursor:pointer; user-select:none;">
+              <div style="font-weight:800; font-size:13px; color:#fff;">Tap for Quick View</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Hold 350ms for Context Menu</div>
+            </div>
+            <div id="lpAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Simple light tap triggered heavy context menu callout!
+            </div>
+          </div>
+        `;
+        const card = sandboxStage.querySelector('#calloutTarget');
+        const alertEl = sandboxStage.querySelector('#lpAlert');
+        let pressTimer = null;
+        card.addEventListener('pointerdown', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          } else {
+            pressTimer = setTimeout(() => {
+              card.style.borderColor = '#10b981';
+              card.innerHTML = '<div style="color:#34d399; font-weight:800;">✅ Context Menu Triggered after 350ms!</div>';
+            }, 350);
+          }
+        });
+        card.addEventListener('pointerup', () => {
+          clearTimeout(pressTimer);
+          if (mode === 'with') {
+            card.style.borderColor = '#3b82f6';
+            card.innerHTML = '<div style="font-weight:800; font-size:13px; color:#fff;">Tap for Quick View</div><div style="font-size:10px; color:#94a3b8; margin-top:4px;">Hold 350ms for Context Menu</div>';
+          }
+        });
+
+      // --- P23: SIDE NAVIGATION DRAWER VS OS EDGE BACK ---
+      } else if (scenarioKey === 'p23') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📲 Side Drawer (P23)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'20px Edge Deadzone':'OS Back Hijack Crash'}</span>
+          </div>
+          <div id="drawerStage" class="scroll-contained" style="flex:1; position:relative; overflow:hidden; background:#090e1a; touch-action:none;">
+            <div style="padding:20px; color:#cbd5e1; font-size:12px; line-height:1.6;">
+              <p>👉 Swipe inwards from the very left edge (0 ~ 20px)!</p>
+            </div>
+            <div id="osBackFade" style="display:none; position:absolute; inset:0; background:#000; z-index:35; align-items:center; justify-content:center; color:#ef4444; font-size:13px; font-weight:800; text-align:center; padding:20px;">
+              💥 [OS Back Triggered!]<br><span style="font-size:11px; color:#94a3b8; font-weight:500;">Browser back gesture hijacked! App closed!</span>
+            </div>
+            <div id="drawerPanel" style="position:absolute; top:0; bottom:0; left:0; width:220px; background:#1e293b; border-right:1px solid #334155; transform:translateX(-100%); transition:transform 0.25s ease; z-index:20; padding:18px; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-weight:800; font-size:14px; color:#fff;">Navigation Menu</div>
+              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">🏠 Dashboard</div>
+              <div style="padding:8px; background:#0f172a; border-radius:6px; font-size:11px; color:#cbd5e1;">📁 Projects</div>
+            </div>
+          </div>
+        `;
+        const st = sandboxStage.querySelector('#drawerStage');
+        const dr = sandboxStage.querySelector('#drawerPanel');
+        const osBack = sandboxStage.querySelector('#osBackFade');
+        let sX = 0, isSwiping = false;
+        st.addEventListener('pointerdown', (e) => { sX = e.clientX - st.getBoundingClientRect().left; isSwiping = true; });
+        st.addEventListener('pointerup', (e) => {
+          if (!isSwiping) return;
+          isSwiping = false;
+          const endX = e.clientX - st.getBoundingClientRect().left;
+          if (endX - sX > 40) {
+            if (mode === 'without' && sX < 25) {
+              osBack.style.display = 'flex';
+              setTimeout(() => { osBack.style.display = 'none'; }, 2500);
+            } else { dr.style.transform = 'translateX(0)'; }
+          }
+        });
+
+      // --- P24: 2D MARQUEE SELECTION VS PAN ---
+      } else if (scenarioKey === 'p24') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🔲 Box Selection vs Pan (P24)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Prerequisite Gate Active':'Gesture Ambiguity Conflict'}</span>
+          </div>
+          <div id="marqueeArea" class="scroll-contained" style="flex:1; background:#020617; position:relative; overflow:hidden; touch-action:none; cursor:crosshair;">
+            <div id="mBox1" style="position:absolute; left:40px; top:40px; width:70px; height:70px; background:#1e293b; border:2px solid #334155; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:700;">Node A</div>
+            <div id="mBox2" style="position:absolute; right:40px; bottom:40px; width:70px; height:70px; background:#1e293b; border:2px solid #334155; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:700;">Node B</div>
+            <div id="marqueeRect" style="display:none; position:absolute; border:1px dashed #3b82f6; background:rgba(59,130,246,0.15); pointer-events:none;"></div>
+            <div id="marqueeAlert" style="display:none; position:absolute; bottom:14px; left:14px; right:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Tried to box-select, but canvas panned instead!
+            </div>
+          </div>
+        `;
+        const mArea = sandboxStage.querySelector('#marqueeArea');
+        const mRect = sandboxStage.querySelector('#marqueeRect');
+        const alertEl = sandboxStage.querySelector('#marqueeAlert');
+        let mStartX=0, mStartY=0, isMarquee=false;
+        mArea.addEventListener('pointerdown', (e) => {
+          mStartX = e.clientX - mArea.getBoundingClientRect().left;
+          mStartY = e.clientY - mArea.getBoundingClientRect().top;
+          isMarquee = true;
+          mRect.style.display = 'block';
+        });
+        mArea.addEventListener('pointermove', (e) => {
+          if (!isMarquee) return;
+          const curX = e.clientX - mArea.getBoundingClientRect().left;
+          const curY = e.clientY - mArea.getBoundingClientRect().top;
+          const l = Math.min(mStartX, curX), t = Math.min(mStartY, curY);
+          const w = Math.abs(curX - mStartX), h = Math.abs(curY - mStartY);
+          mRect.style.left = `${l}px`; mRect.style.top = `${t}px`;
+          mRect.style.width = `${w}px`; mRect.style.height = `${h}px`;
+          if (mode === 'without' && Math.hypot(w, h) > 50) {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          }
+        });
+        mArea.addEventListener('pointerup', () => { isMarquee = false; mRect.style.display = 'none'; });
+
+      // --- P25: AUDIO RANGE SLIDER THUMB HIT TARGET ---
+      } else if (scenarioKey === 'p25') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🎚️ 12px Audio Slider (P25)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'44px Hit Target Active':'12px Thumb Miss'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:30px 20px; display:flex; flex-direction:column; justify-content:center; gap:20px; background:#090e1a;">
+            <div style="font-weight:700; font-size:12px; color:#fff;">Volume: <span id="volLabel">60%</span></div>
+            <div id="volTrack" style="height:6px; background:#1e293b; border-radius:3px; position:relative; touch-action:none;">
+              <div id="volFill" style="width:60%; height:100%; background:#10b981; border-radius:3px;"></div>
+              <!-- Thumb: 12px visible, 44px hit test in Optimized -->
+              <div id="volThumb" style="position:absolute; left:calc(60% - 6px); top:-3px; width:12px; height:12px; background:#fff; border-radius:50%; cursor:grab; box-shadow:0 0 0 ${mode==='with'?'16px rgba(16,185,129,0.15)':'0'};"></div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; text-align:center;">Tap the tiny 12px thumb with your finger/cursor!</div>
+            <div id="volAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: 12px thumb missed! Slider did not respond!
+            </div>
+          </div>
+        `;
+        const vTrack = sandboxStage.querySelector('#volTrack');
+        const vThumb = sandboxStage.querySelector('#volThumb');
+        const vFill = sandboxStage.querySelector('#volFill');
+        const vLabel = sandboxStage.querySelector('#volLabel');
+        const alertEl = sandboxStage.querySelector('#volAlert');
+        vThumb.addEventListener('pointerdown', (e) => {
+          vThumb.setPointerCapture(e.pointerId);
+        });
+        vThumb.addEventListener('pointermove', (e) => {
+          if (!vThumb.hasPointerCapture(e.pointerId)) return;
+          const r = vTrack.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(100, Math.round(((e.clientX - r.left) / r.width) * 100)));
+          vFill.style.width = `${pct}%`; vThumb.style.left = `calc(${pct}% - 6px)`; vLabel.textContent = `${pct}%`;
+        });
+        vTrack.addEventListener('click', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          }
+        });
+
+      // --- P26: CHAT CURSOR KEYBOARD OCCLUSION ---
+      } else if (scenarioKey === 'p26') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🔍 Input Cursor Occlusion (P26)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Cursor Auto-Scroll Active':'Cursor Occluded'}</span>
+          </div>
+          <div id="occlusionArea" class="scroll-contained" style="flex:1; padding:16px; display:flex; flex-direction:column; justify-content:flex-end; background:#090e1a; position:relative;">
+            <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+              <div style="font-weight:700; font-size:12px; color:#fff;">Multi-line Document Editor</div>
+              <textarea id="occTextarea" rows="4" style="background:#0f172a; border:1px solid #334155; border-radius:6px; color:#fff; padding:8px; font-size:11px; resize:none;">Typing at bottom of viewport...</textarea>
+            </div>
+            <!-- Simulated Keyboard -->
+            <div id="simKb26" style="height:180px; background:#1e293b; border-top:1px solid #334155; margin-top:12px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; font-weight:700;">
+              Virtual Keyboard (180px)
+            </div>
+            <div id="occAlert" style="display:none; position:absolute; top:20px; left:16px; right:16px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Input cursor completely hidden under virtual keyboard!
+            </div>
+          </div>
+        `;
+        const ta = sandboxStage.querySelector('#occTextarea');
+        const alertEl = sandboxStage.querySelector('#occAlert');
+        ta.addEventListener('focus', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          } else {
+            ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+
+      // --- P27: STICKY COLUMN HORIZONTAL JITTER ---
+      } else if (scenarioKey === 'p27') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📐 Sticky Column Jitter (P27)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Compositor Layer Active':'1-Frame Lag Jitter'}</span>
+          </div>
+          <div id="stickyTableFeed" class="scroll-contained" style="flex:1; overflow-x:auto; padding:12px; background:#090e1a; position:relative;">
+            <table style="width:500px; border-collapse:collapse; color:#fff; font-size:11px;">
+              <thead>
+                <tr style="background:#1e293b;">
+                  <th id="stickyHeader" style="position:sticky; left:0; width:100px; background:#1e293b; padding:10px; border:1px solid #334155; z-index:2; will-change:${mode==='with'?'transform':'auto'};">
+                    Sticky ID
+                  </th>
+                  <th style="padding:10px; border:1px solid #334155;">Metric Alpha</th>
+                  <th style="padding:10px; border:1px solid #334155;">Metric Beta</th>
+                  <th style="padding:10px; border:1px solid #334155;">Metric Gamma</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="position:sticky; left:0; background:#1e293b; padding:10px; border:1px solid #334155;">Node 01</td><td style="padding:10px; border:1px solid #334155;">99.8%</td><td style="padding:10px; border:1px solid #334155;">12ms</td><td style="padding:10px; border:1px solid #334155;">Active</td></tr>
+              </tbody>
+            </table>
+            <div style="font-size:11px; color:#94a3b8; margin-top:14px;">Scroll horizontally back and forth!</div>
+          </div>
+        `;
+
+      // --- P28: LONG-PRESS BLUE TEXT HIGHLIGHT GLITCH ---
+      } else if (scenarioKey === 'p28') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>👆 Long-Press Text Highlight (P28)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'User-Select Suppressed':'Blue Glitch Bug'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#090e1a;">
+            <div id="cardP28" style="padding:20px; background:#1e293b; border:2px solid #3b82f6; border-radius:12px; cursor:pointer; user-select:${mode==='with'?'none':'text'}; text-align:center;">
+              <div style="font-weight:800; font-size:13px; color:#fff;">Draggable Product Card</div>
+              <div style="font-size:11px; color:#94a3b8; margin-top:6px;">Long-press this card with finger/mouse</div>
+            </div>
+            <div id="highlightAlert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Blue text highlight appeared over card during long-press!
+            </div>
+          </div>
+        `;
+        const c28 = sandboxStage.querySelector('#cardP28');
+        const alertEl = sandboxStage.querySelector('#highlightAlert');
+        c28.addEventListener('pointerdown', () => {
+          if (mode === 'without') {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          }
+        });
+
+      // --- P29: DND AUTO-SCROLL RUNWAY SPEED ---
+      } else if (scenarioKey === 'p29') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🚀 DnD Auto-Scroll Runway (P29)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Velocity Clamped':'Runway Speed Disaster'}</span>
+          </div>
+          <div id="dndRunwayFeed" class="scroll-contained" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; background:#090e1a; position:relative;">
+            <div id="dragItem29" style="padding:14px; background:#3b82f6; border-radius:8px; color:#fff; font-weight:800; font-size:12px; cursor:grab; touch-action:none;">
+              📦 Drag me to the very bottom boundary!
+            </div>
+            <div style="height:400px; background:radial-gradient(#334155 1px, transparent 1px); background-size:16px 16px; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:12px;">
+              Long Feed Area (400px)
+            </div>
+            <div id="runwayAlert" style="display:none; position:sticky; bottom:12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Auto-scroll velocity exploded! Scrolled past 100 items instantly!
+            </div>
+          </div>
+        `;
+        const itm = sandboxStage.querySelector('#dragItem29');
+        const feed = sandboxStage.querySelector('#dndRunwayFeed');
+        const alertEl = sandboxStage.querySelector('#runwayAlert');
+        let isDrag29 = false;
+        itm.addEventListener('pointerdown', (e) => { isDrag29 = true; itm.setPointerCapture(e.pointerId); });
+        itm.addEventListener('pointermove', (e) => {
+          if (!isDrag29) return;
+          const r = feed.getBoundingClientRect();
+          if (e.clientY > r.bottom - 40) {
+            if (mode === 'without') {
+              feed.scrollTop += 80; // Explosion speed
+              alertEl.style.display = 'block';
+              setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+            } else { feed.scrollTop += 8; } // Clamped smooth velocity
+          }
+        });
+        itm.addEventListener('pointerup', (e) => { isDrag29 = false; itm.releasePointerCapture(e.pointerId); });
+
+      // --- P30: MULTI-TOUCH ZOOM INERTIA FLYAWAY ---
+      } else if (scenarioKey === 'p30') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🖼️ Multi-touch Zoom Flyaway (P30)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Fling Friction Decay OK':'Inertia Flyaway Crash'}</span>
+          </div>
+          <div id="p30Area" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#020617; position:relative; overflow:hidden;">
+            <div id="photoP30" style="width:160px; height:160px; background:linear-gradient(135deg, #f59e0b, #ef4444); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:36px; will-change:transform;">
+              🏞️
+            </div>
+            <button id="btnPinchFling" style="margin-top:16px; padding:8px 16px; background:#334155; border:none; border-radius:6px; color:#fff; font-size:11px; font-weight:700; cursor:pointer;">
+              Simulate Pinch Release Fling
+            </button>
+            <div id="flyAlert" style="display:none; position:absolute; bottom:14px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px 14px; border-radius:8px;">
+              💥 Disaster: Photo flew completely out of viewport on release!
+            </div>
+          </div>
+        `;
+        const btn = sandboxStage.querySelector('#btnPinchFling');
+        const photo = sandboxStage.querySelector('#photoP30');
+        const alertEl = sandboxStage.querySelector('#flyAlert');
+        btn.addEventListener('click', () => {
+          if (mode === 'without') {
+            photo.style.transform = 'translate3d(400px, -400px, 0) scale(3)';
+            alertEl.style.display = 'block';
+            setTimeout(() => { photo.style.transform = 'none'; alertEl.style.display = 'none'; }, 2200);
+          } else {
+            photo.style.transform = 'scale(1.2)';
+            setTimeout(() => { photo.style.transform = 'none'; }, 300);
+          }
+        });
+
+      // --- P31: VIEWPORT DOUBLE-TAP ZOOM LOCK ---
+      } else if (scenarioKey === 'p31') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🔍 Viewport Double-Tap Zoom (P31)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Double-Tap Lock Active':'300% Zoom Explosion'}</span>
+          </div>
+          <div id="doubleTapContainer" class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; transition:transform 0.3s; will-change:transform;">
+            <div id="heartBtn" style="width:70px; height:70px; border-radius:50%; background:#ef4444; display:flex; align-items:center; justify-content:center; font-size:32px; color:#fff; cursor:pointer; box-shadow:0 8px 20px rgba(239,68,68,0.5); user-select:none; touch-action:${mode==='with'?'manipulation':'auto'};">❤️</div>
+            <div style="font-weight:800; font-size:13px; color:#fff;">Like Post (Double-Tap Quickly)</div>
+            <div id="doubleTapAlert" style="display:none; padding:10px; border-radius:8px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; text-align:center;">
+              💥 Disaster: Double-tap zoomed entire page by 300%! Viewport shattered!
+            </div>
+          </div>
+        `;
         const btn = sandboxStage.querySelector('#heartBtn');
         const container = sandboxStage.querySelector('#doubleTapContainer');
         const dtAlert = sandboxStage.querySelector('#doubleTapAlert');
-
         let lastTap = 0;
         btn.addEventListener('click', () => {
           const now = Date.now();
           if (now - lastTap < 320) {
             if (mode === 'without') {
-              // 300% Zoom Explosion
-              container.style.transform = 'scale(2.2)';
-              dtAlert.style.display = 'block';
-              setTimeout(() => {
-                container.style.transform = 'none';
-                dtAlert.style.display = 'none';
-              }, 2500);
+              container.style.transform = 'scale(2.2)'; dtAlert.style.display = 'block';
+              setTimeout(() => { container.style.transform = 'none'; dtAlert.style.display = 'none'; }, 2500);
             } else {
-              // Protected by manipulation
               btn.style.transform = 'scale(1.3)';
               setTimeout(() => { btn.style.transform = 'scale(1)'; }, 180);
             }
@@ -2461,69 +2935,178 @@ W3C Pointer Events와 8.0px 직교 축 잠금을 적용하고, 0ms GPU 가속으
           lastTap = now;
         });
 
-      } else {
-        // GENERAL REAL-TOUCH INTERACTION COMPONENT FOR OTHER SCENARIOS
+      // --- P32: SVG PAN LISTENER MEMORY LEAK ---
+      } else if (scenarioKey === 'p32') {
         sandboxStage.innerHTML = `
           <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-            <span>📱 Interactive Touch Lab</span>
-            <span style="font-size:10px; color: ${mode === 'with' ? '#10b981' : '#ef4444'};">${mode === 'with' ? 'Physics Invariant Active' : 'Baseline Defect Active'}</span>
+            <span>⚡️ SVG Pan Listener Leak (P32)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Passive Cleanup Active':'Memory Leak Jitter'}</span>
           </div>
-          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; gap:14px; justify-content:center; align-items:center; text-align:center;">
-            <div id="generalDraggableCard" style="background:#1e293b; border:2px solid ${mode==='with'?'#10b981':'#ef4444'}; border-radius:16px; padding:24px; width:100%; max-width:260px; display:flex; flex-direction:column; gap:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5); cursor:grab; touch-action:none; will-change:transform;">
-              <div style="font-size:28px;">🩺</div>
-              <div style="font-size:14px; font-weight:800; color:#fff;">Direct Physical Interaction</div>
-              <p style="font-size:11px; color:#cbd5e1; line-height:1.5;">
-                ${mode === 'without' ? '❌ <strong>Baseline Defect</strong>: Dragging triggers gesture contention, unmanaged scroll chaining, or sub-pixel coordinate jitter.' : '🟢 <strong>Optimized Invariant</strong>: 8.0px slop gate, 0ms direct GPU clamping, and isolated overscroll containment.'}
-              </p>
-              <div style="font-size:10px; color:#94a3b8; font-family:'JetBrains Mono';">Try dragging this card!</div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#090e1a; position:relative;">
+            <svg id="p32Svg" width="180" height="140" style="background:#020617; border:1px solid #334155; border-radius:10px; cursor:grab;">
+              <circle cx="90" cy="70" r="40" fill="#60a5fa" />
+            </svg>
+            <div id="leakCounter" style="font-size:11px; color:#cbd5e1; font-family:'JetBrains Mono';">Active Listeners: 1</div>
+            <div id="p32Alert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: 50+ unremoved listeners lagging animation loop!
             </div>
-            <div id="generalToast" style="display:none; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:700; max-width:260px;"></div>
           </div>
         `;
-
-        const card = sandboxStage.querySelector('#generalDraggableCard');
-        const gToast = sandboxStage.querySelector('#generalToast');
-        let sX=0, sY=0, cX=0, cY=0, isDrag=false;
-
-        card.addEventListener('pointerdown', (e) => {
-          sX = e.clientX; sY = e.clientY;
-          isDrag = true;
-          card.setPointerCapture(e.pointerId);
-          gToast.style.display = 'none';
-        });
-
-        card.addEventListener('pointermove', (e) => {
-          if (!isDrag) return;
-          const dx = e.clientX - sX, dy = e.clientY - sY;
-          if (mode === 'with') {
-            if (Math.hypot(dx, dy) > 8) {
-              card.style.transform = `translate3d(${cX + dx}px, ${cY + dy}px, 0)`;
-            }
-          } else {
-            card.style.transform = `translate3d(${cX + dx + (Math.random()*6-3)}px, ${cY + dy + (Math.random()*6-3)}px, 0)`;
-          }
-        });
-
-        card.addEventListener('pointerup', (e) => {
-          if (!isDrag) return;
-          isDrag = false;
-          card.releasePointerCapture(e.pointerId);
-          const dx = e.clientX - sX, dy = e.clientY - sY;
-          cX += dx; cY += dy;
-
-          gToast.style.display = 'block';
+        const svg = sandboxStage.querySelector('#p32Svg');
+        const counter = sandboxStage.querySelector('#leakCounter');
+        const alertEl = sandboxStage.querySelector('#p32Alert');
+        let count = 1;
+        svg.addEventListener('pointerdown', () => {
           if (mode === 'without') {
-            gToast.style.background = 'rgba(239, 68, 68, 0.2)';
-            gToast.style.border = '1px solid #ef4444';
-            gToast.style.color = '#f87171';
-            gToast.innerHTML = '💥 <strong>Jitter Glitch!</strong> Unbounded drag jittered coordinates.';
-          } else {
-            gToast.style.background = 'rgba(16, 185, 129, 0.2)';
-            gToast.style.border = '1px solid #10b981';
-            gToast.style.color = '#34d399';
-            gToast.innerHTML = '✨ <strong>Physics Passed!</strong> 0ms GPU tracking without jitter.';
+            count += 12;
+            counter.textContent = `Active Listeners: ${count}`;
+            if (count > 30) alertEl.style.display = 'block';
           }
         });
+
+      // --- P33: SHEET HYPERSENSITIVE FLING CLOSE ---
+      } else if (scenarioKey === 'p33') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🛑 Sheet Fling Threshold (P33)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Velocity + Distance Guard':'Hypersensitive Close'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; background:#090e1a; position:relative;">
+            <div id="sheetP33" style="height:200px; background:#1e293b; border-top-left-radius:18px; border-top-right-radius:18px; padding:16px; display:flex; flex-direction:column; gap:12px; transition:transform 0.2s;">
+              <div style="width:36px; height:4px; background:#475569; border-radius:2px; align-self:center;"></div>
+              <div style="font-weight:800; font-size:13px; color:#fff;">Order Summary Sheet</div>
+              <div style="font-size:11px; color:#94a3b8;">Gently drag down 10px to test sensitivity!</div>
+            </div>
+            <div id="p33Alert" style="display:none; position:absolute; top:20px; left:16px; right:16px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: Tiny 10px tremor falsely closed the modal sheet!
+            </div>
+          </div>
+        `;
+        const sh = sandboxStage.querySelector('#sheetP33');
+        const alertEl = sandboxStage.querySelector('#p33Alert');
+        let sY = 0;
+        sh.addEventListener('pointerdown', (e) => { sY = e.clientY; });
+        sh.addEventListener('pointerup', (e) => {
+          const dy = e.clientY - sY;
+          if (dy > 8) {
+            if (mode === 'without') {
+              sh.style.transform = 'translateY(160px)';
+              alertEl.style.display = 'block';
+              setTimeout(() => { sh.style.transform = 'none'; alertEl.style.display = 'none'; }, 2200);
+            }
+          }
+        });
+
+      // --- P34: STICKY HEADER DIRECTION JITTER ---
+      } else if (scenarioKey === 'p34') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>📌 Sticky Header Deadband (P34)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'12px Deadband Active':'Flicker Jitter Crash'}</span>
+          </div>
+          <div id="headerFeed" class="scroll-contained" style="flex:1; overflow-y:auto; background:#090e1a; position:relative;">
+            <div id="collapsibleHeader" style="position:sticky; top:0; background:#3b82f6; color:#fff; padding:12px; font-weight:800; font-size:12px; z-index:10; transition:all 0.15s;">
+              📌 Smart Sticky Header
+            </div>
+            <div style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+              <div style="padding:14px; background:#1e293b; border-radius:8px;">Scroll feed slowly up and down with tiny movements...</div>
+              <div style="height:300px; background:#0f172a; border-radius:8px;"></div>
+            </div>
+            <div id="p34Alert" style="display:none; position:sticky; bottom:12px; margin:0 12px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; padding:10px; border-radius:8px; text-align:center;">
+              💥 Disaster: 1px micro-scroll jittered header visibility 60 times a second!
+            </div>
+          </div>
+        `;
+        const feed = sandboxStage.querySelector('#headerFeed');
+        const hdr = sandboxStage.querySelector('#collapsibleHeader');
+        const alertEl = sandboxStage.querySelector('#p34Alert');
+        let lastY = 0;
+        feed.addEventListener('scroll', () => {
+          const dy = feed.scrollTop - lastY;
+          if (mode === 'without' && Math.abs(dy) > 1 && Math.abs(dy) < 6) {
+            hdr.style.opacity = hdr.style.opacity === '0.5' ? '1' : '0.5';
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2000);
+          } else if (mode === 'with' && Math.abs(dy) > 12) {
+            hdr.style.transform = dy > 0 ? 'translateY(-100%)' : 'none';
+          }
+          lastY = feed.scrollTop;
+        });
+
+      // --- P35: SWIPE ACTION COMMIT HYSTERESIS ---
+      } else if (scenarioKey === 'p35') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>⛓️ Swipe Action Hysteresis (P35)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'50% Snap Hysteresis':'20% Halfway Deadlock'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; justify-content:center; background:#090e1a; position:relative;">
+            <div style="position:relative; background:#ef4444; border-radius:10px; overflow:hidden;">
+              <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); color:#fff; font-weight:700; font-size:12px;">Archive</div>
+              <div id="swipeRow35" style="position:relative; background:#1e293b; padding:16px; border-radius:10px; border:1px solid #334155; color:#fff; font-weight:700; font-size:12px; touch-action:none; cursor:grab; transition:transform 0.2s;">
+                Swipe me left 20% and release!
+              </div>
+            </div>
+            <div id="p35Alert" style="display:none; margin-top:16px; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Item stuck awkwardly at 20%! Broken halfway state!
+            </div>
+          </div>
+        `;
+        const row = sandboxStage.querySelector('#swipeRow35');
+        const alertEl = sandboxStage.querySelector('#p35Alert');
+        let sX = 0, isSw35 = false;
+        row.addEventListener('pointerdown', (e) => { sX = e.clientX; isSw35 = true; row.setPointerCapture(e.pointerId); });
+        row.addEventListener('pointermove', (e) => {
+          if (!isSw35) return;
+          const dx = e.clientX - sX;
+          if (dx < 0) row.style.transform = `translateX(${dx}px)`;
+        });
+        row.addEventListener('pointerup', (e) => {
+          if (!isSw35) return;
+          isSw35 = false; row.releasePointerCapture(e.pointerId);
+          const dx = e.clientX - sX;
+          if (mode === 'without' && dx < -20 && dx > -80) {
+            row.style.transform = 'translateX(-40px)'; // Stuck halfway
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          } else {
+            row.style.transform = dx < -100 ? 'translateX(-120px)' : 'none';
+          }
+        });
+
+      // --- P36: HORIZONTAL TRACKPAD BACK NAVIGATION ---
+      } else if (scenarioKey === 'p36') {
+        sandboxStage.innerHTML = `
+          <div style="padding: 10px 14px; background:#1e293b; border-bottom:1px solid #334155; font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
+            <span>💻 Trackpad Horizontal Swiper (P36)</span>
+            <span style="font-size:10px; color:${mode==='with'?'#10b981':'#ef4444'}; font-family:'JetBrains Mono';">${mode==='with'?'Overscroll Containment OK':'Browser History Hijacked'}</span>
+          </div>
+          <div class="scroll-contained" style="flex:1; padding:20px; display:flex; flex-direction:column; justify-content:center; gap:16px; background:#090e1a; position:relative;">
+            <div id="carousel36" style="display:flex; gap:10px; overflow-x:auto; padding:10px; background:#1e293b; border-radius:12px; touch-action:pan-x; overscroll-behavior-x:${mode==='with'?'contain':'auto'};">
+              <div style="flex:0 0 160px; height:120px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800;">Slide 1</div>
+              <div style="flex:0 0 160px; height:120px; background:#8b5cf6; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800;">Slide 2</div>
+              <div style="flex:0 0 160px; height:120px; background:#ec4899; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800;">Slide 3 (End)</div>
+            </div>
+            <div style="font-size:11px; color:#94a3b8; text-align:center;">Swipe horizontally past Slide 3 with trackpad!</div>
+            <div id="p36Alert" style="display:none; padding:10px; background:#ef4444; color:#fff; font-size:11px; font-weight:700; border-radius:8px; text-align:center;">
+              💥 Disaster: Overscrolling past edge triggered macOS browser back gesture!
+            </div>
+          </div>
+        `;
+        const car = sandboxStage.querySelector('#carousel36');
+        const alertEl = sandboxStage.querySelector('#p36Alert');
+        car.addEventListener('scroll', () => {
+          if (mode === 'without' && car.scrollLeft >= car.scrollWidth - car.clientWidth - 5) {
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 2200);
+          }
+        });
+
+      // --- FALLBACK SAFETY ---
+      } else {
+        sandboxStage.innerHTML = `
+          <div style="padding:12px; text-align:center; color:#94a3b8;">Interactive sandbox active.</div>
+        `;
       }
     }
 
