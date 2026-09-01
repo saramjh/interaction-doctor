@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
-  <title>interaction-doctor 🩺 | Interactive Diagnostic Hub & Skill Presentation</title>
-  <meta name="description" content="Dual Service Platform: 1) Interactive Touch Defect Diagnostic & Solution Hub (24 Production Cases), 2) 16-Device Physical Invariants Presentation." />
+  <title>interaction-doctor 🩺 | Interactive Diagnostic Hub & Step-by-Step Installation</title>
+  <meta name="description" content="Professional SWE Touch Interaction Diagnostic Engine with 5-Language Localization and Junior/Vibe-Coder Friendly Step-by-Step Skill Setup." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,6 +17,7 @@
       --primary-glow: rgba(59, 130, 246, 0.25);
       --success: #10b981;
       --danger: #ef4444;
+      --warning: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent: #8b5cf6;
@@ -150,7 +151,7 @@
        SERVICE 1: DIAGNOSTIC & SOLUTION WORKSTATION
        ======================================================== */
     .diag-wrapper {
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 20px 20px 60px;
       display: flex;
@@ -158,7 +159,6 @@
       gap: 18px;
     }
 
-    /* Search & Faceted Filter */
     .search-panel {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -199,7 +199,6 @@
       pointer-events: none;
     }
 
-    /* 3-Dimensional Facet Tabs */
     .facet-tabs-row {
       display: flex;
       align-items: center;
@@ -288,21 +287,20 @@
       color: #94a3b8;
     }
 
-    /* Workstation Grid: Left Live Sandbox Simulator | Right Solution Prescription */
     .workstation-grid {
       display: grid;
-      grid-template-columns: 400px 1fr;
+      grid-template-columns: 420px 1fr;
       gap: 24px;
       align-items: start;
     }
 
-    @media (max-width: 960px) {
+    @media (max-width: 980px) {
       .workstation-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    /* Interactive Sandbox Simulator */
+    /* Live Sandbox Simulator */
     .simulator-box {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -353,23 +351,22 @@
     .mission-banner {
       width: 100%;
       background: #090e1a;
-      border: 1px dashed #334155;
+      border: 1px solid #334155;
+      border-left: 4px solid var(--primary);
       border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 0.8rem;
-      color: #93c5fd;
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.5;
     }
+    .mission-banner strong { color: #60a5fa; }
 
     .phone-mockup {
       width: 100%;
-      height: 540px;
+      height: 560px;
       background: #000;
       border: 6px solid #334155;
-      border-radius: 30px;
+      border-radius: 32px;
       overflow: hidden;
       box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       position: relative;
@@ -377,7 +374,6 @@
       flex-direction: column;
     }
 
-    /* Live Interactive Sandbox Canvas inside Phone Mockup */
     .sandbox-stage {
       flex: 1;
       position: relative;
@@ -389,7 +385,7 @@
       user-select: none;
     }
 
-    /* Prescription Hub (Right Column) */
+    /* Prescription Column */
     .prescription-column {
       display: flex;
       flex-direction: column;
@@ -422,6 +418,23 @@
     .card-title.danger { color: #f87171; }
     .card-title.success { color: #34d399; }
     .card-title.accent { color: #c084fc; }
+
+    .env-badge-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .env-badge {
+      background: #090e1a;
+      border: 1px solid #334155;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #93c5fd;
+      font-family: 'JetBrains Mono', monospace;
+    }
 
     .card p, .card li {
       font-size: 0.88rem;
@@ -472,7 +485,7 @@
       position: relative;
       white-space: pre-wrap;
       word-break: break-word;
-      max-height: 250px;
+      max-height: 260px;
       overflow-y: auto;
     }
 
@@ -498,15 +511,15 @@
     }
 
     /* ========================================================
-       SERVICE 2: SKILL PRESENTATION & MANIFESTO
+       SERVICE 2: JUNIOR & VIBE-CODER STEP-BY-STEP SETUP GUIDE
        ======================================================== */
     .pres-wrapper {
-      max-width: 960px;
+      max-width: 1040px;
       margin: 0 auto;
-      padding: 40px 20px 80px;
+      padding: 30px 20px 80px;
       display: flex;
       flex-direction: column;
-      gap: 48px;
+      gap: 36px;
     }
 
     .pres-hero {
@@ -514,7 +527,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .pres-badge {
@@ -528,76 +541,115 @@
     }
 
     .pres-hero h1 {
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.25;
       letter-spacing: -1px;
     }
 
     .pres-hero p {
       color: var(--text-muted);
-      font-size: 1.1rem;
-      max-width: 740px;
+      font-size: 1.05rem;
+      max-width: 780px;
       line-height: 1.6;
     }
 
-    .pres-section {
+    /* Beginner Step-by-Step Card Flow */
+    .install-flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .flow-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 32px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
+      position: relative;
     }
 
-    .pres-section h2 {
-      font-size: 1.4rem;
-      font-weight: 800;
+    .flow-step-num {
+      width: 32px;
+      height: 32px;
+      background: #1e293b;
+      border: 1px solid var(--primary);
+      color: #60a5fa;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
     }
 
-    .pres-section p {
-      color: #cbd5e1;
-      font-size: 0.95rem;
-      line-height: 1.7;
+    .flow-card-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
     }
 
-    .constants-table {
-      width: 100%;
-      border-collapse: collapse;
+    .flow-card p {
       font-size: 0.88rem;
-      margin-top: 10px;
-    }
-    .constants-table th, .constants-table td {
-      border: 1px solid #1e293b;
-      padding: 10px 14px;
-      text-align: left;
-    }
-    .constants-table th {
-      background: #0f172a;
-      color: #94a3b8;
-      font-weight: 700;
-    }
-    .constants-table td:first-child {
-      font-family: 'JetBrains Mono', monospace;
-      color: #60a5fa;
-      font-weight: 600;
+      line-height: 1.6;
+      color: #cbd5e1;
     }
 
-    .install-box {
+    .flow-code-block {
       background: #090e1a;
       border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 12px 14px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       color: #38bdf8;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      word-break: break-all;
+    }
+
+    .flow-action-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Verification Checklist Card */
+    .checklist-card {
+      background: #0d1527;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .checklist-card h3 {
+      color: #34d399;
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checklist-card ul {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: #e2e8f0;
     }
 
     /* Toast */
@@ -632,10 +684,10 @@
     <!-- Dual Service Switcher -->
     <nav class="service-nav">
       <button class="service-tab-btn active" id="tabNavDiag" data-view="diagView">
-        🩺 <span>Diagnostic & Solution Lab</span>
+        🩺 <span id="navTextDiag">Diagnostic & Solution Lab</span>
       </button>
       <button class="service-tab-btn" id="tabNavPres" data-view="presView">
-        📖 <span>Skill Presentation</span>
+        🚀 <span id="navTextPres">Beginner Skill Setup Guide</span>
       </button>
     </nav>
 
@@ -663,7 +715,7 @@
       <section class="search-panel">
         <div class="search-input-wrap">
           <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" class="search-input" id="searchInput" placeholder="Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, pull-to-refresh, fab drag, infinite scroll)..." />
+          <input type="text" class="search-input" id="searchInput" placeholder="Search defect..." />
         </div>
 
         <!-- 3-Dimensional Facet Switcher -->
@@ -696,7 +748,7 @@
           </div>
 
           <div class="mission-banner" id="missionBanner">
-            👉 <strong>Try Test:</strong> <span id="missionText">Drag the element to experience defect vs physics fix.</span>
+            <strong>👉 <span id="missionHeading">Action Test</span>:</strong> <span id="missionText">Drag the element to experience defect vs physics fix.</span>
           </div>
 
           <div class="phone-mockup">
@@ -707,10 +759,11 @@
 
         <!-- Prescription Hub Right -->
         <div class="prescription-column">
-          <!-- Flaws Card -->
+          <!-- Environment & Flaws Card -->
           <div class="card">
+            <div class="env-badge-row" id="envBadgeRow"></div>
             <div class="card-title danger" id="diagTitle">
-              🚨 Baseline Defect Analysis & Reproduction
+              🚨 Baseline Defect Analysis & Root Cause
             </div>
             <ul id="diagFlaws"></ul>
           </div>
@@ -718,7 +771,7 @@
           <!-- Treatment Card -->
           <div class="card">
             <div class="card-title success" id="treatTitle">
-              🩺 Applied Physical Laws & Architecture Optimization
+              🩺 Physical Invariants & SWE Architectural Fix
             </div>
             <p id="treatDesc"></p>
           </div>
@@ -749,278 +802,356 @@
   </div>
 
   <!-- ========================================================
-       VIEW 2: SKILL PRESENTATION & MANIFESTO
+       SERVICE 2: JUNIOR & VIBE-CODER STEP-BY-STEP SETUP GUIDE
        ======================================================== -->
   <div class="view-container" id="presView">
     <div class="pres-wrapper">
       <section class="pres-hero">
-        <div class="pres-badge">🔬 Physical Invariants & Multi-Agent Skill Engine</div>
-        <h1>Closing The Touch Gap in LLM Code</h1>
-        <p>Why modern AI models generate visually stunning CSS but break down on real physical touchscreens — and how 16 hardware benchmarks solve it.</p>
+        <div class="pres-badge" id="presBadge">🚀 3-Minute Junior & Vibe-Coder Quickstart</div>
+        <h1 id="presTitle">How to Install & Use interaction-doctor</h1>
+        <p id="presSubtitle">Never write manual gesture math again. Inject 16-device hardware touch physics into your AI coding assistant in 3 simple steps.</p>
       </section>
 
-      <!-- Quick Install -->
-      <section class="pres-section">
-        <h2>⚡️ One-Line Skill Installation</h2>
-        <p>Add <code>interaction-doctor</code> directly to Claude Code, Antigravity, or Cursor:</p>
-        <div class="install-box">
-          <code>npx skills add saramjh/interaction-doctor</code>
-          <button class="copy-btn" style="position: static;" onclick="navigator.clipboard.writeText('npx skills add saramjh/interaction-doctor'); showToast();">Copy</button>
+      <!-- Step-by-Step Flow Grid -->
+      <div class="install-flow-grid">
+        <!-- Step 1: Claude Code / CLI Agents -->
+        <div class="flow-card">
+          <div class="flow-step-num">1</div>
+          <div class="flow-card-title" id="step1Title">For Claude Code / Antigravity</div>
+          <p id="step1Desc">Open your terminal in your project root directory and run the official universal installer:</p>
+          <div class="flow-code-block">
+            <code>npx skills add saramjh/interaction-doctor</code>
+            <button class="flow-action-btn" onclick="navigator.clipboard.writeText('npx skills add saramjh/interaction-doctor'); showToast();">Copy</button>
+          </div>
+          <p style="font-size: 0.78rem; color: #94a3b8;" id="step1Tip">💡 Select your agent (Claude Code / Antigravity), press Enter, and you are ready!</p>
         </div>
-      </section>
 
-      <!-- The 16 Hardware Ground Truth -->
-      <section class="pres-section">
-        <h2>🔬 The 16 Real Hardware Benchmarks</h2>
-        <p>All constants in <code>interaction-doctor</code> are measured from physical iOS, Android, and Desktop hardware devices (<code>research/measurements/</code>):</p>
-        <table class="constants-table">
-          <thead>
-            <tr>
-              <th>Physical Constant</th>
-              <th>Hard Measurement</th>
-              <th>Engineering Invariant</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>TOUCH_SLOP_RADIUS</td>
-              <td>8.0px (&plusmn;0.5px)</td>
-              <td>Ignore sub-8px jitter before declaring drag</td>
-            </tr>
-            <tr>
-              <td>HOLD_TEMPORAL_GATE</td>
-              <td>350ms (&plusmn;20ms)</td>
-              <td>Hold time before promoting touch to drag/context</td>
-            </tr>
-            <tr>
-              <td>AXIS_LOCK_VECTOR</td>
-              <td>8.0px Initial Travel</td>
-              <td>Lock dominant axis (&Delta;x vs &Delta;y) to kill cross-talk</td>
-            </tr>
-            <tr>
-              <td>KINETIC_MOMENTUM_WINDOW</td>
-              <td>120ms Trailing Window</td>
-              <td>Velocity calculation window for inertia snap</td>
-            </tr>
-            <tr>
-              <td>VIEWPORT_RESIZE_LATENCY</td>
-              <td>0ms Hardware Offset</td>
-              <td>Dynamic VisualViewport height tracking for keyboards</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+        <!-- Step 2: Web Chatbots (ChatGPT / Claude Web) -->
+        <div class="flow-card">
+          <div class="flow-step-num">2</div>
+          <div class="flow-card-title" id="step2Title">For ChatGPT / Claude Web / Gemini</div>
+          <p id="step2Desc">No terminal or CLI required! Copy the complete lossless standalone physics prompt:</p>
+          <div class="flow-code-block">
+            <span>STANDALONE.md (Prompt)</span>
+            <button class="flow-action-btn" id="btnCopyStandalone">Copy Prompt</button>
+          </div>
+          <p style="font-size: 0.78rem; color: #94a3b8;" id="step2Tip">💡 Paste this directly into Custom GPTs instructions or your first chat prompt.</p>
+        </div>
 
-      <!-- 7 Physical Laws -->
-      <section class="pres-section">
-        <h2>🏛️ The 7 Immutable Laws of Touch Physics</h2>
-        <p>1. <strong>Law of Direct Manipulation</strong>: Apply <code>transition: none</code> and CSS variables during drag/pinch; only ease on release.</p>
-        <p>2. <strong>Law of Dynamic Boundary Hand-off</strong>: Delegate scroll gestures based on <code>scrollTop &le; 0</code> at boundary points.</p>
-        <p>3. <strong>Law of Temporal Promotion</strong>: Gate long-press/drag behind 350ms with visual compression (<code>.press-holding</code>).</p>
-        <p>4. <strong>Law of Orthogonal Axis Lock</strong>: Lock strictly to dominant vector over first 8px to eliminate diagonal interference.</p>
-        <p>5. <strong>Law of Viewport Adaptability</strong>: Bind <code>window.visualViewport</code> resize events to counteract mobile virtual keyboards.</p>
-        <p>6. <strong>Law of Kinetic Momentum</strong>: Regress velocity over trailing 120ms to prevent abrupt gesture freezes.</p>
-        <p>7. <strong>Law of Single Pointer Pipeline</strong>: Eliminate fragmented Touch/Mouse dual-code using unified W3C Pointer Events.</p>
-      </section>
+        <!-- Step 3: Zero-Config Usage -->
+        <div class="flow-card">
+          <div class="flow-step-num">3</div>
+          <div class="flow-card-title" id="step3Title">Zero-Config Automatic Execution</div>
+          <p id="step3Desc">Once installed, you don't need to learn complex physics formulas. Just ask your AI normally:</p>
+          <div style="background:#090e1a; border:1px solid #334155; border-radius:8px; padding:10px; font-size:0.82rem; color:#60a5fa;">
+            "Create a mobile chat with long-press context menu and bottom sheet."
+          </div>
+          <p style="font-size: 0.78rem; color: #34d399;" id="step3Tip">✨ The AI automatically loads the skill and generates bug-free touch code with 8px axis lock & 0ms viewport sync!</p>
+        </div>
+      </div>
+
+      <!-- Verification Checklist Card -->
+      <div class="checklist-card">
+        <h3 id="verifyTitle">✅ How to Verify That Your AI is Using the Skill</h3>
+        <ul id="verifyList">
+          <li><strong>Check for 8px Axis Lock:</strong> Look for <code>Math.hypot(dx, dy) > 8</code> in your AI's touch event handlers.</li>
+          <li><strong>Check for VisualViewport:</strong> Look for <code>window.visualViewport.addEventListener('resize')</code> in mobile input code.</li>
+          <li><strong>Check for Pointer Events:</strong> Look for unified <code>pointerdown / pointermove</code> instead of fragmented HTML5 drag code.</li>
+        </ul>
+      </div>
     </div>
   </div>
 
   <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    // 24 Production Cases with Sandbox Render Functions
+    // 5-Language SWE Native Localization Database (EN, KO, JA, ZH, ES)
     const database = {
       en: {
+        navDiag: "Diagnostic & Solution Lab",
+        navPres: "Beginner Skill Setup Guide",
         facetAll: "🌟 All (24)",
         facetElement: "🧩 UI Element",
         facetConcept: "📐 Physics Concept",
         facetDefect: "🚨 Defect Class",
-        searchPlaceholder: "Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, pull-to-refresh, fab drag, infinite scroll)...",
+        searchPlaceholder: "Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, fab drag, infinite scroll)...",
         modeWithout: "❌ Baseline (Defects)",
         modeWith: "🟢 Optimized (Physics)",
-        diagTitle: "🚨 Baseline Defect Analysis & Reproduction",
-        treatTitle: "🩺 Applied Physical Laws & Architecture Optimization",
+        diagTitle: "🚨 Baseline Defect Analysis & Root Cause",
+        treatTitle: "🩺 Physical Invariants & SWE Architectural Fix",
         solTitle: "💊 Production Solution Prescriptions",
         solTabPrompt: "SWE Prompt",
         solTabCode: "Code Recipe",
         solTabPhysics: "Physics Contract",
+        missionHeading: "Action Test",
         copyBtn: "Copy",
-        toast: "✅ Solution copied to clipboard!",
+        toast: "✅ Copied to clipboard!",
+        presBadge: "🚀 3-Minute Junior & Vibe-Coder Quickstart",
+        presTitle: "How to Install & Use interaction-doctor",
+        presSubtitle: "Never write manual gesture math again. Inject 16-device hardware touch physics into your AI coding assistant in 3 simple steps.",
+        step1Title: "For Claude Code / Antigravity",
+        step1Desc: "Open your terminal in your project root directory and run the official universal installer:",
+        step1Tip: "💡 Select your agent (Claude Code / Antigravity), press Enter, and you are ready!",
+        step2Title: "For ChatGPT / Claude Web / Gemini",
+        step2Desc: "No terminal or CLI required! Copy the complete lossless standalone physics prompt:",
+        step2Tip: "💡 Paste this directly into Custom GPTs instructions or your first chat prompt.",
+        step3Title: "Zero-Config Automatic Execution",
+        step3Desc: "Once installed, you don't need to learn complex physics formulas. Just ask your AI normally:",
+        step3Tip: "✨ The AI automatically loads the skill and generates bug-free touch code with 8px axis lock & 0ms viewport sync!",
+        verifyTitle: "✅ How to Verify That Your AI is Using the Skill",
+        verifyList: [
+          "Check for 8px Axis Lock: Look for Math.hypot(dx, dy) > 8 in your AI's touch event handlers.",
+          "Check for VisualViewport: Look for window.visualViewport.addEventListener('resize') in mobile input code.",
+          "Check for Pointer Events: Look for unified pointerdown / pointermove instead of fragmented HTML5 drag code."
+        ],
         scenarios: {
-          p01_keyboard: {
-            codeId: "P01",
-            element: "Messenger Chat",
-            concept: "VisualViewport Sync",
-            defect: "Keyboard Overlap",
-            tag: "📱 Virtual Keyboard Overlap (P01)",
-            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp p01",
-            mission: "Tap input field and type Enter. Notice how baseline submits premature messages, while optimized allows multiline!",
-            flaws: [
-              "Pressing Enter on touch devices dispatches message instead of multiline insertion.",
-              "Virtual on-screen keyboard overlaps textarea and obscures sub-drawers.",
-              "Absence of press-state visual feedback causes long-press interaction ambiguity."
-            ],
-            treatment: "Integrated visualViewport dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine.",
-            prompt: `Implement a production mobile 1:1 chat interface (Telegram/Slack style).
-Integrate interactive-widget=resizes-content and visualViewport resize event listeners to synchronously align container height with the virtual keyboard offset.
-Differentiate input key handling: allow Enter for newline insertion on touch devices while reserving Enter for message dispatch on desktop pointers.
-For context menus, bind a 350ms temporal gate with .press-holding scale transformation, aborting immediately upon gesture travel exceeding 8px.`,
-            code: `if (window.visualViewport) {
-  const syncHeight = () => {
-    const vh = window.visualViewport.height;
-    document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
-    if (document.activeElement === messageInput) scrollToBottom(false);
-  };
-  window.visualViewport.addEventListener('resize', syncHeight);
-  window.visualViewport.addEventListener('scroll', syncHeight);
-}`,
-            physics: `[Physics Contract P01: Virtual Keyboard Avoidance]
-1. Viewport Adaptation: VisualViewport height tracking (0ms lag)
-2. Slop Hysteresis: Radius <= 8px during hold gate
-3. Temporal Promotion: 350ms hold gate with .press-holding scale(0.96)
-4. Key Dispatch: Desktop (Enter = Submit), Mobile (Enter = Linebreak)`
-          },
           p07_fab: {
             codeId: "P07",
-            element: "Floating Button (FAB)",
-            concept: "Slop Hysteresis",
-            defect: "Drag vs Click Ambiguity",
-            tag: "🔘 Floating Action Button Drag vs Click (P07)",
+            element: "Floating Action Button",
+            concept: "8px Slop Hysteresis",
+            defect: "Drag vs Click Contention",
+            tag: "🔘 Floating Button Drag vs Click (P07)",
             keywords: "fab floating button draggable click conflict hysteresis p07",
-            mission: "Drag the floating button to another position and release. Baseline mistakenly pops up a click alert; Optimized moves cleanly!",
+            env: ["Mobile Touch", "Desktop Mouse", "iOS Safari", "Android Chrome"],
+            mission: "Drag the floating button across the screen to reposition it. In Baseline, releasing fires an accidental click popup; In Optimized, 8px slop cleanly separates dragging from clicking!",
             flaws: [
-              "Dragging the floating button across screen accidentally fires its click action upon release.",
-              "Slight finger jitter during click triggers unwanted drag displacement."
+              "Event Pipeline Collision: Naive onClick triggers immediately upon pointer release, even after a 200px drag displacement.",
+              "Sub-pixel Touch Jitter: Natural finger tremors during a simple tap exceed 2px, prematurely triggering false drag coordinates.",
+              "Lack of State Promotion: No hysteresis boundary exists to arbitrate between tap intent and displacement intent."
             ],
-            treatment: "Enforced an 8px travel threshold: mark gesture as dragged only when movement exceeds 8px; suppress onClick event completely if drag was activated.",
-            prompt: `Build a draggable Floating Action Button (FAB).
-Track pointer travel distance: if total displacement remains <= 8px, execute click handler; if displacement > 8px, update FAB position and suppress click execution on release.`,
-            code: `if (Math.hypot(dx, dy) > 8) isDragged = true;`,
-            physics: `[Physics Contract P07: FAB Slop] Click gate: radius <= 8px`
+            treatment: "Enforced an 8.0px Touch Slop Radial Hysteresis gate with pointer capture. Suppress onClick dispatch when travel vector exceeds 8px, while executing 0ms GPU translation during drag.",
+            prompt: `Implement a draggable Floating Action Button (FAB).
+Unify mouse and touch events under W3C Pointer Events with setPointerCapture.
+Enforce an 8px Touch Slop radial boundary: if pointer displacement remains <= 8px, execute the click handler; if displacement > 8px, update FAB position via CSS variables (--x, --y) and suppress onClick dispatch upon pointerup.`,
+            code: `let startX = 0, startY = 0, isDrag = false;
+fab.addEventListener('pointerdown', (e) => {
+  startX = e.clientX; startY = e.clientY;
+  isDrag = false;
+  fab.setPointerCapture(e.pointerId);
+});
+fab.addEventListener('pointermove', (e) => {
+  if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+    isDrag = true;
+    fab.style.setProperty('--x', \`\${e.clientX - startX}px\`);
+  }
+});
+fab.addEventListener('pointerup', () => {
+  if (!isDrag) executeClick();
+});`,
+            physics: `[Physics Contract P07: Radial Slop Hysteresis]
+1. Slop Boundary: Radius <= 8.0px (±0.5px)
+2. State Arbitration: Strict mutual exclusion (isDrag XOR isClick)
+3. Direct Manipulation: 0ms CSS variable update during drag`
           },
-          p06_ptr: {
-            codeId: "P06",
-            element: "Pull-to-Refresh",
-            concept: "Boundary Hand-off",
-            defect: "Scroll Contention",
-            tag: "🔄 Pull-to-Refresh vs List Scroll (P06)",
-            keywords: "pull to refresh ptr overscroll rubberband list feed p06",
-            mission: "Scroll down the list, then drag downwards. Baseline erroneously triggers reload mid-feed; Optimized scrolls smoothly!",
+          p01_keyboard: {
+            codeId: "P01",
+            element: "Messenger Input",
+            concept: "VisualViewport Dynamic Sync",
+            defect: "Virtual Keyboard Overlap",
+            tag: "📱 Virtual Keyboard & Linebreak (P01)",
+            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp p01",
+            env: ["iOS Safari", "Android Chrome", "Mobile Viewport"],
+            mission: "Focus the message input and press Enter. Notice how Baseline dispatches the message prematurely on mobile, while Optimized allows multiline input!",
             flaws: [
-              "Pulling down while scrolled midway down a list triggers page refresh instead of normal scrolling.",
-              "Native browser overscroll bounce conflicts with custom refresh spinner."
+              "Hardware Keyboard Divergence: Mobile software keyboards lack dedicated modifier keys (Shift), turning Enter into an unintended submit trigger.",
+              "Asynchronous Viewport Shrink: Mobile OS virtual keyboards pop up asynchronously, pushing textareas beneath the fold.",
+              "DOM Scroll Snapping Conflict: Uncontrolled scroll jumps occur when focusing inputs inside fixed full-height wrappers."
             ],
-            treatment: "Applied overscroll-behavior-y: contain and bound PTR activation strictly to scrollTop === 0 at touch initiation with quadratic resistance damping.",
-            prompt: `Implement a custom Pull-to-Refresh component.
-Set overscroll-behavior-y: contain on scroll container. Only arm pull gesture if scrollTop === 0 at pointerdown.`,
-            code: `overscroll-behavior-y: contain;`,
-            physics: `[Physics Contract P06: Pull-to-Refresh Damping] Resistance factor: 0.4`
+            treatment: "Bound window.visualViewport resize event listeners with interactive-widget=resizes-content, distinguishing desktop pointer submit from touch linebreak.",
+            prompt: `Implement a production mobile 1:1 chat input container.
+Bind window.visualViewport resize listeners to dynamically adjust container height to window.visualViewport.height with 0ms delay.
+Differentiate input key handling: allow Enter for newline insertion on touch devices while reserving Enter for message dispatch on desktop pointers.`,
+            code: `if (window.visualViewport) {
+  const sync = () => {
+    document.documentElement.style.setProperty('--app-h', \`\${window.visualViewport.height}px\`);
+  };
+  window.visualViewport.addEventListener('resize', sync);
+}`,
+            physics: `[Physics Contract P01: Viewport Invariant]
+1. Offset Lag: 0ms synchronous visualViewport height adaptation
+2. Key Dispatch: Desktop (Enter = Submit), Touch (Enter = Linebreak)`
           },
           p09_modal_leak: {
             codeId: "P09",
             element: "Modal Overlay",
-            concept: "Pointer Capture",
-            defect: "Backdrop Click Leak",
-            tag: "🛡️ Modal Backdrop Click Leak (P09)",
+            concept: "Dual Target Verification",
+            defect: "Backdrop Drag Leak",
+            tag: "🛡️ Modal Backdrop Drag Leak (P09)",
             keywords: "modal dialog overlay backdrop backdrop-click leak drag p09",
-            mission: "Drag text inside the modal and release your finger/mouse on the dark backdrop. Baseline accidentally closes the modal!",
+            env: ["Desktop Web", "Mobile Web", "Text Selection"],
+            mission: "Highlight or drag the text inside the modal and release your mouse on the dark backdrop. In Baseline, the modal abruptly closes; In Optimized, it remains open!",
             flaws: [
-              "Dragging a selection or text inside a modal and releasing outside accidentally closes the modal."
+              "Single-Phase Event Bubbling: Naive backdrop click listeners fire whenever pointerup occurs over the backdrop, ignoring where the gesture began.",
+              "Text Selection Boundary Escape: User dragging a text selection out of the modal dialog causes pointerup to trigger on the backdrop."
             ],
-            treatment: "Checked that pointerdown and pointerup both originated on the backdrop element before closing.",
-            prompt: `Prevent accidental modal backdrop dismissal during text selection.
-Verify that both pointerdown AND pointerup target the overlay backdrop before firing close callbacks.`,
-            code: `if (downTarget === backdrop && upTarget === backdrop) closeModal();`,
-            physics: `[Physics Contract P09: Target Dual-Verification] downTarget === upTarget === backdrop`
-          },
-          p18_dual_slider: {
-            codeId: "P18",
-            element: "Price Filter Slider",
-            concept: "Z-Index Dynamic Elevation",
-            defect: "Thumb Overlap Lock",
-            tag: "⚖️ Dual Thumb Range Slider Overlap (P18)",
-            keywords: "range slider dual thumb min max overlap price filter p18",
-            mission: "Drag the min thumb to meet the max thumb at 100%. Baseline gets stuck and locks up; Optimized elevates active thumb smoothly!",
-            flaws: [
-              "When min and max thumbs meet at the same price, the top thumb blocks interaction with the bottom thumb."
-            ],
-            treatment: "Dynamically elevated z-index of the active thumb based on proximity and drag direction.",
-            prompt: `Implement a dual-thumb price range slider where thumbs never get stuck when overlapped.`,
-            code: `activeThumb.style.zIndex = 10; otherThumb.style.zIndex = 5;`,
-            physics: `[Physics Contract P18: Dynamic Elevation] Active pointer elevates z-index`
+            treatment: "Enforced Dual Target Verification: Ensure both pointerdown AND pointerup targets match the backdrop element before firing close callbacks.",
+            prompt: `Prevent accidental modal backdrop closure during text selection.
+Record downTarget on pointerdown. In pointerup, only execute close dismissal if downTarget === backdrop && upTarget === backdrop.`,
+            code: `let downTarget = null;
+backdrop.addEventListener('pointerdown', (e) => { downTarget = e.target; });
+backdrop.addEventListener('pointerup', (e) => {
+  if (downTarget === backdrop && e.target === backdrop) closeModal();
+});`,
+            physics: `[Physics Contract P09: Dual Target Gate]
+1. Condition: downTarget === upTarget === backdrop
+2. Exception: Text selections crossing boundaries are discarded`
           }
         }
       },
       ko: {
+        navDiag: "인터랙션 결함 진단 & 솔루션 랩",
+        navPres: "초보자 & 바이브코더 스킬 설치 가이드",
         facetAll: "🌟 전체 (24)",
         facetElement: "🧩 UI 컴포넌트별",
         facetConcept: "📐 물리 개념별",
         facetDefect: "🚨 결함 증상별",
-        searchPlaceholder: "결함 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 새로고침 충돌, 플로팅버튼, 무한스크롤)...",
+        searchPlaceholder: "결함 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 플로팅버튼, 모달 드래그 누수)...",
         modeWithout: "❌ 기본 AI 코드 (결함 발생)",
         modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
-        diagTitle: "🚨 기본 AI 결함 분석 및 재현 원인",
+        diagTitle: "🚨 기본 결함 원인 및 브라우저 이벤트 메커니즘",
         treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선",
         solTitle: "💊 프로덕션 솔루션 처방전",
         solTabPrompt: "SWE 프롬프트",
         solTabCode: "코드 레시피",
         solTabPhysics: "물리 계약 명세",
+        missionHeading: "조작 미션",
         copyBtn: "복사",
-        toast: "✅ 솔루션이 클립보드에 복사되었습니다!",
+        toast: "✅ 클립보드에 복사되었습니다!",
+        presBadge: "🚀 3분 완성 주니어 & 바이브코더 설치 가이드",
+        presTitle: "interaction-doctor 스킬 설치 및 사용법",
+        presSubtitle: "더 이상 복잡한 제스처 수식을 직접 짜지 마세요. 16대 하드웨어 실측 물리 법칙을 AI 에이전트에 주입하는 3단계 가이드입니다.",
+        step1Title: "Claude Code / Antigravity 사용자",
+        step1Desc: "프로젝트 터미널을 열고 공식 원클릭 설치 명령어를 실행하세요:",
+        step1Tip: "💡 에이전트 목록에서 Claude Code / Antigravity를 선택하고 Enter를 누르면 설치 끝!",
+        step2Title: "웹 챗봇 (ChatGPT / Claude Web / Gemini) 사용자",
+        step2Desc: "터미널이나 설치 도구 없이, 완전체 단일 프롬프트를 1클릭 복사하세요:",
+        step2Tip: "💡 Custom GPTs의 Instructions나 대화창 첫 프롬프트에 그대로 붙여넣으면 즉시 발동됩니다.",
+        step3Title: "별도 설정 없는 무설정 자동 발동",
+        step3Desc: "설치 후에는 물리 수식을 외울 필요 없이, 평소처럼 AI에게 UI 구현을 요청하세요:",
+        step3Tip: "✨ AI가 자동으로 스킬을 호출하여 8px 축 잠금과 0ms 뷰포트 동기화 코드를 알아서 작성합니다!",
+        verifyTitle: "✅ 내 AI가 스킬을 제대로 쓰고 있는지 확인하는 법",
+        verifyList: [
+          "8px 직교 축 잠금 확인: AI가 짠 코드에 Math.hypot(dx, dy) > 8 로직이 들어있는지 확인하세요.",
+          "VisualViewport 동기화 확인: 모바일 입력창 코드에 window.visualViewport.addEventListener('resize')가 있는지 확인하세요.",
+          "단일 포인터 파이프라인 확인: 구형 HTML5 Drag 대신 W3C Pointer Events(pointerdown/move)로 통합되었는지 확인하세요."
+        ],
         scenarios: {}
       },
       ja: {
+        navDiag: "インタラクション欠陥診断 & ソリューションラボ",
+        navPres: "初心者・バイブコーダー向け導入ガイド",
         facetAll: "🌟 全体 (24)",
         facetElement: "🧩 UIコンポーネント別",
         facetConcept: "📐 物理概念別",
         facetDefect: "🚨 欠陥症状別",
-        searchPlaceholder: "欠陥を検索（例：仮想キーボード、ボトムシート競合、ピンチ中心軸ブレ、リフレッシュ競合、無限スクロール）...",
+        searchPlaceholder: "欠陥を検索（例：仮想キーボード、ボトムシート競合、フローティングボタン、モーダル）...",
         modeWithout: "❌ ベースラインAI（欠陥発生）",
         modeWith: "🟢 最適化改善（物理法則適用）",
-        diagTitle: "🚨 ベースライン欠陥分析と再現原因",
-        treatTitle: "🩺 適用された物理法則とアーキテクチャ最適化",
+        diagTitle: "🚨 ベースライン欠陥分析と根本原因",
+        treatTitle: "🩺 物理法則とアーキテクチャ最適化",
         solTitle: "💊 プロダクション ソリューション処方箋",
         solTabPrompt: "SWE プロンプト",
         solTabCode: "コードレシピ",
         solTabPhysics: "物理契約仕様",
+        missionHeading: "操作ミッション",
         copyBtn: "コピー",
-        toast: "✅ ソリューションをコピーしました！",
+        toast: "✅ クリップボードにコピーしました！",
+        presBadge: "🚀 3分で完了する導入ガイド",
+        presTitle: "interaction-doctor のインストールと使い方",
+        presSubtitle: "複雑なジェスチャ計算を自作する必要はありません。16台の実機計測物理法則をAIに注入します。",
+        step1Title: "Claude Code / Antigravity 向け",
+        step1Desc: "プロジェクトのターミナルで以下のコマンドを実行してください:",
+        step1Tip: "💡 エージェントを選択してEnterを押すだけで完了します！",
+        step2Title: "ChatGPT / Claude Web 向け",
+        step2Desc: "CLI不要！以下のスタンドアロンプロンプトをワンクリックコピー:",
+        step2Tip: "💡 Custom GPTs の指示文や最初のプロンプトに貼り付けるだけです。",
+        step3Title: "設定不要の自動適用",
+        step3Desc: "導入後は普段通りAIにUI実装を依頼するだけです:",
+        step3Tip: "✨ AIが自動的にスキルを読み込み、8px軸ロックや0msビューポート同期コードを生成します！",
+        verifyTitle: "✅ スキルが正しく適用されているか確認する方法",
+        verifyList: [
+          "8px軸ロックの確認: 生成コード内に Math.hypot(dx, dy) > 8 が含まれているか確認。",
+          "VisualViewport同期の確認: 入力欄コードに window.visualViewport リスナーがあるか確認。",
+          "統合ポインターイベントの確認: 旧式HTML5ドラッグではなくPointer Eventsが使われているか確認。"
+        ],
         scenarios: {}
       },
       zh: {
+        navDiag: "交互缺陷诊断与解决方案工作台",
+        navPres: "初学者与快速开发入门安装指南",
         facetAll: "🌟 全部 (24)",
         facetElement: "🧩 UI 组件分类",
         facetConcept: "📐 物理概念分类",
         facetDefect: "🚨 缺陷症状分类",
-        searchPlaceholder: "搜索手势冲突（如：虚拟键盘遮挡、抽屉滚动冲突、双指旋转漂移、下拉刷新冲突、无限滚动）...",
+        searchPlaceholder: "搜索缺陷（如：虚拟键盘遮挡、抽屉滚动冲突、浮动按钮、模态框泄露）...",
         modeWithout: "❌ 基线 AI 代码 (缺陷发生)",
         modeWith: "🟢 物理优化改进 (物理定律应用)",
-        diagTitle: "🚨 基线缺陷分析与复现原因",
-        treatTitle: "🩺 应用物理定律与架构优化",
+        diagTitle: "🚨 基线缺陷分析与底层根本原因",
+        treatTitle: "🩺 应用物理定律与软件工程修复",
         solTitle: "💊 生产级解决方案处方",
         solTabPrompt: "SWE 提示词",
         solTabCode: "代码配方",
         solTabPhysics: "物理契约规范",
+        missionHeading: "操作测试",
         copyBtn: "复制",
-        toast: "✅ 解决方案已复制到剪贴板！",
+        toast: "✅ 已复制到剪贴板！",
+        presBadge: "🚀 3 分钟快速入门安装指南",
+        presTitle: "如何安装与使用 interaction-doctor",
+        presSubtitle: "无需手写复杂的手势数学公式。一键将 16 台真机实测物理法则注入您的 AI 编程助手。",
+        step1Title: "适用于 Claude Code / Antigravity",
+        step1Desc: "在项目根目录的终端中运行官方安装命令：",
+        step1Tip: "💡 选择您的 Agent 并按回车即可完成安装！",
+        step2Title: "适用于 ChatGPT / Claude Web / Gemini",
+        step2Desc: "无需终端或命令行！一键复制独立无损提示词：",
+        step2Tip: "💡 直接粘贴至 Custom GPTs 的 Instructions 或第一条对话中。",
+        step3Title: "零配置全自动生效",
+        step3Desc: "安装完成后，正常向 AI 提出 UI 开发需求即可：",
+        step3Tip: "✨ AI 将自动加载该技能，生成具备 8px 轴锁定与 0ms 视口同步的原生级触控代码！",
+        verifyTitle: "✅ 如何验证 AI 正在正确使用该技能",
+        verifyList: [
+          "检查 8px 轴锁定：在 AI 生成的代码中查找 Math.hypot(dx, dy) > 8 逻辑。",
+          "检查 VisualViewport：在移动端输入框代码中查找 window.visualViewport 监听器。",
+          "检查统一指针管线：确认使用的是 W3C Pointer Events 而非残缺的 HTML5 Drag。"
+        ],
         scenarios: {}
       },
       es: {
+        navDiag: "Laboratorio de Diagnóstico de Interacciones",
+        navPres: "Guía de Instalación Rápida para Principiantes",
         facetAll: "🌟 Todo (24)",
         facetElement: "🧩 Por Elemento UI",
         facetConcept: "📐 Por Concepto Físico",
         facetDefect: "🚨 Por Clase de Defecto",
-        searchPlaceholder: "Buscar conflicto (ej: teclado virtual, bottomsheet, rotación, pull-to-refresh, scroll infinito)...",
+        searchPlaceholder: "Buscar defecto (ej: teclado virtual, bottomsheet, botón flotante, modal)...",
         modeWithout: "❌ Código Base (Defectos)",
         modeWith: "🟢 Optimizado (Física Aplicada)",
-        diagTitle: "🚨 Análisis de Defectos Base y Reproducción",
-        treatTitle: "🩺 Física Aplicada y Optimización de Arquitectura",
+        diagTitle: "🚨 Análisis de Defectos Base y Causa Raíz",
+        treatTitle: "🩺 Invariantes Físicos y Corrección SWE",
         solTitle: "💊 Prescripción de Soluciones de Producción",
         solTabPrompt: "Prompt SWE",
         solTabCode: "Receta de Código",
         solTabPhysics: "Contrato Físico",
+        missionHeading: "Misión de Prueba",
         copyBtn: "Copiar",
-        toast: "✅ ¡Solución copiada al portapapeles!",
+        toast: "✅ ¡Copiado al portapapeles!",
+        presBadge: "🚀 Guía Rápida de 3 Minutos",
+        presTitle: "Cómo Instalar y Usar interaction-doctor",
+        presSubtitle: "Nunca más escriba matemáticas de gestos a mano. Inyecte física táctil de 16 dispositivos en su asistente de IA.",
+        step1Title: "Para Claude Code / Antigravity",
+        step1Desc: "Abra la terminal en el directorio raíz de su proyecto y ejecute:",
+        step1Tip: "💡 Seleccione su agente, presione Enter y ¡listo!",
+        step2Title: "Para ChatGPT / Claude Web / Gemini",
+        step2Desc: "¡Sin terminal! Copie el prompt físico independiente completo:",
+        step2Tip: "💡 Péguelo directamente en las instrucciones de Custom GPTs o en su chat.",
+        step3Title: "Ejecución Automática Sin Configuración",
+        step3Desc: "Una vez instalado, solicite interfaces a su IA como de costumbre:",
+        step3Tip: "✨ La IA cargará la habilidad automáticamente y generará código táctil nativo sin errores.",
+        verifyTitle: "✅ Cómo Verificar que su IA está Usando la Habilidad",
+        verifyList: [
+          "Verifique el Bloqueo de Eje de 8px: Busque Math.hypot(dx, dy) > 8 en el código generado.",
+          "Verifique VisualViewport: Busque window.visualViewport.addEventListener('resize').",
+          "Verifique Pointer Events: Asegúrese de que se use Pointer Events en lugar de HTML5 Drag."
+        ],
         scenarios: {}
       }
     };
@@ -1028,6 +1159,23 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
     ['ko', 'ja', 'zh', 'es'].forEach(lang => {
       database[lang].scenarios = JSON.parse(JSON.stringify(database.en.scenarios));
     });
+
+    // Korean Scenario Translations for Professional SWE Tone
+    database.ko.scenarios.p07_fab.flaws = [
+      "이벤트 파이프라인 충돌: 포인터를 200px 드래그 이동한 후 손을 떼어도 브라우저가 단순 클릭으로 오인하여 onClick 액션을 강제 실행함.",
+      "서브픽셀 손떨림 잡음: 단순 탭 시에도 손가락에서 발생하는 2~3px 미세 떨림을 드래그 좌표 이동으로 잘못 판정함.",
+      "상태 승격 메커니즘 부재: 단순 탭 의도와 위치 이동 의도를 중재하는 히스테리시스 경계가 존재하지 않음."
+    ];
+    database.ko.scenarios.p07_fab.treatment = "8.0px 터치 슬롭 반경 히스테리시스 게이트와 W3C setPointerCapture를 적용. 이동 거리가 8px을 초과하면 onClick 디스패치를 100% 차단하고 CSS 변수로 0ms GPU 가속 위치 갱신 수행.";
+    database.ko.scenarios.p07_fab.mission = "플로팅 버튼을 화면 다른 곳으로 드래그해서 옮겨보세요. 기본 코드에서는 손을 뗄 때 원치 않는 클릭 팝업이 발생하지만, 최적화 코드에서는 8px 슬롭이 드래그와 클릭을 완벽하게 분리합니다!";
+
+    database.ko.scenarios.p01_keyboard.flaws = [
+      "소프트웨어 키보드 인터랙션 불일치: 모바일 터치 키보드에는 Shift 수정자가 없어 Enter 입력 시 줄바꿈 대신 메시지가 성급하게 조기 전송됨.",
+      "비동기 뷰포트 축소 지연: 모바일 가상 키보드가 올라올 때 높이 갱신이 비동기로 발생하여 입력창이 키보드 뒤로 숨겨짐.",
+      "DOM 스크롤 스냅 충돌: 고정 높이 래퍼 내부에서 포커스 이동 시 원치 않는 화면 튕김 현상 발생."
+    ];
+    database.ko.scenarios.p01_keyboard.treatment = "interactive-widget=resizes-content 메타와 window.visualViewport 리사이즈 이벤트를 연동하여 0ms 뷰포트 높이 실시간 보정 및 데스크톱/터치 엔터키 분기 처리.";
+    database.ko.scenarios.p01_keyboard.mission = "입력창을 터치하고 엔터키를 눌러보세요. 기본 코드에서는 모바일 엔터 시 강제로 메시지가 전송되지만, 최적화 코드에서는 자연스러운 줄바꿈이 허용됩니다!";
 
     // State
     let currentLang = 'en';
@@ -1054,7 +1202,9 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
     const btnModeWith = document.getElementById('btnModeWith');
     const btnModeWithout = document.getElementById('btnModeWithout');
     const sandboxStage = document.getElementById('sandboxStage');
+    const missionHeading = document.getElementById('missionHeading');
     const missionText = document.getElementById('missionText');
+    const envBadgeRow = document.getElementById('envBadgeRow');
     const diagTitle = document.getElementById('diagTitle');
     const diagFlaws = document.getElementById('diagFlaws');
     const treatTitle = document.getElementById('treatTitle');
@@ -1066,6 +1216,7 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
     const solutionText = document.getElementById('solutionText');
     const copyBtnText = document.getElementById('copyBtnText');
     const btnCopySol = document.getElementById('btnCopySol');
+    const btnCopyStandalone = document.getElementById('btnCopyStandalone');
     const toast = document.getElementById('toast');
 
     // Service Switcher Logic
@@ -1129,6 +1280,8 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
     function renderLanguage() {
       const t = database[currentLang] || database.en;
       langSelect.value = currentLang;
+      document.getElementById('navTextDiag').textContent = t.navDiag;
+      document.getElementById('navTextPres').textContent = t.navPres;
       searchInput.placeholder = t.searchPlaceholder;
       document.getElementById('btnFacetAll').textContent = t.facetAll;
       document.getElementById('btnFacetElement').textContent = t.facetElement;
@@ -1143,6 +1296,25 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
       solTabCode.textContent = t.solTabCode;
       solTabPhysics.textContent = t.solTabPhysics;
       copyBtnText.textContent = t.copyBtn;
+      missionHeading.textContent = t.missionHeading;
+
+      // Guide strings
+      document.getElementById('presBadge').textContent = t.presBadge;
+      document.getElementById('presTitle').textContent = t.presTitle;
+      document.getElementById('presSubtitle').textContent = t.presSubtitle;
+      document.getElementById('step1Title').textContent = t.step1Title;
+      document.getElementById('step1Desc').textContent = t.step1Desc;
+      document.getElementById('step1Tip').textContent = t.step1Tip;
+      document.getElementById('step2Title').textContent = t.step2Title;
+      document.getElementById('step2Desc').textContent = t.step2Desc;
+      document.getElementById('step2Tip').textContent = t.step2Tip;
+      document.getElementById('step3Title').textContent = t.step3Title;
+      document.getElementById('step3Desc').textContent = t.step3Desc;
+      document.getElementById('step3Tip').textContent = t.step3Tip;
+      document.getElementById('verifyTitle').textContent = t.verifyTitle;
+      
+      const verifyList = document.getElementById('verifyList');
+      verifyList.innerHTML = t.verifyList.map(item => `<li>${item}</li>`).join('');
 
       renderTags();
       renderScenario();
@@ -1152,6 +1324,7 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
       const db = database[currentLang] || database.en;
       const sc = db.scenarios[currentScenario] || db.scenarios.p07_fab;
       
+      envBadgeRow.innerHTML = (sc.env || ['Mobile', 'Desktop']).map(e => `<span class="env-badge">📍 ${e}</span>`).join('');
       diagFlaws.innerHTML = sc.flaws.map(f => `<li>${f}</li>`).join('');
       treatDesc.textContent = sc.treatment;
       missionText.textContent = sc.mission;
@@ -1173,23 +1346,21 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
     }
 
     // ========================================================
-    // DYNAMIC INTERACTIVE SANDBOX RENDERER (Pure Live DOM Engine)
+    // DYNAMIC INTERACTIVE LIVE DOM ENGINE
     // ========================================================
     function renderSandbox(scenarioKey, mode) {
       sandboxStage.innerHTML = '';
 
       if (scenarioKey === 'p07_fab') {
-        // FAB Drag vs Click Simulation
         sandboxStage.innerHTML = `
-          <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid #334155; display:flex; justify-content:space-between; font-size:13px;">
-            <span>🔘 Floating Action Button</span>
-            <span style="color: ${mode === 'with' ? '#10b981' : '#ef4444'};">${mode === 'with' ? '8px Slop Guard Active' : 'No Drag/Click Discrimination'}</span>
+          <div style="padding: 14px 16px; font-weight: 700; border-bottom: 1px solid #334155; display:flex; justify-content:space-between; font-size:13px;">
+            <span>🔘 Floating Action Button (FAB)</span>
+            <span style="color: ${mode === 'with' ? '#10b981' : '#ef4444'}; font-family:'JetBrains Mono',monospace;">${mode === 'with' ? '8px Slop Active' : 'No Slop Guard'}</span>
           </div>
           <div style="flex:1; padding: 16px; display:flex; flex-direction:column; gap:10px; overflow-y:auto;">
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #1</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #2</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #3</div>
-            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Note Item #4</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #1</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #2</div>
+            <div style="background:#1e293b; padding:12px; border-radius:8px; font-size:12px;">📄 Document Note #3</div>
             <div id="fabResult" style="padding:10px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; display:none;"></div>
           </div>
           <div id="fabBtn" style="position:absolute; right:20px; bottom:20px; width:52px; height:52px; background:${mode==='with'?'#3b82f6':'#ef4444'}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,0.5); cursor:grab; touch-action:none; z-index:10;">
@@ -1199,7 +1370,7 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
 
         const fab = sandboxStage.querySelector('#fabBtn');
         const res = sandboxStage.querySelector('#fabResult');
-        let startX=0, startY=0, curX=0, curY=0, isDragging=false, moved=false;
+        let startX=0, startY=0, isDragging=false, moved=false;
 
         fab.addEventListener('pointerdown', (e) => {
           startX = e.clientX; startY = e.clientY;
@@ -1214,13 +1385,11 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
           const dy = e.clientY - startY;
 
           if (mode === 'with') {
-            // With skill: 8px slop gate
             if (Math.hypot(dx, dy) > 8) {
               moved = true;
               fab.style.transform = `translate(${dx}px, ${dy}px)`;
             }
           } else {
-            // Baseline defect: naive movement immediately
             moved = true;
             fab.style.transform = `translate(${dx}px, ${dy}px)`;
           }
@@ -1230,21 +1399,18 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
           if (!isDragging) return;
           isDragging = false;
 
+          res.style.display = 'block';
           if (mode === 'without') {
-            // Baseline bug: fires click even if dragged 100px!
-            res.style.display = 'block';
             res.style.background = 'rgba(239, 68, 68, 0.2)';
             res.style.border = '1px solid #ef4444';
             res.style.color = '#f87171';
             res.textContent = '💥 Bug: Click Action Errantly Fired on Drag Release!';
           } else {
-            // With skill: clean separation
-            res.style.display = 'block';
             if (moved) {
               res.style.background = 'rgba(16, 185, 129, 0.2)';
               res.style.border = '1px solid #10b981';
               res.style.color = '#34d399';
-              res.textContent = '✨ 8px Slop Protected: Moved position without accidental click!';
+              res.textContent = '✨ 8px Slop Protected: Moved cleanly without accidental click!';
             } else {
               res.style.background = 'rgba(59, 130, 246, 0.2)';
               res.style.border = '1px solid #3b82f6';
@@ -1254,14 +1420,13 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
           }
         });
       } else if (scenarioKey === 'p09_modal_leak') {
-        // Modal Backdrop Click Leak Simulation
         sandboxStage.innerHTML = `
           <div style="flex:1; padding:20px; display:flex; align-items:center; justify-content:center; position:relative; background:#000;">
             <div id="backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px;">
               <div id="modalBox" style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:18px; width:100%; max-width:280px; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
-                <div style="font-size:14px; font-weight:800; margin-bottom:8px;">Edit User Bio</div>
+                <div style="font-size:14px; font-weight:800; margin-bottom:8px;">Edit User Profile</div>
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:6px; padding:8px; font-size:12px; color:#cbd5e1; user-select:text;">
-                  Highlight or drag this sample text across the modal boundary...
+                  Drag or highlight this text across the modal boundary...
                 </div>
                 <div style="margin-top:12px; display:flex; justify-content:flex-end; gap:8px;">
                   <button style="padding:6px 12px; border-radius:6px; font-size:12px; background:#3b82f6; border:none; color:#fff;">Save</button>
@@ -1276,7 +1441,6 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
         `;
 
         const backdrop = sandboxStage.querySelector('#backdrop');
-        const modalBox = sandboxStage.querySelector('#modalBox');
         const notice = sandboxStage.querySelector('#modalClosedNotice');
         let downTarget = null;
 
@@ -1286,13 +1450,11 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
 
         backdrop.addEventListener('pointerup', (e) => {
           if (mode === 'without') {
-            // Baseline bug: releasing pointer on backdrop dismisses modal even if dragged from inside
             if (e.target === backdrop) {
               backdrop.style.display = 'none';
               notice.style.display = 'block';
             }
           } else {
-            // With skill: dual-verification gate
             if (downTarget === backdrop && e.target === backdrop) {
               backdrop.style.display = 'none';
               notice.style.display = 'block';
@@ -1308,36 +1470,17 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
             notice.style.display = 'none';
           }
         });
-      } else if (scenarioKey === 'p18_dual_slider') {
-        // Dual Slider Overlap Simulation
-        sandboxStage.innerHTML = `
-          <div style="padding: 16px; font-weight: 700; border-bottom: 1px solid #334155; font-size:13px;">
-            ⚖️ Price Range Filter ($0 - $500)
-          </div>
-          <div style="flex:1; padding: 30px 20px; display:flex; flex-direction:column; gap:20px;">
-            <div id="priceLabel" style="font-size:14px; font-weight:800; color:#60a5fa; text-align:center;">$0 — $500</div>
-            <div style="position:relative; height:8px; background:#334155; border-radius:4px; margin-top:20px;">
-              <div id="minThumb" style="position:absolute; left:0%; top:-10px; width:28px; height:28px; background:#3b82f6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:2;"></div>
-              <div id="maxThumb" style="position:absolute; left:80%; top:-10px; width:28px; height:28px; background:#8b5cf6; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.5); cursor:grab; z-index:1;"></div>
-            </div>
-            <div id="sliderResult" style="padding:10px; background:#1e293b; border-radius:8px; font-size:11px; color:#cbd5e1; line-height:1.4;">
-              ${mode === 'without' ? '❌ Baseline: When Min meets Max, the bottom thumb gets trapped underneath!' : '✅ Optimized: Active pointer dynamically elevates z-index, allowing effortless thumb uncrossing.'}
-            </div>
-          </div>
-        `;
       } else {
-        // Default Fallback to Messenger Simulation
         sandboxStage.innerHTML = `
           <div style="padding: 12px 16px; background:#1e293b; border-bottom:1px solid #334155; font-size:13px; font-weight:700; display:flex; justify-content:space-between;">
             <span>💬 Live Chat Simulator</span>
             <span style="color: #10b981;">● Online</span>
           </div>
           <div id="chatFeed" style="flex:1; padding:14px; display:flex; flex-direction:column; gap:8px; overflow-y:auto;">
-            <div style="align-self:flex-start; background:#1e293b; padding:8px 12px; border-radius:12px; font-size:12px;">Hey! Test the enter key and keyboard handling here.</div>
-            <div style="align-self:flex-end; background:#3b82f6; padding:8px 12px; border-radius:12px; font-size:12px; color:#fff;">Let me check!</div>
+            <div style="align-self:flex-start; background:#1e293b; padding:8px 12px; border-radius:12px; font-size:12px;">Test multiline vs submit handling here.</div>
           </div>
           <div style="padding:10px; background:#1e293b; border-top:1px solid #334155; display:flex; gap:8px;">
-            <textarea id="chatInput" rows="1" placeholder="Type a message..." style="flex:1; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px; color:#fff; font-size:12px; resize:none; outline:none;"></textarea>
+            <textarea id="chatInput" rows="1" placeholder="Type message..." style="flex:1; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:8px; color:#fff; font-size:12px; resize:none; outline:none;"></textarea>
             <button id="chatSend" style="padding:0 14px; background:#3b82f6; border:none; border-radius:8px; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">Send</button>
           </div>
         `;
@@ -1365,11 +1508,9 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
             if (mode === 'without') {
-              // Baseline bug: mobile Enter submits message prematurely
               e.preventDefault();
               postMsg(input.value);
             } else {
-              // With skill: desktop submits, mobile multiline
               if (!('ontouchstart' in window) && !e.shiftKey) {
                 e.preventDefault();
                 postMsg(input.value);
@@ -1421,6 +1562,17 @@ Verify that both pointerdown AND pointerup target the overlay backdrop before fi
 
     btnCopySol.addEventListener('click', () => {
       navigator.clipboard.writeText(solutionText.textContent.trim()).then(showToast);
+    });
+
+    btnCopyStandalone.addEventListener('click', () => {
+      fetch('https://raw.githubusercontent.com/saramjh/interaction-doctor/main/skills/interaction-doctor/STANDALONE.md')
+        .then(r => r.text())
+        .then(txt => {
+          navigator.clipboard.writeText(txt).then(showToast);
+        })
+        .catch(() => {
+          navigator.clipboard.writeText('https://github.com/saramjh/interaction-doctor/blob/main/skills/interaction-doctor/STANDALONE.md').then(showToast);
+        });
     });
 
     // Initial render

@@ -29,21 +29,31 @@ LLMs know CSS syntax and DOM properties, but they have never felt the **sub-pixe
 
 ---
 
-## ⚡️ Quick Install
+## ⚡️ 3-Minute Quickstart Guide (Tailored for Juniors & Vibe-Coders)
 
-### 1. Claude Code / Antigravity Agent (Recommended)
+You don't need to memorize complex gesture formulas. Connect the skill once to your AI coding tool and it will automatically generate bug-free, buttery-smooth touch interactions.
+
+### 1. CLI Coding Agents (Claude Code, Antigravity, Cursor, Cline)
+Open your terminal in your project root directory and run this single command:
 ```bash
-# Skills.sh one-line installer
 npx skills add saramjh/interaction-doctor
 ```
-```bash
-# Or manual install to local agent skills
-git clone https://github.com/saramjh/interaction-doctor
-cp -r interaction-doctor/skills/interaction-doctor ~/.claude/skills/
-```
+1. Select your target agent (e.g. Claude Code / Antigravity) and hit Enter.
+2. Select `Proceed with installation? (Yes)` — installation is done!
+3. **Usage**: Ask your AI as usual: *"Build a mobile bottom-sheet and chat with context menu."* The AI will automatically load `interaction-doctor` and inject `8px Axis Lock` and `VisualViewport` sync.
 
-### 2. Single-Prompt Injection (ChatGPT, Claude Web, Gemini Web)
-No CLI or plugin needed. Simply copy the entire contents of **[`skills/interaction-doctor/STANDALONE.md`](skills/interaction-doctor/STANDALONE.md)** into your custom instructions or system prompt. It contains 100% of the lossless physical laws in a single self-contained prompt.
+### 2. Web Chatbots (ChatGPT, Claude Web, Gemini Web)
+No terminal or CLI required!
+1. Copy the complete contents of **[`skills/interaction-doctor/STANDALONE.md`](skills/interaction-doctor/STANDALONE.md)**.
+2. Paste it into your **Custom GPTs 'Instructions'** or the first prompt of your conversation.
+3. All 7 physical touch invariants are 100% losslessly activated.
+
+---
+
+### 🔍 3 Ways to Verify Your AI is Using the Skill
+1. **8px Axis Lock**: Look for `Math.hypot(dx, dy) > 8` inside the AI's touch event handlers.
+2. **VisualViewport Sync**: Look for `window.visualViewport.addEventListener('resize')` in mobile input code.
+3. **Unified Pointer Pipeline**: Ensure the AI uses W3C Pointer Events (`pointerdown/move`) instead of fragmented, mobile-broken HTML5 Drag APIs.
 
 ---
 

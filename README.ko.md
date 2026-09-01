@@ -28,21 +28,31 @@ AI 모델은 CSS 문법과 DOM 속성은 잘 알지만, **실제 터치스크린
 
 ---
 
-## ⚡️ 초간단 설치 방법
+## ⚡️ 3분 초간단 설치 및 사용 가이드 (주니어 & 바이브코더 맞춤)
 
-### 1. Claude Code / Antigravity 에이전트 스킬 (권장)
+복잡한 제스처 수식을 외울 필요가 없습니다. 내 AI 코딩 도구에 스킬을 1번만 연결해두면 알아서 버그 없는 코드를 작성합니다.
+
+### 1. CLI 코딩 에이전트 (Claude Code, Antigravity, Cursor, Cline)
+프로젝트 터미널을 열고 다음 명령어 한 줄만 실행하세요:
 ```bash
-# Skills.sh 원클릭 설치
 npx skills add saramjh/interaction-doctor
 ```
-```bash
-# 또는 로컬 에이전트 스킬 폴더에 직접 복사
-git clone https://github.com/saramjh/interaction-doctor
-cp -r interaction-doctor/skills/interaction-doctor ~/.claude/skills/
-```
+1. 명령어 실행 후 목록에서 사용 중인 에이전트(Claude Code / Antigravity 등)를 선택하고 Enter를 누릅니다.
+2. `Proceed with installation? (Yes)`를 선택하면 설치 끝!
+3. **사용법**: 평소처럼 AI에게 *"모바일 바텀시트랑 채팅창 만들어줘"*라고 요청하면, AI가 자동으로 스킬을 읽고 `8px 축 잠금`과 `VisualViewport`가 들어간 네이티브급 코드를 짜줍니다.
 
-### 2. 단일 프롬프트 주입 (ChatGPT, Claude Web, Gemini Web 등)
-별도 설치나 플러그인 없이, **[`skills/interaction-doctor/STANDALONE.md`](skills/interaction-doctor/STANDALONE.md)** 파일의 내용을 통째로 복사해서 Custom Instructions(시스템 프롬프트)에 붙여넣기만 하면 100% 무손실로 물리 헌장이 활성화됩니다.
+### 2. 웹 챗봇 (ChatGPT, Claude Web, Gemini Web)
+터미널이 필요 없습니다!
+1. **[`skills/interaction-doctor/STANDALONE.md`](skills/interaction-doctor/STANDALONE.md)** 파일 내용을 통째로 복사합니다.
+2. ChatGPT의 **Custom GPTs 'Instructions'** 또는 대화창 첫 메시지에 붙여넣습니다.
+3. 100% 무손실로 7대 터치 물리 법칙이 주입됩니다.
+
+---
+
+### 🔍 내 AI가 스킬을 제대로 쓰고 있는지 확인하는 3가지 팁
+1. **8px 직교 축 잠금 확인**: AI가 짠 코드에 `Math.hypot(dx, dy) > 8` 로직이 들어가 있는지 확인하세요.
+2. **VisualViewport 동기화 확인**: 모바일 입력창 코드에 `window.visualViewport.addEventListener('resize')`가 있는지 확인하세요.
+3. **단일 포인터 파이프라인 확인**: 모바일에서 깨지는 구형 HTML5 Drag 대신 `pointerdown/move`로 통합되었는지 확인하세요.
 
 ---
 
