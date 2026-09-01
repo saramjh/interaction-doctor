@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
-  <title>interaction-doctor 🩺 | Global Interaction Diagnostic & SWE Solution Engine</title>
-  <meta name="description" content="Complete C1-C13 interaction defect index, live physics demos, and multi-tier SWE prompt prescriptions." />
+  <title>interaction-doctor 🩺 | Interactive Diagnostic Hub & Skill Presentation</title>
+  <meta name="description" content="Dual Service Platform: 1) Interactive Touch Defect Diagnostic & Solution Hub, 2) 16-Device Physical Invariants Presentation." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #090d16;
@@ -34,18 +34,19 @@
       overflow-x: hidden;
     }
 
+    /* Top Navigation */
     header {
-      background: rgba(19, 27, 46, 0.9);
+      background: rgba(19, 27, 46, 0.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--card-border);
-      padding: 14px 24px;
+      padding: 12px 24px;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
     }
 
     .brand {
@@ -56,6 +57,8 @@
       font-size: 1.15rem;
       letter-spacing: -0.5px;
       white-space: nowrap;
+      text-decoration: none;
+      color: inherit;
     }
 
     .brand span {
@@ -64,7 +67,39 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .header-links {
+    /* 2 Main Service Switcher Tabs */
+    .service-nav {
+      display: flex;
+      background: #090e1a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .service-tab-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .service-tab-btn.active {
+      background: #1e293b;
+      color: #60a5fa;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .header-right {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -101,63 +136,50 @@
       border-color: #64748b;
     }
 
-    /* Hero */
-    .hero {
-      text-align: center;
-      padding: 36px 20px 20px;
-      max-width: 960px;
+    /* Views */
+    .view-container {
+      display: none;
+      flex: 1;
+      width: 100%;
+    }
+    .view-container.active {
+      display: block;
+    }
+
+    /* ========================================================
+       SERVICE 1: DIAGNOSTIC & SOLUTION WORKSTATION
+       ======================================================== */
+    .diag-wrapper {
+      max-width: 1240px;
       margin: 0 auto;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: #93c5fd;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .hero h1 {
-      font-size: 2.3rem;
-      font-weight: 800;
-      line-height: 1.25;
-      letter-spacing: -1px;
-      margin-bottom: 12px;
-    }
-
-    .hero p {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
-    /* Search & 13-Symptom Index Bar */
-    .search-section {
-      max-width: 1160px;
-      margin: 0 auto 24px;
-      padding: 0 20px;
+      padding: 24px 20px 60px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 20px;
     }
 
-    .search-bar-wrap {
+    /* Search & Faceted Filter */
+    .search-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .search-input-wrap {
       position: relative;
       width: 100%;
     }
 
     .search-input {
       width: 100%;
-      background: #0f172a;
+      background: #090e1a;
       border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 14px 16px 14px 44px;
+      border-radius: 10px;
+      padding: 12px 16px 12px 42px;
       font-size: 0.95rem;
       color: #fff;
       outline: none;
@@ -177,32 +199,58 @@
       pointer-events: none;
     }
 
-    .index-category-heading {
+    /* 3-Dimensional Facet Tabs */
+    .facet-tabs-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
+      gap: 10px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .facet-label {
+      font-size: 0.8rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .symptom-tag-bar {
+    .facet-btn {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .facet-btn.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--primary);
+      color: #60a5fa;
+    }
+
+    .symptom-tag-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding-bottom: 4px;
+      max-height: 120px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .tag-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: #090e1a;
+      border: 1px solid #1e293b;
       color: var(--text-muted);
-      padding: 7px 12px;
+      padding: 6px 12px;
       border-radius: 8px;
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -213,61 +261,61 @@
       background: #1e293b;
       border-color: var(--primary);
       color: #60a5fa;
-      box-shadow: 0 0 12px var(--primary-glow);
+      box-shadow: 0 0 10px var(--primary-glow);
     }
-    .tag-badge {
+    .tag-id {
       background: #0f172a;
       border: 1px solid #334155;
-      padding: 2px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: #94a3b8;
     }
 
-    /* Main Showroom Layout */
-    .showroom-layout {
-      max-width: 1160px;
-      margin: 0 auto 50px;
-      padding: 0 20px;
+    /* Workstation Grid: Left Live Demo | Right Solution Prescription */
+    .workstation-grid {
       display: grid;
       grid-template-columns: 380px 1fr;
-      gap: 32px;
+      gap: 24px;
       align-items: start;
     }
 
-    @media (max-width: 900px) {
-      .showroom-layout {
+    @media (max-width: 960px) {
+      .workstation-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    /* Device Container */
-    .device-area {
+    /* Phone Simulator Box */
+    .simulator-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
     }
 
-    .switch-mode-bar {
+    .sim-toggle-bar {
       display: flex;
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 4px;
+      background: #090e1a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 3px;
       width: 100%;
-      max-width: 360px;
     }
 
-    .mode-btn {
+    .sim-toggle-btn {
       flex: 1;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      padding: 8px 12px;
-      border-radius: 7px;
-      font-size: 0.85rem;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -276,75 +324,56 @@
       gap: 6px;
       transition: all 0.2s;
     }
-
-    .mode-btn.active.without {
+    .sim-toggle-btn.active.without {
       background: var(--danger);
       color: #fff;
-      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
     }
-
-    .mode-btn.active.with {
+    .sim-toggle-btn.active.with {
       background: var(--success);
       color: #fff;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
     }
 
-    .phone-frame {
+    .phone-mockup {
       width: 100%;
-      max-width: 360px;
-      height: 640px;
+      height: 560px;
       background: #000;
-      border: 8px solid #334155;
-      border-radius: 36px;
+      border: 6px solid #334155;
+      border-radius: 30px;
       overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--primary-glow);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
       position: relative;
     }
-
-    .phone-notch {
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 18px;
-      background: #334155;
-      border-radius: 12px;
-      z-index: 10;
-    }
-
-    .phone-frame iframe {
+    .phone-mockup iframe {
       width: 100%;
       height: 100%;
       border: none;
-      background: #fff;
     }
 
-    /* Diagnostics & Solution Hub */
-    .solution-hub {
+    /* Prescription Hub (Right Column) */
+    .prescription-column {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 22px;
+      padding: 20px;
     }
 
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .card-title {
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -355,7 +384,7 @@
     .card-title.accent { color: #c084fc; }
 
     .card p, .card li {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       line-height: 1.6;
       color: #cbd5e1;
     }
@@ -367,20 +396,19 @@
       gap: 6px;
     }
 
-    /* Solution Tabs */
     .solution-tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       border-bottom: 1px solid #1e293b;
-      padding-bottom: 10px;
-      margin-bottom: 14px;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .sol-tab-btn {
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       padding: 4px 8px;
       cursor: pointer;
@@ -392,19 +420,19 @@
       color: #c084fc;
     }
 
-    .solution-content {
+    .solution-code-box {
       background: #090e1a;
       border: 1px solid #1e293b;
-      border-radius: 10px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 14px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       line-height: 1.55;
       color: #e2e8f0;
       position: relative;
       white-space: pre-wrap;
       word-break: break-word;
-      max-height: 280px;
+      max-height: 250px;
       overflow-y: auto;
     }
 
@@ -429,33 +457,107 @@
       background: #2563eb;
     }
 
-    /* Physics Metrics */
-    .physics-metric-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 14px;
+    /* ========================================================
+       SERVICE 2: SKILL PRESENTATION & MANIFESTO
+       ======================================================== */
+    .pres-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
     }
 
-    .metric-box {
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 10px;
+    .pres-hero {
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
     }
 
-    .metric-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.15rem;
+    .pres-badge {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: #60a5fa;
     }
 
-    .metric-label {
-      font-size: 0.72rem;
+    .pres-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+
+    .pres-hero p {
       color: var(--text-muted);
-      margin-top: 2px;
+      font-size: 1.1rem;
+      max-width: 740px;
+      line-height: 1.6;
+    }
+
+    .pres-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .pres-section h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pres-section p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .constants-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-top: 10px;
+    }
+    .constants-table th, .constants-table td {
+      border: 1px solid #1e293b;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .constants-table th {
+      background: #0f172a;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+    .constants-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    .install-box {
+      background: #090e1a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     /* Toast */
@@ -472,7 +574,7 @@
       border-radius: 30px;
       box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 100;
+      z-index: 200;
     }
     .toast.show {
       transform: translateX(-50%) translateY(0);
@@ -481,11 +583,23 @@
 </head>
 <body>
 
+  <!-- Header with 2 Service Tabs -->
   <header>
-    <div class="brand">
+    <a href="#" class="brand">
       🩺 <span>interaction-doctor</span>
-    </div>
-    <div class="header-links">
+    </a>
+
+    <!-- Dual Service Switcher -->
+    <nav class="service-nav">
+      <button class="service-tab-btn active" id="tabNavDiag" data-view="diagView">
+        🩺 <span>Diagnostic & Solution Lab</span>
+      </button>
+      <button class="service-tab-btn" id="tabNavPres" data-view="presView">
+        📖 <span>Skill Presentation</span>
+      </button>
+    </nav>
+
+    <div class="header-right">
       <select class="lang-select" id="langSelect" aria-label="Language Select">
         <option value="en">🇺🇸 English</option>
         <option value="ko">🇰🇷 한국어</option>
@@ -500,122 +614,184 @@
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-badge" id="heroBadge">⚡️ 0ms Touch Physics & 13 Gesture Conflict Diagnostic</div>
-      <h1 id="heroTitle">Interaction Defect Diagnostic & Solution Hub</h1>
-      <p id="heroSubtitle">Diagnose complete C1-C13 gesture conflict states, test baseline vs optimized physics live demos, and copy production-ready SWE engineering solutions.</p>
-    </section>
-
-    <!-- Search & 13-Symptom Index -->
-    <section class="search-section">
-      <div class="search-bar-wrap">
-        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search any gesture conflict (e.g. keyboard resize, bottomsheet scroll, pinch centroid, dnd, doubletap, drawer)..." />
-      </div>
-
-      <div class="index-category-heading">
-        <span id="indexHeading">Complete Interaction Taxonomy (C1 – C13)</span>
-        <span style="font-size: 0.75rem; color: #60a5fa;">13 Verified Patterns</span>
-      </div>
-
-      <div class="symptom-tag-bar" id="tagBar"></div>
-    </section>
-
-    <!-- Showroom Layout -->
-    <div class="showroom-layout">
-      <!-- Device Area -->
-      <div class="device-area">
-        <div class="switch-mode-bar">
-          <button class="mode-btn without" id="btnModeWithout">
-            ❌ Baseline Code (Defects)
-          </button>
-          <button class="mode-btn active with" id="btnModeWith">
-            🟢 Optimized (Physics Invariants)
-          </button>
+  <!-- ========================================================
+       VIEW 1: DIAGNOSTIC & SOLUTION WORKSTATION
+       ======================================================== -->
+  <div class="view-container active" id="diagView">
+    <div class="diag-wrapper">
+      <!-- Search & 3D Facet Panel -->
+      <section class="search-panel">
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, kanban dnd, axis lock)..." />
         </div>
 
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <iframe id="previewFrame" src="demos/messenger-with.html"></iframe>
-        </div>
-      </div>
-
-      <!-- Solutions Hub -->
-      <div class="solution-hub">
-        <!-- Defect Analysis -->
-        <div class="card">
-          <div class="card-title danger" id="diagTitle">
-            🚨 Baseline Defect Analysis & Reproduction
-          </div>
-          <ul id="diagFlaws"></ul>
+        <!-- 3-Dimensional Facet Switcher -->
+        <div class="facet-tabs-row">
+          <span class="facet-label" id="facetLabel">Filter Dimension:</span>
+          <button class="facet-btn active" data-facet="all" id="btnFacetAll">🌟 All (C1-C13)</button>
+          <button class="facet-btn" data-facet="element" id="btnFacetElement">🧩 UI Element</button>
+          <button class="facet-btn" data-facet="concept" id="btnFacetConcept">📐 Physics Concept</button>
+          <button class="facet-btn" data-facet="defect" id="btnFacetDefect">🚨 Defect Class</button>
         </div>
 
-        <!-- Applied Physics -->
-        <div class="card">
-          <div class="card-title success" id="treatTitle">
-            🩺 Applied Physical Laws & Architecture Optimization
-          </div>
-          <p id="treatDesc"></p>
+        <!-- Tag Grid -->
+        <div class="symptom-tag-grid" id="tagGrid"></div>
+      </section>
 
-          <div class="physics-metric-row">
-            <div class="metric-box">
-              <div class="metric-value" id="metricVal1">0ms</div>
-              <div class="metric-label" id="metricLabel1">Viewport Resizing Lag</div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-value" id="metricVal2">350ms</div>
-              <div class="metric-label" id="metricLabel2">Temporal Gate</div>
-            </div>
-            <div class="metric-box">
-              <div class="metric-value" id="metricVal3">8px</div>
-              <div class="metric-label" id="metricLabel3">Touch Slop Hysteresis</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Multi-tier Solutions -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title accent" id="solTitle">
-              💊 Production Solution Prescriptions
-            </div>
-            <div class="solution-tabs">
-              <button class="sol-tab-btn active" data-sol="prompt" id="solTabPrompt">SWE Prompt</button>
-              <button class="sol-tab-btn" data-sol="code" id="solTabCode">Code Recipe</button>
-              <button class="sol-tab-btn" data-sol="physics" id="solTabPhysics">Physics Contract</button>
-            </div>
-          </div>
-
-          <div style="position: relative;">
-            <div class="solution-content" id="solutionText"></div>
-            <button class="copy-btn" id="btnCopySol">
-              📋 <span id="copyBtnText">Copy Solution</span>
+      <!-- Workstation: Simulator Left | Prescription Right -->
+      <div class="workstation-grid">
+        <!-- Simulator Left -->
+        <div class="simulator-box">
+          <div class="sim-toggle-bar">
+            <button class="sim-toggle-btn without" id="btnModeWithout">
+              ❌ Baseline (Defects)
             </button>
+            <button class="sim-toggle-btn active with" id="btnModeWith">
+              🟢 Optimized (Physics)
+            </button>
+          </div>
+
+          <div class="phone-mockup">
+            <iframe id="previewFrame" src="demos/messenger-with.html"></iframe>
+          </div>
+        </div>
+
+        <!-- Prescription Hub Right -->
+        <div class="prescription-column">
+          <!-- Flaws Card -->
+          <div class="card">
+            <div class="card-title danger" id="diagTitle">
+              🚨 Baseline Defect Analysis & Reproduction
+            </div>
+            <ul id="diagFlaws"></ul>
+          </div>
+
+          <!-- Treatment Card -->
+          <div class="card">
+            <div class="card-title success" id="treatTitle">
+              🩺 Applied Physical Laws & Architecture Optimization
+            </div>
+            <p id="treatDesc"></p>
+          </div>
+
+          <!-- Multi-tier Solutions Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title accent" id="solTitle">
+                💊 Production Solution Prescriptions
+              </div>
+              <div class="solution-tabs">
+                <button class="sol-tab-btn active" data-sol="prompt" id="solTabPrompt">SWE Prompt</button>
+                <button class="sol-tab-btn" data-sol="code" id="solTabCode">Code Recipe</button>
+                <button class="sol-tab-btn" data-sol="physics" id="solTabPhysics">Physics Contract</button>
+              </div>
+            </div>
+
+            <div style="position: relative;">
+              <div class="solution-code-box" id="solutionText"></div>
+              <button class="copy-btn" id="btnCopySol">
+                📋 <span id="copyBtnText">Copy Solution</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
+
+  <!-- ========================================================
+       VIEW 2: SKILL PRESENTATION & MANIFESTO
+       ======================================================== -->
+  <div class="view-container" id="presView">
+    <div class="pres-wrapper">
+      <section class="pres-hero">
+        <div class="pres-badge">🔬 Physical Invariants & Multi-Agent Skill Engine</div>
+        <h1>Closing The Touch Gap in LLM Code</h1>
+        <p>Why modern AI models generate visually stunning CSS but break down on real physical touchscreens — and how 16 hardware benchmarks solve it.</p>
+      </section>
+
+      <!-- Quick Install -->
+      <section class="pres-section">
+        <h2>⚡️ One-Line Skill Installation</h2>
+        <p>Add <code>interaction-doctor</code> directly to Claude Code, Antigravity, or Cursor:</p>
+        <div class="install-box">
+          <code>npx skills add saramjh/interaction-doctor</code>
+          <button class="copy-btn" style="position: static;" onclick="navigator.clipboard.writeText('npx skills add saramjh/interaction-doctor'); showToast();">Copy</button>
+        </div>
+      </section>
+
+      <!-- The 16 Hardware Ground Truth -->
+      <section class="pres-section">
+        <h2>🔬 The 16 Real Hardware Benchmarks</h2>
+        <p>All constants in <code>interaction-doctor</code> are measured from physical iOS, Android, and Desktop hardware devices (<code>research/measurements/</code>):</p>
+        <table class="constants-table">
+          <thead>
+            <tr>
+              <th>Physical Constant</th>
+              <th>Hard Measurement</th>
+              <th>Engineering Invariant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TOUCH_SLOP_RADIUS</td>
+              <td>8.0px (±0.5px)</td>
+              <td>Ignore sub-8px jitter before declaring drag</td>
+            </tr>
+            <tr>
+              <td>HOLD_TEMPORAL_GATE</td>
+              <td>350ms (±20ms)</td>
+              <td>Hold time before promoting touch to drag/context</td>
+            </tr>
+            <tr>
+              <td>AXIS_LOCK_VECTOR</td>
+              <td>8.0px Initial Travel</td>
+              <td>Lock dominant axis (&Delta;x vs &Delta;y) to kill cross-talk</td>
+            </tr>
+            <tr>
+              <td>KINETIC_MOMENTUM_WINDOW</td>
+              <td>120ms Trailing Window</td>
+              <td>Velocity calculation window for inertia snap</td>
+            </tr>
+            <tr>
+              <td>VIEWPORT_RESIZE_LATENCY</td>
+              <td>0ms Hardware Offset</td>
+              <td>Dynamic VisualViewport height tracking for keyboards</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 7 Physical Laws -->
+      <section class="pres-section">
+        <h2>🏛️ The 7 Immutable Laws of Touch Physics</h2>
+        <p>1. <strong>Law of Direct Manipulation</strong>: Apply <code>transition: none</code> and CSS variables during drag/pinch; only ease on release.</p>
+        <p>2. <strong>Law of Dynamic Boundary Hand-off</strong>: Delegate scroll gestures based on <code>scrollTop &le; 0</code> at boundary points.</p>
+        <p>3. <strong>Law of Temporal Promotion</strong>: Gate long-press/drag behind 350ms with visual compression (<code>.press-holding</code>).</p>
+        <p>4. <strong>Law of Orthogonal Axis Lock</strong>: Lock strictly to dominant vector over first 8px to eliminate diagonal interference.</p>
+        <p>5. <strong>Law of Viewport Adaptability</strong>: Bind <code>window.visualViewport</code> resize events to counteract mobile virtual keyboards.</p>
+        <p>6. <strong>Law of Kinetic Momentum</strong>: Regress velocity over trailing 120ms to prevent abrupt gesture freezes.</p>
+        <p>7. <strong>Law of Single Pointer Pipeline</strong>: Eliminate fragmented Touch/Mouse dual-code using unified W3C Pointer Events.</p>
+      </section>
+    </div>
+  </div>
 
   <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    // Complete 13 Gesture Conflict Matrix (C1 - C13) across 5 Languages
+    // Complete 13 Gesture Matrix with 3D Facets (Element, Concept, Defect)
     const database = {
       en: {
-        heroBadge: "⚡️ 0ms Touch Physics & 13 Gesture Conflict Diagnostic",
-        heroTitle: "Interaction Defect Diagnostic & Solution Hub",
-        heroSubtitle: "Diagnose complete C1-C13 gesture conflict states, test baseline vs optimized physics live demos, and copy production-ready SWE engineering solutions.",
-        searchPlaceholder: "Search any gesture conflict (e.g. keyboard resize, bottomsheet scroll, pinch centroid, dnd, doubletap, drawer)...",
-        indexHeading: "Complete Interaction Taxonomy (C1 – C13)",
-        modeWithout: "❌ Baseline Code (Defects)",
-        modeWith: "🟢 Optimized (Physics Invariants)",
+        facetAll: "🌟 All (C1-C13)",
+        facetElement: "🧩 UI Element",
+        facetConcept: "📐 Physics Concept",
+        facetDefect: "🚨 Defect Class",
+        searchPlaceholder: "Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, kanban dnd, axis lock)...",
+        modeWithout: "❌ Baseline (Defects)",
+        modeWith: "🟢 Optimized (Physics)",
         diagTitle: "🚨 Baseline Defect Analysis & Reproduction",
         treatTitle: "🩺 Applied Physical Laws & Architecture Optimization",
-        metric1: "Viewport Resizing Lag",
-        metric2: "Temporal Gate",
-        metric3: "Touch Slop Hysteresis",
         solTitle: "💊 Production Solution Prescriptions",
         solTabPrompt: "SWE Prompt",
         solTabCode: "Code Recipe",
@@ -625,21 +801,23 @@
         scenarios: {
           c13_keyboard: {
             codeId: "C13",
+            element: "Messenger / Chat",
+            concept: "VisualViewport Sync",
+            defect: "Keyboard Overlap",
             demo: "messenger",
             tag: "📱 Virtual Keyboard & Chat (C13)",
-            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp c13",
+            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp c13 messenger",
             flaws: [
               "Pressing Enter on touch devices dispatches message instead of multiline insertion.",
               "Virtual on-screen keyboard overlaps textarea and obscures sub-drawers.",
               "Absence of press-state visual feedback causes long-press interaction ambiguity."
             ],
-            treatment: "Integrated `visualViewport` dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine (350ms compression ➔ haptic ➔ context menu).",
+            treatment: "Integrated visualViewport dynamic dimension listeners with W3C Pointer Events unified pipeline to deliver 0ms keyboard offset synchronization and a deterministic 3-tier long-press state machine.",
             prompt: `Implement a production mobile 1:1 chat interface (Telegram/Slack style).
-Integrate \`interactive-widget=resizes-content\` and \`visualViewport\` resize event listeners to synchronously align container height with the virtual keyboard offset.
+Integrate interactive-widget=resizes-content and visualViewport resize event listeners to synchronously align container height with the virtual keyboard offset.
 Differentiate input key handling: allow Enter for newline insertion on touch devices while reserving Enter for message dispatch on desktop pointers.
-For context menus, bind a 350ms temporal gate with \`.press-holding\` scale transformation, aborting immediately upon gesture travel exceeding 8px.`,
-            code: `// VisualViewport Dynamic Alignment
-if (window.visualViewport) {
+For context menus, bind a 350ms temporal gate with .press-holding scale transformation, aborting immediately upon gesture travel exceeding 8px.`,
+            code: `if (window.visualViewport) {
   const syncHeight = () => {
     const vh = window.visualViewport.height;
     document.documentElement.style.setProperty('--app-height', \`\${vh}px\`);
@@ -656,6 +834,9 @@ if (window.visualViewport) {
           },
           c10_bottomsheet: {
             codeId: "C10",
+            element: "Bottom Sheet",
+            concept: "Dynamic Hand-off",
+            defect: "Scroll Conflict",
             demo: "mapsheet",
             tag: "🗺️ Bottom Sheet & Scroll (C10)",
             keywords: "bottomsheet nested scroll modal snap maps uber airbnb c10",
@@ -664,13 +845,12 @@ if (window.visualViewport) {
               "Horizontal category chip swipes introduce diagonal cross-talk.",
               "Kinetic release velocity is discarded, producing abrupt animation halts."
             ],
-            treatment: "Enforced 8px Orthogonal Axis Lock to eliminate directional cross-talk, combined with dynamic boundary hand-off (`scrollTop <= 0`) and 120ms velocity regression queue.",
+            treatment: "Enforced 8px Orthogonal Axis Lock to eliminate directional cross-talk, combined with dynamic boundary hand-off (scrollTop <= 0) and 120ms velocity regression queue.",
             prompt: `Implement a 3-snap level bottom sheet with nested scrollable views (Apple Maps / Uber style).
-Enforce dynamic boundary hand-off: delegate pointer events to sheet displacement strictly when \`scrollTop <= 0\` at pointer down; otherwise preserve internal view scrolling.
+Enforce dynamic boundary hand-off: delegate pointer events to sheet displacement strictly when scrollTop <= 0 at pointer down; otherwise preserve internal view scrolling.
 Enforce an 8px Orthogonal Axis Lock during initial displacement to isolate horizontal sub-carousels from vertical sheet transforms.
 On pointer release, compute release velocity across a 120ms trailing window to execute momentum-driven snap convergence.`,
-            code: `// Dynamic Boundary Hand-off + 8px Axis Lock
-let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
+            code: `let isDraggingSheet = false, axisLocked = false, startY = 0, startX = 0;
 sheet.addEventListener('pointerdown', (e) => {
   isDraggingSheet = nestedScrollEl.scrollTop <= 0;
   startY = e.clientY; startX = e.clientX;
@@ -683,20 +863,22 @@ sheet.addEventListener('pointerdown', (e) => {
           },
           c11_pinch: {
             codeId: "C11",
+            element: "2D Canvas Editor",
+            concept: "Centroid Invariant",
+            defect: "Center Axis Drift",
             demo: "canvas",
             tag: "🎨 Pinch-Zoom & Rotate (C11)",
             keywords: "pinch zoom rotate canvas figma instagram transform center multitouch c11",
             flaws: [
               "Two-finger rotation leads to transformation center axis drift and jumping.",
-              "Hardcoded legacy \`e.touches[0]\` indexing causes pointer dropped events.",
+              "Hardcoded legacy e.touches[0] indexing causes pointer dropped events.",
               "CSS transition latency introduces phase delay relative to physical touch points."
             ],
-            treatment: "Maintained active W3C Pointer map (`pointerId`) for isolated multi-touch tracking, dynamically calculating invariant transform centroid with zero-latency CSS variable clamping.",
+            treatment: "Maintained active W3C Pointer map (pointerId) for isolated multi-touch tracking, dynamically calculating invariant transform centroid with zero-latency CSS variable clamping.",
             prompt: `Build a 2D canvas editor supporting simultaneous pinch-zoom and rotation (Figma/Canva style).
-Utilize W3C Pointer Events with an active \`pointerId\` Map for discrete pointer tracking. Dynamically preserve the multi-pointer centroid (Center X/Y) across gesture frames to eliminate axis drift.
+Utilize W3C Pointer Events with an active pointerId Map for discrete pointer tracking. Dynamically preserve the multi-pointer centroid across gesture frames to eliminate axis drift.
 Apply zero-latency direct transformation via CSS variables (--scale, --rotate) during active gestures, enabling spring easing only upon pointer release.`,
-            code: `// Pointer Map Tracking & Centroid Preservation
-const activePointers = new Map();
+            code: `const activePointers = new Map();
 canvas.addEventListener('pointerdown', (e) => {
   activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 });`,
@@ -707,6 +889,9 @@ canvas.addEventListener('pointerdown', (e) => {
           },
           c6_kanban: {
             codeId: "C6",
+            element: "Kanban Board",
+            concept: "Temporal Promotion",
+            defect: "Accidental Drag",
             demo: "kanban",
             tag: "📋 Kanban Reorder & DnD (C6)",
             keywords: "kanban dnd drag and drop linear trello card reorder touch slop c6",
@@ -718,10 +903,9 @@ canvas.addEventListener('pointerdown', (e) => {
             treatment: "Applied W3C Pointer Events with a 350ms Hold-to-Drag temporal gate and 8px touch slop hysteresis, accompanied by hardware-accelerated GPU ghost mirroring.",
             prompt: `Implement a production Kanban Board with drag-and-drop card reordering (Linear/Trello style).
 Unify desktop mouse and mobile touch under W3C Pointer Events (avoid HTML5 Drag API).
-Enforce a 350ms hold delay before promoting a touch to card dragging, providing a visual \`.press-holding\` state.
+Enforce a 350ms hold delay before promoting a touch to card dragging, providing a visual .press-holding state.
 If pointer displacement exceeds 8px before 350ms, abort drag and allow native column scrolling.`,
-            code: `// Hold-to-Drag Promotion & Slop Guard
-let dragTimer = null, isDragging = false;
+            code: `let dragTimer = null, isDragging = false;
 card.addEventListener('pointerdown', (e) => {
   dragTimer = setTimeout(() => { isDragging = true; }, 350);
 });`,
@@ -732,6 +916,9 @@ card.addEventListener('pointerdown', (e) => {
           },
           c9_swipe: {
             codeId: "C9",
+            element: "Swipeable List",
+            concept: "8px Axis Lock",
+            defect: "Diagonal Cross-talk",
             demo: "swipe",
             tag: "✉️ Swipe-to-Dismiss (C9)",
             keywords: "swipe dismiss delete list mail ios gmail action reveal c9",
@@ -744,8 +931,7 @@ card.addEventListener('pointerdown', (e) => {
             prompt: `Implement a swipe-to-dismiss list item component (iOS Mail / Gmail style).
 Apply an 8px Orthogonal Axis Lock to prevent diagonal gestures from conflicting with vertical list scrolling.
 Establish a 50% item-width threshold: if swipe distance exceeds 50% or release velocity exceeds 0.5px/ms, execute dismiss animation; otherwise snap back smoothly.`,
-            code: `// 8px Orthogonal Lock + 50% Threshold
-row.addEventListener('pointermove', (e) => {
+            code: `row.addEventListener('pointermove', (e) => {
   const dx = e.clientX - startX, dy = e.clientY - startY;
   if (!locked && Math.hypot(dx, dy) > 8) {
     locked = true;
@@ -759,192 +945,132 @@ row.addEventListener('pointermove', (e) => {
           },
           c1_doubletap: {
             codeId: "C1",
+            element: "Button / Media",
+            concept: "Touch-Action Debounce",
+            defect: "300ms Click Delay",
             demo: "messenger",
             tag: "⚡️ Tap vs Double-Tap (C1)",
             keywords: "tap double tap delay 300ms ios safari zoom c1",
-            flaws: [
-              "Double-tap gesture triggers iOS 300ms default click latency.",
-              "Single tap fires twice prematurely before double-tap is confirmed."
-            ],
-            treatment: "Applied `touch-action: manipulation` to kill 300ms zoom delay and established a 250ms deterministic debounce window for single vs double tap disambiguation.",
-            prompt: `Implement an instant tap and double-tap gesture handler without 300ms delay.
-Apply CSS \`touch-action: manipulation\` to disable browser zoom latency.
-Use a 250ms disambiguation window: dispatch single-tap callback only if second tap does not occur within 250ms, otherwise dispatch double-tap callback.`,
-            code: `let lastTap = 0, tapTimeout = null;
-btn.addEventListener('pointerup', (e) => {
-  const now = performance.now();
-  if (now - lastTap < 250) {
-    clearTimeout(tapTimeout);
-    onDoubleTap(e);
-  } else {
-    tapTimeout = setTimeout(() => onSingleTap(e), 250);
-  }
-  lastTap = now;
-});`,
-            physics: `[Physics Contract C1: Tap Disambiguation]
-1. Latency Elimination: touch-action: manipulation
-2. Disambiguation Window: 250ms debounce threshold`
+            flaws: ["Double-tap gesture triggers iOS 300ms default click latency."],
+            treatment: "Applied touch-action: manipulation to eliminate 300ms zoom delay with a 250ms disambiguation window.",
+            prompt: "Implement instant tap/double-tap handler using touch-action: manipulation and 250ms disambiguation window.",
+            code: "touch-action: manipulation;",
+            physics: "[Physics Contract C1: Tap Disambiguation] 250ms window"
           },
           c2_longpress: {
             codeId: "C2",
+            element: "Context Item",
+            concept: "Temporal Gate",
+            defect: "False Long-Press",
             demo: "messenger",
             tag: "👆 Tap vs Long-Press (C2)",
             keywords: "tap longpress contextmenu callout 350ms c2",
-            flaws: [
-              "Quick tapping mistakenly triggers long-press context menus.",
-              "User has no indication that long-press is currently charging."
-            ],
-            treatment: "Bound a 350ms timer cancelled strictly on movement exceeding 8px or pointer release, providing progressive scale feedback (`.press-holding`).",
-            prompt: `Implement a robust long-press handler for list items.
-Start a 350ms timer on pointerdown with visual compression feedback. Cancel immediately if pointer displacement exceeds 8px or pointerup fires before 350ms.`,
-            code: `let timer = null, startX = 0, startY = 0;
-el.addEventListener('pointerdown', (e) => {
-  startX = e.clientX; startY = e.clientY;
-  timer = setTimeout(() => onLongPress(e), 350);
-});
-el.addEventListener('pointermove', (e) => {
-  if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) clearTimeout(timer);
-});`,
-            physics: `[Physics Contract C2: Long-Press Gate]
-1. Slop Hysteresis: Radius <= 8px
-2. Promotion Delay: 350ms`
+            flaws: ["Quick tapping mistakenly triggers long-press context menus."],
+            treatment: "Bound a 350ms timer cancelled strictly on movement exceeding 8px or pointer release.",
+            prompt: "Implement long-press handler with 350ms temporal gate and 8px slop cancel guard.",
+            code: "setTimeout(() => onLongPress(), 350);",
+            physics: "[Physics Contract C2: Long-Press Gate] 350ms hold, 8px slop"
           },
           c4_carousel: {
             codeId: "C4",
+            element: "Carousel Slider",
+            concept: "8px Axis Lock",
+            defect: "Scroll Conflict",
             demo: "mapsheet",
             tag: "🎠 Carousel vs Page Scroll (C4)",
             keywords: "carousel slider horizontal scroll page vertical lock c4",
-            flaws: [
-              "Swiping horizontal carousel items drags the vertical viewport diagonally.",
-              "Carousel snap points get stuck midway during diagonal flings."
-            ],
-            treatment: "Enforced `touch-action: pan-y` on container and 8px orthogonal axis lock to isolate horizontal swipe tracks from vertical window scrolling.",
-            prompt: `Implement a horizontal carousel slider inside a scrollable feed.
-Apply \`touch-action: pan-y\` to allow page scrolling. During initial 8px movement, lock exclusively to horizontal scrolling if dx > dy, suppressing page scroll.`,
-            code: `// Orthogonal Track Isolation
-carousel.addEventListener('pointermove', (e) => {
-  if (!locked && Math.hypot(dx, dy) > 8) {
-    locked = true;
-    if (Math.abs(dx) > Math.abs(dy)) e.stopPropagation();
-  }
-});`,
-            physics: `[Physics Contract C4: Carousel Track Lock]
-1. Initial Axis Lock: 8px vector discrimination
-2. Touch Action: pan-y CSS binding`
+            flaws: ["Swiping horizontal carousel items drags the vertical viewport diagonally."],
+            treatment: "Enforced touch-action: pan-y and 8px orthogonal axis lock.",
+            prompt: "Implement carousel slider with 8px axis locking and touch-action: pan-y.",
+            code: "touch-action: pan-y;",
+            physics: "[Physics Contract C4: Carousel Track Lock] 8px initial vector lock"
           },
           c5_scrubber: {
             codeId: "C5",
+            element: "Range Scrubber",
+            concept: "Pointer Capture",
+            defect: "Scroll Conflict",
             demo: "canvas",
             tag: "🎚️ Audio/Video Scrubber (C5)",
             keywords: "scrubber slider seekbar audio video progress touch c5",
-            flaws: [
-              "Dragging progress bar knob scrolls the parent page instead of seeking audio.",
-              "Quick finger release causes thumb knob to jump to 0%."
-            ],
-            treatment: "Applied `setPointerCapture(pointerId)` on thumb pointerdown and direct CSS variable position clamping without transition delay.",
-            prompt: `Implement a high-precision audio/video progress scrubber bar.
-Capture active pointer session with \`setPointerCapture\` on thumb knob. Update progress at 0ms latency with direct percentage clamping (0% to 100%).`,
-            code: `thumb.addEventListener('pointerdown', (e) => {
-  thumb.setPointerCapture(e.pointerId);
-});
-thumb.addEventListener('pointermove', (e) => {
-  const percent = Math.max(0, Math.min(1, (e.clientX - barRect.left) / barRect.width));
-  track.style.setProperty('--progress', \`\${percent * 100}%\`);
-});`,
-            physics: `[Physics Contract C5: Scrubber Capture]
-1. Session Capture: Element.setPointerCapture(pointerId)
-2. Clamping: Value clamped in [0.0, 1.0]`
+            flaws: ["Dragging progress bar knob scrolls the parent page instead of seeking."],
+            treatment: "Applied setPointerCapture on thumb pointerdown and direct CSS variable clamping.",
+            prompt: "Implement scrubber with setPointerCapture and direct percentage clamping.",
+            code: "thumb.setPointerCapture(e.pointerId);",
+            physics: "[Physics Contract C5: Scrubber Capture] [0.0, 1.0] clamping"
           },
           c7_multiselect: {
             codeId: "C7",
+            element: "Selection Canvas",
+            concept: "Prerequisite Gate",
+            defect: "Scroll Conflict",
             demo: "canvas",
             tag: "🔲 Box Selection vs Scroll (C7)",
             keywords: "rubberband multiselect marquee drag select scroll c7",
-            flaws: [
-              "Dragging marquee selection box scrolls canvas viewport instead of selecting.",
-              "Releasing pointer leaves rubberband box frozen on screen."
-            ],
-            treatment: "Enforced Shift/Long-press prerequisite gate before enabling marquee selection box, freeing single finger drag for canvas pan navigation.",
-            prompt: `Implement a multi-item marquee rubberband selection box.
-Gate rubberband selection behind 350ms long-press or desktop Shift-drag. Allow standard single pointer drag to pan the viewport smoothly.`,
-            code: `// Marquee Prerequisite Gate
-if (e.shiftKey || isLongPressed) {
-  drawRubberband(startX, startY, e.clientX, e.clientY);
-}`,
-            physics: `[Physics Contract C7: Rubberband Gate]
-1. Gate Requirement: Desktop Shift-key or Mobile 350ms Hold`
+            flaws: ["Dragging marquee selection box scrolls canvas viewport instead of selecting."],
+            treatment: "Enforced Shift/Long-press prerequisite gate before enabling marquee selection.",
+            prompt: "Implement rubberband box selection gated behind 350ms long-press or Shift-drag.",
+            code: "if (e.shiftKey || isLongPressed) drawRubberband();",
+            physics: "[Physics Contract C7: Rubberband Gate] Shift-key / 350ms hold"
           },
           c8_scroll_longpress: {
             codeId: "C8",
+            element: "Feed List",
+            concept: "Universal Abort",
+            defect: "False Long-Press",
             demo: "messenger",
             tag: "📜 Scroll vs Long-Press Cancel (C8)",
             keywords: "scroll longpress cancel contextmenu false positive c8",
-            flaws: [
-              "Scrolling rapidly through a list mistakenly triggers long-press context menus on random rows."
-            ],
-            treatment: "Linked list `scroll` event to universally abort all active long-press timers across child components.",
-            prompt: `Prevent false-positive long-press triggers during list scrolling.
-Listen to container scroll event and immediately clear all pending child long-press timers and reset holding states.`,
-            code: `listContainer.addEventListener('scroll', () => {
-  clearAllPendingLongPressTimers();
-}, { passive: true });`,
-            physics: `[Physics Contract C8: Universal Scroll Abort]
-1. Scroll Invariant: Container scroll event immediately invalidates pending hold timers`
+            flaws: ["Scrolling rapidly through a list mistakenly triggers long-press context menus."],
+            treatment: "Linked list scroll event to universally abort all active long-press timers.",
+            prompt: "Clear all pending child long-press timers on parent container scroll.",
+            code: "list.addEventListener('scroll', clearAllTimers, { passive: true });",
+            physics: "[Physics Contract C8: Universal Scroll Abort] Scroll invalidates timers"
           },
           c12_sidedrawer: {
             codeId: "C12",
+            element: "Side Drawer",
+            concept: "Edge Deadzone",
+            defect: "OS Back Hijack",
             demo: "mapsheet",
             tag: "📲 Side Drawer vs Edge Back (C12)",
             keywords: "sidedrawer navigation edge back gesture ios android c12",
-            flaws: [
-              "Swiping from left edge triggers both app side drawer and OS back navigation."
-            ],
-            treatment: "Enforced 24px left edge exclusion deadzone to respect OS system navigation gestures before initiating custom drawer drag.",
-            prompt: `Implement a slide-out side drawer that respects OS system back gestures.
-Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag if pointerdown starts within 0-24px from left screen edge.`,
-            code: `drawer.addEventListener('pointerdown', (e) => {
-  if (e.clientX <= 24) return; // Yield to OS Back Gesture
-  initiateDrawerDrag(e);
-});`,
-            physics: `[Physics Contract C12: OS Edge Exclusion]
-1. Edge Deadzone: 24px left/right margin yielded strictly to OS`
+            flaws: ["Swiping from left edge triggers both app side drawer and OS back navigation."],
+            treatment: "Enforced 24px left edge exclusion deadzone to respect OS back gestures.",
+            prompt: "Implement slide-out drawer with 24px left edge deadzone for OS gestures.",
+            code: "if (e.clientX <= 24) return; // Yield to OS",
+            physics: "[Physics Contract C12: OS Edge Exclusion] 24px deadzone"
           }
         }
       },
       ko: {
-        heroBadge: "⚡️ 0ms 터치 물리 & 13대 제스처 충돌 진단 엔진",
-        heroTitle: "상호작용 결함 진단 및 SWE 솔루션 허브",
-        heroSubtitle: "C1~C13 제스처 충돌 증상을 전수 색인하고, 기본 코드와 최적화 물리 코드를 비교 체험하며, 검증된 SWE 엔지니어링 솔루션을 처방받으세요.",
-        searchPlaceholder: "제스처 충돌 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 칸반 드래그, 더블탭, 드로어)...",
-        indexHeading: "13대 상호작용 충돌 전체 분류 체계 (C1 – C13)",
+        facetAll: "🌟 전체 (C1-C13)",
+        facetElement: "🧩 UI 컴포넌트별",
+        facetConcept: "📐 물리 개념별",
+        facetDefect: "🚨 결함 증상별",
+        searchPlaceholder: "결함 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 칸반 드래그, 직교 축잠금)...",
         modeWithout: "❌ 기본 AI 코드 (결함 발생)",
         modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
         diagTitle: "🚨 기본 AI 결함 분석 및 재현 원인",
         treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선",
-        metric1: "뷰포트 리사이징 랙",
-        metric2: "시간 승격 게이트",
-        metric3: "터치 슬롭 유예",
         solTitle: "💊 프로덕션 솔루션 처방전",
         solTabPrompt: "SWE 프롬프트",
         solTabCode: "코드 레시피",
         solTabPhysics: "물리 계약 명세",
         copyBtn: "복사",
         toast: "✅ 솔루션이 클립보드에 복사되었습니다!",
-        scenarios: {} // Will inherit structure from en with Korean translations
+        scenarios: {}
       },
       ja: {
-        heroBadge: "⚡️ 0ms タッチ物理 & 13ジェスチャ競合診断エンジン",
-        heroTitle: "インタラクション欠陥診断 & SWEソリューションハブ",
-        heroSubtitle: "C1〜C13のジェスチャ競合状態を完全インデックス化し、ベースラインと最適化コードを比較してSWEプロンプトを取得できます。",
+        facetAll: "🌟 全体 (C1-C13)",
+        facetElement: "🧩 UIコンポーネント別",
+        facetConcept: "📐 物理概念別",
+        facetDefect: "🚨 欠陥症状別",
         searchPlaceholder: "欠陥を検索（例：仮想キーボード、ボトムシート競合、ピンチ中心軸ブレ、カンバンドラッグ）...",
-        indexHeading: "13のインタラクション分類体系 (C1 – C13)",
         modeWithout: "❌ ベースラインAI（欠陥発生）",
         modeWith: "🟢 最適化改善（物理法則適用）",
         diagTitle: "🚨 ベースライン欠陥分析と再現原因",
         treatTitle: "🩺 適用された物理法則とアーキテクチャ最適化",
-        metric1: "ビューポート遅延",
-        metric2: "時間昇格ゲート",
-        metric3: "タッチスロップ許容値",
         solTitle: "💊 プロダクション ソリューション処方箋",
         solTabPrompt: "SWE プロンプト",
         solTabCode: "コードレシピ",
@@ -954,18 +1080,15 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
         scenarios: {}
       },
       zh: {
-        heroBadge: "⚡️ 0ms 触控物理与 13 种手势冲突诊断引擎",
-        heroTitle: "交互缺陷诊断与 SWE 解决方案中心",
-        heroSubtitle: "全量索引 C1-C13 手势冲突状态，对比基线与优化代码，获取生产级软件工程提示词规范与代码配方。",
+        facetAll: "🌟 全部 (C1-C13)",
+        facetElement: "🧩 UI 组件分类",
+        facetConcept: "📐 物理概念分类",
+        facetDefect: "🚨 缺陷症状分类",
         searchPlaceholder: "搜索手势冲突（如：虚拟键盘遮挡、抽屉滚动冲突、双指旋转漂移、看板拖拽）...",
-        indexHeading: "13 种完整交互分类体系 (C1 – C13)",
         modeWithout: "❌ 基线 AI 代码 (缺陷发生)",
         modeWith: "🟢 物理优化改进 (物理定律应用)",
         diagTitle: "🚨 基线缺陷分析与复现原因",
         treatTitle: "🩺 应用物理定律与架构优化",
-        metric1: "视口调整延迟",
-        metric2: "时间判定门槛",
-        metric3: "触控死区裕度",
         solTitle: "💊 生产级解决方案处方",
         solTabPrompt: "SWE 提示词",
         solTabCode: "代码配方",
@@ -975,18 +1098,15 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
         scenarios: {}
       },
       es: {
-        heroBadge: "⚡️ Motor de Física Táctil y Diagnóstico C1-C13",
-        heroTitle: "Diagnóstico de Defectos y Centro de Soluciones SWE",
-        heroSubtitle: "Indexe los 13 conflictos de gestos C1-C13, compare código base vs física optimizada y copie soluciones SWE de producción.",
+        facetAll: "🌟 Todo (C1-C13)",
+        facetElement: "🧩 Por Elemento UI",
+        facetConcept: "📐 Por Concepto Físico",
+        facetDefect: "🚨 Por Clase de Defecto",
         searchPlaceholder: "Buscar conflicto (ej: teclado virtual, colapso de bottomsheet, rotación, kanban, swipe)...",
-        indexHeading: "Taxonomía Completa de Interacciones (C1 – C13)",
         modeWithout: "❌ Código Base (Defectos)",
         modeWith: "🟢 Optimizado (Física Aplicada)",
         diagTitle: "🚨 Análisis de Defectos Base y Reproducción",
         treatTitle: "🩺 Física Aplicada y Optimización de Arquitectura",
-        metric1: "Latencia de Viewport",
-        metric2: "Puerta Temporal",
-        metric3: "Tolerancia Touch Slop",
         solTitle: "💊 Prescripción de Soluciones de Producción",
         solTabPrompt: "Prompt SWE",
         solTabCode: "Receta de Código",
@@ -997,7 +1117,6 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
       }
     };
 
-    // Duplicate scenarios across languages with localized tags
     ['ko', 'ja', 'zh', 'es'].forEach(lang => {
       database[lang].scenarios = JSON.parse(JSON.stringify(database.en.scenarios));
     });
@@ -1010,7 +1129,7 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
       swipe: { with: "demos/swipe-with.html", without: "demos/swipe-without.html" }
     };
 
-    // Auto-detect Language
+    // State
     let currentLang = 'en';
     const userLang = (navigator.language || '').toLowerCase();
     if (userLang.startsWith('ko')) currentLang = 'ko';
@@ -1021,14 +1140,16 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
     let currentScenario = 'c13_keyboard';
     let currentMode = 'with';
     let currentSolTab = 'prompt';
+    let currentFacet = 'all';
 
+    // Elements
+    const tabNavDiag = document.getElementById('tabNavDiag');
+    const tabNavPres = document.getElementById('tabNavPres');
+    const diagView = document.getElementById('diagView');
+    const presView = document.getElementById('presView');
     const langSelect = document.getElementById('langSelect');
     const searchInput = document.getElementById('searchInput');
-    const tagBar = document.getElementById('tagBar');
-    const heroBadge = document.getElementById('heroBadge');
-    const heroTitle = document.getElementById('heroTitle');
-    const heroSubtitle = document.getElementById('heroSubtitle');
-    const indexHeading = document.getElementById('indexHeading');
+    const tagGrid = document.getElementById('tagGrid');
     const btnModeWith = document.getElementById('btnModeWith');
     const btnModeWithout = document.getElementById('btnModeWithout');
     const previewFrame = document.getElementById('previewFrame');
@@ -1036,9 +1157,6 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
     const diagFlaws = document.getElementById('diagFlaws');
     const treatTitle = document.getElementById('treatTitle');
     const treatDesc = document.getElementById('treatDesc');
-    const metricLabel1 = document.getElementById('metricLabel1');
-    const metricLabel2 = document.getElementById('metricLabel2');
-    const metricLabel3 = document.getElementById('metricLabel3');
     const solTitle = document.getElementById('solTitle');
     const solTabPrompt = document.getElementById('solTabPrompt');
     const solTabCode = document.getElementById('solTabCode');
@@ -1048,40 +1166,72 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
     const btnCopySol = document.getElementById('btnCopySol');
     const toast = document.getElementById('toast');
 
+    // Service Switcher Logic
+    tabNavDiag.addEventListener('click', () => {
+      tabNavDiag.classList.add('active');
+      tabNavPres.classList.remove('active');
+      diagView.classList.add('active');
+      presView.classList.remove('active');
+    });
+
+    tabNavPres.addEventListener('click', () => {
+      tabNavPres.classList.add('active');
+      tabNavDiag.classList.remove('active');
+      presView.classList.add('active');
+      diagView.classList.remove('active');
+    });
+
+    // 3D Facet Filter Logic
+    document.querySelectorAll('.facet-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.facet-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFacet = btn.dataset.facet;
+        renderTags();
+      });
+    });
+
     function renderTags() {
       const db = database[currentLang] || database.en;
-      tagBar.innerHTML = '';
+      tagGrid.innerHTML = '';
+      const q = searchInput.value.toLowerCase().trim();
+
       Object.keys(db.scenarios).forEach(key => {
         const sc = db.scenarios[key];
+        let labelText = sc.tag;
+        if (currentFacet === 'element') labelText = `🧩 ${sc.element}`;
+        else if (currentFacet === 'concept') labelText = `📐 ${sc.concept}`;
+        else if (currentFacet === 'defect') labelText = `🚨 ${sc.defect}`;
+
+        const fullSearchText = `${sc.codeId} ${sc.tag} ${sc.element} ${sc.concept} ${sc.defect} ${sc.keywords} ${sc.flaws.join(' ')}`.toLowerCase();
+        if (q && !fullSearchText.includes(q)) return;
+
         const btn = document.createElement('button');
         btn.className = `tag-btn ${key === currentScenario ? 'active' : ''}`;
         btn.dataset.scenario = key;
-        btn.innerHTML = `<span class="tag-badge">${sc.codeId}</span> ${sc.tag}`;
+        btn.innerHTML = `<span class="tag-id">${sc.codeId}</span> <span>${labelText}</span>`;
         btn.addEventListener('click', () => {
           currentScenario = key;
           document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           renderScenario();
         });
-        tagBar.appendChild(btn);
+        tagGrid.appendChild(btn);
       });
     }
 
     function renderLanguage() {
       const t = database[currentLang] || database.en;
       langSelect.value = currentLang;
-      heroBadge.textContent = t.heroBadge;
-      heroTitle.textContent = t.heroTitle;
-      heroSubtitle.textContent = t.heroSubtitle;
-      indexHeading.textContent = t.indexHeading;
       searchInput.placeholder = t.searchPlaceholder;
+      document.getElementById('btnFacetAll').textContent = t.facetAll;
+      document.getElementById('btnFacetElement').textContent = t.facetElement;
+      document.getElementById('btnFacetConcept').textContent = t.facetConcept;
+      document.getElementById('btnFacetDefect').textContent = t.facetDefect;
       btnModeWithout.textContent = t.modeWithout;
       btnModeWith.textContent = t.modeWith;
       diagTitle.textContent = t.diagTitle;
       treatTitle.textContent = t.treatTitle;
-      metricLabel1.textContent = t.metric1;
-      metricLabel2.textContent = t.metric2;
-      metricLabel3.textContent = t.metric3;
       solTitle.textContent = t.solTitle;
       solTabPrompt.textContent = t.solTabPrompt;
       solTabCode.textContent = t.solTabCode;
@@ -1118,6 +1268,13 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
       }
     }
 
+    function showToast() {
+      const t = database[currentLang] || database.en;
+      toast.textContent = t.toast;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
     langSelect.addEventListener('change', (e) => {
       currentLang = e.target.value;
       renderLanguage();
@@ -1146,38 +1303,12 @@ Enforce a 24px left edge exclusion deadzone: do not initiate custom drawer drag 
       });
     });
 
-    // Search filter
-    searchInput.addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      const db = database[currentLang] || database.en;
-      let matched = false;
-      document.querySelectorAll('.tag-btn').forEach(btn => {
-        const scKey = btn.dataset.scenario;
-        const sc = db.scenarios[scKey];
-        const text = `${sc.codeId} ${sc.tag} ${sc.keywords} ${sc.flaws.join(' ')}`.toLowerCase();
-        if (!q || text.includes(q)) {
-          btn.style.display = 'flex';
-          if (!matched) {
-            currentScenario = scKey;
-            matched = true;
-          }
-        } else {
-          btn.style.display = 'none';
-        }
-      });
-      document.querySelectorAll('.tag-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.scenario === currentScenario);
-      });
-      renderScenario();
+    searchInput.addEventListener('input', () => {
+      renderTags();
     });
 
     btnCopySol.addEventListener('click', () => {
-      const t = database[currentLang] || database.en;
-      navigator.clipboard.writeText(solutionText.textContent.trim()).then(() => {
-        toast.textContent = t.toast;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2200);
-      });
+      navigator.clipboard.writeText(solutionText.textContent.trim()).then(showToast);
     });
 
     // Initial render
