@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
   <title>interaction-doctor 🩺 | Interactive Diagnostic Hub & Skill Presentation</title>
-  <meta name="description" content="Dual Service Platform: 1) Interactive Touch Defect Diagnostic & Solution Hub, 2) 16-Device Physical Invariants Presentation." />
+  <meta name="description" content="Dual Service Platform: 1) Interactive Touch Defect Diagnostic & Solution Hub (24 Production Cases), 2) 16-Device Physical Invariants Presentation." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* 2 Main Service Switcher Tabs */
+    /* Dual Service Switcher */
     .service-nav {
       display: flex;
       background: #090e1a;
@@ -150,12 +150,12 @@
        SERVICE 1: DIAGNOSTIC & SOLUTION WORKSTATION
        ======================================================== */
     .diag-wrapper {
-      max-width: 1240px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 24px 20px 60px;
+      padding: 20px 20px 60px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
     }
 
     /* Search & Faceted Filter */
@@ -163,10 +163,10 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     .search-input-wrap {
@@ -203,14 +203,22 @@
     .facet-tabs-row {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
       border-bottom: 1px solid #1e293b;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .facet-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .facet-label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -223,7 +231,7 @@
       color: var(--text-muted);
       padding: 5px 12px;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
@@ -234,11 +242,18 @@
       color: #60a5fa;
     }
 
+    .case-counter {
+      font-size: 0.75rem;
+      color: #60a5fa;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
     .symptom-tag-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      max-height: 120px;
+      gap: 6px;
+      max-height: 140px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -247,9 +262,9 @@
       background: #090e1a;
       border: 1px solid #1e293b;
       color: var(--text-muted);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 0.76rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -266,10 +281,10 @@
     .tag-id {
       background: #0f172a;
       border: 1px solid #334155;
-      padding: 1px 5px;
-      border-radius: 4px;
+      padding: 1px 4px;
+      border-radius: 3px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       color: #94a3b8;
     }
 
@@ -292,11 +307,11 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .sim-toggle-bar {
@@ -623,16 +638,19 @@
       <section class="search-panel">
         <div class="search-input-wrap">
           <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" class="search-input" id="searchInput" placeholder="Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, kanban dnd, axis lock)..." />
+          <input type="text" class="search-input" id="searchInput" placeholder="Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, pull-to-refresh, fab drag, infinite scroll)..." />
         </div>
 
         <!-- 3-Dimensional Facet Switcher -->
         <div class="facet-tabs-row">
-          <span class="facet-label" id="facetLabel">Filter Dimension:</span>
-          <button class="facet-btn active" data-facet="all" id="btnFacetAll">🌟 All (C1-C13)</button>
-          <button class="facet-btn" data-facet="element" id="btnFacetElement">🧩 UI Element</button>
-          <button class="facet-btn" data-facet="concept" id="btnFacetConcept">📐 Physics Concept</button>
-          <button class="facet-btn" data-facet="defect" id="btnFacetDefect">🚨 Defect Class</button>
+          <div class="facet-left">
+            <span class="facet-label" id="facetLabel">Dimension:</span>
+            <button class="facet-btn active" data-facet="all" id="btnFacetAll">🌟 All (24)</button>
+            <button class="facet-btn" data-facet="element" id="btnFacetElement">🧩 UI Element</button>
+            <button class="facet-btn" data-facet="concept" id="btnFacetConcept">📐 Physics Concept</button>
+            <button class="facet-btn" data-facet="defect" id="btnFacetDefect">🚨 Defect Class</button>
+          </div>
+          <div class="case-counter" id="caseCounter">24 Cases Available</div>
         </div>
 
         <!-- Tag Grid -->
@@ -736,12 +754,12 @@
           <tbody>
             <tr>
               <td>TOUCH_SLOP_RADIUS</td>
-              <td>8.0px (±0.5px)</td>
+              <td>8.0px (&plusmn;0.5px)</td>
               <td>Ignore sub-8px jitter before declaring drag</td>
             </tr>
             <tr>
               <td>HOLD_TEMPORAL_GATE</td>
-              <td>350ms (±20ms)</td>
+              <td>350ms (&plusmn;20ms)</td>
               <td>Hold time before promoting touch to drag/context</td>
             </tr>
             <tr>
@@ -780,14 +798,14 @@
   <div class="toast" id="toast">✅ Copied to clipboard!</div>
 
   <script>
-    // Complete 13 Gesture Matrix with 3D Facets (Element, Concept, Defect)
+    // 24 Production-Grade Interaction Conflict Cases (P01 - P24)
     const database = {
       en: {
-        facetAll: "🌟 All (C1-C13)",
+        facetAll: "🌟 All (24)",
         facetElement: "🧩 UI Element",
         facetConcept: "📐 Physics Concept",
         facetDefect: "🚨 Defect Class",
-        searchPlaceholder: "Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, kanban dnd, axis lock)...",
+        searchPlaceholder: "Search defect (e.g. keyboard resize, bottomsheet scroll, pinch centroid, pull-to-refresh, fab drag, infinite scroll)...",
         modeWithout: "❌ Baseline (Defects)",
         modeWith: "🟢 Optimized (Physics)",
         diagTitle: "🚨 Baseline Defect Analysis & Reproduction",
@@ -799,14 +817,14 @@
         copyBtn: "Copy",
         toast: "✅ Solution copied to clipboard!",
         scenarios: {
-          c13_keyboard: {
-            codeId: "C13",
-            element: "Messenger / Chat",
+          p01_keyboard: {
+            codeId: "P01",
+            element: "Messenger Chat",
             concept: "VisualViewport Sync",
             defect: "Keyboard Overlap",
             demo: "messenger",
-            tag: "📱 Virtual Keyboard & Chat (C13)",
-            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp c13 messenger",
+            tag: "📱 Virtual Keyboard Overlap (P01)",
+            keywords: "keyboard visualviewport chat input enter longpress telegram slack whatsapp p01",
             flaws: [
               "Pressing Enter on touch devices dispatches message instead of multiline insertion.",
               "Virtual on-screen keyboard overlaps textarea and obscures sub-drawers.",
@@ -826,20 +844,20 @@ For context menus, bind a 350ms temporal gate with .press-holding scale transfor
   window.visualViewport.addEventListener('resize', syncHeight);
   window.visualViewport.addEventListener('scroll', syncHeight);
 }`,
-            physics: `[Physics Contract C13: Virtual Keyboard Avoidance]
+            physics: `[Physics Contract P01: Virtual Keyboard Avoidance]
 1. Viewport Adaptation: VisualViewport height tracking (0ms lag)
 2. Slop Hysteresis: Radius <= 8px during hold gate
 3. Temporal Promotion: 350ms hold gate with .press-holding scale(0.96)
 4. Key Dispatch: Desktop (Enter = Submit), Mobile (Enter = Linebreak)`
           },
-          c10_bottomsheet: {
-            codeId: "C10",
+          p02_bottomsheet: {
+            codeId: "P02",
             element: "Bottom Sheet",
             concept: "Dynamic Hand-off",
-            defect: "Scroll Conflict",
+            defect: "Scroll Collapse",
             demo: "mapsheet",
-            tag: "🗺️ Bottom Sheet & Scroll (C10)",
-            keywords: "bottomsheet nested scroll modal snap maps uber airbnb c10",
+            tag: "🗺️ Bottom Sheet & Nested Scroll (P02)",
+            keywords: "bottomsheet nested scroll modal snap maps uber airbnb p02",
             flaws: [
               "Nested scrollable view scrolling triggers container drag collapse unintentionally.",
               "Horizontal category chip swipes introduce diagonal cross-talk.",
@@ -856,19 +874,19 @@ sheet.addEventListener('pointerdown', (e) => {
   startY = e.clientY; startX = e.clientX;
   axisLocked = false;
 });`,
-            physics: `[Physics Contract C10: Bottom Sheet & Scroll Hand-off]
+            physics: `[Physics Contract P02: Bottom Sheet & Scroll Hand-off]
 1. Hand-off Gate: scrollTop <= 0 strictly required at pointerdown
 2. Orthogonal Lock: Delta evaluation over initial 8px (dx vs dy)
 3. Momentum Queue: Trailing 120ms velocity calculation for snap landing`
           },
-          c11_pinch: {
-            codeId: "C11",
+          p03_pinch: {
+            codeId: "P03",
             element: "2D Canvas Editor",
             concept: "Centroid Invariant",
             defect: "Center Axis Drift",
             demo: "canvas",
-            tag: "🎨 Pinch-Zoom & Rotate (C11)",
-            keywords: "pinch zoom rotate canvas figma instagram transform center multitouch c11",
+            tag: "🎨 Pinch-Zoom & Rotate (P03)",
+            keywords: "pinch zoom rotate canvas figma instagram transform center multitouch p03",
             flaws: [
               "Two-finger rotation leads to transformation center axis drift and jumping.",
               "Hardcoded legacy e.touches[0] indexing causes pointer dropped events.",
@@ -882,19 +900,19 @@ Apply zero-latency direct transformation via CSS variables (--scale, --rotate) d
 canvas.addEventListener('pointerdown', (e) => {
   activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 });`,
-            physics: `[Physics Contract C11: Multi-touch Centroid Invariant]
+            physics: `[Physics Contract P03: Multi-touch Centroid Invariant]
 1. Pointer Isolation: Explicit Map(pointerId -> {x, y})
 2. Axis Invariant: Centroid ((x1+x2)/2, (y1+y2)/2) set as transformOrigin
 3. Direct Manipulation: 0ms CSS variables without transition latency`
           },
-          c6_kanban: {
-            codeId: "C6",
+          p04_kanban: {
+            codeId: "P04",
             element: "Kanban Board",
             concept: "Temporal Promotion",
             defect: "Accidental Drag",
             demo: "kanban",
-            tag: "📋 Kanban Reorder & DnD (C6)",
-            keywords: "kanban dnd drag and drop linear trello card reorder touch slop c6",
+            tag: "📋 Kanban Reorder & DnD (P04)",
+            keywords: "kanban dnd drag and drop linear trello card reorder touch slop p04",
             flaws: [
               "Touching a card to scroll the board triggers unwanted card drag states.",
               "Native HTML5 Drag API fails completely on mobile touch screens.",
@@ -909,19 +927,19 @@ If pointer displacement exceeds 8px before 350ms, abort drag and allow native co
 card.addEventListener('pointerdown', (e) => {
   dragTimer = setTimeout(() => { isDragging = true; }, 350);
 });`,
-            physics: `[Physics Contract C6: Hold-to-Drag Promotion]
+            physics: `[Physics Contract P04: Hold-to-Drag Promotion]
 1. Unified Pipeline: W3C Pointer Events only (no HTML5 Drag)
 2. Slop Hysteresis: Radius <= 8px cancels timer and restores scroll
 3. Visual Cue: 350ms compression animation before ghost elevation`
           },
-          c9_swipe: {
-            codeId: "C9",
+          p05_swipe: {
+            codeId: "P05",
             element: "Swipeable List",
             concept: "8px Axis Lock",
             defect: "Diagonal Cross-talk",
             demo: "swipe",
-            tag: "✉️ Swipe-to-Dismiss (C9)",
-            keywords: "swipe dismiss delete list mail ios gmail action reveal c9",
+            tag: "✉️ Swipe-to-Dismiss (P05)",
+            keywords: "swipe dismiss delete list mail ios gmail action reveal p05",
             flaws: [
               "Vertical scrolling accidentally triggers horizontal swipe action reveals.",
               "Swiping halfway leaves action buttons in an undefined indeterminate state.",
@@ -938,117 +956,334 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
     isHorizontal = Math.abs(dx) > Math.abs(dy);
   }
 });`,
-            physics: `[Physics Contract C9: Swipe Actions]
+            physics: `[Physics Contract P05: Swipe Actions]
 1. Axis Lock: 8px initial vector threshold
 2. Commit Gate: Threshold at 50% width or velocity > 0.5px/ms
 3. Kinetic Release: 120ms trailing window regression`
           },
-          c1_doubletap: {
-            codeId: "C1",
+          p06_ptr: {
+            codeId: "P06",
+            element: "Pull-to-Refresh",
+            concept: "Boundary Hand-off",
+            defect: "Scroll Contention",
+            demo: "mapsheet",
+            tag: "🔄 Pull-to-Refresh vs List Scroll (P06)",
+            keywords: "pull to refresh ptr overscroll rubberband list feed p06",
+            flaws: [
+              "Pulling down while scrolled midway down a list triggers page refresh instead of normal scrolling.",
+              "Native browser overscroll bounce conflicts with custom refresh spinner."
+            ],
+            treatment: "Applied `overscroll-behavior-y: contain` and bound PTR activation strictly to `scrollTop === 0` at touch initiation with quadratic resistance damping.",
+            prompt: `Implement a custom Pull-to-Refresh component.
+Set \`overscroll-behavior-y: contain\` on the scroll container. Only arm the pull gesture if \`scrollTop === 0\` at pointerdown. Apply quadratic resistance damping: dy_effective = dy * 0.4.`,
+            code: `overscroll-behavior-y: contain;`,
+            physics: `[Physics Contract P06: Pull-to-Refresh Damping] Resistance factor: 0.4`
+          },
+          p07_fab: {
+            codeId: "P07",
+            element: "Floating Button (FAB)",
+            concept: "Slop Hysteresis",
+            defect: "Drag vs Click Ambiguity",
+            demo: "messenger",
+            tag: "🔘 Floating Action Button Drag vs Click (P07)",
+            keywords: "fab floating button draggable click conflict hysteresis p07",
+            flaws: [
+              "Dragging the floating button across screen accidentally fires its click action upon release.",
+              "Slight finger jitter during click triggers unwanted drag displacement."
+            ],
+            treatment: "Enforced an 8px travel threshold: mark gesture as dragged only when movement exceeds 8px; suppress onClick event completely if drag was activated.",
+            prompt: `Build a draggable Floating Action Button (FAB).
+Track pointer travel distance: if total displacement remains <= 8px, execute click handler; if displacement > 8px, update FAB position and suppress click execution on release.`,
+            code: `if (Math.hypot(dx, dy) > 8) isDragged = true;`,
+            physics: `[Physics Contract P07: FAB Slop] Click gate: radius <= 8px`
+          },
+          p08_infinite_scroll: {
+            codeId: "P08",
+            element: "Infinite Feed",
+            concept: "Scroll Anchoring",
+            defect: "Layout Jump / Shift",
+            demo: "mapsheet",
+            tag: "📜 Infinite Scroll Position Jump (P08)",
+            keywords: "infinite scroll prepend append layout shift jump virtualization p08",
+            flaws: [
+              "Prepending older chat messages causes viewport scroll position to jump violently to the top.",
+              "Rapid flings cause blank white screen flash before items render."
+            ],
+            treatment: "Applied CSS `overflow-anchor: auto` with explicit delta height compensation before and after DOM insertions.",
+            prompt: `Implement smooth infinite feed loading without scroll jumps.
+Use \`overflow-anchor: auto\` and calculate pre-render height delta to preserve scroll offset synchronously during item prepend.`,
+            code: `const delta = newHeight - oldHeight; container.scrollTop += delta;`,
+            physics: `[Physics Contract P08: Scroll Anchoring] Invariant: viewport item remains fixed`
+          },
+          p09_modal_leak: {
+            codeId: "P09",
+            element: "Modal Overlay",
+            concept: "Pointer Capture",
+            defect: "Backdrop Click Leak",
+            demo: "messenger",
+            tag: "🛡️ Modal Backdrop Click Leak (P09)",
+            keywords: "modal dialog overlay backdrop backdrop-click leak drag p09",
+            flaws: [
+              "Dragging a selection or text inside a modal and releasing outside accidentally closes the modal.",
+              "Background page scrolls when touch-dragging the modal dialog body."
+            ],
+            treatment: "Checked that pointerdown and pointerup both originated on the backdrop element before closing, and locked background body scroll.",
+            prompt: `Prevent accidental modal backdrop dismissal during text selection.
+Verify that both pointerdown AND pointerup target the overlay backdrop before firing close callbacks.`,
+            code: `if (downTarget === backdrop && upTarget === backdrop) closeModal();`,
+            physics: `[Physics Contract P09: Target Dual-Verification] downTarget === upTarget === backdrop`
+          },
+          p10_tabs_pager: {
+            codeId: "P10",
+            element: "Nested Tabs",
+            concept: "Axis Isolation",
+            defect: "ViewPager Cross-talk",
+            demo: "mapsheet",
+            tag: "📑 Horizontal Tabs vs Outer ViewPager (P10)",
+            keywords: "tabs viewpager horizontal scroll nested swiper p10",
+            flaws: [
+              "Swiping horizontal chip category tabs triggers the parent outer horizontal screen swipe instead."
+            ],
+            treatment: "Applied `stopPropagation` during chip scroll until boundaries are reached, with 8px direction evaluation.",
+            prompt: `Implement nested horizontal tabs inside a horizontal viewpager without gesture fighting.
+Capture pointer in nested tab list until scroll reach maxLeft/maxRight boundaries.`,
+            code: `e.stopPropagation();`,
+            physics: `[Physics Contract P10: Nested Scroll Isolation] Boundary-gated propagation`
+          },
+          p11_textarea_grow: {
+            codeId: "P11",
+            element: "Auto-grow Textarea",
+            concept: "Height Synchronizer",
+            defect: "Input Scroll Jump",
+            demo: "messenger",
+            tag: "📝 Textarea Auto-growth Jump (P11)",
+            keywords: "textarea autogrow chat input height jump scroll p11",
+            flaws: [
+              "Typing long text causes textarea to jump up and down erratically as new lines are added.",
+              "Cursor disappears below virtual keyboard."
+            ],
+            treatment: "Clamped height changes using `scrollHeight` synchronous updates with fixed scroll-anchor positioning.",
+            prompt: `Implement auto-expanding textarea with smooth height transition and no viewport jumps.`,
+            code: `textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px';`,
+            physics: `[Physics Contract P11: Textarea Clamping] Synchronous DOM reflow avoidance`
+          },
+          p12_touch_hover: {
+            codeId: "P12",
+            element: "Tooltip & Popover",
+            concept: "PointerType Separation",
+            defect: "Sticky Hover State",
+            demo: "messenger",
+            tag: "💡 Mobile Sticky Tooltip & Hover (P12)",
+            keywords: "tooltip hover touch sticky mobile popover p12",
+            flaws: [
+              "Tapping a button on mobile leaves CSS `:hover` tooltip permanently stuck on screen.",
+              "Tooltips cannot be dismissed by tapping elsewhere on touch devices."
+            ],
+            treatment: "Gated hover effects strictly behind `@media (hover: hover) and (pointer: fine)` CSS rules, using click-toggle for touch pointers.",
+            prompt: `Prevent stuck hover tooltips on mobile touch screens.
+Wrap all hover transitions inside \`@media (hover: hover)\` and handle touch tooltip states explicitly via pointer events.`,
+            code: `@media (hover: hover) { .btn:hover .tooltip { opacity: 1; } }`,
+            physics: `[Physics Contract P12: Pointer Fine Gating] Touch devices exclude :hover`
+          },
+          p13_timeline_scrub: {
+            codeId: "P13",
+            element: "Media Player",
+            concept: "Pointer Capture",
+            defect: "Seekbar Scrub Jump",
+            demo: "canvas",
+            tag: "🎬 Video Timeline Drag & Scrub (P13)",
+            keywords: "video audio timeline scrubber seekbar scrub jump p13",
+            flaws: [
+              "Fast scrubbing causes cursor to slip off thin seekbar, freezing time seeking.",
+              "Page scrolls vertically while trying to adjust video progress."
+            ],
+            treatment: "Enforced `setPointerCapture` on seekbar track and 0ms direct CSS variable progress clamping.",
+            prompt: `Implement a precision media scrubber timeline with setPointerCapture.`,
+            code: `track.setPointerCapture(e.pointerId);`,
+            physics: `[Physics Contract P13: Pointer Capture] Global tracking during scrub`
+          },
+          p14_crop_handle: {
+            codeId: "P14",
+            element: "Image Cropper",
+            concept: "Hit Target Extension",
+            defect: "Corner Handle Miss",
+            demo: "canvas",
+            tag: "✂️ Image Crop Resizer Corner Miss (P14)",
+            keywords: "crop resizer handle 44px hit test canvas corner p14",
+            flaws: [
+              "Small 8px crop handles are impossible to touch accurately on mobile screens.",
+              "Dragging corner handle pans canvas instead of resizing crop box."
+            ],
+            treatment: "Extended invisible touch target area to 44px min dimension via transparent pseudo-elements with explicit touch-action: none.",
+            prompt: `Build high-precision crop resize handles for mobile.
+Provide 44x44px minimum touch targets for all 4 corners while maintaining 8px visual dots.`,
+            code: `.handle::after { content: ''; position: absolute; inset: -18px; }`,
+            physics: `[Physics Contract P14: Apple HIG 44px Target] Minimum interactive bound: 44px`
+          },
+          p15_wheel_pinch: {
+            codeId: "P15",
+            element: "Desktop Trackpad",
+            concept: "CtrlKey Discrimination",
+            defect: "Pinch vs Wheel Conflict",
+            demo: "canvas",
+            tag: "💻 Trackpad Pinch vs Wheel Zoom (P15)",
+            keywords: "trackpad pinch wheel zoom ctrlkey macos windows p15",
+            flaws: [
+              "Trackpad pinch gestures on macOS trigger giant browser-level window zoom instead of canvas zoom.",
+              "Mouse wheel scroll zooms way too fast."
+            ],
+            treatment: "Intercepted `wheel` event with `e.ctrlKey` check and `e.preventDefault()`, normalizing delta zoom multipliers.",
+            prompt: `Handle macOS trackpad pinch-zoom smoothly in 2D canvas apps.
+Listen to wheel event: if e.ctrlKey is true, treat as pinch-zoom and preventDefault.`,
+            code: `if (e.ctrlKey) { e.preventDefault(); zoomBy(e.deltaY * -0.01); }`,
+            physics: `[Physics Contract P15: CtrlKey Trackpad Zoom] Intercept browser zoom`
+          },
+          p16_fling_catch: {
+            codeId: "P16",
+            element: "Fast Fling List",
+            concept: "Momentum Interruption",
+            defect: "Accidental Click on Stop",
+            demo: "mapsheet",
+            tag: "🛑 Fast Fling Catch Accidental Click (P16)",
+            keywords: "fling scroll inertia catch click accidental tap momentum p16",
+            flaws: [
+              "Tapping a rapidly scrolling list to stop it accidentally triggers a link or item click.",
+              "List bounces backward when touched during inertia."
+            ],
+            treatment: "Detected active scrolling state: if container velocity > 0 on touch, consume pointerdown to halt momentum and suppress subsequent click event.",
+            prompt: `Prevent accidental item clicks when tapping a fast-scrolling list to stop it.
+If scroll velocity > 0 on pointerdown, stop scroll momentum and set a flag to prevent click handler execution.`,
+            code: `if (isFastScrolling) { haltScroll(); e.preventDefault(); }`,
+            physics: `[Physics Contract P16: Momentum Intercept] Inertia touch suppresses click`
+          },
+          p17_color_picker: {
+            codeId: "P17",
+            element: "2D Color Picker",
+            concept: "2D Vector Clamping",
+            defect: "Page Scroll Conflict",
+            demo: "canvas",
+            tag: "🎨 2D Color Spectrum Drag (P17)",
+            keywords: "colorpicker spectrum 2d drag saturation value scroll p17",
+            flaws: [
+              "Dragging 2D color picker handle scrolls parent page diagonally."
+            ],
+            treatment: "Applied `touch-action: none` and W3C Pointer Capture with normalized (X, Y) bounds clamping [0, 1].",
+            prompt: `Build a 2D color picker spectrum panel with touch-action: none and pointer capture.`,
+            code: `touch-action: none;`,
+            physics: `[Physics Contract P17: 2D Plane Capture] Clamped [0, 1] x [0, 1]`
+          },
+          p18_dual_slider: {
+            codeId: "P18",
+            element: "Price Filter Slider",
+            concept: "Z-Index Dynamic Elevation",
+            defect: "Thumb Overlap Lock",
+            demo: "canvas",
+            tag: "⚖️ Dual Thumb Range Slider Overlap (P18)",
+            keywords: "range slider dual thumb min max overlap price filter p18",
+            flaws: [
+              "When min and max thumbs meet at the same price, the top thumb blocks interaction with the bottom thumb."
+            ],
+            treatment: "Dynamically elevated z-index of the active thumb based on proximity and drag direction.",
+            prompt: `Implement a dual-thumb price range slider where thumbs never get stuck when overlapped.`,
+            code: `activeThumb.style.zIndex = 10; otherThumb.style.zIndex = 5;`,
+            physics: `[Physics Contract P18: Dynamic Elevation] Active pointer elevates z-index`
+          },
+          p19_table_resize: {
+            codeId: "P19",
+            element: "Data Table",
+            concept: "Axis Isolation",
+            defect: "Column Resize vs Scroll",
+            demo: "canvas",
+            tag: "📊 Table Column Resize vs Horizontal Scroll (P19)",
+            keywords: "datatable column resize header drag horizontal scroll p19",
+            flaws: [
+              "Dragging column header separator scrolls the entire table horizontally instead of resizing."
+            ],
+            treatment: "Applied `setPointerCapture` on resize bar and suppressed table scroll container events.",
+            prompt: `Implement draggable table column resizer with setPointerCapture.`,
+            code: `divider.setPointerCapture(e.pointerId);`,
+            physics: `[Physics Contract P19: Column Divider Capture] Isolate from horizontal table scroll`
+          },
+          p20_accordion: {
+            codeId: "P20",
+            element: "Accordion List",
+            concept: "Layout Shift Damping",
+            defect: "Scroll Jump on Expand",
+            demo: "mapsheet",
+            tag: "📂 Accordion Collapse Scroll Jump (P20)",
+            keywords: "accordion collapsible expand collapse scroll jump layout shift p20",
+            flaws: [
+              "Collapsing an accordion item above current viewport pushes content out of view abruptly."
+            ],
+            treatment: "Compensated scroll offset by the collapsed item height delta synchronously.",
+            prompt: `Implement accordion expansion without causing viewport scroll jumps.`,
+            code: `container.scrollTop -= deltaHeight;`,
+            physics: `[Physics Contract P20: Height Compensation] Scroll offset -= deltaHeight`
+          },
+          p21_doubletap: {
+            codeId: "P21",
             element: "Button / Media",
             concept: "Touch-Action Debounce",
             defect: "300ms Click Delay",
             demo: "messenger",
-            tag: "⚡️ Tap vs Double-Tap (C1)",
-            keywords: "tap double tap delay 300ms ios safari zoom c1",
+            tag: "⚡️ Tap vs Double-Tap 300ms Delay (P21)",
+            keywords: "tap double tap delay 300ms ios safari zoom p21",
             flaws: ["Double-tap gesture triggers iOS 300ms default click latency."],
             treatment: "Applied touch-action: manipulation to eliminate 300ms zoom delay with a 250ms disambiguation window.",
             prompt: "Implement instant tap/double-tap handler using touch-action: manipulation and 250ms disambiguation window.",
             code: "touch-action: manipulation;",
-            physics: "[Physics Contract C1: Tap Disambiguation] 250ms window"
+            physics: "[Physics Contract P21: Tap Disambiguation] 250ms window"
           },
-          c2_longpress: {
-            codeId: "C2",
+          p22_longpress: {
+            codeId: "P22",
             element: "Context Item",
             concept: "Temporal Gate",
             defect: "False Long-Press",
             demo: "messenger",
-            tag: "👆 Tap vs Long-Press (C2)",
-            keywords: "tap longpress contextmenu callout 350ms c2",
+            tag: "👆 Tap vs Long-Press False Trigger (P22)",
+            keywords: "tap longpress contextmenu callout 350ms p22",
             flaws: ["Quick tapping mistakenly triggers long-press context menus."],
             treatment: "Bound a 350ms timer cancelled strictly on movement exceeding 8px or pointer release.",
             prompt: "Implement long-press handler with 350ms temporal gate and 8px slop cancel guard.",
             code: "setTimeout(() => onLongPress(), 350);",
-            physics: "[Physics Contract C2: Long-Press Gate] 350ms hold, 8px slop"
+            physics: "[Physics Contract P22: Long-Press Gate] 350ms hold, 8px slop"
           },
-          c4_carousel: {
-            codeId: "C4",
-            element: "Carousel Slider",
-            concept: "8px Axis Lock",
-            defect: "Scroll Conflict",
-            demo: "mapsheet",
-            tag: "🎠 Carousel vs Page Scroll (C4)",
-            keywords: "carousel slider horizontal scroll page vertical lock c4",
-            flaws: ["Swiping horizontal carousel items drags the vertical viewport diagonally."],
-            treatment: "Enforced touch-action: pan-y and 8px orthogonal axis lock.",
-            prompt: "Implement carousel slider with 8px axis locking and touch-action: pan-y.",
-            code: "touch-action: pan-y;",
-            physics: "[Physics Contract C4: Carousel Track Lock] 8px initial vector lock"
-          },
-          c5_scrubber: {
-            codeId: "C5",
-            element: "Range Scrubber",
-            concept: "Pointer Capture",
-            defect: "Scroll Conflict",
-            demo: "canvas",
-            tag: "🎚️ Audio/Video Scrubber (C5)",
-            keywords: "scrubber slider seekbar audio video progress touch c5",
-            flaws: ["Dragging progress bar knob scrolls the parent page instead of seeking."],
-            treatment: "Applied setPointerCapture on thumb pointerdown and direct CSS variable clamping.",
-            prompt: "Implement scrubber with setPointerCapture and direct percentage clamping.",
-            code: "thumb.setPointerCapture(e.pointerId);",
-            physics: "[Physics Contract C5: Scrubber Capture] [0.0, 1.0] clamping"
-          },
-          c7_multiselect: {
-            codeId: "C7",
-            element: "Selection Canvas",
-            concept: "Prerequisite Gate",
-            defect: "Scroll Conflict",
-            demo: "canvas",
-            tag: "🔲 Box Selection vs Scroll (C7)",
-            keywords: "rubberband multiselect marquee drag select scroll c7",
-            flaws: ["Dragging marquee selection box scrolls canvas viewport instead of selecting."],
-            treatment: "Enforced Shift/Long-press prerequisite gate before enabling marquee selection.",
-            prompt: "Implement rubberband box selection gated behind 350ms long-press or Shift-drag.",
-            code: "if (e.shiftKey || isLongPressed) drawRubberband();",
-            physics: "[Physics Contract C7: Rubberband Gate] Shift-key / 350ms hold"
-          },
-          c8_scroll_longpress: {
-            codeId: "C8",
-            element: "Feed List",
-            concept: "Universal Abort",
-            defect: "False Long-Press",
-            demo: "messenger",
-            tag: "📜 Scroll vs Long-Press Cancel (C8)",
-            keywords: "scroll longpress cancel contextmenu false positive c8",
-            flaws: ["Scrolling rapidly through a list mistakenly triggers long-press context menus."],
-            treatment: "Linked list scroll event to universally abort all active long-press timers.",
-            prompt: "Clear all pending child long-press timers on parent container scroll.",
-            code: "list.addEventListener('scroll', clearAllTimers, { passive: true });",
-            physics: "[Physics Contract C8: Universal Scroll Abort] Scroll invalidates timers"
-          },
-          c12_sidedrawer: {
-            codeId: "C12",
+          p23_sidedrawer: {
+            codeId: "P23",
             element: "Side Drawer",
             concept: "Edge Deadzone",
             defect: "OS Back Hijack",
             demo: "mapsheet",
-            tag: "📲 Side Drawer vs Edge Back (C12)",
-            keywords: "sidedrawer navigation edge back gesture ios android c12",
+            tag: "📲 Side Drawer vs OS Edge Back (P23)",
+            keywords: "sidedrawer navigation edge back gesture ios android p23",
             flaws: ["Swiping from left edge triggers both app side drawer and OS back navigation."],
             treatment: "Enforced 24px left edge exclusion deadzone to respect OS back gestures.",
             prompt: "Implement slide-out drawer with 24px left edge deadzone for OS gestures.",
             code: "if (e.clientX <= 24) return; // Yield to OS",
-            physics: "[Physics Contract C12: OS Edge Exclusion] 24px deadzone"
+            physics: "[Physics Contract P23: OS Edge Exclusion] 24px deadzone"
+          },
+          p24_marquee: {
+            codeId: "P24",
+            element: "Selection Canvas",
+            concept: "Prerequisite Gate",
+            defect: "Marquee vs Scroll Conflict",
+            demo: "canvas",
+            tag: "🔲 Rubberband Box Selection vs Scroll (P24)",
+            keywords: "rubberband multiselect marquee drag select scroll p24",
+            flaws: ["Dragging marquee selection box scrolls canvas viewport instead of selecting."],
+            treatment: "Enforced Shift/Long-press prerequisite gate before enabling marquee selection.",
+            prompt: "Implement rubberband box selection gated behind 350ms long-press or Shift-drag.",
+            code: "if (e.shiftKey || isLongPressed) drawRubberband();",
+            physics: "[Physics Contract P24: Rubberband Gate] Shift-key / 350ms hold"
           }
         }
       },
       ko: {
-        facetAll: "🌟 전체 (C1-C13)",
+        facetAll: "🌟 전체 (24)",
         facetElement: "🧩 UI 컴포넌트별",
         facetConcept: "📐 물리 개념별",
         facetDefect: "🚨 결함 증상별",
-        searchPlaceholder: "결함 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 칸반 드래그, 직교 축잠금)...",
+        searchPlaceholder: "결함 검색 (예: 가상 키보드 가림, 바텀시트 스크롤 충돌, 핀치 중심축 요동, 새로고침 충돌, 플로팅버튼, 무한스크롤)...",
         modeWithout: "❌ 기본 AI 코드 (결함 발생)",
         modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
         diagTitle: "🚨 기본 AI 결함 분석 및 재현 원인",
@@ -1062,11 +1297,11 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
         scenarios: {}
       },
       ja: {
-        facetAll: "🌟 全体 (C1-C13)",
+        facetAll: "🌟 全体 (24)",
         facetElement: "🧩 UIコンポーネント別",
         facetConcept: "📐 物理概念別",
         facetDefect: "🚨 欠陥症状別",
-        searchPlaceholder: "欠陥を検索（例：仮想キーボード、ボトムシート競合、ピンチ中心軸ブレ、カンバンドラッグ）...",
+        searchPlaceholder: "欠陥を検索（例：仮想キーボード、ボトムシート競合、ピンチ中心軸ブレ、リフレッシュ競合、無限スクロール）...",
         modeWithout: "❌ ベースラインAI（欠陥発生）",
         modeWith: "🟢 最適化改善（物理法則適用）",
         diagTitle: "🚨 ベースライン欠陥分析と再現原因",
@@ -1080,11 +1315,11 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
         scenarios: {}
       },
       zh: {
-        facetAll: "🌟 全部 (C1-C13)",
+        facetAll: "🌟 全部 (24)",
         facetElement: "🧩 UI 组件分类",
         facetConcept: "📐 物理概念分类",
         facetDefect: "🚨 缺陷症状分类",
-        searchPlaceholder: "搜索手势冲突（如：虚拟键盘遮挡、抽屉滚动冲突、双指旋转漂移、看板拖拽）...",
+        searchPlaceholder: "搜索手势冲突（如：虚拟键盘遮挡、抽屉滚动冲突、双指旋转漂移、下拉刷新冲突、无限滚动）...",
         modeWithout: "❌ 基线 AI 代码 (缺陷发生)",
         modeWith: "🟢 物理优化改进 (物理定律应用)",
         diagTitle: "🚨 基线缺陷分析与复现原因",
@@ -1098,11 +1333,11 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
         scenarios: {}
       },
       es: {
-        facetAll: "🌟 Todo (C1-C13)",
+        facetAll: "🌟 Todo (24)",
         facetElement: "🧩 Por Elemento UI",
         facetConcept: "📐 Por Concepto Físico",
         facetDefect: "🚨 Por Clase de Defecto",
-        searchPlaceholder: "Buscar conflicto (ej: teclado virtual, colapso de bottomsheet, rotación, kanban, swipe)...",
+        searchPlaceholder: "Buscar conflicto (ej: teclado virtual, bottomsheet, rotación, pull-to-refresh, scroll infinito)...",
         modeWithout: "❌ Código Base (Defectos)",
         modeWith: "🟢 Optimizado (Física Aplicada)",
         diagTitle: "🚨 Análisis de Defectos Base y Reproducción",
@@ -1137,7 +1372,7 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
     else if (userLang.startsWith('zh')) currentLang = 'zh';
     else if (userLang.startsWith('es')) currentLang = 'es';
 
-    let currentScenario = 'c13_keyboard';
+    let currentScenario = 'p01_keyboard';
     let currentMode = 'with';
     let currentSolTab = 'prompt';
     let currentFacet = 'all';
@@ -1150,6 +1385,7 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
     const langSelect = document.getElementById('langSelect');
     const searchInput = document.getElementById('searchInput');
     const tagGrid = document.getElementById('tagGrid');
+    const caseCounter = document.getElementById('caseCounter');
     const btnModeWith = document.getElementById('btnModeWith');
     const btnModeWithout = document.getElementById('btnModeWithout');
     const previewFrame = document.getElementById('previewFrame');
@@ -1195,6 +1431,7 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
       const db = database[currentLang] || database.en;
       tagGrid.innerHTML = '';
       const q = searchInput.value.toLowerCase().trim();
+      let matchCount = 0;
 
       Object.keys(db.scenarios).forEach(key => {
         const sc = db.scenarios[key];
@@ -1206,6 +1443,7 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
         const fullSearchText = `${sc.codeId} ${sc.tag} ${sc.element} ${sc.concept} ${sc.defect} ${sc.keywords} ${sc.flaws.join(' ')}`.toLowerCase();
         if (q && !fullSearchText.includes(q)) return;
 
+        matchCount++;
         const btn = document.createElement('button');
         btn.className = `tag-btn ${key === currentScenario ? 'active' : ''}`;
         btn.dataset.scenario = key;
@@ -1218,6 +1456,8 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
         });
         tagGrid.appendChild(btn);
       });
+
+      caseCounter.textContent = `${matchCount} Cases Available`;
     }
 
     function renderLanguage() {
@@ -1244,7 +1484,7 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
 
     function renderScenario() {
       const db = database[currentLang] || database.en;
-      const sc = db.scenarios[currentScenario] || db.scenarios.c13_keyboard;
+      const sc = db.scenarios[currentScenario] || db.scenarios.p01_keyboard;
       
       diagFlaws.innerHTML = sc.flaws.map(f => `<li>${f}</li>`).join('');
       treatDesc.textContent = sc.treatment;
@@ -1258,7 +1498,7 @@ Establish a 50% item-width threshold: if swipe distance exceeds 50% or release v
 
     function renderSolutionContent() {
       const db = database[currentLang] || database.en;
-      const sc = db.scenarios[currentScenario] || db.scenarios.c13_keyboard;
+      const sc = db.scenarios[currentScenario] || db.scenarios.p01_keyboard;
       if (currentSolTab === 'prompt') {
         solutionText.textContent = sc.prompt;
       } else if (currentSolTab === 'code') {
