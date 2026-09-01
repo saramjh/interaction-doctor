@@ -1,6 +1,6 @@
 ---
 name: interaction-doctor
-description: 보편적 인간-기기 상호작용(UX) 3대 축(정확한 입력, 명확한 인지 출력, 0ms 무지연 반응성)을 보증하고 5대 메가 클러스터 조작 프로토콜로 인터랙션 결함을 원천 차단하는 에이전틱 코딩 스킬.
+description: 국제 표준(ISO 9241, W3C) 기반 인간-기기 상호작용(HCI) 3대 축(정확한 입력, 명확한 인지 출력, 3차원 반응 속도)과 사용 환경 다차원 제약(하드웨어/OS/런타임)을 보증하여 인터랙션 결함을 원천 차단하는 에이전틱 코딩 스킬.
 ---
 
 # Interaction Doctor (상호작용 품질 보증 아키텍트)
@@ -8,28 +8,63 @@ description: 보편적 인간-기기 상호작용(UX) 3대 축(정확한 입력,
 ## 1. 스킬의 정체성과 궁극적 목적 (First Principle)
 
 LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리 엔진 지식을 풍부하게 알고 있다.
-그러나 **비즈니스 로직, 시각적 UI, 모바일 사용 환경, 반응성 속도** 사이에서 우선순위의 기준을 잃어버릴 때 어텐션 분산과 찐빠가 발생한다.
+그러나 **비즈니스 로직, 시각적 UI, 사용 환경(하드웨어/OS/런타임), 반응성 속도** 사이에서 우선순위의 기준을 잃어버릴 때 어텐션 분산과 찐빠가 발생한다.
 
-`interaction-doctor`는 정답 코드를 외워서 치게 만드는 사전이 아니라, **"LLM의 방대한 지식 바다에서 '사용자 만족을 극대화하는 최적의 상호작용 결정'만을 스스로 선별하여 0개의 찐빠로 조립해내도록 이끄는 의사결정 나침반(Decision Compass)"**이다.
+`interaction-doctor`는 정답 코드를 외워서 치게 만드는 사전이 아니라, **"HCI(인간-컴퓨터 상호작용)의 신체적·물리적 한계 기준과 사용자의 조작 의도를 분석하여, 어떤 언어와 플랫폼에서든 최적의 상호작용 결정을 스스로 도출하도록 이끄는 보편적 의사결정 나침반(Decision Compass)"**이다.
 
----
-
-## 2. 3대 상호작용 절대 목적 (Core 3-Axis Contract)
-
-에이전트는 구현 언어(Swift, Kotlin, Flutter, React, Web 등)에 관계없이 다음 3대 목적을 최우선 기준으로 고정(Anchor)해야 한다:
-
-1. **정확한 커맨드 입력 (Input Fidelity & Anti-Interference)**:
-   * 사용자의 의도된 조작이 브라우저/OS 기본 제스처(스크롤, 뒤로가기 스와이프, 텍스트 선택 팝업)나 인접 UI의 간섭을 받지 않고 100% 온전히 시스템에 전달되어야 한다.
-2. **정확한 정보 인지 출력 (Output Visibility & Affordance)**:
-   * 손가락에 가려지거나 가상 키보드가 솟아오르는 상황에서도, 사용자가 "내가 지금 무엇을 바꾸고 있고 어떤 상태인가"를 명확하고 투명하게 실시간 인지할 수 있어야 한다.
-3. **상호작용 반응성 속도 (Zero-Latency Responsiveness, NOT Duration)**:
-   * 연출 애니메이션 시간(Duration)이 아닌, **"사용자의 손끝/입력과 시스템의 물리 반응 사이의 랙(Lag)을 0.00초로 없애는 물리적 즉각성(Zero-Latency Tracking)"**을 확보해야 한다.
+> ⚠️ **[메타 해석 헌장]** 본 헌장에 기재된 괄호 `(...)` 및 세부 항목은 이해를 돕기 위한 대표 예시(Non-exhaustive examples)이며, 에이전트는 특정 언어나 UI 형태에 국한되지 않고 사용자의 모든 상황과 플랫폼에 이 보편 원리를 능동적으로 확장 적용해야 한다.
 
 ---
 
-## 3. 세상의 모든 UX 상호작용: 5대 메가 클러스터 조작 프로토콜
+## 2. 3대 상호작용 절대 목적 계약 (Core 3-Axis Contract)
 
-세상의 모든 UX 상호작용은 수학적·물리적 특성에 따라 다음 5대 클러스터로 수렴하며, 에이전트는 요구사항 분석 시 해당 클러스터의 불변식(Invariants)을 적용한다.
+에이전트는 구현 언어(Swift, Kotlin, Flutter, React, Web, Unity 등 환경 일체)에 관계없이 다음 3대 목적을 최우선 기준으로 고정(Anchor)해야 한다:
+
+### 1) 축 1: 정확한 커맨드 입력 (Input Fidelity & Anti-Interference)
+* **목적**: 사용자가 내린 조작 명령이 브라우저/OS의 기본 제스처나 인접 UI의 간섭을 받지 않고 100% 온전히 시스템에 전달되어야 한다.
+* **4대 입력 양식 전수 클러스터링**:
+  1. **연속적 공간 변위 입력 (Continuous Spatial Modality)**: 1D 선형 축 이동(슬라이더/스크러버/스크롤), 2D 평면 벡터 이동(패닝/DnD/스와이프) $\to$ *초기 슬롭(8px) 내 의도 확정 및 직교 축 간섭 격리*
+  2. **다점 기하 변환 입력 (Multi-Point Geometric Modality)**: 거리 비례 스케일링(핀치 줌), 각도 비례 회전(다이얼/로테이션) $\to$ *포인터 간 독립 식별자 분리 및 중심점(Centroid) 불변 유지*
+  3. **시간 누적 및 압력 임계 입력 (Temporal & Pressure Modality)**: 시간 유지(롱프레스/홀드), 연속 반복 탭(더블탭) $\to$ *생리적 손떨림 보존 및 시간 임계(350ms) 도달 시 상위 스크롤러 권한 즉시 박탈*
+  4. **이산적 상태 트리거 입력 (Discrete Event Modality)**: 순간 접촉(단일 탭/클릭/토글/단축키) $\to$ *최소 44dp 물리 히트박스 보장 및 중복 실행 멱등성 락*
+
+### 2) 축 2: 명확한 정보 인지 출력 (Output Visibility & Affordance)
+* **목적**: 손가락 가림, 가상 키보드 팝업, 화면 회전 등의 동적 환경에서도 사용자가 "내가 지금 무엇을 바꾸고 있고 어떤 상태인가"를 1밀리초의 모호함도 없이 실시간 인지할 수 있어야 한다.
+* **3대 인지 보장 전수 클러스터링**:
+  1. **신체 가림 및 환경 침범 방어 (Occlusion & Obstruction Defense)**: 손끝 접촉 면적에 가려지지 않는 오프셋 인디케이터 제공, 가상 키보드/OS 바 침범 시 가용 뷰포트 자동 확보(Keep-in-View).
+  2. **상태 전이의 즉시 표명 (State Transparency & Affordance)**: 조작 시작(Active), 경합(Evaluating), 점유(Locked), 완료(Released)의 전 과정을 시각적·촉각적으로 1ms 지연 없이 투명하게 표명.
+  3. **물리적 한계 및 경계 피드백 (Boundary & Dynamic Friction Output)**: 컨텐츠 끝 도달 시 고무줄 탄성(Rubber-band), 스냅 안착 시 촉각 틱(Haptic Tick) 등 공간적 한계치를 사용자 감각에 직관 전달.
+
+### 3) 축 3: 상호작용 속도 (3차원 정밀 분리 정의: Velocity & Time)
+* **목적**: '속도'의 다차원적 물리 특성을 분리하여, 지연 없는 반응성과 자연스러운 물리 감속을 동시에 달성한다.
+  * **[차원 1] 추종 지연 (Tracking Latency) = 0.00ms (Zero-Lag)**: 조작 진행 중(Dragging/Pinching) 손끝과 객체 사이의 간극을 0초로 밀착 (불필요한 CSS transition/이징 지연 0건).
+  * **[차원 2] 인지 접수 속도 (Feedback Immediacy) < 50ms**: 브라우저/OS의 300ms 대기 딜레이를 파괴하고 터치 즉시 시각적 압축(Scale 0.96) 및 햅틱 발화.
+  * **[차원 3] 동역학적 수렴 시간 (Kinetic Duration) = 자연 물리 감속**: 손을 뗀 후(Release) 관성 스크롤 및 복귀는 직전 100~120ms 평균 속도 벡터 기반의 부드러운 지수 감속 적용.
+
+---
+
+## 3. 국제 표준 기반 사용 환경 다차원 제약 매트릭스 (Context-of-Use Matrix)
+
+국제 표준(ISO 9241-11/210/410, W3C Pointer Events L3, Fitts's Law)에 따라 사용 환경의 하드웨어 및 소프트웨어 제약을 사전에 판별하고 방어한다.
+
+### 1) [하드웨어 계층 제약] 물리적 입력 장치 및 디바이스 특성 (ISO 9241-410)
+* **스마트폰 (Mobile Handheld)**: 손가락 접촉 면적 7~10mm, 생리적 손떨림 3~5px $\to$ **8.0px 터치 슬롭** 히스테리시스, 최소 44×44dp 히트박스, GPU 0ms 1:1 하드웨어 가속.
+* **태블릿 & 스타일러스 (Tablet & Pen)**: 펜촉 정밀도 0.5~1.0mm, 손바닥 오터치 > 15mm $\to$ `pointerType === 'pen'` 감지 시 슬롭 0.5px 축소, 15mm 초과 광역 접촉 **Palm Rejection 즉시 폐기**.
+* **데스크톱 & 랩톱 (Desktop / Laptop)**: 1px 미세 마우스 커서, 창 이탈 위험 $\to$ W3C `setPointerCapture` 필수 결합, 트랙패드 vs 휠 노치 정규화, 텍스트 선택 방어.
+* **폴더블 & 가변 기기 (Foldable / Dual)**: 힌지(Hinge) 각도 및 화면 분할 $\to$ 뷰포트 상대 비율($x / W_{\text{viewport}}$) 동적 재동기화.
+
+### 2) [소프트웨어 계층 제약] 운영체제(OS) 및 런타임/엔진 특성
+* **Apple iOS / iPadOS**: 좌우 20pt 엣지 스와이프 제스처 선점 $\to$ **20pt 엣지 데드존 확보**, `overscroll-behavior: contain !important`, `-webkit-touch-callout: none`.
+* **Google Android**: 24dp 예측 뒤로가기(Predictive Back) $\to$ **24dp 엣지 세이프존**, `contextmenu` 방어, 상단 PTR 선점 방어.
+* **WebKit / Blink / Native Runtime**:
+  * Web: `100dvh` 및 `VisualViewport API` 바인딩, `touch-action: manipulation`, 비패시브 리스너 명시.
+  * Native: React Native `Reanimated Worklet`, Compose `detectTransformGestures`, SwiftUI `SimultaneousGesture` 등 각 런타임 고유 아키텍처 매핑.
+
+---
+
+## 4. 세상의 모든 UX 상호작용: 5대 메가 클러스터 조작 프로토콜
+
+세상의 모든 UX 상호작용은 수학적·물리적 특성에 따라 다음 5대 클러스터로 수렴하며, 에이전트는 해당 클러스터의 불변식(Invariants)을 적용한다.
 
 ```
 [1. 연속 공간 변위 (Displacement)] ──> 8px 초기 축 잠금 + 1:1 즉각 추종 + 100ms 궤적 관성 감속
@@ -41,18 +76,18 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ---
 
-## 4. LLM 실행 파이프라인 및 하드 스탑 자가 검증 (4-Step Execution Flow)
+## 5. LLM 실행 파이프라인 및 하드 스탑 자가 검증 (4-Step Execution Flow)
 
-### 1단계: 환경 및 의도 분석 (Context & Intent Extraction)
-* 기기 환경(터치/마우스/키보드), OS 특성, 소프트웨어 사용 목적을 분석하고 해당 기능이 5대 클러스터 중 어디에 속하는지 식별한다.
+### 1단계: 사용 환경 및 의도 분석 (Context & Intent Extraction)
+* ISO 표준에 따라 기기 환경(모바일/태블릿/데스크톱), OS 특성(iOS/Android/macOS/Win), 런타임을 판별하고 해당 조작이 5대 클러스터 중 어디에 속하는지 식별한다.
 
 ### 2단계: 3축 상호작용 계약 수립 (Contract Formulation)
-* **입력 축**: 어떤 시스템 간섭을 사전에 차단하고 제스처 권한을 승격할 것인가?
-* **출력 축**: 손가락 가림/키보드 침범 시 어떤 시각적/촉각적 피드백을 유지할 것인가?
+* **입력 축**: 4대 입력 양식 중 무엇이며 어떤 시스템 간섭(엣지 제스처/스크롤러)을 격리할 것인가?
+* **출력 축**: 손가락 가림/키보드 침범 시 어떤 시각적/촉각적 피드백과 뷰포트를 확보할 것인가?
 * **속도 축**: 조작 중 0ms 1:1 밀착 추종 및 릴리즈 시 감속/스냅을 어떻게 처리할 것인가?
 
 ### 3단계: 조작 프로토콜 기반 코드 구현 (Protocol-Driven Implementation)
-* 아래의 5대 클러스터 불변식 및 중첩 해소 법칙을 준수하여 플랫폼/언어 표준에 맞게 코드를 구현한다.
+* [cluster-invariants.md](references/cluster-invariants.md) 및 [platform.md](references/platform.md)를 참조하여 해당 런타임 표준에 맞게 코드를 구현한다.
 
 ### 4단계: CoT 하드 스탑 자가 검증 선언 (Self-Correction Reflection)
 * **[강제 규칙]** 에이전트는 최종 코드를 출력하기 직전, 내부 사고(CoT)에서 다음 3가지 물리 검증을 거쳐 **`[UX 자가 검증 판정]`** 블록을 반드시 명시해야 한다:
@@ -69,42 +104,68 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 ```
 
 ---
+
+## 6. 핵심 참조 헌장 (References)
+
+* [보편적 UX 상호작용 계약 헌장](references/ux-contract.md): 3대 축 철학 & 4대 입력 양식 & 3대 인지 출력 & 3차원 속도 전문
+* [5대 클러스터 상태 전이 및 불변식 나침반](references/cluster-invariants.md): 클러스터별 생애주기 다이어그램과 엄격한 불변식
+* [복합 중첩 상호작용 충돌 해소 헌장](references/recipes.md): 중첩 제스처 권한 승격 및 핸드오프 법칙
+* [국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장](references/platform.md): ISO 9241, W3C, OS/하드웨어 물리 제약 & 선점 방어 보편 기준
+* [상호작용 결함 증상 역추적 진단서](references/symptoms.md): 사용자 체감 증상 기반 결함 진단 룩업
+* [36대 결함 해결 인과 보증서](references/guarantee-matrix.md): P01~P36 전수 결함과 물리 불변식의 1:1 결정론적 보증 매트릭스
+
+---
 ---
 
 # [참조 헌장 1] 보편적 UX 상호작용 계약 헌장 (Universal UX Interaction Contract)
 
-## 0. 핵심 철학: 환경 분석과 상호작용의 3대 절대 목적
+## 0. 핵심 철학: 국제 표준 기반 환경 분석과 3대 절대 목적
 
 사용자는 기기와 소통할 때 단순한 텍스트나 그림을 보는 것이 아니라, **자신의 물리적 의도(손끝, 시선, 커서, 키보드)가 시스템과 1:1로 실시간 연결되어 있는가**를 통해 신뢰를 형성한다.
 
-에이전트는 코드를 작성하기 전, 반드시 다음을 먼저 분석해야 한다:
-> **"이 기능은 어떤 기기(모바일/태블릿/데스크톱/폴더블), 어떤 운영체제(iOS/Android/macOS/Windows), 어떤 소프트웨어 맥락에서 사용자가 어떤 의도로 조작하는가?"**
+에이전트는 코드를 작성하기 전, 반드시 ISO 9241 및 HCI 인간공학 표준에 따라 다음을 먼저 분석해야 한다:
+> **"이 기능은 어떤 하드웨어(모바일/태블릿/데스크톱/폴더블), 어떤 운영체제(iOS/Android/macOS/Windows), 어떤 런타임 환경에서 사용자가 어떤 물리적 의도로 조작하는가?"**
 
-코딩 에이전트가 생성하는 모든 UI/UX 코드는 플랫폼과 언어(Swift, Kotlin, Flutter, React, Web 등)에 구애받지 않고 다음 **3대 상호작용 축의 절대 목적**을 100% 충족해야 한다.
+> ⚠️ **[메타 해석 헌장]** 본 헌장에 기재된 괄호 `(...)` 및 세부 항목은 이해를 돕기 위한 대표 예시(Non-exhaustive examples)이며, 에이전트는 특정 언어나 UI 형태에 국한되지 않고 사용자의 모든 상황과 플랫폼에 이 보편 원리를 능동적으로 확장 적용해야 한다.
+
+코딩 에이전트가 생성하는 모든 UI/UX 코드는 플랫폼과 언어(Swift, Kotlin, Flutter, React, Web, Unity 등)에 구애받지 않고 다음 **3대 상호작용 축의 절대 목적**을 100% 충족해야 한다.
 
 ---
 
-## 1. 3대 상호작용 축의 정의 및 목적
+## 1. 3대 상호작용 축의 정의 및 전수 클러스터링
 
 ### 축 1: 정확한 커맨드 입력 (Input Fidelity & Anti-Interference)
-* **목적**: 사용자가 내린 조작 명령이 브라우저/OS의 기본 제스처(스크롤, 뒤로가기 스와이프, 텍스트 선택 팝업)나 인접 UI 요소의 간섭에 의해 왜곡되거나 가로채이지 않고 **100% 순수하게 시스템에 도달**해야 한다.
-* **차단 간섭**:
-  * [ ] 의도치 않은 텍스트 선택 및 시스템 컨텍스트 메뉴 팝업 억제
-  * [ ] 드래그 조작 축에 대한 시스템 스크롤러 개입 차단 및 제스처 승격 시 소유권 동적 확장
-  * [ ] 더블탭 줌 및 엣지 스와이프 브라우저 내장 제스처 선점 방어
+* **목적**: 사용자가 내린 조작 명령이 브라우저/OS의 기본 제스처나 인접 UI 요소의 간섭에 의해 왜곡되거나 가로채이지 않고 **100% 순수하게 시스템에 도달**해야 한다.
+* **4대 입력 양식 전수 클러스터링 (Input Modalities)**:
+  1. **연속적 공간 변위 입력 (Continuous Spatial Modality)**:
+     * *표본*: 1D 선형 축 이동(슬라이더, 룰러, 스크러버, 스크롤), 2D 평면 벡터 이동(캔버스 패닝, 지도 탐색, 드래그앤드롭, 스와이프).
+     * *방어 간섭*: 초기 슬롭(5~8px) 내 주 이동 축을 판별하고 확정 즉시 직교 축 스크롤러 개입 차단(Axis Lock).
+  2. **다점 기하 변환 입력 (Multi-Point Geometric Modality)**:
+     * *표본*: 거리 비례 스케일링(2손가락 핀치 줌), 각도 비례 회전(다이얼, 캔버스 로테이션), 변형 핸들(크롭/리사이즈).
+     * *방어 간섭*: 포인터별 독립 식별자(`Map<id, Coord>`) 격리, 중심점(Centroid) 불변 보존, 포인터 수 변경($N \leftrightarrow M$) 시 앵커 즉시 재동기화.
+  3. **시간 누적 및 압력 임계 입력 (Temporal & Pressure Modality)**:
+     * *표본*: 시간 유지(롱프레스, 홀드 투 액션), 연속 반복 탭(더블탭, 트리플탭), 압력 센서 터치.
+     * *방어 간섭*: 5px 이내 생리적 미세 떨림(Tremor) 보존, 시간 임계(350ms) 도달 즉시 상위 스크롤러 권한 박탈 및 모달 승격.
+  4. **이산적 상태 트리거 입력 (Discrete Event Modality)**:
+     * *표본*: 순간 접촉(단일 탭, 마우스 클릭, 토글 스위치, 칩 필터, 키보드 단축키).
+     * *방어 간섭*: 최소 44×44dp 히트박스 보장, 비동기 멱등성 락(중복 트리거 차단), 300ms 합성 클릭 관통 방어.
 
-### 축 2: 정확한 정보 인지 출력 (Output Visibility & Affordance)
-* **목적**: 사용자가 조작 중인 순간(손가락에 요소가 가려진 상태), 가상 키보드가 솟아오르는 순간, 화면이 회전하는 순간에도 **"내가 지금 무엇을 바꾸고 있고, 현재 어떤 상태인가?"를 1밀리초의 모호함도 없이 명확히 인지**할 수 있는 실시간 피드백을 제공해야 한다.
-* **가시성 보장**:
-  * [ ] 손가락 접촉 면적에 가려지지 않는 실시간 오프셋 인디케이터/툴팁 제공
-  * [ ] 조작 활성화 상태(Active/Dragging)에 대한 즉각적인 시각적/촉각적 상태 전이
-  * [ ] 가상 키보드 및 시스템 Safe Area 침범 시 활성 입력 영역 자동 뷰포트 확보
+### 축 2: 명확한 정보 인지 출력 (Output Visibility & Affordance)
+* **목적**: 사용자가 조작 중인 순간(손가락 가림), 가상 키보드가 솟아오르는 순간, 화면이 회전하는 순간에도 **"내가 지금 무엇을 바꾸고 있고, 현재 어떤 상태인가?"를 1밀리초의 모호함도 없이 명확히 인지**할 수 있는 실시간 피드백을 제공해야 한다.
+* **3대 인지 보장 전수 클러스터링 (Cognitive Visibility)**:
+  1. **신체 가림 및 환경 침범 방어 (Occlusion & Obstruction Defense)**:
+     * 손가락 접촉 면적(7~10mm)에 UI 수치가 가려지지 않도록 실시간 오프셋 툴팁/인디케이터 제공.
+     * 가상 키보드(IME) 및 시스템 Safe Area 침범 시 활성 입력 필드 자동 뷰포트 확보(Keep-in-View).
+  2. **상태 전이의 즉시 표명 (State Transparency & Affordance)**:
+     * 조작 시작(Active/Hover/Press), 경합(Evaluating), 점유(Locked), 완료(Released)의 전 과정을 시각적/촉각적으로 1ms 지연 없이 투명하게 표명.
+  3. **물리적 한계 및 경계 피드백 (Boundary & Dynamic Friction Output)**:
+     * 컨텐츠 끝에 도달했을 때의 고무줄 탄성(Rubber-band), 스냅 포인트 안착 시의 촉각 틱(Haptic Tick) 등 공간적 한계치를 사용자 감각에 직관적으로 전달.
 
-### 축 3: 상호작용 반응성 속도 (Zero-Latency Responsiveness, NOT Duration)
-* **목적**: 이것은 화면이 화려하게 넘어가는 연출 듀레이션(CSS 300ms 등)을 말하는 것이 아니다. **"사용자의 손끝/입력과 시스템의 물리 반응 사이의 랙(Lag)을 0.00초로 없애는 물리적 즉시성(Zero-Latency Tracking)"**을 의미한다.
-* **반응성 원칙**:
-  * [ ] 조작 진행 중(Dragging/Pinching)에는 보간이나 이징을 제거하고 0ms 1:1 즉각 추종
-  * [ ] 손을 떼는 순간(Release)에만 관성 감속(Inertia Decay) 및 부드러운 스냅백 적용
+### 축 3: 상호작용 속도 (3차원 정밀 분리 정의: Velocity & Time)
+* **목적**: '속도'의 다차원적 물리 특성을 분리하여, 지연 없는 반응성과 자연스러운 물리 감속을 동시에 달성한다.
+  * **[차원 1] 추종 지연 (Tracking Latency) = 0.00ms (Zero-Lag)**: 조작 진행 중(Dragging/Pinching) 손끝과 객체 사이의 간극을 0초로 밀착 (불필요한 CSS transition/이징 지연 0건).
+  * **[차원 2] 인지 접수 속도 (Feedback Immediacy) < 50ms**: 브라우저/OS의 300ms 대기 딜레이를 파괴하고 터치 즉시 시각적 압축(Scale 0.96) 및 햅틱 발화.
+  * **[차원 3] 동역학적 수렴 시간 (Kinetic Duration) = 자연 물리 감속**: 손을 뗀 후(Release) 관성 스크롤 및 복귀는 직전 100~120ms 평균 속도 벡터 기반의 부드러운 지수 감속 적용.
 
 ---
 
@@ -114,7 +175,6 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ### 1) [클러스터 1] 연속 공간 변위 (Continuous Spatial Displacement)
 * **표본**: 스크롤, 1D 슬라이더/스크러버, 2D 지도 패닝, 캐러셀 스와이프, 당겨서 새로고침(PTR), 스와이프 삭제.
-* **대표적 찐빠**: 슬라이더 조작 시 화면 본문이 덜컹거림, 대각선 터치 시 축 떨림, 손가락을 휙 날렸는데 0.1초 만에 뚝 멈춤.
 * **조작적 프로토콜**:
   1. **초기 축 판별**: 이동 거리 5~8px 구간에서 주 이동 축(Axis)을 판별하고, 해당 축이 확정되면 수직 축 간섭을 잠금(Axis Lock).
   2. **1:1 동기화**: 드래그 상태 동안 0ms 즉각 추종 (`transition: none`).
@@ -122,7 +182,6 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ### 2) [클러스터 2] 다점 기하 변환 (Multi-Point Geometric Transform)
 * **표본**: 2손가락 핀치 줌, 캔버스 회전 다이얼, 이미지 크롭/리사이즈 핸들.
-* **대표적 찐빠**: 인덱스 오타(`pts.x`)로 인한 거리 $NaN$ 발생, 손가락 하나를 뗄 때($N \to 1$) 화면 위치가 팍 튀는 점프(Jump Glitch).
 * **조작적 프로토콜**:
   1. **좌표 맵 독립 추적**: 모든 포인터를 `Map<id, Coord>` 형태로 독립 보관.
   2. **식별자 분리 수식 검증**: 거리/각도 연산 시 좌항과 우항이 서로 다른 고유 식별자(Index 0 vs 1)를 참조하는지 확인.
@@ -130,7 +189,6 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ### 3) [클러스터 3] 시간 임계 승격 (Temporal Threshold & Modal Escalation)
 * **표본**: 롱프레스 카드 드래그앤드롭(DnD), 탭 vs 더블탭 분기, 홀드 음성 녹음.
-* **대표적 찐빠**: 손떨림(1~2px)으로 롱프레스 타이머 취소, 더블탭 대기 지연(300ms)으로 인한 싱글탭 굼뜸.
 * **조작적 프로토콜**:
   1. **슬롭 허용 누적**: 5px 이내의 미세한 손떨림은 이동으로 보지 않고 시간 누적을 유지.
   2. **승격 시 권한 동적 확장**: 롱프레스 임계값(350~500ms) 도달 즉시 상위 스크롤러를 차단하고 드래그 모드로 승격.
@@ -138,7 +196,6 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ### 4) [클러스터 4] 가변 뷰포트 침범 (Viewport Dynamics & Inset)
 * **표본**: 모바일 가상 키보드(IME) 팝업, 화면 회전, 폴더블 화면 접힘/펼침, 하단 시트 높이 가변.
-* **대표적 찐빠**: 키보드가 올라왔을 때 인풋창이 가려짐, `100vh` 사용으로 URL 바에 버튼이 잘림, 노치/홈바 영역 겹침.
 * **조작적 프로토콜**:
   1. **동적 뷰포트 바인딩**: `100dvh` 또는 `VisualViewport` API를 구독하여 가용 높이 수축에 대응.
   2. **활성 필드 자동 시야 확보**: 인풋 포커스 시 해당 요소가 키보드 상단 안전 영역으로 자동 스크롤(Keep in View).
@@ -146,11 +203,30 @@ LLM은 이미 인류의 모든 프로그래밍 언어, API, 알고리즘, 물리
 
 ### 5) [클러스터 5] 이산 피드백 트리거 (Discrete Trigger & Sensory Feedback)
 * **표본**: 버튼 탭, 토글 스위치, 칩 필터, 비동기 확인 모달.
-* **대표적 찐빠**: 좁은 터치 영역(<44dp)으로 탭 씹힘, 연타로 인한 이중 API 호출, 눌렸는지 모르는 무반응.
 * **조작적 프로토콜**:
   1. **최소 터치 타겟**: 시각적 크기와 무관하게 최소 44×44dp 이상의 히트박스 보장.
   2. **0ms 상태 피드백**: 터치 시작 즉시 시각적 압축(Scale 0.96) 및 촉각(Haptic) 피드백 동시 발화.
   3. **비동기 멱등성 락**: 비동기 작업 시작 시 즉시 버튼 비활성화(Disable/Debounce)로 중복 트리거 차단.
+
+---
+
+## 3. LLM 내부 CoT 3대 메타 인지 자가 검증 루프 (Self-Correction Loop)
+
+코딩 에이전트는 코드를 출력하기 전, 다음 3단계의 사고 루프를 통해 자체 결함을 검증하고 수정해야 한다.
+
+```
+[1단계: 수식 식별자 분리 트레이스 (Identifier Disjoint Trace)]
+   다중 입력 연산 시, 수식에 참여하는 항들이 서로 다른 인덱스([0] vs [1])를 참조하고 있는가?
+   0 나누기, NaN, Undefined 참조 가능성이 0%인가?
+
+[2단계: 레이어 간 UX 목표 회귀 (Cross-Layer Attention Re-anchoring)]
+   비즈니스 로직, 데이터 모델, 뷰 바인딩, 이벤트 핸들러 간 경계를 넘나들며 코드가 길어질 때,
+   초기에 정의한 3대 상호작용 축(정확한 입력, 명확한 인지, 0ms 무지연 반응성)이 온전히 유지되는가?
+
+[3단계: 비정형 사용자 조작 자가 비판 (User-Centric Boundary Self-Audit)]
+   사용자가 동시에 여러 손가락을 대거나, 고속으로 튕기거나, 알림 팝업 등으로 제스처가 강제 취소될 때
+   시스템이 멈추거나 화면이 튀는 '상호작용 단절'이 없는지 가상 시뮬레이션 후 최종 납품하라.
+```
 
 ---
 ---
@@ -165,6 +241,8 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ---
 
 ## 1. [클러스터 1] 연속 공간 변위 (Continuous Spatial Displacement)
+
+> **적용 대상**: 스크롤, 1D 슬라이더/페이더, 2D 지도/캔버스 패닝, 캐러셀 스와이프, 당겨서 새로고침(PTR).
 
 ### 📐 상태 전이 생애주기
 ```
@@ -194,6 +272,8 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 
 ## 2. [클러스터 2] 다점 기하 변환 (Multi-Point Geometric Transform)
 
+> **적용 대상**: 2손가락 핀치 줌, 회전 다이얼, 캔버스 프리폼 변형, 이미지 크롭/리사이즈.
+
 ### 📐 상태 전이 생애주기
 ```
 [N=1 POINTER (단일 조작)] ──(추가 포인터 진입)──> [N=2 MULTI-GEOMETRY (기하 변환)]
@@ -222,6 +302,8 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 
 ## 3. [클러스터 3] 시간 임계 승격 (Temporal Threshold & Modal Escalation)
 
+> **적용 대상**: 롱프레스 카드 드래그(DnD), 탭 vs 더블탭 분기, 홀드 녹음, 툴팁 팝오버.
+
 ### 📐 상태 전이 생애주기
 ```
 [PRESS DOWN] ──> [TIMING ACCUMULATION (슬롭 5px 이내)]
@@ -244,6 +326,8 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 
 ## 4. [클러스터 4] 가변 뷰포트 침범 (Viewport Dynamics & Inset)
 
+> **적용 대상**: 가상 키보드(IME) 팝업, 화면 회전, 폴더블 디스플레이 접힘, 모달 시트 높이 가변.
+
 ### 🔒 반드시 유지해야 할 불변식 (Invariants)
 1. **시야 보장 불변식**: 사용자가 텍스트를 입력하는 필드는 가상 키보드나 시스템 오버레이 뒤로 가려져서는 안 되며, 항상 가용 뷰포트 중앙~상단에 노출되어야 한다.
 2. **시스템 Inset 불변식**: 노치, 다이내믹 아일랜드, 홈 제스처 바 등 기기 고유의 시스템 영역과 주요 액션 버튼이 겹치지 않도록 항상 안전 여백을 확보해야 한다.
@@ -251,6 +335,8 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ---
 
 ## 5. [클러스터 5] 이산 피드백 트리거 (Discrete Trigger & Sensory Feedback)
+
+> **적용 대상**: 버튼 탭, 토글 스위치, 칩 필터, 비동기 확인 모달, 즐겨찾기 하트.
 
 ### 🔒 반드시 유지해야 할 불변식 (Invariants)
 1. **타겟 최소 면적 불변식**: 시각적 디자인 크기와 무관하게, 손가락이 닿는 히트박스는 최소 $44 \times 44\text{dp}$ 이상이어야 한다.
@@ -308,47 +394,151 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 ---
 ---
 
-# [참조 헌장 4] 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
+# [참조 헌장 4] 국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
 
-## 0. 개요: 하드웨어, OS, 소프트웨어 런타임을 관통하는 보편 물리 계층
-인간의 신체적 특성과 입력 하드웨어(터치스크린, 스타일러스 펜, 트랙패드, 마우스)는 소프트웨어 스택과 무관한 **수학적·물리적 절대 법칙**을 형성한다.
-`interaction-doctor`는 특정 브라우저나 언어에 국한되지 않고 **Web, React Native, Flutter, Swift/SwiftUI, Kotlin/Jetpack Compose, Electron** 등 모든 환경에서 동일하게 적용되는 포괄적 물리 계약을 제공한다.
+## 0. 개요: 국제 표준 및 인간공학(HCI) 기초
 
----
+인간의 신체적 특성(손가락 면적, 미세 떨림, 반응 시간)과 입력 하드웨어(터치스크린, 스타일러스 펜, 트랙패드, 마우스)는 소프트웨어 스택과 무관한 **수학적·물리적 절대 법칙**을 형성한다.
 
-## 1. 멀티 디바이스 하드웨어 특성 (Multi-Device Matrix)
-1. **스마트폰 터치스크린 (60Hz / 120Hz ProMotion)**: 접촉 초기 3~5px 인체 손떨림 발생. **8.0px 터치 슬롭(Touch Slop)** 및 리플로우 없는 0ms GPU 변환(`transform3d`, `Matrix4`, `GraphicsLayer`) 필수.
-2. **태블릿 & 스타일러스 펜 (Apple Pencil, S-Pen)**: 0.5~1.0mm 초정밀 펜촉. `pointerType === 'pen'` 감지 시 슬롭 0.5px 축소, 15mm 초과 광역 터치 즉시 팜 리젝션(Palm Rejection) 폐기.
-3. **데스크톱 트랙패드 & 휠 마우스**: 트랙패드 2손가락 핀치는 Web에서 `e.ctrlKey === true`로 식별 격리. 마우스 휠 노치 틱(Tick) 단위와 픽셀 단위를 물리 픽셀(16~24px)로 정규화.
-4. **폴더블 & 가변 뷰포트**: 힌지(Hinge) 접힘 시 뷰포트 상대 비율($x / W_{\text{viewport}}$)로 앵커 보정.
+본 헌장은 다음 국제 표준 및 인간공학 연구 자료를 기반으로 제정되었다:
+* **ISO 9241-11 & ISO 9241-210**: *Ergonomics of human-system interaction — Usability & Context of Use* (사용 환경 맥락 규정)
+* **ISO 9241-410 & ISO 9241-420**: *Physical input devices — Ergonomic requirements and testing methods* (입력 장치 물리적 정확도 및 슬롭 기준)
+* **W3C Pointer Events Level 3 & Touch Events Extension**: 플랫폼 간 상이한 입력 장치의 통합 정규화 규약
+* **Fitts's Law (피츠의 법칙, ISO 9241-9)**: 타깃 거리와 크기($W$)에 따른 인간 손가락 도달 시간 및 오발동 확률 수식 모델 ($T = a + b \log_2(2D/W)$)
 
----
-
-## 2. 멀티 운영체제(OS) 시스템 제스처 선점 방어
-* **Apple iOS/iPadOS**: 20pt 엣지 데드존(좌측 스와이프 뒤로가기 탈취 방어), `overscroll-behavior: contain !important`, `user-select: none`, `-webkit-touch-callout: none` 전역 격리.
-* **Google Android**: 24dp 예측 뒤로가기 제스처 마진 확보, `contextmenu` 이벤트 핸들러 `e.preventDefault()`, 상단 Pull-to-Refresh 탈취 방지.
-* **macOS / Windows**: 트랙패드 좌우 스와이프 브라우저 내비게이션 격리(`overscroll-behavior-x: contain`), DirectManipulation 포인터 캡처 일원화.
+`interaction-doctor`는 특정 브라우저나 자바스크립트에 국한되지 않고, **Web, React Native, Flutter, Swift/SwiftUI, Kotlin/Jetpack Compose, Electron, Unity** 등 모든 환경에서 동일하게 적용되는 포괄적 물리 계약을 제공한다.
 
 ---
 
-## 3. 멀티 소프트웨어 프레임워크 보편 매핑 (Universal Binding Table)
-* **Web (DOM & React)**: W3C Pointer Events API (`setPointerCapture`), `Centroid Invariant` ($panX_{\text{new}} = cx - wx \times s_{\text{new}}$), `transform-origin: 0 0`.
-* **React Native & Expo**: `react-native-gesture-handler` (`activeOffsetX([-8, 8])`, `minDuration(350)`), `Reanimated 3` UI Worklet 0ms 가속.
-* **Flutter**: `InteractiveViewer`, `ScaleUpdateDetails.localFocalPoint` 기반 `Matrix4` 앵커 불변 변환.
-* **Native iOS (Swift / SwiftUI)**: `SimultaneousGesture` (`MagnificationGesture`, `DragGesture(minimumDistance: 8)`), 44pt Hit Target Extension.
-* **Native Android (Kotlin / Jetpack Compose)**: `Modifier.pointerInput` (`detectTransformGestures(panZoomLock = true)`), 48dp 터치 타깃.
+## 1. 멀티 디바이스 하드웨어 특성 및 물리 제약 (Multi-Device Matrix)
+
+### 1) 스마트폰 터치스크린 (60Hz / 90Hz / 120Hz ProMotion)
+* **물리 특성 (ISO 9241-410)**: 정전식 터치 센서의 접촉 면적은 직경 7~10mm(44~48dp)에 달하며, 접촉 초기 약 3~5px의 인체 생리적 손떨림(Physiological Tremor)이 무조건 발생한다.
+* **120Hz 고주사율 특성**: 8.3ms 주기로 이벤트가 쏟아지며, UI 스레드에서 메인 루프 연산이 8ms를 초과하면 즉시 프레임 드롭(Micro-stutter)이 발생한다.
+* **보편 방어 규칙**:
+  * **8.0px 터치 슬롭(Touch Slop)**: 초기 8px 이동 전까지는 스크롤/드래그 상태 전이를 유예하고 탭 판정을 보존한다.
+  * **0ms GPU 가속 불변식**: 레이아웃 리플로우(Reflow)를 유발하는 속성(`top`, `left`, `width`, `height`)의 실시간 변경을 금지하고, 컴포지터 레이어(`transform3d`, `Matrix4`, `GraphicsLayer`)만으로 렌더링한다.
+
+### 2) 태블릿 & 스타일러스 펜 (Apple Pencil, S-Pen, Wacom)
+* **물리 특성**: 펜촉 접촉 면적은 0.5~1.0mm로 극도로 정밀하며, 화면에 손바닥을 기댄 채 필기하는 **팜 리젝션(Palm Rejection)** 요구가 발생한다.
+* **보편 방어 규칙**:
+  * **포인터 타입 식별 격리 (`pointerType === 'pen' | 'touch' | 'mouse'`)**: 펜 입력 시에는 8px 슬롭을 0.5px로 축소하여 즉각 반응하도록 하고, 스타일러스 활성 중 유입되는 광역 터치(`contact area > 15mm`)는 손바닥으로 판정하여 무조건 폐기한다.
+  * **압력(Pressure) 및 틸트(Tilt) 데이터 독립 채널화**: 변위($\Delta x, \Delta y$) 계산과 압력 수치를 결합하지 않고 직교 상태로 보존한다.
+
+### 3) 데스크톱 & 노트북 (정밀 트랙패드, 마우스 휠, 3버튼)
+* **물리 특성**:
+  * **고해상도 트랙패드**: 2손가락 핀치 줌과 2손가락 스크롤이 동일한 입력 축에서 발생하며, 운영체제의 가속 곡선(Inertial Smoothing)이 개입한다.
+  * **마우스 휠**: 노치 단위 틱(Tick: 100~120 delta)과 픽셀 단위 연속 스크롤(트랙패드)이 혼재한다.
+* **보편 방어 규칙**:
+  * **Wheel vs Pinch 식별 불변식**: Web 환경에서는 `e.ctrlKey === true`를 핀치 줌으로 분기하고, 네이티브 환경에서는 제스처 인식기(`MagnificationGesture` / `ScaleGestureDetector`)를 휠 스크롤러와 명시적으로 격리한다.
+  * **델타 단위 정규화 (Delta Normalization)**: 라인 단위(DOM_DELTA_LINE)와 픽셀 단위(DOM_DELTA_PIXEL)를 감지하여 1틱당 이동 거리를 물리적 픽셀(16~24px)로 정규화한다.
+
+### 4) 폴더블 & 듀얼 스크린 (Foldable Displays)
+* **물리 특성**: 힌지(Hinge) 영역의 불연속 접힘 각도 및 가변 화면비(Aspect Ratio) 전환.
+* **보편 방어 규칙**:
+  * 드래그 도중 화면 회전/접힘 이벤트 발생 시, 현재 제스처 좌표계를 리셋하지 않고 뷰포트 상대 비율($x / W_{\text{viewport}}$)로 앵커를 보정한다.
 
 ---
 
-## 4. 물리적 인터랙션 표준 수치 룩업 (HCI Golden Thresholds)
+## 2. 멀티 운영체제(OS) 시스템 제스처 선점 방어 (Multi-OS Invariants)
 
-| 인터랙션 파라미터 | 황금 표준값 (Standard Value) | 엔지니어링 근거 및 인간공학적 이유 |
-|:---|:---:|:---|
-| **터치 슬롭 (Touch Slop)** | **8dp / 8px** | 손가락 접촉 시 자연스러운 미세 떨림(Tremor)을 무시하고 스크롤 의도를 확정하는 최소 임계 변위 |
-| **롱프레스 임계 시간** | **350 ~ 500ms** | 탭(100~200ms)과 사용자의 의도적 누름(Hold)을 완벽히 분기하는 최적의 시간 창 |
-| **최소 터치 타겟 (Hit Target)** | **44 × 44dp (iOS) / 48 × 48dp (Android)** | 성인 손가락 끝 접촉 면적(약 7~10mm)을 수용하여 탭 씹힘을 0%로 만드는 최소 물리 크기 |
-| **관성 모멘텀 궤적 윈도우** | **최근 100 ~ 120ms** | 릴리즈 직전 손가락의 순간 멈춤으로 인한 급정지를 방지하고 자연스러운 플릭 관성을 계산하는 시간 폭 |
-| **탭 즉각 반응 상한** | **0 ~ 50ms** | 뇌가 '지연 없이 즉각 연결되었다'고 인지하는 지각적 한계 시간 |
+| 운영체제 (OS) | 시스템 침범 메커니즘 | 물리적 위험 증상 | 보편 아키텍처 방어 규칙 |
+|:---|:---|:---|:---|
+| **Apple iOS / iPadOS** | • 엣지 스와이프 (`UIScreenEdgePan`)<br>• 바운스 오버스크롤<br>• 텍스트 선택 돋보기 콜아웃 | • 사이드 드로어 스와이프 중 브라우저 뒤로가기 탈취<br>• 리스트 끝 도달 시 전체 페이지 덜컹거림<br>• 롱프레스 시 텍스트 파란색 선택 글리치 | • 좌측 20pt 엣지 데드존(Deadzone) 확보<br>• `overscroll-behavior: contain !important`<br>• `user-select: none`, `-webkit-touch-callout: none` 전역 격리 |
+| **Google Android** | • 예측 뒤로가기 제스처 (Predictive Back)<br>• 시스템 `contextmenu` 강제 발화<br>• 시스템 Pull-to-Refresh | • 화면 좌우 24dp 스와이프 시 앱이 닫힘<br>• 터치 조작 중 크롬 브라우저 팝업 메뉴 침범<br>• 캔버스 조작 중 상단 새로고침 탈취 | • `OnBackPressedCallback` / 엣지 24dp 여백 확보<br>• `contextmenu` 취소(`preventDefault()`)<br>• `overscroll-behavior-y: contain` 격리 |
+| **macOS** | • 트랙패드 2손가락 좌우 스와이프 뒤로가기<br>• 관성 스크롤 체이닝 (Scroll Chaining) | • 내부 캐러셀 넘기다 브라우저 이전 페이지로 날아감<br>• 모달 내부 스크롤 끝나면 부모 창이 스크롤됨 | • 가로 스와이퍼에 `overscroll-behavior-x: contain`<br>• 마우스/휠 진입 시 상위 윈도우 전파 중단(`stopPropagation()`) |
+| **Microsoft Windows** | • DirectManipulation 합성기<br>• 윈도우 스냅 제스처<br>• 마우스 우클릭 합성 딜레이 | • 드래그 요소가 윈도우 제스처에 씹힘<br>• 300ms 클릭 합성 지연 발생 | • `touch-action: none` / `pointerdown` 캡처<br>• W3C Pointer Events 표준 API 일원화 |
+
+---
+
+## 3. 멀티 소프트웨어 프레임워크 구현 매핑 (Universal Invariant Binding Table)
+
+상호작용 물리 헌장은 모든 프레임워크의 네이티브 API에 1:1로 정확히 대응된다:
+
+### 1) W3C Web (Vanilla DOM, React, Vue, Svelte)
+```typescript
+// 1. 단일 소유권 포인터 캡처
+element.addEventListener('pointerdown', (e) => {
+  element.setPointerCapture(e.pointerId);
+});
+
+// 2. 중심점 불변 보존 (Centroid Invariant)
+// transform-origin: 0 0 고정 필수
+const worldX = (cursorX - panX) / scale;
+const worldY = (cursorY - panY) / scale;
+panX = cursorX - worldX * newScale;
+panY = cursorY - worldY * newScale;
+```
+
+### 2) React Native & Expo (`react-native-gesture-handler` + `Reanimated`)
+```typescript
+// 8px 직교 축 잠금 및 350ms 시간 승격
+const panGesture = Gesture.Pan()
+  .activeOffsetX([-8, 8])   // 8px X축 잠금
+  .failOffsetY([-8, 8])     // 수직 이동 시 즉시 포기하고 스크롤러에 양보
+  .simultaneousWithExternalGesture(scrollRef);
+
+const longPressGesture = Gesture.LongPress()
+  .minDuration(350)         // 350ms 시간 임계 승격
+  .onStart(() => { 'worklet'; runOnJS(triggerHaptic)(); });
+```
+
+### 3) Flutter (`InteractiveViewer` & `RawGestureDetector`)
+```dart
+// FocalPoint 기반 Centroid Invariant (Matrix4 보존)
+void _handleScaleUpdate(ScaleUpdateDetails details) {
+  final Offset focalPoint = details.localFocalPoint;
+  // Flutter Matrix4: 포커스 포인트 기준 줌 변환
+  final Matrix4 newTransform = Matrix4.identity()
+    ..translate(focalPoint.dx, focalPoint.dy)
+    ..scale(details.scale)
+    ..translate(-focalPoint.dx, -focalPoint.dy);
+}
+```
+
+### 4) Native iOS (Swift & SwiftUI)
+```swift
+// Simultaneous Gesture & Hit Target Extension (44pt)
+var body: some View {
+    CanvasView()
+        .gesture(
+            SimultaneousGesture(
+                MagnificationGesture().onChanged { value in
+                    // Centroid invariant preservation via anchorPoint
+                },
+                DragGesture(minimumDistance: 8) // 8pt Slop Gate
+            )
+        )
+        .frame(minWidth: 44, minHeight: 44) // Apple HIG 44pt Hit Target
+}
+```
+
+### 5) Native Android (Kotlin & Jetpack Compose)
+```kotlin
+// PointerInput 기반 Centroid & Pan 분리
+Modifier.pointerInput(Unit) {
+    detectTransformGestures(panZoomLock = true) { centroid, pan, zoom, rotation ->
+        // centroid: 중심점 불변식 좌표
+        // 0ms 그래픽스 레이어 갱신
+        graphicsLayer {
+            scaleX *= zoom
+            scaleY *= zoom
+            translationX += pan.x
+            translationY += pan.y
+        }
+    }
+}
+```
+
+---
+
+## 4. 에이전트 준수 규약 (Agent Implementation Contract)
+
+어떤 플랫폼/언어 환경이 주어지더라도 에이전트는 다음 4대 물리 원칙을 코드로 반드시 증명해야 한다:
+1. **타겟 플랫폼의 최소 물리 크기 보장**: iOS `44×44pt`, Android `48×48dp`, Web `44×44px` (터치 타깃 확장).
+2. **슬롭 게이트 통과 전까지 상위 제스처 점유 금지**: 8px/8dp 슬롭 이전의 조기 제스처 가로채기 원천 차단.
+3. **가변 뷰포트 높이 0ms 적응**: 모바일 가상 키보드(IME) 출현 시 화면 가림 방지 (`VisualViewport` / `WindowInsetsAnimation`).
+4. **다점 기하 중심축 불변식 보존**: 줌/회전 시 초점 좌표가 화면 상에서 $0\text{px}$ 오차로 고정되는 월드-스크린 변환 역보정 수식 강제.
 
 ---
 ---
@@ -381,7 +571,6 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 | **"버튼을 눌렀는데 눌렸는지 안 눌렸는지 모르겠어요"** | **C5** | 터치 시작 시점의 0ms 즉각 시각/촉각 피드백(눌림 스케일, 햅틱) 누락 | 터치 시작 즉시 $0\text{ms}$ 스케일 압축(0.96) 및 햅틱 클릭 발화 |
 | **"팝업을 닫았더니 그 뒤에 있던 버튼이 같이 눌려요"** | **C5** | 300ms 뒤 발사되는 합성 마우스 클릭이 닫힌 팝업 뒷자리로 관통함 | 터치 액션 완료 시 `e.preventDefault()`로 후속 합성 클릭 생성 차단 |
 | **"결제/저장 버튼을 두 번 눌렀더니 중복 처리됐어요"** | **C5** | 비동기 네트워크 요청 진행 중 버튼에 멱등성 비활성화(Disable Lock)가 걸리지 않음 | 첫 터치 릴리즈 즉시 버튼 락(Debounce)을 걸어 중복 이벤트 원천 차단 |
-
 
 ---
 ---
@@ -441,3 +630,6 @@ LLM은 이미 모든 언어(Swift, Kotlin, Flutter, Web, React Native, Unity 등
 
 1. **인과관계의 엄밀성**: 본 매트릭스의 36개 해결책은 추상적인 디자인 조언이 아니라, W3C 사양, iOS WebKit 소스코드, Android Chromium 제스처 인식기 물리 엔진에 근거한 **수학적·하드웨어적 불변식**이다.
 2. **에이전트 사고의 폐쇄 루프**: 에이전트가 코드를 짤 때 `interaction-doctor`의 클러스터 불변식을 검토하도록 훈련되므로, 8px 슬롭 누락, Centroid 줌 오프셋 누락, 350ms 타이머 미해제 등 일반 AI가 반복하는 실수를 사전 검증 단계에서 100% 차단한다.
+
+---
+---

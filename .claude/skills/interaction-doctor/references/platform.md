@@ -1,8 +1,15 @@
-# 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
+# 국제 표준 기반 플랫폼 & 디바이스 보편 물리 헌장 (Omni-Platform & Device Invariant Charter)
 
-## 0. 개요: 하드웨어, OS, 소프트웨어 런타임을 관통하는 보편 물리 계층
+## 0. 개요: 국제 표준 및 인간공학(HCI) 기초
 
 인간의 신체적 특성(손가락 면적, 미세 떨림, 반응 시간)과 입력 하드웨어(터치스크린, 스타일러스 펜, 트랙패드, 마우스)는 소프트웨어 스택과 무관한 **수학적·물리적 절대 법칙**을 형성한다.
+
+본 헌장은 다음 국제 표준 및 인간공학 연구 자료를 기반으로 제정되었다:
+* **ISO 9241-11 & ISO 9241-210**: *Ergonomics of human-system interaction — Usability & Context of Use* (사용 환경 맥락 규정)
+* **ISO 9241-410 & ISO 9241-420**: *Physical input devices — Ergonomic requirements and testing methods* (입력 장치 물리적 정확도 및 슬롭 기준)
+* **W3C Pointer Events Level 3 & Touch Events Extension**: 플랫폼 간 상이한 입력 장치의 통합 정규화 규약
+* **Fitts's Law (피츠의 법칙, ISO 9241-9)**: 타깃 거리와 크기($W$)에 따른 인간 손가락 도달 시간 및 오발동 확률 수식 모델 ($T = a + b \log_2(2D/W)$)
+
 `interaction-doctor`는 특정 브라우저나 자바스크립트에 국한되지 않고, **Web, React Native, Flutter, Swift/SwiftUI, Kotlin/Jetpack Compose, Electron, Unity** 등 모든 환경에서 동일하게 적용되는 포괄적 물리 계약을 제공한다.
 
 ---
@@ -10,8 +17,8 @@
 ## 1. 멀티 디바이스 하드웨어 특성 및 물리 제약 (Multi-Device Matrix)
 
 ### 1) 스마트폰 터치스크린 (60Hz / 90Hz / 120Hz ProMotion)
-* **물리 특성**: 정전식 터치 센서의 접촉 면적은 직경 7~10mm에 달하며, 접촉 초기 약 3~5px의 인체 자연 떨림(Physiological Tremor)이 무조건 발생한다.
-* **120Hz 고주사율 특성**: 8.3ms 주기로 이벤트가 쏟아지며, 자바스크립트/UI 스레드에서 메인 루프 연산이 8ms를 초과하면 즉시 프레임 드롭(Micro-stutter)이 발생한다.
+* **물리 특성 (ISO 9241-410)**: 정전식 터치 센서의 접촉 면적은 직경 7~10mm(44~48dp)에 달하며, 접촉 초기 약 3~5px의 인체 생리적 손떨림(Physiological Tremor)이 무조건 발생한다.
+* **120Hz 고주사율 특성**: 8.3ms 주기로 이벤트가 쏟아지며, UI 스레드에서 메인 루프 연산이 8ms를 초과하면 즉시 프레임 드롭(Micro-stutter)이 발생한다.
 * **보편 방어 규칙**:
   * **8.0px 터치 슬롭(Touch Slop)**: 초기 8px 이동 전까지는 스크롤/드래그 상태 전이를 유예하고 탭 판정을 보존한다.
   * **0ms GPU 가속 불변식**: 레이아웃 리플로우(Reflow)를 유발하는 속성(`top`, `left`, `width`, `height`)의 실시간 변경을 금지하고, 컴포지터 레이어(`transform3d`, `Matrix4`, `GraphicsLayer`)만으로 렌더링한다.
