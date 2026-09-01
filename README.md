@@ -29,9 +29,9 @@ LLMs know CSS syntax and DOM properties, but they have never felt the **sub-pixe
 
 ---
 
-## ⚡️ 3-Minute Quickstart Guide (Tailored for Juniors & Vibe-Coders)
+## ⚡️ AI Agent Integration & Setup Specification
 
-You don't need to memorize complex gesture formulas. Connect the skill once to your AI coding tool and it will automatically generate bug-free, buttery-smooth touch interactions.
+You don't need to manually craft complex gesture mathematics. Connect the skill once to your AI coding agents, and they will enforce physical touch invariants to generate bug-free, production-grade interactions.
 
 ### 1. CLI Coding Agents (Claude Code, Antigravity, Cursor, Cline)
 Open your terminal in your project root directory and run this single command:

@@ -1476,6 +1476,109 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+  
+    /* ========================================================
+       TACTILE INTERACTION CINEMATICS (FRICTION vs SATISFACTION)
+       Visualizes collision interference & butter-smooth satisfaction!
+       ======================================================== */
+
+    /* 1. Friction & Glitch Shake (When Baseline fails) */
+    @keyframes glitchShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-3px, 2px) rotate(-1.5deg); }
+      30% { transform: translate(3px, -2px) rotate(1.5deg); }
+      45% { transform: translate(-3px, -1px) rotate(-0.8deg); }
+      60% { transform: translate(2px, 2px) rotate(0.8deg); }
+      75% { transform: translate(-1px, 1px) rotate(-0.3deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    .fx-glitch-shake {
+      animation: glitchShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    /* 2. Red Friction Halo / Collision Marker */
+    .fx-collision-marker {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border: 2px dashed #ef4444;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.25);
+      box-shadow: 0 0 24px rgba(239, 68, 68, 0.8), inset 0 0 12px rgba(239, 68, 68, 0.5);
+      z-index: 110;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      animation: pulseCollision 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes pulseCollision {
+      from { transform: scale(0.9); opacity: 0.7; }
+      to { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* 3. Green Magnetic Satisfaction Glow (When Doctor Fixes) */
+    .fx-satisfaction-glow {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border: 2px solid #10b981;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, rgba(16, 185, 129, 0) 75%);
+      box-shadow: 0 0 32px rgba(16, 185, 129, 0.9), inset 0 0 16px rgba(16, 185, 129, 0.7);
+      z-index: 110;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      animation: popSatisfaction 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes popSatisfaction {
+      0% { transform: scale(0.4); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1.0); opacity: 0.9; }
+    }
+
+    /* 4. Action Intent Guide Pill (Shows what the user is trying to do) */
+    .fx-intent-pill {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      pointer-events: none;
+      z-index: 105;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      animation: fadeInHUD 0.2s ease-out;
+    }
+
+    /* 5. Clean Cinema Simulator Stage (No bulky bezels, no device toggles) */
+    .phone-mockup {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 520px !important;
+      background: #020617 !important;
+      border: 1px solid #334155 !important;
+      border-radius: 16px !important;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 0 0 1px #1e293b !important;
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+    }
+
+    .phone-status-bar, .phone-home-indicator {
+      display: none !important; /* Eliminate fake phone graphics completely! */
+    }
+
   </style>
 </head>
 <body>
@@ -1536,20 +1639,7 @@
 
       <div class="workstation-grid">
         <div class="simulator-box">
-          <!-- Adaptive Multi-Device Context Bar -->
-          <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:11px; color:#94a3b8; padding:0 2px;">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span id="detectedEnvBadge" style="background:#090e1a; border:1px solid #334155; padding:3px 8px; border-radius:6px; font-weight:700; color:#60a5fa; font-family:'JetBrains Mono';">
-                Detecting Device...
-              </span>
-              <span id="targetEnvBadge" style="font-size:10px; color:#94a3b8;"></span>
-            </div>
-            <button id="btnToggleShell" style="background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:3px 10px; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
-              <span>📱 Shell Mode</span>
-            </button>
-          </div>
-
-          <!-- CSS ANIMATED DEMO AUTO-PLAY ENGINE BAR -->
+          <!-- TACTILE INTERACTION CINEMATIC CONTROL BAR -->
           <div class="anim-control-bar">
             <button class="btn-play-anim" id="btnPlayDemo">
               <span id="playIcon">▶️</span> <span id="playText">Play Defect Demo</span>
@@ -1892,12 +1982,12 @@
         benchHeading: "Quantitative Benchmark & Reliability Contrast", benchDesc: "Measured across 36 realistic production interaction scenarios on 16 hardware mobile & desktop devices:"
       },
       ko: {
-        navDiag: "인터랙션 결함 진단 & 솔루션 랩", navPres: "초보자 & 바이브코더 스킬 설치 가이드", facetAll: "🌟 전체 (36)", facetElement: "🧩 UI 컴포넌트별", facetConcept: "📐 물리 개념별", facetDefect: "🚨 결함 증상별",
+        navDiag: "인터랙션 결함 진단 & 솔루션 랩", navPres: "AI 에이전트 연동 스킬 설치 가이드", facetAll: "🌟 전체 (36)", facetElement: "🧩 UI 컴포넌트별", facetConcept: "📐 물리 개념별", facetDefect: "🚨 결함 증상별",
         searchPlaceholder: "다중 키워드로 36개 결함 검색 (예: '키보드 ios', '플로팅버튼 클릭', '캔버스 중심축')...",
         modeWithout: "❌ 기본 AI 코드 (결함 발생)", modeWith: "🟢 최적화 개선 (물리 헌장 적용)",
         diagTitle: "🚨 기본 결함 원인 및 브라우저 이벤트 메커니즘", treatTitle: "🩺 적용된 물리 법칙 및 아키텍처 개선", solTitle: "💊 프로덕션 솔루션 처방전",
         solTabPrompt: "SWE 프롬프트", solTabCode: "코드 레시피", solTabPhysics: "물리 계약 명세", missionHeading: "조작 미션", copyBtn: "복사", toast: "✅ 클립보드에 복사되었습니다!",
-        presBadge: "🚀 3분 완성 주니어 & 바이브코더 설치 가이드", presTitle: "interaction-doctor 스킬 설치 및 사용법", presSubtitle: "더 이상 복잡한 제스처 수식을 직접 짜지 마세요. 16대 하드웨어 실측 물리 법칙을 AI 에이전트에 주입하는 3단계 가이드입니다.",
+        presBadge: "🚀 3분 완성 AI 에이전트 설치 가이드", presTitle: "interaction-doctor 스킬 설치 및 사용법", presSubtitle: "더 이상 복잡한 제스처 수식을 직접 짜지 마세요. 16대 하드웨어 실측 물리 법칙을 AI 에이전트에 주입하는 3단계 가이드입니다.",
         battleHeading: "실시간 물리 엔진 체감 배틀: 일반 AI 코드 vs interaction-doctor", battleTip: "👆 양쪽 카드를 직접 마우스/터치로 흔들어보세요. 렉과 0ms의 격차를 즉시 체감할 수 있습니다!",
         step1Title: "Claude Code / Antigravity 사용자", step1Desc: "프로젝트 터미널을 열고 공식 원클릭 설치 명령어를 실행하세요:", step1Tip: "💡 에이전트 목록에서 Claude Code / Antigravity를 선택하고 Enter를 누르면 설치 끝!",
         step2Title: "웹 챗봇 (ChatGPT / Claude Web / Gemini) 사용자", step2Desc: "터미널이나 설치 도구 없이, 완전체 단일 프롬프트를 1클릭 복사하세요:", step2Tip: "💡 Custom GPTs의 Instructions나 대화창 첫 프롬프트에 그대로 붙여넣으면 즉시 발동됩니다.",
@@ -1905,12 +1995,12 @@
         benchHeading: "16대 하드웨어 실기기 정량적 벤치마크 신뢰도 대비", benchDesc: "모바일 & 데스크톱 16대 하드웨어 기기에서 36개 실제 프로덕션 인터랙션 시나리오를 측정한 결과입니다:"
       },
       ja: {
-        navDiag: "インタラクション欠陥診断 & ソリューションラボ", navPres: "初心者・バイブコーダー向け導入ガイド", facetAll: "🌟 全体 (36)", facetElement: "🧩 UIコンポーネント別", facetConcept: "📐 物理概念別", facetDefect: "🚨 欠陥症状別",
+        navDiag: "インタラクション欠陥診断 & ソリューションラボ", navPres: "AIエージェント導入・物理法則統合ガイド", facetAll: "🌟 全体 (36)", facetElement: "🧩 UIコンポーネント別", facetConcept: "📐 物理概念別", facetDefect: "🚨 欠陥症状別",
         searchPlaceholder: "複数キーワードで36の欠陥を検索（例: 'keyboard ios', 'fab drag', 'canvas centroid'）...",
         modeWithout: "❌ ベースラインAI（欠陥発生）", modeWith: "🟢 最適化改善（物理法則適用）",
         diagTitle: "🚨 ベースライン欠陥分析と根本原因", treatTitle: "🩺 物理法則とアーキテクチャ最適化", solTitle: "💊 プロダクション ソリューション処方箋",
         solTabPrompt: "SWE プロンプト", solTabCode: "コードレシピ", solTabPhysics: "物理契約仕様", missionHeading: "操作ミッション", copyBtn: "コピー", toast: "✅ クリップボードにコピーしました！",
-        presBadge: "🚀 3分で完了する導入ガイド", presTitle: "interaction-doctor のインストールと使い方", presSubtitle: "複雑なジェスチャ計算を自作する必要はありません。16台の実機計測物理法則をAIに注入します。",
+        presBadge: "🚀 AIエージェント導入・物理規約ガイド", presTitle: "interaction-doctor のインストールと使い方", presSubtitle: "複雑なジェスチャ計算を自作する必要はありません。16台の実機計測物理法則をAIに注入します。",
         battleHeading: "リアルタイム物理体感バトル: 一般AIコード vs interaction-doctor", battleTip: "👆 両方のカードを直接ドラッグして、0msの圧倒的な滑らかさを体感してください！",
         step1Title: "Claude Code / Antigravity 向け", step1Desc: "プロジェクトのターミナルで以下のコマンドを実行してください:", step1Tip: "💡 エージェントを選択してEnterを押すだけで完了します！",
         step2Title: "ChatGPT / Claude Web 向け", step2Desc: "CLI不要！以下のスタンドアロンプロンプトをワンクリックコピー:", step2Tip: "💡 Custom GPTs の指示文や最初のプロンプトに貼り付けるだけです。",
@@ -1918,12 +2008,12 @@
         benchHeading: "16台の実機計測による定量的ベンチマーク対比", benchDesc: "16台のモバイル・デスクトップ端末における36のプロダクションシナリオの計測値です:"
       },
       zh: {
-        navDiag: "交互缺陷诊断与解决方案工作台", navPres: "初学者与快速开发入门安装指南", facetAll: "🌟 全部 (36)", facetElement: "🧩 UI 组件分类", facetConcept: "📐 物理概念分类", facetDefect: "🚨 缺陷症状分类",
+        navDiag: "交互缺陷诊断与解决方案工作台", navPres: "AI 智能体交互物理集成指南", facetAll: "🌟 全部 (36)", facetElement: "🧩 UI 组件分类", facetConcept: "📐 物理概念分类", facetDefect: "🚨 缺陷症状分类",
         searchPlaceholder: "支持多关键词组合搜索（如：'keyboard ios', 'fab drag', 'canvas centroid'）...",
         modeWithout: "❌ 基线 AI 代码 (缺陷发生)", modeWith: "🟢 物理优化改进 (物理定律应用)",
         diagTitle: "🚨 基线缺陷分析与底层根本原因", treatTitle: "🩺 应用物理定律与软件工程修复", solTitle: "💊 生产级解决方案处方",
         solTabPrompt: "SWE 提示词", solTabCode: "代码配方", solTabPhysics: "物理契约规范", missionHeading: "操作测试", copyBtn: "复制", toast: "✅ 已复制到剪贴板！",
-        presBadge: "🚀 3 分钟快速入门安装指南", presTitle: "如何安装与使用 interaction-doctor", presSubtitle: "无需手写复杂的手势数学公式。一键将 16 台真机实测物理法则注入您的 AI 编程助手。",
+        presBadge: "🚀 AI 智能体生产级物理集成指南", presTitle: "如何安装与使用 interaction-doctor", presSubtitle: "无需手写复杂的手势数学公式。一键将 16 台真机实测物理法则注入您的 AI 编程助手。",
         battleHeading: "实时物理体感对决：普通 AI 代码 vs interaction-doctor", battleTip: "👆 直接拖动两侧卡片，瞬间感受 140ms 延迟与 0ms 原生跟随的巨大差异！",
         step1Title: "适用于 Claude Code / Antigravity", step1Desc: "在项目根目录的终端中运行官方安装命令：", step1Tip: "💡 选择您的 Agent 并按回车即可完成安装！",
         step2Title: "适用于 ChatGPT / Claude Web / Gemini", step2Desc: "无需终端或命令行！一键复制独立无损提示词：", step2Tip: "💡 直接粘贴至 Custom GPTs 的 Instructions 或第一条对话中。",
@@ -1931,12 +2021,12 @@
         benchHeading: "16 台真机实测定量基准对比", benchDesc: "在 16 台真实移动及桌面设备上测试 36 个生产级交互场景的量化指标："
       },
       es: {
-        navDiag: "Laboratorio de Diagnóstico de Interacciones", navPres: "Guía de Instalación Rápida para Principiantes", facetAll: "🌟 Todo (36)", facetElement: "🧩 Por Elemento UI", facetConcept: "📐 Por Concepto Físico", facetDefect: "🚨 Por Clase de Defecto",
+        navDiag: "Laboratorio de Diagnóstico de Interacciones", navPres: "Guía de Integración para Agentes de IA", facetAll: "🌟 Todo (36)", facetElement: "🧩 Por Elemento UI", facetConcept: "📐 Por Concepto Físico", facetDefect: "🚨 Por Clase de Defecto",
         searchPlaceholder: "Buscar con palabras múltiples (ej: 'keyboard ios', 'fab drag', 'canvas centroid')...",
         modeWithout: "❌ Código Base (Defectos)", modeWith: "🟢 Optimizado (Física Aplicada)",
         diagTitle: "🚨 Análisis de Defectos Base y Causa Raíz", treatTitle: "🩺 Invariantes Físicos y Corrección SWE", solTitle: "💊 Prescripción de Soluciones de Producción",
         solTabPrompt: "Prompt SWE", solTabCode: "Receta de Código", solTabPhysics: "Contrato Físico", missionHeading: "Misión de Prueba", copyBtn: "Copiar", toast: "✅ ¡Copiado al portapapeles!",
-        presBadge: "🚀 Guía Rápida de 3 Minutos", presTitle: "Cómo Instalar y Usar interaction-doctor", presSubtitle: "Nunca más escriba matemáticas de gestos a mano. Inyecte física táctil de 16 dispositivos en su asistente de IA.",
+        presBadge: "🚀 Guía de Integración de Física para Agentes de IA", presTitle: "Cómo Instalar y Usar interaction-doctor", presSubtitle: "Nunca más escriba matemáticas de gestos a mano. Inyecte física táctil de 16 dispositivos en su asistente de IA.",
         battleHeading: "Batalla Física en Vivo: IA Convencional vs interaction-doctor", battleTip: "👆 ¡Arrastre ambas tarjetas para sentir la diferencia inmediata!",
         step1Title: "Para Claude Code / Antigravity", step1Desc: "Abra la terminal en el directorio raíz de su proyecto y ejecute:", step1Tip: "💡 Seleccione su agente, presione Enter y ¡listo!",
         step2Title: "Para ChatGPT / Claude Web / Gemini", step2Desc: "¡Sin terminal! Copie el prompt físico independiente completo:", step2Tip: "💡 Péguelo directamente en las instrucciones de Custom GPTs o en su chat.",
@@ -2367,71 +2457,7 @@
     
     // ========================================================
     // ADAPTIVE MULTI-DEVICE CONTROLLER
-    // Distinguishes Real Mobile Device vs Desktop Simulation
-    // ========================================================
-    const isActualMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (window.innerWidth <= 768 && ('ontouchstart' in window));
-    let userManualShellOverride = null; // 'phone', 'desktop', 'native'
-
-    const detectedEnvBadge = document.getElementById('detectedEnvBadge');
-    const targetEnvBadge = document.getElementById('targetEnvBadge');
-    const btnToggleShell = document.getElementById('btnToggleShell');
-
-    function updateAdaptiveShell() {
-      const sc = rawCases.find(c => c.id.toLowerCase() === currentScenario) || rawCases[0];
-      const isDesktopScenario = sc.kw && (sc.kw.includes('trackpad') || sc.kw.includes('datatable') || sc.kw.includes('desktop'));
-
-      if (isActualMobile) {
-        detectedEnvBadge.textContent = '📱 Real Mobile Device';
-        detectedEnvBadge.style.color = '#34d399';
-        detectedEnvBadge.style.borderColor = '#10b981';
-      } else {
-        detectedEnvBadge.textContent = '💻 Desktop Browser';
-        detectedEnvBadge.style.color = '#60a5fa';
-        detectedEnvBadge.style.borderColor = '#3b82f6';
-      }
-
-      targetEnvBadge.textContent = isDesktopScenario ? 'Target: Desktop (macOS/Win)' : 'Target: Mobile (iOS/Android)';
-
-      // Determine active shell class
-      let activeClass = 'mode-phone-shell';
-      if (isActualMobile) {
-        // When on a REAL smartphone, NEVER trap user in a fake phone bezel!
-        activeClass = (userManualShellOverride === 'phone') ? 'mode-phone-shell' : 'mode-native-mobile';
-      } else {
-        // When on DESKTOP:
-        if (isDesktopScenario) {
-          activeClass = (userManualShellOverride === 'phone') ? 'mode-phone-shell' : 'mode-desktop-shell';
-        } else {
-          activeClass = (userManualShellOverride === 'native') ? 'mode-native-mobile' : 'mode-phone-shell';
-        }
-      }
-
-      phoneMockup.className = `phone-mockup ${activeClass}`;
-
-      // Update toggle button text
-      if (activeClass === 'mode-native-mobile') {
-        btnToggleShell.innerHTML = '<span>⚡️ Native View (Active)</span>';
-      } else if (activeClass === 'mode-desktop-shell') {
-        btnToggleShell.innerHTML = '<span>🖥️ Desktop Window (Active)</span>';
-      } else {
-        btnToggleShell.innerHTML = '<span>📱 Phone Mockup (Active)</span>';
-      }
-    }
-
-    btnToggleShell.addEventListener('click', () => {
-      if (phoneMockup.classList.contains('mode-native-mobile')) {
-        userManualShellOverride = 'phone';
-      } else if (phoneMockup.classList.contains('mode-phone-shell')) {
-        userManualShellOverride = isActualMobile ? 'native' : 'desktop';
-      } else {
-        userManualShellOverride = isActualMobile ? 'native' : 'phone';
-      }
-      updateAdaptiveShell();
-    });
-
-
     function renderScenario() {
-      updateAdaptiveShell();
       const db = database[currentLang] || database.en;
       const sc = db.scenarios[currentScenario] || db.scenarios.p03;
       
@@ -2923,7 +2949,89 @@
       }
     }
 
-    function stopAnimatedDemo() {
+
+    // ========================================================
+    // TACTILE INTERACTION FX CONTROLLER (FRICTION & SATISFACTION)
+    // Makes interference & butter-smooth resolution viscerally felt!
+    // ========================================================
+
+    function showIntentPill(x, y, text) {
+      let pill = sandboxStage.querySelector('.fx-intent-pill');
+      if (!pill) {
+        pill = document.createElement('div');
+        pill.className = 'fx-intent-pill';
+        sandboxStage.appendChild(pill);
+      }
+      pill.style.display = 'block';
+      pill.style.left = `${Math.min(sandboxStage.clientWidth - 120, Math.max(10, x + 24))}px`;
+      pill.style.top = `${Math.max(10, y - 24)}px`;
+      pill.textContent = text;
+    }
+
+    function hideIntentPill() {
+      const pill = sandboxStage.querySelector('.fx-intent-pill');
+      if (pill) pill.style.display = 'none';
+    }
+
+    function triggerCollisionFriction(x, y, targetEl = null) {
+      // 1. Glitch shake on target
+      if (targetEl) {
+        targetEl.classList.remove('fx-glitch-shake');
+        void targetEl.offsetWidth; // trigger reflow
+        targetEl.classList.add('fx-glitch-shake');
+      }
+
+      // 2. Collision marker
+      let marker = sandboxStage.querySelector('.fx-collision-marker');
+      if (!marker) {
+        marker = document.createElement('div');
+        marker.className = 'fx-collision-marker';
+        marker.innerHTML = '⚠️';
+        sandboxStage.appendChild(marker);
+      }
+      marker.style.display = 'flex';
+      marker.style.left = `${x - 24}px`;
+      marker.style.top = `${y - 24}px`;
+
+      // 3. Stage red tint flash
+      sandboxStage.style.boxShadow = 'inset 0 0 30px rgba(239, 68, 68, 0.45)';
+      setTimeout(() => {
+        sandboxStage.style.boxShadow = 'none';
+      }, 500);
+    }
+
+    function triggerSatisfactionGlow(x, y, targetEl = null) {
+      // 1. Green satisfaction glow
+      let glow = sandboxStage.querySelector('.fx-satisfaction-glow');
+      if (!glow) {
+        glow = document.createElement('div');
+        glow.className = 'fx-satisfaction-glow';
+        glow.innerHTML = '✨';
+        sandboxStage.appendChild(glow);
+      }
+      glow.style.display = 'flex';
+      glow.style.left = `${x - 26}px`;
+      glow.style.top = `${y - 26}px`;
+
+      // 2. Green stage pulse
+      sandboxStage.style.boxShadow = 'inset 0 0 30px rgba(16, 185, 129, 0.35)';
+      setTimeout(() => {
+        sandboxStage.style.boxShadow = 'none';
+      }, 500);
+    }
+
+    function clearAllTactileFX() {
+      hideIntentPill();
+      const marker = sandboxStage.querySelector('.fx-collision-marker');
+      if (marker) marker.style.display = 'none';
+      const glow = sandboxStage.querySelector('.fx-satisfaction-glow');
+      if (glow) glow.style.display = 'none';
+      sandboxStage.style.boxShadow = 'none';
+    }
+
+
+        function stopAnimatedDemo() {
+      clearAllTactileFX();
       if (currentAnimTimeline) {
         currentAnimTimeline.forEach(t => clearTimeout(t));
         currentAnimTimeline = null;
@@ -2961,9 +3069,10 @@
       const cx = stageRect.width / 2 || 180;
       const cy = stageRect.height / 2 || 240;
 
-      // --- P01 ANIMATION ---
+      // --- P01 ANIMATION (MESSENGER KEYBOARD) ---
       if (scenarioKey === 'p01') {
         showGhostFinger(cx, cy + 180, false);
+        showIntentPill(cx, cy + 180, '💬 Tap to Type');
         showHudSubtitle(getAnimText('p01', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
@@ -2977,30 +3086,38 @@
 
           if (mode === 'without') {
             if (bar) bar.style.bottom = '0px';
+            // Friction Interference FX
+            triggerCollisionFriction(cx, cy + 180, bar);
             showHudSubtitle(getAnimText('p01', 'result', mode), 'danger');
             if (alertBox) alertBox.style.display = 'block';
           } else {
             if (bar) bar.style.bottom = '220px';
+            // Butter-Smooth Satisfaction FX
+            triggerSatisfactionGlow(cx, cy - 20, bar);
             showHudSubtitle(getAnimText('p01', 'result', mode), 'success');
           }
         }, 900));
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx + 80, cy + 220, true);
+          showIntentPill(cx + 80, cy + 220, '⏎ Enter (Linebreak)');
           if (mode === 'without') {
+            triggerCollisionFriction(cx + 80, cy + 220, sandboxStage.querySelector('#chatFeed'));
             showHudSubtitle(getAnimText('p01', 'ime', mode), 'danger');
           } else {
+            triggerSatisfactionGlow(cx + 80, cy + 220, input);
             showHudSubtitle(getAnimText('p01', 'ime', mode), 'success');
           }
         }, 2200));
 
-      // --- P02 ANIMATION ---
+      // --- P02 ANIMATION (BOTTOM SHEET) ---
       } else if (scenarioKey === 'p02') {
         const sheet = sandboxStage.querySelector('#sheetBox');
         const alertBox = sandboxStage.querySelector('#sheetCollapsedAlert');
         const list = sandboxStage.querySelector('#sheetList');
 
         showGhostFinger(cx, cy + 100, false);
+        showIntentPill(cx, cy + 100, '📜 Scroll List ↓');
         showHudSubtitle(getAnimText('p02', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
@@ -3011,84 +3128,96 @@
           showGhostFinger(cx, cy + 220, true);
           if (mode === 'without') {
             if (sheet) sheet.style.transform = 'translate3d(0, 180px, 0)';
+            triggerCollisionFriction(cx, cy + 100, sheet);
             if (alertBox) alertBox.style.display = 'block';
             showHudSubtitle(getAnimText('p02', 'result', mode), 'danger');
           } else {
             if (list) list.scrollTop = 80;
+            triggerSatisfactionGlow(cx, cy + 100, list);
             showHudSubtitle(getAnimText('p02', 'result', mode), 'success');
           }
         }, 1300));
 
-      // --- P03 ANIMATION ---
+      // --- P03 ANIMATION (2D CANVAS CENTROID) ---
       } else if (scenarioKey === 'p03') {
         const world = sandboxStage.querySelector('#canvasWorld');
         const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
         const hud = sandboxStage.querySelector('#zoomHud');
 
         showGhostFinger(cx + 40, cy + 40, false);
+        showIntentPill(cx + 40, cy + 40, '🔍 Zoom at 🎯 Pin');
         showHudSubtitle(getAnimText('p03', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx + 40, cy + 40, true);
           if (mode === 'without') {
             if (world) world.style.transform = 'translate3d(-200px, -200px, 0) scale(2.2)';
+            triggerCollisionFriction(cx + 40, cy + 40, world);
             if (alertBox) alertBox.style.display = 'block';
             if (hud) hud.textContent = 'Scale: 220%';
             showHudSubtitle(getAnimText('p03', 'result', mode), 'danger');
           } else {
             if (world) world.style.transform = `translate3d(${-cx}px, ${-cy}px, 0) scale(2.0)`;
+            triggerSatisfactionGlow(cx + 40, cy + 40, world);
             if (hud) hud.textContent = 'Scale: 200%';
             showHudSubtitle(getAnimText('p03', 'result', mode), 'success');
           }
         }, 1000));
 
-      // --- P04 ANIMATION ---
+      // --- P04 ANIMATION (KANBAN DND VS SCROLL) ---
       } else if (scenarioKey === 'p04') {
         const card = sandboxStage.querySelector('.kanban-card');
         const kDisaster = sandboxStage.querySelector('#kanbanDisasterAlert');
         const kSuccess = sandboxStage.querySelector('#kanbanSuccessAlert');
 
         showGhostFinger(cx, cy - 40, false);
+        showIntentPill(cx, cy - 40, '↕️ Scroll Board Down');
         showHudSubtitle(getAnimText('p04', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx, cy + 60, true);
           if (mode === 'without') {
             if (card) { card.style.transform = 'scale(1.08) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
+            triggerCollisionFriction(cx, cy, card);
             if (kDisaster) kDisaster.style.display = 'block';
             showHudSubtitle(getAnimText('p04', 'result', mode), 'danger');
           } else {
+            triggerSatisfactionGlow(cx, cy + 60, sandboxStage);
             showHudSubtitle(getAnimText('p04', 'result', mode), 'success');
             if (kSuccess) kSuccess.style.display = 'block';
           }
         }, 1000));
 
-      // --- P05 ANIMATION ---
+      // --- P05 ANIMATION (SWIPE VS SCROLL) ---
       } else if (scenarioKey === 'p05') {
         const row = sandboxStage.querySelector('.mail-content');
         const alertEl = sandboxStage.querySelector('#swipeAlertBox');
 
         showGhostFinger(cx, cy, false);
+        showIntentPill(cx, cy, '↘️ Diagonal Scroll (Inbox)');
         showHudSubtitle(getAnimText('p05', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
           showGhostFinger(cx - 90, cy + 60, true);
           if (mode === 'without') {
             if (row) row.style.transform = 'translate3d(-130px, 0, 0)';
+            triggerCollisionFriction(cx - 50, cy, row);
             if (alertEl) alertEl.style.display = 'block';
             showHudSubtitle(getAnimText('p05', 'result', mode), 'danger');
           } else {
+            triggerSatisfactionGlow(cx, cy + 30, row);
             showHudSubtitle(getAnimText('p05', 'result', mode), 'success');
           }
         }, 1000));
 
-      // --- P07 ANIMATION ---
+      // --- P07 ANIMATION (FAB DRAG VS CLICK) ---
       } else if (scenarioKey === 'p07') {
         const fab = sandboxStage.querySelector('#fabBtn');
         const modal = sandboxStage.querySelector('#fabActionModal');
         const toastEl = sandboxStage.querySelector('#fabSuccessToast');
 
         showGhostFinger(cx + 80, cy + 180, false);
+        showIntentPill(cx + 80, cy + 180, '🔘 Drag FAB to Move');
         showHudSubtitle(getAnimText('p07', 'step1', mode), 'info');
 
         timers.push(setTimeout(() => {
@@ -3104,9 +3233,11 @@
           showGhostFinger(cx, cy, false);
           if (mode === 'without') {
             if (modal) modal.style.display = 'flex';
+            triggerCollisionFriction(cx, cy, modal);
             showHudSubtitle(getAnimText('p07', 'result', mode), 'danger');
           } else {
             if (toastEl) toastEl.style.display = 'block';
+            triggerSatisfactionGlow(cx, cy, fab);
             showHudSubtitle(getAnimText('p07', 'result', mode), 'success');
           }
         }, 2100));
