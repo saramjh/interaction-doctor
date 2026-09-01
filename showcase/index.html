@@ -2574,487 +2574,214 @@
     // 5-LANGUAGE LOCALIZED ANIMATION HUD SUBTITLES & SCRIPTS
     // ========================================================
     const animI18n = {
-      en: {
-        playBtnWithout: 'Play Defect Demo', playBtnWith: 'Play Physics Demo', stopBtn: 'Stop Demo', ready: 'Ready',
-        replayingWithout: 'Replaying Defect...', replayingWith: 'Replaying Physics...',
-        p01: {
-          step1: '1. User taps message input bar to type...',
-          without: '💥 100vh Defect: Keyboard popped up and occluded input bar!',
-          with: '✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!',
-          imeWithout: '💥 IME Defect: Enter key accidentally sent an incomplete draft!',
-          imeWith: '✨ IME Guard: Enter inserted a smooth linebreak without premature send!'
-        },
-        p02: {
-          step1: '1. User swipes down inside the place list to scroll...',
-          without: '💥 Contention Defect: Bottom Sheet accidentally collapsed while scrolling list!',
-          with: '✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!'
-        },
-        p03: {
-          step1: '1. User places cursor on Target 🎯 Pin and zooms in...',
-          without: '💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!',
-          with: '✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!'
-        },
-        p04: {
-          step1: '1. User tries to scroll the kanban board vertically...',
-          without: '💥 Immediate Drag: Card grabbed instantly during scroll, breaking column order!',
-          with: '✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!'
-        },
-        p05: {
-          step1: '1. User scrolls diagonally across the email inbox...',
-          without: '💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!',
-          with: '✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!'
-        },
-        p07: {
-          step1: '1. User drags the floating FAB button to a new corner...',
-          without: '💥 False Click: Released drag falsely popped up New Note Editor modal!',
-          with: '✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal popup!'
-        },
-        p08: {
-          step1: '1. User taps "Load Older Messages" to prepend content...',
-          without: '💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!',
-          with: '✨ Scroll Anchoring: Eye-level reading position frozen with 0px drift!'
-        },
-        p09: {
-          step1: '1. User drags text inside modal and releases on backdrop...',
-          without: '💥 Backdrop Drag Leak: Releasing text selection outside closed modal!',
-          with: '✨ Dual Target Guard: Text selected safely, modal remains open!'
-        },
-        p13: {
-          step1: '1. User drags scrubber thumb, then finger slips 50px upwards...',
-          without: '💥 Pointer Slip: Seeking halted prematurely because finger left track!',
-          with: '✨ Pointer Capture: Seeking continues continuously even outside track bounds!'
-        },
-        p15: {
-          step1: '1. User pinches with 2 fingers on macOS trackpad...',
-          without: '💥 Window Zoom Disaster: Whole browser window zoomed! Web page broken!',
-          with: '✨ CtrlKey Isolated: Canvas layer zoomed smoothly without window zoom!'
-        },
-        p23: {
-          step1: '1. User swipes from the left edge (10px) to open drawer...',
-          without: '💥 OS Back Hijack: Browser back gesture hijacked! App closed!',
-          with: '✨ 20px Edge Deadzone: Drawer opened safely without OS back collision!'
-        },
-        p31: {
-          step1: '1. User rapidly double-taps heart button to like post...',
-          without: '💥 Double-Tap Zoom Disaster: Browser forced 300% page zoom!',
-          with: '✨ Double-Tap Zoom Lock: Like triggered cleanly without page zoom explosion!'
-        },
-        generic: {
-          step1: '1. Simulating physical touch interaction...',
-          without: '💥 Baseline Defect: Unmanaged touch caused gesture contention & jitter!',
-          with: '✨ Physics Passed: 0ms GPU tracking without dropped frames or contention!'
-        }
-      },
-      ko: {
-        playBtnWithout: '결함 시연 재생', playBtnWith: '물리 개선 시연', stopBtn: '시연 중지', ready: '준비 완료',
-        replayingWithout: '결함 현상 재생 중...', replayingWith: '물리 개선 작동 중...',
-        p01: {
-          step1: '1. 사용자가 메시지를 입력하기 위해 하단 입력창을 탭합니다...',
-          without: '💥 100vh 결함: 키보드가 올라오며 입력창을 완전히 가려버렸습니다!',
-          with: '✨ 0ms VisualViewport 동기화: 입력창이 키보드 위로 0ms 즉각 솟아오릅니다!',
-          imeWithout: '💥 IME 조합 결함: 엔터 키 입력 시 한글 조합 중 미완성 조기 전송 발생!',
-          imeWith: '✨ IME 보호: 조합 중 엔터는 줄바꿈으로 처리되어 조기 전송이 방지됩니다!'
-        },
-        p02: {
-          step1: '1. 사용자가 목록을 스크롤하기 위해 아래로 스와이프합니다...',
-          without: '💥 중첩 스크롤 붕괴: 리스트 스크롤 대신 바텀시트 전체가 푹 꺼져 닫혀버렸습니다!',
-          with: '✨ 경계 핸드오프: 바텀시트는 고정되고 내부 리스트만 안전하게 스크롤됩니다!'
-        },
-        p03: {
-          step1: '1. 사용자가 🎯 타겟 핀에 커서를 두고 캔버스를 확대합니다...',
-          without: '💥 원점 이탈: 기준점이 (0,0)에 묶여 타겟 핀이 화면 밖으로 날아갔습니다!',
-          with: '✨ 중심점 불변: 타겟 핀이 커서 밑에 0.000px 오차로 완벽 고정됩니다!'
-        },
-        p04: {
-          step1: '1. 사용자가 칸반 보드를 세로로 스크롤하려고 손을 댑니다...',
-          without: '💥 즉각 드래그 결함: 스크롤 도중 카드가 덜컥 잡혀 순서가 뒤틀렸습니다!',
-          with: '✨ 350ms 시간 게이트: 일반 스크롤은 자유롭고, 350ms 누르고 있을 때만 카드가 들립니다!'
-        },
-        p05: {
-          step1: '1. 사용자가 메일 목록을 대각선으로 훑으며 스크롤합니다...',
-          without: '💥 축 충돌 누수: 대각선 스크롤 중 스와이프가 오발동되어 메일이 삭제되었습니다!',
-          with: '✨ 8px 직교 축 잠금: 수평 스와이프가 잠기고 수직 스크롤로 안전하게 고정됩니다!'
-        },
-        p07: {
-          step1: '1. 사용자가 플로팅 FAB 버튼을 잡고 원하는 위치로 이동합니다...',
-          without: '💥 오클릭 발생: 드래그 후 손을 놓자마자 새 글 작성 모달이 팝업되었습니다!',
-          with: '✨ 8px 슬롭 보호: 오클릭 모달 없이 FAB 위치만 깔끔하게 이동되었습니다!'
-        },
-        p08: {
-          step1: '1. 사용자가 "이전 메시지 5개 불러오기"를 누릅니다...',
-          without: '💥 스크롤 점프: 스크롤이 맨 위로 튀어 읽고 있던 위치를 놓쳤습니다!',
-          with: '✨ 스크롤 앵커링: 높이 차분이 자동 보정되어 읽던 글이 화면에 그대로 멈춰있습니다!'
-        },
-        p09: {
-          step1: '1. 사용자가 모달 안 텍스트를 드래그하다 백드롭 위에서 손을 놓습니다...',
-          without: '💥 백드롭 누수: 마우스를 뗀 순간 모달 전체가 닫혀버렸습니다!',
-          with: '✨ 듀얼 타겟 검증: 텍스트 선택이 유지되며 모달이 안전하게 닫히지 않습니다!'
-        },
-        p13: {
-          step1: '1. 비디오 타임라인을 잡고 드래그하던 중 손가락이 트랙 밖으로 빗나갑니다...',
-          without: '💥 포인터 이탈: 트랙을 벗어나자마자 탐색이 뚝 멈춰버렸습니다!',
-          with: '✨ 포인터 캡처: 손가락이 화면 어디로 가든 타임라인이 연속 추종합니다!'
-        },
-        p15: {
-          step1: '1. 사용자가 macOS 트랙패드에서 두 손가락으로 핀치 줌을 시도합니다...',
-          without: '💥 브라우저 창 줌 폭주: 웹 브라우저 전체 창이 300% 돋보기처럼 확대되었습니다!',
-          with: '✨ CtrlKey 식별: 브라우저 창 확대 없이 캔버스 레이어만 매끄럽게 줌됩니다!'
-        },
-        p23: {
-          step1: '1. 사용자가 화면 왼쪽 끝 10px에서 오른쪽으로 쓸어넘깁니다...',
-          without: '💥 OS 뒤로가기 탈취: 브라우저 뒤로가기 제스처가 발동되어 화면이 꺼졌습니다!',
-          with: '✨ 20px 엣지 데드존: OS 뒤로가기 충돌 없이 드로어 메뉴만 얌전하게 열립니다!'
-        },
-        p31: {
-          step1: '1. 사용자가 좋아요를 누르기 위해 하트 버튼을 빠르게 연타합니다...',
-          without: '💥 더블탭 줌 폭주: 브라우저가 더블탭으로 오인하여 화면이 300% 확대되었습니다!',
-          with: '✨ 더블탭 줌 락: 화면 확대 없이 하트 애니메이션만 기분 좋게 통통 튑니다!'
-        },
-        generic: {
-          step1: '1. 터치 물리 인터랙션을 시뮬레이션합니다...',
-          without: '💥 기본 결함: 관리되지 않은 터치로 인해 제스처 충돌과 지터가 발생합니다!',
-          with: '✨ 물리 검증 통과: 0ms GPU 트래킹으로 프레임 드롭 없이 안정적으로 동작합니다!'
-        }
-      },
-      ja: {
-        playBtnWithout: '欠陥デモ再生', playBtnWith: '改善デモ再生', stopBtn: '停止', ready: '準備完了',
-        replayingWithout: '欠陥を再生中...', replayingWith: '物理改善を再生中...',
-        p01: {
-          step1: '1. ユーザーが入力欄をタップしてキーボードを呼び出します...',
-          without: '💥 100vh欠陥: キーボードに入力欄が完全に隠れてしまいました！',
-          with: '✨ 0ms VisualViewport同期: 入力欄がキーボード上に即座に追従します！',
-          imeWithout: '💥 IME変換欠陥: 日本語入力中のEnterで誤送信が発生しました！',
-          imeWith: '✨ IMEガード: 確定Enterによる誤送信を防止し、安全に改行します！'
-        },
-        p02: {
-          step1: '1. リストをスクロールしようと下にスワイプします...',
-          without: '💥 ネストスクロール崩壊: リストではなくシート全体が崩落して閉じました！',
-          with: '✨ 境界ハンドオフ: シートは固定され、内部リストのみ安全にスクロール！'
-        },
-        p03: {
-          step1: '1. ターゲットピンにカーソルを合わせてピンチズームします...',
-          without: '💥 原点ドリフト: (0,0)基準のため、ターゲットが画面外に吹き飛びました！',
-          with: '✨ 重心点不変: ターゲットピンがカーソル直下に0.000px誤差で吸着します！'
-        },
-        p04: {
-          step1: '1. カンバンボードを縦スクロールしようと指を動かします...',
-          without: '💥 即時ドラッグ暴発: スクロール中にカードが掴まれ順序が破壊されました！',
-          with: '✨ 350ms時間ゲート: 通常スクロールは自由。350ms長押し時のみカード浮上！'
-        },
-        p05: {
-          step1: '1. メール一覧を斜め方向にスワイプします...',
-          without: '💥 軸衝突リーク: 斜め移動でスワイプが誤爆しメールが勝手に削除されました！',
-          with: '✨ 8px軸ロック: 水平スワイプがロックされ、垂直スクロールに安全固定！'
-        },
-        p07: {
-          step1: '1. フローティングFABボタンを掴んで位置を移動させます...',
-          without: '💥 誤クリック暴発: 移動後に指を離した瞬間、編集画面が誤爆表示されました！',
-          with: '✨ 8pxスロップ保護: 誤クリックなくFABの位置のみ綺麗に移動完了！'
-        },
-        p08: {
-          step1: '1. 「過去のメッセージを読み込む」を押します...',
-          without: '💥 スクロールジャンプ: スクロールが先頭に跳ねて閲覧位置を見失いました！',
-          with: '✨ スクロールアンカー: 高さ差分が補正され、視線位置が0pxで固定されます！'
-        },
-        p09: {
-          step1: '1. モーダル内のテキストを選択し、背景部分で指を離します...',
-          without: '💥 背景リーク: 外で離したためモーダルが勝手に閉じてしまいました！',
-          with: '✨ デュアルターゲット検証: 選択を維持し、モーダルは開いたまま安全！'
-        },
-        p13: {
-          step1: '1. シークバーをドラッグ中、指がトラックの外へ外れます...',
-          without: '💥 ポインター脱落: トラックを外れた瞬間にシークが止まってしまいました！',
-          with: '✨ ポインターキャプチャ: 画面のどこに指が動いても途切れず追従！'
-        },
-        p15: {
-          step1: '1. macOSトラックパッドでピンチズームします...',
-          without: '💥 ブラウザ画面全体ズーム: Webページ全体が300%巨大化して崩壊！',
-          with: '✨ CtrlKey識別: 画面全体を崩さずキャンバスのみ滑らかにズーム！'
-        },
-        p23: {
-          step1: '1. 画面左端10pxから右へスワイプします...',
-          without: '💥 OS戻る誤爆: ブラウザの戻るジェスチャが暴発してアプリが終了！',
-          with: '✨ 20pxエッジデッドゾーン: OSジェスチャを回避しドロワーのみ安全に開きます！'
-        },
-        p31: {
-          step1: '1. いいねを押すためにハートボタンを連打します...',
-          without: '💥 ダブルタップズーム爆発: ダブルタップと誤認され画面が300%拡大暴走！',
-          with: '✨ ダブルタップロック: 画面拡大せずハートのみ気持ちよく弾みます！'
-        },
-        generic: {
-          step1: '1. タッチ操作をシミュレーションします...',
-          without: '💥 基準欠陥: 未制御のタッチによりジェスチャ衝突とジッターが発生！',
-          with: '✨ 物理検証クリア: 0ms GPU追従によりフレーム低下なく安定動作！'
-        }
-      },
-      zh: {
-        playBtnWithout: '播放缺陷演示', playBtnWith: '播放优化演示', stopBtn: '停止', ready: '就绪',
-        replayingWithout: '正在重现缺陷...', replayingWith: '正在演示物理优化...',
-        p01: {
-          step1: '1. 用户点击底部输入框准备输入...',
-          without: '💥 100vh 缺陷: 虚拟键盘弹起完全遮挡住了输入框！',
-          with: '✨ 0ms VisualViewport 同步: 输入框紧贴键盘实时吸顶！',
-          imeWithout: '💥 IME 缺陷: 回车换行时误发未完成的半成品草稿！',
-          imeWith: '✨ IME 保护: 输入中回车正确识别为换行，避免误发！'
-        },
-        p02: {
-          step1: '1. 用户在列表区域向下滑动浏览...',
-          without: '💥 嵌套滚动冲突: 列表未滚动，整个底部抽屉意外塌陷关闭！',
-          with: '✨ 边界动态交接: 抽屉牢固保持，内部列表流畅安全滚动！'
-        },
-        p03: {
-          step1: '1. 用户将光标对准目标 🎯 大头针进行双指缩放...',
-          without: '💥 原点漂移: 锚定于(0,0)，目标 🎯 被抛出视野之外！',
-          with: '✨ 质心不变性: 目标 🎯 以 0.000px 误差磁吸于光标正下方！'
-        },
-        p04: {
-          step1: '1. 用户试图上下滚动看板列表...',
-          without: '💥 瞬间拖拽缺陷: 滚动中卡片被意外抓起，破坏列表顺序！',
-          with: '✨ 350ms 时间阈值: 普通滚动畅行无阻，长按 350ms 方可抓取卡片！'
-        },
-        p05: {
-          step1: '1. 用户斜向滑动邮件列表...',
-          without: '💥 轴向冲突泄露: 斜向手势误触发滑动删除，邮件被误删！',
-          with: '✨ 8px 正交轴锁定: 水平滑动被锁定，保持垂直滚动平稳！'
-        },
-        p07: {
-          step1: '1. 用户将悬浮 FAB 按钮拖至新位置...',
-          without: '💥 误触发点击: 松手后意外弹出了新建笔记编辑器模态框！',
-          with: '✨ 8px 容差滞后: 纯净拖拽到位，绝不误触弹窗！'
-        },
-        p08: {
-          step1: '1. 用户点击“加载更早的历史消息”...',
-          without: '💥 滚动跳动: 视口猛烈跳至顶部 0，丢失了阅读位置！',
-          with: '✨ 滚动位置锚定: 自动补偿高度差，阅读视线 0px 纹丝不动！'
-        },
-        p09: {
-          step1: '1. 用户拖拽选中文本并在遮罩层上松开...',
-          without: '💥 遮罩泄露: 在外部松开导致整个对话框意外关闭！',
-          with: '✨ 双目标验证: 选区保留，对话框安全维持开启！'
-        },
-        p13: {
-          step1: '1. 拖动视频进度条时，手指滑出轨道上方 50px...',
-          without: '💥 指针滑脱: 手指一旦离开轨道，进度搜索立即中断卡死！',
-          with: '✨ 指针捕获 (Pointer Capture): 无论手指移至何处均持续流畅拖拽！'
-        },
-        p15: {
-          step1: '1. 用户在 macOS 触控板上双指缩放...',
-          without: '💥 浏览器全局缩放灾难: 整个网页被强制放大 300% 破损！',
-          with: '✨ CtrlKey 隔离: 页面保持稳定，仅画布图层流畅缩放！'
-        },
-        p23: {
-          step1: '1. 用户从屏幕左边缘 10px 处向右轻扫...',
-          without: '💥 系统返回劫持: 触发了浏览器返回手势，应用意外关闭！',
-          with: '✨ 20px 边缘避让盲区: 完美避让系统手势，抽屉安全滑出！'
-        },
-        p31: {
-          step1: '1. 用户快速双击爱心按钮进行点赞...',
-          without: '💥 双击缩放灾难: 浏览器误判为双击，页面异常膨胀 300%！',
-          with: '✨ 双击缩放锁定: 页面尺寸牢固，爱心按钮欢快弹动！'
-        },
-        generic: {
-          step1: '1. 模拟触控物理交互...',
-          without: '💥 基线缺陷: 未管理的触控导致手势冲突与剧烈抖动！',
-          with: '✨ 物理验证通过: 0ms GPU 实时跟踪，无掉帧或手势冲突！'
-        }
-      },
-      es: {
-        playBtnWithout: 'Ver Defecto', playBtnWith: 'Ver Solución', stopBtn: 'Detener', ready: 'Listo',
-        replayingWithout: 'Reproduciendo Defecto...', replayingWith: 'Reproduciendo Física...',
-        p01: {
-          step1: '1. El usuario toca la barra de entrada para escribir...',
-          without: '💥 Defecto 100vh: ¡El teclado ocultó por completo el campo de entrada!',
-          with: '✨ Sync 0ms VisualViewport: ¡La barra de entrada sube limpiamente!',
-          imeWithout: '💥 Defecto IME: ¡Enter envió por error un borrador incompleto!',
-          imeWith: '✨ Protección IME: ¡Enter inserta salto de línea seguro!'
-        },
-        p02: {
-          step1: '1. El usuario desliza hacia abajo en la lista para desplazarse...',
-          without: '💥 Colapso: ¡La hoja inferior colapsó al desplazarse!',
-          with: '✨ Traspaso Dinámico: ¡La hoja permanece fija y la lista fluye!'
-        },
-        p03: {
-          step1: '1. El usuario coloca el cursor en el pin objetivo 🎯 y hace zoom...',
-          without: '💥 Deriva de Origen: ¡Anclado a (0,0), el pin 🎯 salió volando!',
-          with: '✨ Centroide Invariante: ¡El pin 🎯 se fija al cursor con 0.000px de error!'
-        },
-        p04: {
-          step1: '1. El usuario intenta desplazarse verticalmente en el tablero...',
-          without: '💥 Arrastre Inmediato: ¡La tarjeta se agarró rompiendo el orden!',
-          with: '✨ Puerta Temporal 350ms: ¡Desplazamiento libre, arrastre solo tras 350ms!'
-        },
-        p05: {
-          step1: '1. El usuario se desplaza en diagonal por la bandeja...',
-          without: '💥 Fuga Diagonal: ¡El gesto diagonal eliminó el correo por error!',
-          with: '✨ Bloqueo de Eje 8px: ¡Deslizamiento bloqueado, scroll preservado!'
-        },
-        p07: {
-          step1: '1. El usuario arrastra el botón flotante FAB...',
-          without: '💥 Clic Falso: ¡Al soltar el arrastre se abrió el modal no deseado!',
-          with: '✨ Guardia 8px: ¡Arrastre limpio sin falsos clics!'
-        },
-        p08: {
-          step1: '1. El usuario pulsa "Cargar mensajes anteriores"...',
-          without: '💥 Salto de Scroll: ¡El scroll saltó arriba perdiendo la posición!',
-          with: '✨ Anclaje de Scroll: ¡Posición de lectura fija con 0px de deriva!'
-        },
-        p09: {
-          step1: '1. El usuario arrastra texto y suelta sobre el fondo...',
-          without: '💥 Cierre Accidental: ¡Soltar fuera cerró el modal involuntariamente!',
-          with: '✨ Doble Objetivo: ¡Selección segura y modal preservado!'
-        },
-        p13: {
-          step1: '1. El dedo se desliza 50px fuera de la barra de progreso...',
-          without: '💥 Pérdida de Puntero: ¡La búsqueda se detuvo al salir de la barra!',
-          with: '✨ Captura de Puntero: ¡Búsqueda continua en toda la pantalla!'
-        },
-        p15: {
-          step1: '1. El usuario pellizca con 2 dedos en el trackpad de macOS...',
-          without: '💥 Desastre de Zoom: ¡Toda la ventana del navegador se amplió al 300%!',
-          with: '✨ CtrlKey Aislado: ¡Zoom limpio en el lienzo sin alterar la ventana!'
-        },
-        p23: {
-          step1: '1. El usuario desliza desde el borde izquierdo (10px)...',
-          without: '💥 Secuestro de Retroceso: ¡El gesto cerró la aplicación!',
-          with: '✨ Zona Muerta de 20px: ¡El cajón se abre sin conflicto del sistema!'
-        },
-        p31: {
-          step1: '1. El usuario pulsa rápidamente el botón de corazón...',
-          without: '💥 Zoom Forzado: ¡El navegador forzó un zoom del 300%!',
-          with: '✨ Bloqueo de Doble Toque: ¡Like limpio sin zoom no deseado!'
-        },
-        generic: {
-          step1: '1. Simulando interacción física táctil...',
-          without: '💥 Defecto Base: ¡Conflicto de gestos y vibraciones no controladas!',
-          with: '✨ Física Verificada: ¡Rastreo GPU de 0ms sin caídas de cuadros!'
-        }
-      }
-    };
+  en: {
+    playBtnWithout: 'Play Defect Demo', playBtnWith: 'Play Physics Demo', stopBtn: 'Stop Demo', ready: 'Ready',
+    replayingWithout: 'Replaying Defect...', replayingWith: 'Replaying Physics...',
+    p01: { step1: '1. User taps input bar to summon virtual keyboard...', without: '💥 100vh Defect: Keyboard occluded input bar!', with: '✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!' },
+    p02: { step1: '1. User swipes down inside list to scroll places...', without: '💥 Contention Defect: Bottom Sheet collapsed instead of list scrolling!', with: '✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!' },
+    p03: { step1: '1. User pinches to zoom centered at 🎯 Target Pin...', without: '💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!', with: '✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!' },
+    p04: { step1: '1. User scrolls kanban board vertically...', without: '💥 Immediate Drag: Card grabbed instantly during scroll, breaking column order!', with: '✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!' },
+    p05: { step1: '1. User scrolls diagonally across email inbox...', without: '💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!', with: '✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!' },
+    p06: { step1: '1. User pulls down feed to trigger refresh...', without: '💥 Scroll Contention: Normal scroll collided with refresh, page jittered!', with: '✨ Boundary Damping: Clean spring tension with overscroll hysteresis!' },
+    p07: { step1: '1. User drags floating FAB button to reposition...', without: '💥 False Click: Releasing drag falsely popped up New Note modal!', with: '✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal!' },
+    p08: { step1: '1. User taps \'Load Older Messages\' to prepend...', without: '💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!', with: '✨ Scroll Anchoring: Reading position frozen with 0px drift!' },
+    p09: { step1: '1. User selects text inside modal and releases on backdrop...', without: '💥 Backdrop Drag Leak: Releasing selection outside closed the modal!', with: '✨ Dual Target Guard: Text selection intact, modal remains open!' },
+    p10: { step1: '1. User swipes horizontal tab strip inside viewpager...', without: '💥 ViewPager Cross-talk: Tab strip drag caused parent viewpager to flip page!', with: '✨ Axis Isolation: Horizontal touch captured strictly by active tab strip!' },
+    p11: { step1: '1. User types multiple lines into auto-growing textarea...', without: '💥 Viewport Scroll Jump: Textarea growth caused sudden jarring scroll jumps!', with: '✨ Height Synchronizer: Smooth animated growth with locked scroll anchor!' },
+    p12: { step1: '1. User taps help icon on mobile touch device...', without: '💥 Sticky Hover: Tooltip permanently stuck on screen after tapping away!', with: '✨ PointerFine Gate: Touch devices bypass sticky hover, close cleanly!' },
+    p13: { step1: '1. User scrubs timeline, then finger slips 50px outside track...', without: '💥 Pointer Slip: Seeking halted prematurely when cursor left the track!', with: '✨ Pointer Capture: Seeking continues continuously across full viewport!' },
+    p14: { step1: '1. User tries to grab 12px corner handle of crop box...', without: '💥 Hit Target Miss: Too small (12px)! Tap missed and selection was lost!', with: '✨ 44px Hit Extension: Transparent 44px touch target grabs handle effortlessly!' },
+    p15: { step1: '1. User pinches trackpad on canvas workspace...', without: '💥 Window Zoom Disaster: Whole browser window zoomed! Web layout shattered!', with: '✨ CtrlKey Isolated: Canvas scaled cleanly without altering browser zoom!' },
+    p16: { step1: '1. User flings list at high speed, then taps to stop scrolling...', without: '💥 Accidental Tap: Attempting to stop list accidentally opened the item link!', with: '✨ Momentum Catch: Stop tap absorbs momentum without firing click event!' },
+    p17: { step1: '1. User drags circular thumb in 2D color spectrum...', without: '💥 Scroll Collision: Dragging diagonally triggered page scroll, thumb locked!', with: '✨ 2D Vector Clamp: Touch-action locked, thumb tracks 2D coordinates freely!' },
+    p18: { step1: '1. User drags minimum thumb overlapping maximum thumb at $500...', without: '💥 Thumb Overlap Lock: Min thumb trapped beneath Max thumb, slider frozen!', with: '✨ Dynamic Z-Index: Active drag dynamically elevates thumb Z-index!' },
+    p19: { step1: '1. User drags table column divider to resize column...', without: '💥 Drag Contention: Column resize drag triggered horizontal table scroll!', with: '✨ Divider Capture: PointerCapture pins resize drag exclusively to divider!' },
+    p20: { step1: '1. User collapses an open FAQ accordion item...', without: '💥 Layout Shift Jump: Collapsing item caused page content below to suddenly jump!', with: '✨ Smooth Transition: CSS grid-template-rows 0fr animation prevents jump!' },
+    p21: { step1: '1. User taps checkout button on mobile browser...', without: '💥 300ms Click Delay: Noticeable sluggish latency before button responds!', with: '✨ Touch-Action Manipulation: Eliminates 300ms delay for 0ms instant tap!' },
+    p22: { step1: '1. User quickly taps card to open details...', without: '💥 False Long-Press: Quick tap falsely triggered heavy long-press menu!', with: '✨ 350ms Temporal Gate: Quick taps execute immediately; menu requires 350ms hold!' },
+    p23: { step1: '1. User swipes from screen edge (10px) to open drawer...', without: '💥 OS Back Hijack: Edge swipe hijacked by browser back navigation! App closed!', with: '✨ 20px Edge Deadzone: Drawer swipe ignores 0-20px edge to prevent collision!' },
+    p24: { step1: '1. User drags on empty canvas to draw selection box...', without: '💥 Canvas Pan Contention: Dragging empty space panned entire canvas instead!', with: '✨ Prerequisite Gate: Box select requires Shift or Tool active; panning otherwise!' },
+    p25: { step1: '1. User taps small 12px audio volume slider thumb...', without: '💥 Tap Slop Miss: Narrow thumb missed, volume jumped accidentally to wrong point!', with: '✨ 44px Hit Target: Invisible 44px padding ensures 100% tap accuracy!' },
+    p26: { step1: '1. User types long paragraph reaching bottom of textarea...', without: '💥 Cursor Hidden: Caret typed blindly underneath virtual keyboard!', with: '✨ Cursor Auto-Scroll: Dynamically scrolls active caret to viewport center!' },
+    p27: { step1: '1. User scrolls wide data table horizontally...', without: '💥 Sticky Jitter: Sticky fixed column lags by 1 frame and blinks erratically!', with: '✨ GPU Compositor Layer: will-change & translateZ(0) lock column jitter to 0ms!' },
+    p28: { step1: '1. User presses and holds interactive card...', without: '💥 Text Glitch: Ugly blue browser text selection and callout popped up!', with: '✨ Selection Suppression: user-select & touch-callout suppressed cleanly!' },
+    p29: { step1: '1. User drags card to bottom boundary of list...', without: '💥 Runway Speed: Auto-scroll velocity accelerated infinitely out of control!', with: '✨ Velocity Clamping: Clamps max auto-scroll speed to a smooth 12px/frame!' },
+    p30: { step1: '1. User releases pinch zoom with high inertia...', without: '💥 Flyaway Disaster: Momentum flung photo completely outside viewport bounds!', with: '✨ Friction & Elastic Snap: 0.92 friction decay + rubberband bounce back to bounds!' },
+    p31: { step1: '1. User rapidly double-taps heart button...', without: '💥 Double-Tap Zoom: Browser mistook rapid taps for double-tap page zoom 300%!', with: '✨ Meta & Touch Lock: touch-action: manipulation locks out page zoom completely!' },
+    p32: { step1: '1. User pans SVG canvas repeatedly...', without: '💥 Memory Leak: Uncleaned pointer listeners accumulated, dropping FPS to 20!', with: '✨ AbortController Cleanup: Gesture listeners synchronously dismantled on pointerup!' },
+    p33: { step1: '1. User makes a tiny flick on bottom sheet...', without: '💥 Accidental Dismiss: Micro-flick triggered hyper-speed close, sheet vanished!', with: '✨ Dual Thresholding: Requires BOTH distance (>80px) and velocity (>0.5px/ms)!' },
+    p34: { step1: '1. User micro-scrolls slightly up and down...', without: '💥 Header Flicker: 1px delta triggered sticky header to show/hide 60 times/sec!', with: '✨ 12px Directional Deadband: Requires accumulated 12px delta before toggling header!' },
+    p35: { step1: '1. User swipes list item 20% and releases finger...', without: '💥 Awkward State: Row trapped halfway open in an ambiguous broken position!', with: '✨ 50% Commit Hysteresis: Snaps cleanly open if >50%; snaps closed otherwise!' },
+    p36: { step1: '1. User swipes horizontal carousel past the last slide...', without: '💥 OS History Hijack: Overscroll hijacked by macOS trackpad back navigation!', with: '✨ Overscroll Containment: overscroll-behavior-x: contain locks history traversal!' },
+    generic: { step1: 'Simulating interaction...', without: 'Defect occurred!', with: 'Physics applied cleanly!' }
+  },
+  ko: {
+    playBtnWithout: '결함 시연 재생', playBtnWith: '물리 개선 시연', stopBtn: '시연 중지', ready: '준비 완료',
+    replayingWithout: '결함 현상 재생 중...', replayingWith: '물리 개선 작동 중...',
+    p01: { step1: '1. 사용자가 메시지를 입력하기 위해 하단 입력창을 탭합니다...', without: '💥 100vh 결함: 키보드가 올라오며 입력창을 완전히 가려버렸습니다!', with: '✨ 0ms VisualViewport 동기화: 입력창이 키보드 위로 0ms 즉각 솟아오릅니다!' },
+    p02: { step1: '1. 사용자가 장소 목록을 스크롤하기 위해 아래로 스와이프합니다...', without: '💥 중첩 스크롤 붕괴: 리스트 대신 바텀시트 전체가 푹 꺼져 닫혀버렸습니다!', with: '✨ 경계 핸드오프: 바텀시트는 고정되고 내부 리스트만 안전하게 스크롤됩니다!' },
+    p03: { step1: '1. 사용자가 🎯 타겟 핀에 커서를 두고 캔버스를 확대합니다...', without: '💥 원점 이탈: 기준점이 (0,0)에 묶여 타겟 핀이 화면 밖으로 날아갔습니다!', with: '✨ 중심점 불변: 타겟 핀이 커서 밑에 0.000px 오차로 완벽 고정됩니다!' },
+    p04: { step1: '1. 사용자가 칸반 보드를 세로로 스크롤하려고 손을 댑니다...', without: '💥 즉각 드래그 결함: 스크롤 도중 카드가 덜컥 잡혀 순서가 뒤틀렸습니다!', with: '✨ 350ms 시간 게이트: 일반 스크롤은 자유롭고, 350ms 누르고 있을 때만 카드가 들립니다!' },
+    p05: { step1: '1. 사용자가 메일 목록을 대각선으로 훑으며 스크롤합니다...', without: '💥 축 충돌 누수: 대각선 스크롤 중 스와이프가 오발동되어 메일이 삭제되었습니다!', with: '✨ 8px 직교 축 잠금: 수평 스와이프가 잠기고 수직 스크롤로 안전하게 고정됩니다!' },
+    p06: { step1: '1. 사용자가 피드를 당겨서 새로고침을 시도합니다...', without: '💥 스크롤 충돌: 상단 스크롤과 새로고침이 충돌하여 화면이 떨렸습니다!', with: '✨ 경계 댐핑: 탄성 저항과 히스테리시스로 부드럽게 새로고침을 트리거합니다!' },
+    p07: { step1: '1. 사용자가 플로팅 FAB 버튼을 잡고 원하는 위치로 이동합니다...', without: '💥 오클릭 발생: 드래그 후 손을 놓자마자 새 글 작성 모달이 팝업되었습니다!', with: '✨ 8px 슬롭 보호: 오클릭 모달 없이 FAB 위치만 깔끔하게 이동되었습니다!' },
+    p08: { step1: '1. 사용자가 \'이전 메시지 불러오기\'를 누릅니다...', without: '💥 스크롤 점프: 스크롤이 맨 위로 튀어 읽고 있던 위치를 놓쳤습니다!', with: '✨ 스크롤 앵커링: 높이 차분이 자동 보정되어 읽던 글이 화면에 그대로 멈춰있습니다!' },
+    p09: { step1: '1. 사용자가 모달 안 텍스트를 드래그하다 백드롭 위에서 손을 놓습니다...', without: '💥 백드롭 누수: 마우스를 뗀 순간 모달 전체가 닫혀버렸습니다!', with: '✨ 듀얼 타겟 검증: 텍스트 선택이 유지되며 모달이 안전하게 닫히지 않습니다!' },
+    p10: { step1: '1. 사용자가 뷰페이저 안의 수평 탭 바를 좌우로 스크롤합니다...', without: '💥 뷰페이저 간섭: 탭 스크롤 중 상위 뷰페이저가 넘어가 화면이 바뀌었습니다!', with: '✨ 터치 축 격리: 탭 바 내부 터치를 완전히 격리하여 뷰페이저 오작동을 방지합니다!' },
+    p11: { step1: '1. 사용자가 자동 확장 텍스트 영역에 여러 줄을 입력합니다...', without: '💥 뷰포트 덜컹거림: 입력창이 늘어나며 화면 스크롤이 갑자기 덜컹거렸습니다!', with: '✨ 높이 동기화: 레이아웃 시프트 없이 부드러운 높이 확장과 스크롤 동기화!' },
+    p12: { step1: '1. 사용자가 모바일에서 도움말 아이콘을 터치합니다...', without: '💥 스티키 호버 결함: 다른 곳을 터치해도 툴팁이 화면에 박혀 사라지지 않습니다!', with: '✨ 터치 게이트: 마우스와 터치를 식별하여 바깥 탭 시 툴팁이 즉시 사라집니다!' },
+    p13: { step1: '1. 비디오 타임라인을 드래그하던 중 손가락이 트랙 밖으로 빗나갑니다...', without: '💥 포인터 이탈: 트랙을 벗어나자마자 탐색이 뚝 멈춰버렸습니다!', with: '✨ 포인터 캡처: 손가락이 화면 어디로 가든 타임라인이 연속 추종합니다!' },
+    p14: { step1: '1. 사용자가 이미지 크롭 상자의 12px 얇은 모서리를 터치합니다...', without: '💥 터치 씹힘: 12px 크기가 너무 작아 터치를 인식하지 못하고 선택이 풀렸습니다!', with: '✨ 44px 타겟 확장: 투명 44px 터치 패딩으로 손가락이 닿기만 해도 즉시 잡힙니다!' },
+    p15: { step1: '1. 사용자가 macOS 트랙패드에서 두 손가락으로 핀치 줌을 시도합니다...', without: '💥 브라우저 창 줌 폭주: 웹 브라우저 전체 창이 300% 돋보기처럼 확대되었습니다!', with: '✨ CtrlKey 식별: 브라우저 창 확대 없이 캔버스 레이어만 매끄럽게 줌됩니다!' },
+    p16: { step1: '1. 고속 스크롤 중 화면을 터치하여 스크롤을 멈추려 합니다...', without: '💥 멈춤 터치 오클릭: 스크롤을 멈추려 손을 댔는데 상세 페이지가 열려버렸습니다!', with: '✨ 관성 흡수 게이트: 고속 관성 중의 터치는 정지 동작으로만 흡수됩니다!' },
+    p17: { step1: '1. 사용자가 2D 색상 스펙트럼에서 원형 손잡이를 드래그합니다...', without: '💥 페이지 스크롤 간섭: 대각선 드래그 중 웹페이지가 스크롤되어 조작이 멈췄습니다!', with: '✨ 2차원 벡터 클램핑: 브라우저 스크롤을 격리하고 색상 좌표를 부드럽게 추종합니다!' },
+    p18: { step1: '1. $500에 겹쳐진 최소값/최대값 듀얼 슬라이더를 왼쪽으로 끌어봅니다...', without: '💥 썸 겹침 잠김: 앞 썸에 가려져 뒤 썸이 잡히지 않아 슬라이더가 멈췄습니다!', with: '✨ Z-Index 동적 승격: 드래그 방향에 따라 선택된 썸이 최상위로 승격되어 빠져나옵니다!' },
+    p19: { step1: '1. 데이터 테이블의 열 구분선을 드래그하여 너비를 조절합니다...', without: '💥 테이블 스크롤 간섭: 구분선 리사이즈 중 테이블 가로 스크롤이 발속되었습니다!', with: '✨ 열 디바이더 캡처: 포인터 캡처로 구분선 조작만을 단독으로 정확하게 유지합니다!' },
+    p20: { step1: '1. 열려 있는 아코디언 메뉴를 닫습니다...', without: '💥 레이아웃 시프트: 아코디언이 접히며 아래 콘텐츠가 갑자기 덜컹 위로 튀었습니다!', with: '✨ 댐핑 복구: 높이 변화를 스무스하게 댐핑하여 시선 위치를 안정적으로 유지합니다!' },
+    p21: { step1: '1. 모바일 브라우저에서 결제 버튼을 탭합니다...', without: '💥 300ms 지연: 더블탭 대기로 인해 버튼 반응이 300ms 동안 둔탁하게 지연됩니다!', with: '✨ 0ms 즉각 반응: touch-action: manipulation으로 300ms 딜레이를 완전 소거합니다!' },
+    p22: { step1: '1. 상세 페이지를 열기 위해 카드를 가볍게 탭합니다...', without: '💥 롱프레스 오발동: 가볍게 탭했는데 컨텍스트 메뉴가 화면을 가려버렸습니다!', with: '✨ 350ms 시간 게이트: 가벼운 탭은 즉시 실행되고, 350ms 누를 때만 메뉴가 뜹니다!' },
+    p23: { step1: '1. 사용자가 화면 왼쪽 끝 10px에서 오른쪽으로 쓸어넘깁니다...', without: '💥 OS 뒤로가기 탈취: 브라우저 뒤로가기 제스처가 발동되어 화면이 꺼졌습니다!', with: '✨ 20px 엣지 데드존: OS 뒤로가기 충돌 없이 드로어 메뉴만 얌전하게 열립니다!' },
+    p24: { step1: '1. 캔버스 빈 영역을 드래그하여 다중 선택 박스를 그리려 합니다...', without: '💥 캔버스 패닝 충돌: 영역 선택 대신 캔버스 전체가 스크롤 패닝되어 버렸습니다!', with: '✨ 전제조건 게이트: Shift 키 또는 선택 툴 활성화 시에만 박스 선택으로 분기합니다!' },
+    p25: { step1: '1. 12px 작은 오디오 볼륨 슬라이더 손잡이를 터치합니다...', without: '💥 탭 빗나감: 손잡이가 너무 작아 빗맞아 볼륨이 엉뚱한 값으로 튀었습니다!', with: '✨ 44px 터치 타겟: 시각 형태는 12px를 유지하되 44px 가상 타겟으로 완벽 조작!' },
+    p26: { step1: '1. 긴 문장을 작성하여 텍스트 커서가 입력창 하단으로 내려갑니다...', without: '💥 커서 가림: 가상 키보드 밑으로 커서가 숨어 작성 중인 글이 안 보입니다!', with: '✨ 커서 자동 스크롤: 텍스트 커서 위치를 실시간 감지하여 가용 뷰포트 중앙에 고정!' },
+    p27: { step1: '1. 가로로 긴 데이터 테이블을 좌우로 스크롤합니다...', without: '💥 고정 열 지터: 고정 열(Sticky)이 1프레임 늦게 따라오며 어지럽게 깜빡입니다!', with: '✨ GPU 레이어 분리: will-change 및 translateZ(0)로 메인 스레드 지연을 완전 박멸!' },
+    p28: { step1: '1. 인터랙티브 카드를 길게 누르고 있습니다...', without: '💥 텍스트 선택 글리치: 파란색 텍스트 선택 영역과 시스템 돋보기가 튀어나옵니다!', with: '✨ 선택 억제 격리: user-select 및 touch-callout을 원천 억제하여 네이티브 감각 제공!' },
+    p29: { step1: '1. 카드를 목록 맨 아래 경계선으로 드래그합니다...', without: '💥 스크롤 폭주: 경계선 자동 스크롤 속도가 무한대로 치솟아 통제를 잃었습니다!', with: '✨ 속도 클램핑: 자동 스크롤 속도를 초당 12px/프레임으로 엄격히 제한하여 안전 제어!' },
+    p30: { step1: '1. 사진을 빠르게 핀치 줌하고 손을 놓습니다...', without: '💥 원점 이탈 방출: 관성 속도로 인해 사진이 화면 바깥으로 날아가 버렸습니다!', with: '✨ 마찰 감쇠 & 스냅: 0.92 마찰 감쇠 곡선과 탄성 복귀 스냅으로 화면 안에 안착!' },
+    p31: { step1: '1. 좋아요를 누르기 위해 하트 버튼을 빠르게 연타합니다...', without: '💥 더블탭 줌 폭주: 브라우저가 더블탭으로 오인하여 화면이 300% 확대되었습니다!', with: '✨ 더블탭 줌 락: 화면 확대 없이 하트 애니메이션만 기분 좋게 통통 튑니다!' },
+    p32: { step1: '1. SVG 캔버스를 반복해서 드래그 패닝합니다...', without: '💥 리스너 누수: 제스처 리스너가 누적 등록되어 프레임이 20FPS로 뚝 떨어졌습니다!', with: '✨ AbortController 정리: 터치가 끝나는 즉시 리스너를 단일 시그널로 완전 해제!' },
+    p33: { step1: '1. 바텀시트를 살짝 스쳤을 뿐인데 손을 뗍니다...', without: '💥 초고속 닫힘 오판: 미세한 손떨림을 플링으로 오인하여 시트가 사라져버렸습니다!', with: '✨ 거리+속도 듀얼 검증: 이동 거리(80px)와 플링 속도(0.5px/ms)가 동시 충족될 때만 닫힘!' },
+    p34: { step1: '1. 사용자가 화면을 위아래로 1px씩 미세하게 스크롤합니다...', without: '💥 헤더 깜빡임: 1px 변화마다 상단 헤더가 숨었다 나타났다 초당 60회 깜빡입니다!', with: '✨ 12px 방향 데드밴드: 누적 이동량이 12px 이상일 때만 상태를 전환하여 안정화!' },
+    p35: { step1: '1. 목록 항목을 20%만 슬라이드하고 손을 놓습니다...', without: '💥 어정쩡한 걸림: 메뉴가 반쯤 열린 불완전한 상태로 어색하게 갇혀버렸습니다!', with: '✨ 50% 커밋 히스테리시스: 50%를 넘으면 완전 오픈, 미만이면 0px로 즉각 복귀 스냅!' },
+    p36: { step1: '1. 가로 캐러셀의 마지막 슬라이드에서 더 넘기려 스와이프합니다...', without: '💥 브라우저 뒤로가기 탈취: 오버스크롤이 macOS 뒤로가기 제스처로 누수되었습니다!', with: '✨ 오버스크롤 격리: overscroll-behavior-x: contain으로 OS 내비게이션 완벽 방어!' },
+    generic: { step1: 'Simulating interaction...', without: 'Defect occurred!', with: 'Physics applied cleanly!' }
+  },
+  ja: {
+    playBtnWithout: '欠陥デモ再生', playBtnWith: '改善デモ再生', stopBtn: '停止', ready: '準備完了',
+    replayingWithout: '欠陥を再生中...', replayingWith: '物理改善を再生中...',
+    p01: { step1: '1. User taps input bar to summon virtual keyboard...', without: '💥 100vh Defect: Keyboard occluded input bar!', with: '✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!' },
+    p02: { step1: '1. User swipes down inside list to scroll places...', without: '💥 Contention Defect: Bottom Sheet collapsed instead of list scrolling!', with: '✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!' },
+    p03: { step1: '1. User pinches to zoom centered at 🎯 Target Pin...', without: '💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!', with: '✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!' },
+    p04: { step1: '1. User scrolls kanban board vertically...', without: '💥 Immediate Drag: Card grabbed instantly during scroll, breaking column order!', with: '✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!' },
+    p05: { step1: '1. User scrolls diagonally across email inbox...', without: '💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!', with: '✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!' },
+    p06: { step1: '1. User pulls down feed to trigger refresh...', without: '💥 Scroll Contention: Normal scroll collided with refresh, page jittered!', with: '✨ Boundary Damping: Clean spring tension with overscroll hysteresis!' },
+    p07: { step1: '1. User drags floating FAB button to reposition...', without: '💥 False Click: Releasing drag falsely popped up New Note modal!', with: '✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal!' },
+    p08: { step1: '1. User taps \'Load Older Messages\' to prepend...', without: '💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!', with: '✨ Scroll Anchoring: Reading position frozen with 0px drift!' },
+    p09: { step1: '1. User selects text inside modal and releases on backdrop...', without: '💥 Backdrop Drag Leak: Releasing selection outside closed the modal!', with: '✨ Dual Target Guard: Text selection intact, modal remains open!' },
+    p10: { step1: '1. User swipes horizontal tab strip inside viewpager...', without: '💥 ViewPager Cross-talk: Tab strip drag caused parent viewpager to flip page!', with: '✨ Axis Isolation: Horizontal touch captured strictly by active tab strip!' },
+    p11: { step1: '1. User types multiple lines into auto-growing textarea...', without: '💥 Viewport Scroll Jump: Textarea growth caused sudden jarring scroll jumps!', with: '✨ Height Synchronizer: Smooth animated growth with locked scroll anchor!' },
+    p12: { step1: '1. User taps help icon on mobile touch device...', without: '💥 Sticky Hover: Tooltip permanently stuck on screen after tapping away!', with: '✨ PointerFine Gate: Touch devices bypass sticky hover, close cleanly!' },
+    p13: { step1: '1. User scrubs timeline, then finger slips 50px outside track...', without: '💥 Pointer Slip: Seeking halted prematurely when cursor left the track!', with: '✨ Pointer Capture: Seeking continues continuously across full viewport!' },
+    p14: { step1: '1. User tries to grab 12px corner handle of crop box...', without: '💥 Hit Target Miss: Too small (12px)! Tap missed and selection was lost!', with: '✨ 44px Hit Extension: Transparent 44px touch target grabs handle effortlessly!' },
+    p15: { step1: '1. User pinches trackpad on canvas workspace...', without: '💥 Window Zoom Disaster: Whole browser window zoomed! Web layout shattered!', with: '✨ CtrlKey Isolated: Canvas scaled cleanly without altering browser zoom!' },
+    p16: { step1: '1. User flings list at high speed, then taps to stop scrolling...', without: '💥 Accidental Tap: Attempting to stop list accidentally opened the item link!', with: '✨ Momentum Catch: Stop tap absorbs momentum without firing click event!' },
+    p17: { step1: '1. User drags circular thumb in 2D color spectrum...', without: '💥 Scroll Collision: Dragging diagonally triggered page scroll, thumb locked!', with: '✨ 2D Vector Clamp: Touch-action locked, thumb tracks 2D coordinates freely!' },
+    p18: { step1: '1. User drags minimum thumb overlapping maximum thumb at $500...', without: '💥 Thumb Overlap Lock: Min thumb trapped beneath Max thumb, slider frozen!', with: '✨ Dynamic Z-Index: Active drag dynamically elevates thumb Z-index!' },
+    p19: { step1: '1. User drags table column divider to resize column...', without: '💥 Drag Contention: Column resize drag triggered horizontal table scroll!', with: '✨ Divider Capture: PointerCapture pins resize drag exclusively to divider!' },
+    p20: { step1: '1. User collapses an open FAQ accordion item...', without: '💥 Layout Shift Jump: Collapsing item caused page content below to suddenly jump!', with: '✨ Smooth Transition: CSS grid-template-rows 0fr animation prevents jump!' },
+    p21: { step1: '1. User taps checkout button on mobile browser...', without: '💥 300ms Click Delay: Noticeable sluggish latency before button responds!', with: '✨ Touch-Action Manipulation: Eliminates 300ms delay for 0ms instant tap!' },
+    p22: { step1: '1. User quickly taps card to open details...', without: '💥 False Long-Press: Quick tap falsely triggered heavy long-press menu!', with: '✨ 350ms Temporal Gate: Quick taps execute immediately; menu requires 350ms hold!' },
+    p23: { step1: '1. User swipes from screen edge (10px) to open drawer...', without: '💥 OS Back Hijack: Edge swipe hijacked by browser back navigation! App closed!', with: '✨ 20px Edge Deadzone: Drawer swipe ignores 0-20px edge to prevent collision!' },
+    p24: { step1: '1. User drags on empty canvas to draw selection box...', without: '💥 Canvas Pan Contention: Dragging empty space panned entire canvas instead!', with: '✨ Prerequisite Gate: Box select requires Shift or Tool active; panning otherwise!' },
+    p25: { step1: '1. User taps small 12px audio volume slider thumb...', without: '💥 Tap Slop Miss: Narrow thumb missed, volume jumped accidentally to wrong point!', with: '✨ 44px Hit Target: Invisible 44px padding ensures 100% tap accuracy!' },
+    p26: { step1: '1. User types long paragraph reaching bottom of textarea...', without: '💥 Cursor Hidden: Caret typed blindly underneath virtual keyboard!', with: '✨ Cursor Auto-Scroll: Dynamically scrolls active caret to viewport center!' },
+    p27: { step1: '1. User scrolls wide data table horizontally...', without: '💥 Sticky Jitter: Sticky fixed column lags by 1 frame and blinks erratically!', with: '✨ GPU Compositor Layer: will-change & translateZ(0) lock column jitter to 0ms!' },
+    p28: { step1: '1. User presses and holds interactive card...', without: '💥 Text Glitch: Ugly blue browser text selection and callout popped up!', with: '✨ Selection Suppression: user-select & touch-callout suppressed cleanly!' },
+    p29: { step1: '1. User drags card to bottom boundary of list...', without: '💥 Runway Speed: Auto-scroll velocity accelerated infinitely out of control!', with: '✨ Velocity Clamping: Clamps max auto-scroll speed to a smooth 12px/frame!' },
+    p30: { step1: '1. User releases pinch zoom with high inertia...', without: '💥 Flyaway Disaster: Momentum flung photo completely outside viewport bounds!', with: '✨ Friction & Elastic Snap: 0.92 friction decay + rubberband bounce back to bounds!' },
+    p31: { step1: '1. User rapidly double-taps heart button...', without: '💥 Double-Tap Zoom: Browser mistook rapid taps for double-tap page zoom 300%!', with: '✨ Meta & Touch Lock: touch-action: manipulation locks out page zoom completely!' },
+    p32: { step1: '1. User pans SVG canvas repeatedly...', without: '💥 Memory Leak: Uncleaned pointer listeners accumulated, dropping FPS to 20!', with: '✨ AbortController Cleanup: Gesture listeners synchronously dismantled on pointerup!' },
+    p33: { step1: '1. User makes a tiny flick on bottom sheet...', without: '💥 Accidental Dismiss: Micro-flick triggered hyper-speed close, sheet vanished!', with: '✨ Dual Thresholding: Requires BOTH distance (>80px) and velocity (>0.5px/ms)!' },
+    p34: { step1: '1. User micro-scrolls slightly up and down...', without: '💥 Header Flicker: 1px delta triggered sticky header to show/hide 60 times/sec!', with: '✨ 12px Directional Deadband: Requires accumulated 12px delta before toggling header!' },
+    p35: { step1: '1. User swipes list item 20% and releases finger...', without: '💥 Awkward State: Row trapped halfway open in an ambiguous broken position!', with: '✨ 50% Commit Hysteresis: Snaps cleanly open if >50%; snaps closed otherwise!' },
+    p36: { step1: '1. User swipes horizontal carousel past the last slide...', without: '💥 OS History Hijack: Overscroll hijacked by macOS trackpad back navigation!', with: '✨ Overscroll Containment: overscroll-behavior-x: contain locks history traversal!' },
+    generic: { step1: 'Simulating interaction...', without: 'Defect occurred!', with: 'Physics applied cleanly!' }
+  },
+  zh: {
+    playBtnWithout: '播放缺陷演示', playBtnWith: '播放优化演示', stopBtn: '停止', ready: '就绪',
+    replayingWithout: '正在重现缺陷...', replayingWith: '正在演示物理优化...',
+    p01: { step1: '1. User taps input bar to summon virtual keyboard...', without: '💥 100vh Defect: Keyboard occluded input bar!', with: '✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!' },
+    p02: { step1: '1. User swipes down inside list to scroll places...', without: '💥 Contention Defect: Bottom Sheet collapsed instead of list scrolling!', with: '✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!' },
+    p03: { step1: '1. User pinches to zoom centered at 🎯 Target Pin...', without: '💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!', with: '✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!' },
+    p04: { step1: '1. User scrolls kanban board vertically...', without: '💥 Immediate Drag: Card grabbed instantly during scroll, breaking column order!', with: '✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!' },
+    p05: { step1: '1. User scrolls diagonally across email inbox...', without: '💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!', with: '✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!' },
+    p06: { step1: '1. User pulls down feed to trigger refresh...', without: '💥 Scroll Contention: Normal scroll collided with refresh, page jittered!', with: '✨ Boundary Damping: Clean spring tension with overscroll hysteresis!' },
+    p07: { step1: '1. User drags floating FAB button to reposition...', without: '💥 False Click: Releasing drag falsely popped up New Note modal!', with: '✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal!' },
+    p08: { step1: '1. User taps \'Load Older Messages\' to prepend...', without: '💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!', with: '✨ Scroll Anchoring: Reading position frozen with 0px drift!' },
+    p09: { step1: '1. User selects text inside modal and releases on backdrop...', without: '💥 Backdrop Drag Leak: Releasing selection outside closed the modal!', with: '✨ Dual Target Guard: Text selection intact, modal remains open!' },
+    p10: { step1: '1. User swipes horizontal tab strip inside viewpager...', without: '💥 ViewPager Cross-talk: Tab strip drag caused parent viewpager to flip page!', with: '✨ Axis Isolation: Horizontal touch captured strictly by active tab strip!' },
+    p11: { step1: '1. User types multiple lines into auto-growing textarea...', without: '💥 Viewport Scroll Jump: Textarea growth caused sudden jarring scroll jumps!', with: '✨ Height Synchronizer: Smooth animated growth with locked scroll anchor!' },
+    p12: { step1: '1. User taps help icon on mobile touch device...', without: '💥 Sticky Hover: Tooltip permanently stuck on screen after tapping away!', with: '✨ PointerFine Gate: Touch devices bypass sticky hover, close cleanly!' },
+    p13: { step1: '1. User scrubs timeline, then finger slips 50px outside track...', without: '💥 Pointer Slip: Seeking halted prematurely when cursor left the track!', with: '✨ Pointer Capture: Seeking continues continuously across full viewport!' },
+    p14: { step1: '1. User tries to grab 12px corner handle of crop box...', without: '💥 Hit Target Miss: Too small (12px)! Tap missed and selection was lost!', with: '✨ 44px Hit Extension: Transparent 44px touch target grabs handle effortlessly!' },
+    p15: { step1: '1. User pinches trackpad on canvas workspace...', without: '💥 Window Zoom Disaster: Whole browser window zoomed! Web layout shattered!', with: '✨ CtrlKey Isolated: Canvas scaled cleanly without altering browser zoom!' },
+    p16: { step1: '1. User flings list at high speed, then taps to stop scrolling...', without: '💥 Accidental Tap: Attempting to stop list accidentally opened the item link!', with: '✨ Momentum Catch: Stop tap absorbs momentum without firing click event!' },
+    p17: { step1: '1. User drags circular thumb in 2D color spectrum...', without: '💥 Scroll Collision: Dragging diagonally triggered page scroll, thumb locked!', with: '✨ 2D Vector Clamp: Touch-action locked, thumb tracks 2D coordinates freely!' },
+    p18: { step1: '1. User drags minimum thumb overlapping maximum thumb at $500...', without: '💥 Thumb Overlap Lock: Min thumb trapped beneath Max thumb, slider frozen!', with: '✨ Dynamic Z-Index: Active drag dynamically elevates thumb Z-index!' },
+    p19: { step1: '1. User drags table column divider to resize column...', without: '💥 Drag Contention: Column resize drag triggered horizontal table scroll!', with: '✨ Divider Capture: PointerCapture pins resize drag exclusively to divider!' },
+    p20: { step1: '1. User collapses an open FAQ accordion item...', without: '💥 Layout Shift Jump: Collapsing item caused page content below to suddenly jump!', with: '✨ Smooth Transition: CSS grid-template-rows 0fr animation prevents jump!' },
+    p21: { step1: '1. User taps checkout button on mobile browser...', without: '💥 300ms Click Delay: Noticeable sluggish latency before button responds!', with: '✨ Touch-Action Manipulation: Eliminates 300ms delay for 0ms instant tap!' },
+    p22: { step1: '1. User quickly taps card to open details...', without: '💥 False Long-Press: Quick tap falsely triggered heavy long-press menu!', with: '✨ 350ms Temporal Gate: Quick taps execute immediately; menu requires 350ms hold!' },
+    p23: { step1: '1. User swipes from screen edge (10px) to open drawer...', without: '💥 OS Back Hijack: Edge swipe hijacked by browser back navigation! App closed!', with: '✨ 20px Edge Deadzone: Drawer swipe ignores 0-20px edge to prevent collision!' },
+    p24: { step1: '1. User drags on empty canvas to draw selection box...', without: '💥 Canvas Pan Contention: Dragging empty space panned entire canvas instead!', with: '✨ Prerequisite Gate: Box select requires Shift or Tool active; panning otherwise!' },
+    p25: { step1: '1. User taps small 12px audio volume slider thumb...', without: '💥 Tap Slop Miss: Narrow thumb missed, volume jumped accidentally to wrong point!', with: '✨ 44px Hit Target: Invisible 44px padding ensures 100% tap accuracy!' },
+    p26: { step1: '1. User types long paragraph reaching bottom of textarea...', without: '💥 Cursor Hidden: Caret typed blindly underneath virtual keyboard!', with: '✨ Cursor Auto-Scroll: Dynamically scrolls active caret to viewport center!' },
+    p27: { step1: '1. User scrolls wide data table horizontally...', without: '💥 Sticky Jitter: Sticky fixed column lags by 1 frame and blinks erratically!', with: '✨ GPU Compositor Layer: will-change & translateZ(0) lock column jitter to 0ms!' },
+    p28: { step1: '1. User presses and holds interactive card...', without: '💥 Text Glitch: Ugly blue browser text selection and callout popped up!', with: '✨ Selection Suppression: user-select & touch-callout suppressed cleanly!' },
+    p29: { step1: '1. User drags card to bottom boundary of list...', without: '💥 Runway Speed: Auto-scroll velocity accelerated infinitely out of control!', with: '✨ Velocity Clamping: Clamps max auto-scroll speed to a smooth 12px/frame!' },
+    p30: { step1: '1. User releases pinch zoom with high inertia...', without: '💥 Flyaway Disaster: Momentum flung photo completely outside viewport bounds!', with: '✨ Friction & Elastic Snap: 0.92 friction decay + rubberband bounce back to bounds!' },
+    p31: { step1: '1. User rapidly double-taps heart button...', without: '💥 Double-Tap Zoom: Browser mistook rapid taps for double-tap page zoom 300%!', with: '✨ Meta & Touch Lock: touch-action: manipulation locks out page zoom completely!' },
+    p32: { step1: '1. User pans SVG canvas repeatedly...', without: '💥 Memory Leak: Uncleaned pointer listeners accumulated, dropping FPS to 20!', with: '✨ AbortController Cleanup: Gesture listeners synchronously dismantled on pointerup!' },
+    p33: { step1: '1. User makes a tiny flick on bottom sheet...', without: '💥 Accidental Dismiss: Micro-flick triggered hyper-speed close, sheet vanished!', with: '✨ Dual Thresholding: Requires BOTH distance (>80px) and velocity (>0.5px/ms)!' },
+    p34: { step1: '1. User micro-scrolls slightly up and down...', without: '💥 Header Flicker: 1px delta triggered sticky header to show/hide 60 times/sec!', with: '✨ 12px Directional Deadband: Requires accumulated 12px delta before toggling header!' },
+    p35: { step1: '1. User swipes list item 20% and releases finger...', without: '💥 Awkward State: Row trapped halfway open in an ambiguous broken position!', with: '✨ 50% Commit Hysteresis: Snaps cleanly open if >50%; snaps closed otherwise!' },
+    p36: { step1: '1. User swipes horizontal carousel past the last slide...', without: '💥 OS History Hijack: Overscroll hijacked by macOS trackpad back navigation!', with: '✨ Overscroll Containment: overscroll-behavior-x: contain locks history traversal!' },
+    generic: { step1: 'Simulating interaction...', without: 'Defect occurred!', with: 'Physics applied cleanly!' }
+  },
+  es: {
+    playBtnWithout: 'Ver Defecto', playBtnWith: 'Ver Solución', stopBtn: 'Detener', ready: 'Listo',
+    replayingWithout: 'Reproduciendo Defecto...', replayingWith: 'Reproduciendo Física...',
+    p01: { step1: '1. User taps input bar to summon virtual keyboard...', without: '💥 100vh Defect: Keyboard occluded input bar!', with: '✨ 0ms VisualViewport Sync: Input bar lifted cleanly above keyboard!' },
+    p02: { step1: '1. User swipes down inside list to scroll places...', without: '💥 Contention Defect: Bottom Sheet collapsed instead of list scrolling!', with: '✨ Boundary Hand-off: Sheet remains pinned, list scrolls safely!' },
+    p03: { step1: '1. User pinches to zoom centered at 🎯 Target Pin...', without: '💥 Origin Drift: Anchored to (0,0)! Target 🎯 flew away out of sight!', with: '✨ Centroid Invariant: Target 🎯 glued magnetically to cursor at 0.000px!' },
+    p04: { step1: '1. User scrolls kanban board vertically...', without: '💥 Immediate Drag: Card grabbed instantly during scroll, breaking column order!', with: '✨ 350ms Temporal Gate: Normal scroll scrolls freely. Hold 350ms to lift card!' },
+    p05: { step1: '1. User scrolls diagonally across email inbox...', without: '💥 Diagonal Leak: Diagonal scroll accidentally dismissed & deleted email!', with: '✨ 8px Axis Lock: Horizontal swipe locked out, vertical scroll preserved!' },
+    p06: { step1: '1. User pulls down feed to trigger refresh...', without: '💥 Scroll Contention: Normal scroll collided with refresh, page jittered!', with: '✨ Boundary Damping: Clean spring tension with overscroll hysteresis!' },
+    p07: { step1: '1. User drags floating FAB button to reposition...', without: '💥 False Click: Releasing drag falsely popped up New Note modal!', with: '✨ 8px Slop Guard: Dragged cleanly without triggering unwanted modal!' },
+    p08: { step1: '1. User taps \'Load Older Messages\' to prepend...', without: '💥 Scroll Jump: Scroll violently jumped to 0! Lost reading position!', with: '✨ Scroll Anchoring: Reading position frozen with 0px drift!' },
+    p09: { step1: '1. User selects text inside modal and releases on backdrop...', without: '💥 Backdrop Drag Leak: Releasing selection outside closed the modal!', with: '✨ Dual Target Guard: Text selection intact, modal remains open!' },
+    p10: { step1: '1. User swipes horizontal tab strip inside viewpager...', without: '💥 ViewPager Cross-talk: Tab strip drag caused parent viewpager to flip page!', with: '✨ Axis Isolation: Horizontal touch captured strictly by active tab strip!' },
+    p11: { step1: '1. User types multiple lines into auto-growing textarea...', without: '💥 Viewport Scroll Jump: Textarea growth caused sudden jarring scroll jumps!', with: '✨ Height Synchronizer: Smooth animated growth with locked scroll anchor!' },
+    p12: { step1: '1. User taps help icon on mobile touch device...', without: '💥 Sticky Hover: Tooltip permanently stuck on screen after tapping away!', with: '✨ PointerFine Gate: Touch devices bypass sticky hover, close cleanly!' },
+    p13: { step1: '1. User scrubs timeline, then finger slips 50px outside track...', without: '💥 Pointer Slip: Seeking halted prematurely when cursor left the track!', with: '✨ Pointer Capture: Seeking continues continuously across full viewport!' },
+    p14: { step1: '1. User tries to grab 12px corner handle of crop box...', without: '💥 Hit Target Miss: Too small (12px)! Tap missed and selection was lost!', with: '✨ 44px Hit Extension: Transparent 44px touch target grabs handle effortlessly!' },
+    p15: { step1: '1. User pinches trackpad on canvas workspace...', without: '💥 Window Zoom Disaster: Whole browser window zoomed! Web layout shattered!', with: '✨ CtrlKey Isolated: Canvas scaled cleanly without altering browser zoom!' },
+    p16: { step1: '1. User flings list at high speed, then taps to stop scrolling...', without: '💥 Accidental Tap: Attempting to stop list accidentally opened the item link!', with: '✨ Momentum Catch: Stop tap absorbs momentum without firing click event!' },
+    p17: { step1: '1. User drags circular thumb in 2D color spectrum...', without: '💥 Scroll Collision: Dragging diagonally triggered page scroll, thumb locked!', with: '✨ 2D Vector Clamp: Touch-action locked, thumb tracks 2D coordinates freely!' },
+    p18: { step1: '1. User drags minimum thumb overlapping maximum thumb at $500...', without: '💥 Thumb Overlap Lock: Min thumb trapped beneath Max thumb, slider frozen!', with: '✨ Dynamic Z-Index: Active drag dynamically elevates thumb Z-index!' },
+    p19: { step1: '1. User drags table column divider to resize column...', without: '💥 Drag Contention: Column resize drag triggered horizontal table scroll!', with: '✨ Divider Capture: PointerCapture pins resize drag exclusively to divider!' },
+    p20: { step1: '1. User collapses an open FAQ accordion item...', without: '💥 Layout Shift Jump: Collapsing item caused page content below to suddenly jump!', with: '✨ Smooth Transition: CSS grid-template-rows 0fr animation prevents jump!' },
+    p21: { step1: '1. User taps checkout button on mobile browser...', without: '💥 300ms Click Delay: Noticeable sluggish latency before button responds!', with: '✨ Touch-Action Manipulation: Eliminates 300ms delay for 0ms instant tap!' },
+    p22: { step1: '1. User quickly taps card to open details...', without: '💥 False Long-Press: Quick tap falsely triggered heavy long-press menu!', with: '✨ 350ms Temporal Gate: Quick taps execute immediately; menu requires 350ms hold!' },
+    p23: { step1: '1. User swipes from screen edge (10px) to open drawer...', without: '💥 OS Back Hijack: Edge swipe hijacked by browser back navigation! App closed!', with: '✨ 20px Edge Deadzone: Drawer swipe ignores 0-20px edge to prevent collision!' },
+    p24: { step1: '1. User drags on empty canvas to draw selection box...', without: '💥 Canvas Pan Contention: Dragging empty space panned entire canvas instead!', with: '✨ Prerequisite Gate: Box select requires Shift or Tool active; panning otherwise!' },
+    p25: { step1: '1. User taps small 12px audio volume slider thumb...', without: '💥 Tap Slop Miss: Narrow thumb missed, volume jumped accidentally to wrong point!', with: '✨ 44px Hit Target: Invisible 44px padding ensures 100% tap accuracy!' },
+    p26: { step1: '1. User types long paragraph reaching bottom of textarea...', without: '💥 Cursor Hidden: Caret typed blindly underneath virtual keyboard!', with: '✨ Cursor Auto-Scroll: Dynamically scrolls active caret to viewport center!' },
+    p27: { step1: '1. User scrolls wide data table horizontally...', without: '💥 Sticky Jitter: Sticky fixed column lags by 1 frame and blinks erratically!', with: '✨ GPU Compositor Layer: will-change & translateZ(0) lock column jitter to 0ms!' },
+    p28: { step1: '1. User presses and holds interactive card...', without: '💥 Text Glitch: Ugly blue browser text selection and callout popped up!', with: '✨ Selection Suppression: user-select & touch-callout suppressed cleanly!' },
+    p29: { step1: '1. User drags card to bottom boundary of list...', without: '💥 Runway Speed: Auto-scroll velocity accelerated infinitely out of control!', with: '✨ Velocity Clamping: Clamps max auto-scroll speed to a smooth 12px/frame!' },
+    p30: { step1: '1. User releases pinch zoom with high inertia...', without: '💥 Flyaway Disaster: Momentum flung photo completely outside viewport bounds!', with: '✨ Friction & Elastic Snap: 0.92 friction decay + rubberband bounce back to bounds!' },
+    p31: { step1: '1. User rapidly double-taps heart button...', without: '💥 Double-Tap Zoom: Browser mistook rapid taps for double-tap page zoom 300%!', with: '✨ Meta & Touch Lock: touch-action: manipulation locks out page zoom completely!' },
+    p32: { step1: '1. User pans SVG canvas repeatedly...', without: '💥 Memory Leak: Uncleaned pointer listeners accumulated, dropping FPS to 20!', with: '✨ AbortController Cleanup: Gesture listeners synchronously dismantled on pointerup!' },
+    p33: { step1: '1. User makes a tiny flick on bottom sheet...', without: '💥 Accidental Dismiss: Micro-flick triggered hyper-speed close, sheet vanished!', with: '✨ Dual Thresholding: Requires BOTH distance (>80px) and velocity (>0.5px/ms)!' },
+    p34: { step1: '1. User micro-scrolls slightly up and down...', without: '💥 Header Flicker: 1px delta triggered sticky header to show/hide 60 times/sec!', with: '✨ 12px Directional Deadband: Requires accumulated 12px delta before toggling header!' },
+    p35: { step1: '1. User swipes list item 20% and releases finger...', without: '💥 Awkward State: Row trapped halfway open in an ambiguous broken position!', with: '✨ 50% Commit Hysteresis: Snaps cleanly open if >50%; snaps closed otherwise!' },
+    p36: { step1: '1. User swipes horizontal carousel past the last slide...', without: '💥 OS History Hijack: Overscroll hijacked by macOS trackpad back navigation!', with: '✨ Overscroll Containment: overscroll-behavior-x: contain locks history traversal!' },
+    generic: { step1: 'Simulating interaction...', without: 'Defect occurred!', with: 'Physics applied cleanly!' }
+  },
+};
 
-    function getAnimText(scenarioKey, stage, mode = 'without') {
-      const lang = animI18n[currentLang] ? currentLang : 'en';
-      const dict = animI18n[lang];
-      const scKey = scenarioKey.toLowerCase();
-      const scObj = dict[scKey] || dict.generic;
-
-      if (stage === 'step1') return scObj.step1;
-      if (stage === 'result') return mode === 'with' ? scObj.with : scObj.without;
-      if (stage === 'ime') return mode === 'with' ? scObj.imeWith : scObj.imeWithout;
-      return '';
-    }
-
-    const SVG_PLAY_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-    const SVG_STOP_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle;"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
-
-    function updateAnimPlayButtonState() {
-      const lang = animI18n[currentLang] ? currentLang : 'en';
-      const dict = animI18n[lang];
-      if (isAnimPlaying) {
-        playIcon.innerHTML = SVG_STOP_ICON;
-        playText.textContent = dict.stopBtn;
-        animStatusLabel.textContent = currentMode === 'without' ? dict.replayingWithout : dict.replayingWith;
-      } else {
-        playIcon.innerHTML = SVG_PLAY_ICON;
-        playText.textContent = currentMode === 'without' ? dict.playBtnWithout : dict.playBtnWith;
-        animStatusLabel.textContent = dict.ready;
-      }
-    }
-
-
-    // ========================================================
-    // TACTILE INTERACTION FX CONTROLLER (FRICTION & SATISFACTION)
-    // Makes interference & butter-smooth resolution viscerally felt!
-    // ========================================================
-
-    function showIntentPill(x, y, text) {
-      let pill = sandboxStage.querySelector('.fx-intent-pill');
-      if (!pill) {
-        pill = document.createElement('div');
-        pill.className = 'fx-intent-pill';
-        sandboxStage.appendChild(pill);
-      }
-      pill.style.display = 'block';
-      pill.style.left = `${Math.min(sandboxStage.clientWidth - 120, Math.max(10, x + 24))}px`;
-      pill.style.top = `${Math.max(10, y - 24)}px`;
-      pill.textContent = text;
-    }
-
-    function hideIntentPill() {
-      const pill = sandboxStage.querySelector('.fx-intent-pill');
-      if (pill) pill.style.display = 'none';
-    }
-
-    function triggerCollisionFriction(x, y, targetEl = null) {
-      // 1. Glitch shake on target
-      if (targetEl) {
-        targetEl.classList.remove('fx-glitch-shake');
-        void targetEl.offsetWidth; // trigger reflow
-        targetEl.classList.add('fx-glitch-shake');
-      }
-
-      // 2. Collision marker
-      let marker = sandboxStage.querySelector('.fx-collision-marker');
-      if (!marker) {
-        marker = document.createElement('div');
-        marker.className = 'fx-collision-marker';
-        marker.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-        sandboxStage.appendChild(marker);
-      }
-      marker.style.display = 'flex';
-      marker.style.left = `${x - 24}px`;
-      marker.style.top = `${y - 24}px`;
-
-      // 3. Stage red tint flash
-      sandboxStage.style.boxShadow = 'inset 0 0 30px rgba(239, 68, 68, 0.45)';
-      setTimeout(() => {
-        sandboxStage.style.boxShadow = 'none';
-      }, 500);
-    }
-
-    function triggerSatisfactionGlow(x, y, targetEl = null) {
-      // 1. Green satisfaction glow
-      let glow = sandboxStage.querySelector('.fx-satisfaction-glow');
-      if (!glow) {
-        glow = document.createElement('div');
-        glow.className = 'fx-satisfaction-glow';
-        glow.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        sandboxStage.appendChild(glow);
-      }
-      glow.style.display = 'flex';
-      glow.style.left = `${x - 26}px`;
-      glow.style.top = `${y - 26}px`;
-
-      // 2. Green stage pulse
-      sandboxStage.style.boxShadow = 'inset 0 0 30px rgba(16, 185, 129, 0.35)';
-      setTimeout(() => {
-        sandboxStage.style.boxShadow = 'none';
-      }, 500);
-    }
-
-    function clearAllTactileFX() {
-      hideIntentPill();
-      const marker = sandboxStage.querySelector('.fx-collision-marker');
-      if (marker) marker.style.display = 'none';
-      const glow = sandboxStage.querySelector('.fx-satisfaction-glow');
-      if (glow) glow.style.display = 'none';
-      sandboxStage.style.boxShadow = 'none';
-    }
-
-
-        function stopAnimatedDemo() {
-      clearAllTactileFX();
-      if (currentAnimTimeline) {
-        currentAnimTimeline.forEach(t => clearTimeout(t));
-        currentAnimTimeline = null;
-      }
-      isAnimPlaying = false;
-      btnPlayDemo.classList.remove('playing');
-      updateAnimPlayButtonState();
-      animProgressFill.style.width = '0%';
-      hideGhostFinger();
-      hideHudSubtitle();
-    }
-
+    
     function playScenarioAnimation(scenarioKey, mode) {
       stopAnimatedDemo();
       isAnimPlaying = true;
@@ -3064,7 +2791,6 @@
       const timers = [];
       currentAnimTimeline = timers;
 
-      // Animate progress bar over 3.6s
       const startTime = Date.now();
       const duration = 3600;
       const progressInterval = setInterval(() => {
@@ -3079,313 +2805,670 @@
       const stageRect = sandboxStage.getBoundingClientRect();
       const cx = stageRect.width / 2 || 180;
       const cy = stageRect.height / 2 || 240;
+      const sc = scenarioKey.toLowerCase();
 
-      // --- P01 ANIMATION (MESSENGER KEYBOARD) ---
-      if (scenarioKey === 'p01') {
-        showGhostFinger(cx, cy + 180, false);
-        showIntentPill(cx, cy + 180, '💬 Tap to Type');
-        showHudSubtitle(getAnimText('p01', 'step1', mode), 'info');
+      // Show Intent & First Step
+      showHudSubtitle(getAnimText(sc, 'step1', mode), 'info');
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 180, true);
-          const input = sandboxStage.querySelector('#mobileChatInput');
-          const kb = sandboxStage.querySelector('#simKeyboard');
-          const bar = sandboxStage.querySelector('#chatInputBar');
-          const alertBox = sandboxStage.querySelector('#prematureAlert');
+      // Dispatch 36 Individual Scenario Sequences
+      switch (sc) {
+        case 'p01': { // Messenger Keyboard
+          showGhostFinger(cx, cy + 180, false);
+          showIntentPill(cx, cy + 180, '💬 Tap to Type');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 180, true);
+            const kb = sandboxStage.querySelector('#simKeyboard');
+            const bar = sandboxStage.querySelector('#chatInputBar');
+            if (kb) kb.classList.add('open');
+            if (mode === 'without') {
+              if (bar) bar.style.bottom = '0px';
+              triggerCollisionFriction(cx, cy + 180, bar);
+              showHudSubtitle(getAnimText('p01', 'without', mode), 'danger');
+            } else {
+              if (bar) bar.style.bottom = '220px';
+              triggerSatisfactionGlow(cx, cy - 20, bar);
+              showHudSubtitle(getAnimText('p01', 'with', mode), 'success');
+            }
+          }, 900));
+          break;
+        }
 
-          if (kb) kb.classList.add('open');
+        case 'p02': { // Bottom Sheet
+          const sheet = sandboxStage.querySelector('#sheetBox');
+          const list = sandboxStage.querySelector('#sheetList');
+          showGhostFinger(cx, cy + 100, false);
+          showIntentPill(cx, cy + 100, '📜 Scroll List ↓');
+          timers.push(setTimeout(() => showGhostFinger(cx, cy + 100, true), 700));
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 220, true);
+            if (mode === 'without') {
+              if (sheet) sheet.style.transform = 'translate3d(0, 180px, 0)';
+              triggerCollisionFriction(cx, cy + 100, sheet);
+              showHudSubtitle(getAnimText('p02', 'without', mode), 'danger');
+            } else {
+              if (list) list.scrollTop = 80;
+              triggerSatisfactionGlow(cx, cy + 100, list);
+              showHudSubtitle(getAnimText('p02', 'with', mode), 'success');
+            }
+          }, 1300));
+          break;
+        }
 
-          if (mode === 'without') {
-            if (bar) bar.style.bottom = '0px';
-            // Friction Interference FX
-            triggerCollisionFriction(cx, cy + 180, bar);
-            showHudSubtitle(getAnimText('p01', 'result', mode), 'danger');
-            if (alertBox) alertBox.style.display = 'block';
-          } else {
-            if (bar) bar.style.bottom = '220px';
-            // Butter-Smooth Satisfaction FX
-            triggerSatisfactionGlow(cx, cy - 20, bar);
-            showHudSubtitle(getAnimText('p01', 'result', mode), 'success');
-          }
-        }, 900));
+        case 'p03': { // 2D Canvas Centroid
+          const world = sandboxStage.querySelector('#canvasWorld');
+          showGhostFinger(cx + 40, cy + 40, false);
+          showIntentPill(cx + 40, cy + 40, '🔍 Zoom at 🎯 Pin');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 40, cy + 40, true);
+            if (mode === 'without') {
+              if (world) world.style.transform = 'translate3d(-200px, -200px, 0) scale(2.2)';
+              triggerCollisionFriction(cx + 40, cy + 40, world);
+              showHudSubtitle(getAnimText('p03', 'without', mode), 'danger');
+            } else {
+              if (world) world.style.transform = `translate3d(${-cx}px, ${-cy}px, 0) scale(2.0)`;
+              triggerSatisfactionGlow(cx + 40, cy + 40, world);
+              showHudSubtitle(getAnimText('p03', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx + 80, cy + 220, true);
-          showIntentPill(cx + 80, cy + 220, '⏎ Enter (Linebreak)');
-          if (mode === 'without') {
-            triggerCollisionFriction(cx + 80, cy + 220, sandboxStage.querySelector('#chatFeed'));
-            showHudSubtitle(getAnimText('p01', 'ime', mode), 'danger');
-          } else {
-            triggerSatisfactionGlow(cx + 80, cy + 220, input);
-            showHudSubtitle(getAnimText('p01', 'ime', mode), 'success');
-          }
-        }, 2200));
+        case 'p04': { // Kanban Reorder
+          const card = sandboxStage.querySelector('.kanban-card');
+          showGhostFinger(cx, cy - 40, false);
+          showIntentPill(cx, cy - 40, '↕️ Scroll Board');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 60, true);
+            if (mode === 'without') {
+              if (card) { card.style.transform = 'scale(1.08) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
+              triggerCollisionFriction(cx, cy, card);
+              showHudSubtitle(getAnimText('p04', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy + 60, sandboxStage);
+              showHudSubtitle(getAnimText('p04', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-      // --- P02 ANIMATION (BOTTOM SHEET) ---
-      } else if (scenarioKey === 'p02') {
-        const sheet = sandboxStage.querySelector('#sheetBox');
-        const alertBox = sandboxStage.querySelector('#sheetCollapsedAlert');
-        const list = sandboxStage.querySelector('#sheetList');
-
-        showGhostFinger(cx, cy + 100, false);
-        showIntentPill(cx, cy + 100, '📜 Scroll List ↓');
-        showHudSubtitle(getAnimText('p02', 'step1', mode), 'info');
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 100, true);
-        }, 700));
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 220, true);
-          if (mode === 'without') {
-            if (sheet) sheet.style.transform = 'translate3d(0, 180px, 0)';
-            triggerCollisionFriction(cx, cy + 100, sheet);
-            if (alertBox) alertBox.style.display = 'block';
-            showHudSubtitle(getAnimText('p02', 'result', mode), 'danger');
-          } else {
-            if (list) list.scrollTop = 80;
-            triggerSatisfactionGlow(cx, cy + 100, list);
-            showHudSubtitle(getAnimText('p02', 'result', mode), 'success');
-          }
-        }, 1300));
-
-      // --- P03 ANIMATION (2D CANVAS CENTROID) ---
-      } else if (scenarioKey === 'p03') {
-        const world = sandboxStage.querySelector('#canvasWorld');
-        const alertBox = sandboxStage.querySelector('#canvasFlyawayAlert');
-        const hud = sandboxStage.querySelector('#zoomHud');
-
-        showGhostFinger(cx + 40, cy + 40, false);
-        showIntentPill(cx + 40, cy + 40, '🔍 Zoom at 🎯 Pin');
-        showHudSubtitle(getAnimText('p03', 'step1', mode), 'info');
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx + 40, cy + 40, true);
-          if (mode === 'without') {
-            if (world) world.style.transform = 'translate3d(-200px, -200px, 0) scale(2.2)';
-            triggerCollisionFriction(cx + 40, cy + 40, world);
-            if (alertBox) alertBox.style.display = 'block';
-            if (hud) hud.textContent = 'Scale: 220%';
-            showHudSubtitle(getAnimText('p03', 'result', mode), 'danger');
-          } else {
-            if (world) world.style.transform = `translate3d(${-cx}px, ${-cy}px, 0) scale(2.0)`;
-            triggerSatisfactionGlow(cx + 40, cy + 40, world);
-            if (hud) hud.textContent = 'Scale: 200%';
-            showHudSubtitle(getAnimText('p03', 'result', mode), 'success');
-          }
-        }, 1000));
-
-      // --- P04 ANIMATION (KANBAN DND VS SCROLL) ---
-      } else if (scenarioKey === 'p04') {
-        const card = sandboxStage.querySelector('.kanban-card');
-        const kDisaster = sandboxStage.querySelector('#kanbanDisasterAlert');
-        const kSuccess = sandboxStage.querySelector('#kanbanSuccessAlert');
-
-        showGhostFinger(cx, cy - 40, false);
-        showIntentPill(cx, cy - 40, '↕️ Scroll Board Down');
-        showHudSubtitle(getAnimText('p04', 'step1', mode), 'info');
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy + 60, true);
-          if (mode === 'without') {
-            if (card) { card.style.transform = 'scale(1.08) rotate(3deg)'; card.style.borderColor = '#ef4444'; }
-            triggerCollisionFriction(cx, cy, card);
-            if (kDisaster) kDisaster.style.display = 'block';
-            showHudSubtitle(getAnimText('p04', 'result', mode), 'danger');
-          } else {
-            triggerSatisfactionGlow(cx, cy + 60, sandboxStage);
-            showHudSubtitle(getAnimText('p04', 'result', mode), 'success');
-            if (kSuccess) kSuccess.style.display = 'block';
-          }
-        }, 1000));
-
-      // --- P05 ANIMATION (SWIPE VS SCROLL) ---
-      } else if (scenarioKey === 'p05') {
-        const row = sandboxStage.querySelector('.mail-content');
-        const alertEl = sandboxStage.querySelector('#swipeAlertBox');
-
-        showGhostFinger(cx, cy, false);
-        showIntentPill(cx, cy, '↘️ Diagonal Scroll (Inbox)');
-        showHudSubtitle(getAnimText('p05', 'step1', mode), 'info');
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx - 90, cy + 60, true);
-          if (mode === 'without') {
-            if (row) row.style.transform = 'translate3d(-130px, 0, 0)';
-            triggerCollisionFriction(cx - 50, cy, row);
-            if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle(getAnimText('p05', 'result', mode), 'danger');
-          } else {
-            triggerSatisfactionGlow(cx, cy + 30, row);
-            showHudSubtitle(getAnimText('p05', 'result', mode), 'success');
-          }
-        }, 1000));
-
-      // --- P07 ANIMATION (FAB DRAG VS CLICK) ---
-      } else if (scenarioKey === 'p07') {
-        const fab = sandboxStage.querySelector('#fabBtn');
-        const modal = sandboxStage.querySelector('#fabActionModal');
-        const toastEl = sandboxStage.querySelector('#fabSuccessToast');
-
-        showGhostFinger(cx + 80, cy + 180, false);
-        showIntentPill(cx + 80, cy + 180, '🔘 Drag FAB to Move');
-        showHudSubtitle(getAnimText('p07', 'step1', mode), 'info');
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx + 80, cy + 180, true);
-        }, 600));
-
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy, true);
-          if (fab) fab.style.transform = 'translate3d(-80px, -140px, 0)';
-        }, 1300));
-
-        timers.push(setTimeout(() => {
+        case 'p05': { // Mail Swipe
+          const row = sandboxStage.querySelector('.mail-content');
           showGhostFinger(cx, cy, false);
-          if (mode === 'without') {
-            if (modal) modal.style.display = 'flex';
-            triggerCollisionFriction(cx, cy, modal);
-            showHudSubtitle(getAnimText('p07', 'result', mode), 'danger');
-          } else {
-            if (toastEl) toastEl.style.display = 'block';
-            triggerSatisfactionGlow(cx, cy, fab);
-            showHudSubtitle(getAnimText('p07', 'result', mode), 'success');
-          }
-        }, 2100));
+          showIntentPill(cx, cy, '↘️ Diagonal Scroll');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 90, cy + 60, true);
+            if (mode === 'without') {
+              if (row) row.style.transform = 'translate3d(-130px, 0, 0)';
+              triggerCollisionFriction(cx - 50, cy, row);
+              showHudSubtitle(getAnimText('p05', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy + 30, row);
+              showHudSubtitle(getAnimText('p05', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-      // --- P08 ANIMATION ---
-      } else if (scenarioKey === 'p08') {
-        const btn = sandboxStage.querySelector('#btnPrependOlder');
+        case 'p06': { // Pull-to-Refresh
+          const ptrHeader = sandboxStage.querySelector('#ptrHeader') || sandboxStage.firstElementChild;
+          showGhostFinger(cx, cy - 80, false);
+          showIntentPill(cx, cy - 80, '👇 Pull Down to Refresh');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 80, true);
+            if (mode === 'without') {
+              if (ptrHeader) ptrHeader.style.transform = 'translate3d(0, 100px, 0)';
+              triggerCollisionFriction(cx, cy, ptrHeader);
+              showHudSubtitle(getAnimText('p06', 'without', mode), 'danger');
+            } else {
+              if (ptrHeader) ptrHeader.style.transform = 'translate3d(0, 48px, 0)';
+              triggerSatisfactionGlow(cx, cy - 40, ptrHeader);
+              showHudSubtitle(getAnimText('p06', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        showGhostFinger(cx, cy - 140, false);
-        showHudSubtitle(getAnimText('p08', 'step1', mode), 'info');
+        case 'p07': { // FAB Button
+          const fab = sandboxStage.querySelector('#fabBtn') || sandboxStage.querySelector('button');
+          showGhostFinger(cx + 80, cy + 160, false);
+          showIntentPill(cx + 80, cy + 160, '🔘 Drag FAB');
+          timers.push(setTimeout(() => showGhostFinger(cx + 80, cy + 160, true), 600));
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            if (fab) fab.style.transform = 'translate3d(-80px, -140px, 0)';
+          }, 1200));
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, false);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, fab);
+              showHudSubtitle(getAnimText('p07', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, fab);
+              showHudSubtitle(getAnimText('p07', 'with', mode), 'success');
+            }
+          }, 2000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy - 140, true);
-          if (btn) btn.click();
-          showHudSubtitle(getAnimText('p08', 'result', mode), mode === 'without' ? 'danger' : 'success');
-        }, 1000));
+        case 'p08': { // Infinite Feed Prepend Jump
+          const btn = sandboxStage.querySelector('#btnPrependOlder') || sandboxStage.querySelector('button');
+          showGhostFinger(cx, cy - 140, false);
+          showIntentPill(cx, cy - 140, '📜 Prepend Messages');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy - 140, true);
+            if (btn) btn.click();
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy - 140, sandboxStage);
+              showHudSubtitle(getAnimText('p08', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p08', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-      // --- P09 ANIMATION ---
-      } else if (scenarioKey === 'p09') {
-        const backdrop = sandboxStage.querySelector('#demoModalBackdrop');
-        const alertEl = sandboxStage.querySelector('#modalLeakAlert');
+        case 'p09': { // Modal Backdrop Leak
+          const backdrop = sandboxStage.querySelector('#demoModalBackdrop') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '📝 Select Text & Release');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 100, cy + 100, true);
+            if (mode === 'without') {
+              if (backdrop) backdrop.style.display = 'none';
+              triggerCollisionFriction(cx + 100, cy + 100, sandboxStage);
+              showHudSubtitle(getAnimText('p09', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p09', 'with', mode), 'success');
+            }
+          }, 1200));
+          break;
+        }
 
-        showGhostFinger(cx, cy, false);
-        showHudSubtitle(getAnimText('p09', 'step1', mode), 'info');
+        case 'p10': { // Nested Horizontal Tabs
+          const tabTrack = sandboxStage.querySelector('.tab-track') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '↔️ Swipe Tab Strip');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 80, cy, true);
+            if (mode === 'without') {
+              if (tabTrack) tabTrack.style.transform = 'translate3d(-120px, 0, 0)';
+              triggerCollisionFriction(cx - 40, cy, tabTrack);
+              showHudSubtitle(getAnimText('p10', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx - 40, cy, tabTrack);
+              showHudSubtitle(getAnimText('p10', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx + 100, cy + 100, true);
-          if (mode === 'without') {
-            if (backdrop) backdrop.style.display = 'none';
-            if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle(getAnimText('p09', 'result', mode), 'danger');
-          } else {
-            showHudSubtitle(getAnimText('p09', 'result', mode), 'success');
-          }
-        }, 1200));
+        case 'p11': { // Textarea Auto-grow Jump
+          const ta = sandboxStage.querySelector('textarea');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '⌨️ Type 4 Lines');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            if (ta) { ta.value = "Line 1\nLine 2\nLine 3\nLine 4"; ta.style.height = "120px"; }
+            if (mode === 'without') {
+              sandboxStage.scrollTop = 120;
+              triggerCollisionFriction(cx, cy, ta);
+              showHudSubtitle(getAnimText('p11', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, ta);
+              showHudSubtitle(getAnimText('p11', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-      // --- P13 ANIMATION ---
-      } else if (scenarioKey === 'p13') {
-        const thumb = sandboxStage.querySelector('#scrubThumb');
-        const prog = sandboxStage.querySelector('#scrubProgress');
-        const alertEl = sandboxStage.querySelector('#scrubAlert');
+        case 'p12': { // Tooltip Sticky Hover
+          const icon = sandboxStage.querySelector('.tooltip-trigger') || sandboxStage.querySelector('button');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '💡 Tap Help Icon');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            timers.push(setTimeout(() => {
+              showGhostFinger(cx + 80, cy + 80, false); // Tap away
+              if (mode === 'without') {
+                triggerCollisionFriction(cx, cy, icon);
+                showHudSubtitle(getAnimText('p12', 'without', mode), 'danger');
+              } else {
+                triggerSatisfactionGlow(cx + 80, cy + 80, sandboxStage);
+                showHudSubtitle(getAnimText('p12', 'with', mode), 'success');
+              }
+            }, 800));
+          }, 700));
+          break;
+        }
 
-        showGhostFinger(cx - 50, cy + 20, false);
-        showHudSubtitle(getAnimText('p13', 'step1', mode), 'info');
+        case 'p13': { // Video Scrubber Track Slip
+          const thumb = sandboxStage.querySelector('#scrubThumb') || sandboxStage.querySelector('.thumb');
+          showGhostFinger(cx - 60, cy, false);
+          showIntentPill(cx - 60, cy, '🎬 Scrub Timeline');
+          timers.push(setTimeout(() => showGhostFinger(cx - 60, cy, true), 600));
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 60, cy - 60, true); // Finger slips upwards
+            if (mode === 'without') {
+              triggerCollisionFriction(cx + 60, cy - 60, thumb);
+              showHudSubtitle(getAnimText('p13', 'without', mode), 'danger');
+            } else {
+              if (thumb) thumb.style.left = '75%';
+              triggerSatisfactionGlow(cx + 60, cy, thumb);
+              showHudSubtitle(getAnimText('p13', 'with', mode), 'success');
+            }
+          }, 1400));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx - 50, cy + 20, true);
-        }, 600));
+        case 'p14': { // Image Cropper Corner Hit
+          const handle = sandboxStage.querySelector('.crop-handle') || sandboxStage.querySelector('div');
+          showGhostFinger(cx + 70, cy + 70, false);
+          showIntentPill(cx + 70, cy + 70, '✂️ Grab 12px Handle');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 70, cy + 70, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx + 70, cy + 70, handle);
+              showHudSubtitle(getAnimText('p14', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx + 70, cy + 70, handle);
+              showHudSubtitle(getAnimText('p14', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx + 60, cy - 60, true);
-          if (mode === 'without') {
-            if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle(getAnimText('p13', 'result', mode), 'danger');
-          } else {
-            if (prog) prog.style.width = '75%';
-            if (thumb) thumb.style.left = 'calc(75% - 10px)';
-            showHudSubtitle(getAnimText('p13', 'result', mode), 'success');
-          }
-        }, 1400));
+        case 'p15': { // Trackpad Pinch
+          const card = sandboxStage.querySelector('#trackpadCard') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '💻 2-Finger Pinch');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, card);
+              showHudSubtitle(getAnimText('p15', 'without', mode), 'danger');
+            } else {
+              if (card) card.style.transform = 'scale(1.35)';
+              triggerSatisfactionGlow(cx, cy, card);
+              showHudSubtitle(getAnimText('p15', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-      // --- P15 ANIMATION ---
-      } else if (scenarioKey === 'p15') {
-        const card = sandboxStage.querySelector('#trackpadCard');
-        const alertEl = sandboxStage.querySelector('#trackpadAlert');
+        case 'p16': { // Fling Stop Tap
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '🛑 Tap to Stop Fling');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p16', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p16', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        showGhostFinger(cx, cy, false);
-        showHudSubtitle(getAnimText('p15', 'step1', mode), 'info');
+        case 'p17': { // 2D Color Spectrum
+          const thumb = sandboxStage.querySelector('.color-thumb') || sandboxStage.querySelector('div');
+          showGhostFinger(cx - 40, cy - 40, false);
+          showIntentPill(cx - 40, cy - 40, '🎨 Drag Spectrum 2D');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 40, cy + 40, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx + 40, cy + 40, thumb);
+              showHudSubtitle(getAnimText('p17', 'without', mode), 'danger');
+            } else {
+              if (thumb) thumb.style.transform = 'translate3d(60px, 60px, 0)';
+              triggerSatisfactionGlow(cx + 40, cy + 40, thumb);
+              showHudSubtitle(getAnimText('p17', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy, true);
-          if (mode === 'without') {
-            if (alertEl) alertEl.style.display = 'block';
-            showHudSubtitle(getAnimText('p15', 'result', mode), 'danger');
-          } else {
-            if (card) card.style.transform = 'scale(1.4)';
-            showHudSubtitle(getAnimText('p15', 'result', mode), 'success');
-          }
-        }, 1000));
+        case 'p18': { // Price Dual Slider
+          const thumbMin = sandboxStage.querySelector('#thumbMin') || sandboxStage.querySelector('.thumb-min');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '⚖️ Drag Overlapping Thumb');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 60, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, thumbMin);
+              showHudSubtitle(getAnimText('p18', 'without', mode), 'danger');
+            } else {
+              if (thumbMin) { thumbMin.style.zIndex = '10'; thumbMin.style.transform = 'translate3d(-60px, 0, 0)'; }
+              triggerSatisfactionGlow(cx - 60, cy, thumbMin);
+              showHudSubtitle(getAnimText('p18', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
 
-      // --- P23 ANIMATION ---
-      } else if (scenarioKey === 'p23') {
-        const osBack = sandboxStage.querySelector('#osBackFade');
-        const drawer = sandboxStage.querySelector('#drawerPanel');
+        case 'p19': { // Data Table Column Divider
+          const divider = sandboxStage.querySelector('.col-divider') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy - 80, false);
+          showIntentPill(cx, cy - 80, '📊 Drag Column Divider');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 50, cy - 80, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx + 50, cy - 80, divider);
+              showHudSubtitle(getAnimText('p19', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx + 50, cy - 80, divider);
+              showHudSubtitle(getAnimText('p19', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
 
-        showGhostFinger(cx - 150, cy, false);
-        showHudSubtitle(getAnimText('p23', 'step1', mode), 'info');
+        case 'p20': { // Accordion Jump
+          const accBtn = sandboxStage.querySelector('.accordion-trigger') || sandboxStage.querySelector('button');
+          showGhostFinger(cx, cy - 50, false);
+          showIntentPill(cx, cy - 50, '📂 Collapse Accordion');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy - 50, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p20', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy - 50, accBtn);
+              showHudSubtitle(getAnimText('p20', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx - 60, cy, true);
-          if (mode === 'without') {
-            if (osBack) osBack.style.display = 'flex';
-            showHudSubtitle(getAnimText('p23', 'result', mode), 'danger');
-          } else {
-            if (drawer) drawer.style.transform = 'translate3d(0, 0, 0)';
-            showHudSubtitle(getAnimText('p23', 'result', mode), 'success');
-          }
-        }, 1200));
+        case 'p21': { // Tap Delay
+          const btn = sandboxStage.querySelector('button');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '⚡️ Tap Checkout Button');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            if (mode === 'without') {
+              timers.push(setTimeout(() => {
+                triggerCollisionFriction(cx, cy, btn);
+                showHudSubtitle(getAnimText('p21', 'without', mode), 'danger');
+              }, 300));
+            } else {
+              triggerSatisfactionGlow(cx, cy, btn);
+              showHudSubtitle(getAnimText('p21', 'with', mode), 'success');
+            }
+          }, 800));
+          break;
+        }
 
-      // --- P31 ANIMATION ---
-      } else if (scenarioKey === 'p31') {
-        const btn = sandboxStage.querySelector('#heartBtn');
-        const container = sandboxStage.querySelector('#doubleTapContainer');
-        const dtAlert = sandboxStage.querySelector('#doubleTapAlert');
+        case 'p22': { // False Long-Press
+          const item = sandboxStage.querySelector('.context-item') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '👆 Quick 100ms Tap');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            timers.push(setTimeout(() => showGhostFinger(cx, cy, false), 120));
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, item);
+              showHudSubtitle(getAnimText('p22', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, item);
+              showHudSubtitle(getAnimText('p22', 'with', mode), 'success');
+            }
+          }, 800));
+          break;
+        }
 
-        showGhostFinger(cx, cy - 20, false);
-        showHudSubtitle(getAnimText('p31', 'step1', mode), 'info');
+        case 'p23': { // OS Back Deadzone
+          const drawer = sandboxStage.querySelector('#drawerPanel') || sandboxStage.querySelector('div');
+          showGhostFinger(cx - 150, cy, false);
+          showIntentPill(cx - 150, cy, '📲 Edge Swipe at 10px');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 60, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx - 60, cy, drawer);
+              showHudSubtitle(getAnimText('p23', 'without', mode), 'danger');
+            } else {
+              if (drawer) drawer.style.transform = 'translate3d(0, 0, 0)';
+              triggerSatisfactionGlow(cx, cy, drawer);
+              showHudSubtitle(getAnimText('p23', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
 
-        timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 600));
-        timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, false); }, 750));
-        timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 900));
+        case 'p24': { // Selection Box vs Pan
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '🔲 Drag Selection Box');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 80, cy + 80, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p24', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx + 40, cy + 40, sandboxStage);
+              showHudSubtitle(getAnimText('p24', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          if (mode === 'without') {
-            if (container) container.style.transform = 'scale(2.2)';
-            if (dtAlert) dtAlert.style.display = 'block';
-            showHudSubtitle(getAnimText('p31', 'result', mode), 'danger');
-          } else {
-            if (btn) btn.style.transform = 'scale(1.3)';
-            setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 200);
-            showHudSubtitle(getAnimText('p31', 'result', mode), 'success');
-          }
-        }, 1100));
+        case 'p25': { // Audio Thumb Target
+          const thumb = sandboxStage.querySelector('.slider-thumb') || sandboxStage.querySelector('div');
+          showGhostFinger(cx + 40, cy, false);
+          showIntentPill(cx + 40, cy, '🎚️ Tap 12px Thumb');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 40, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx + 40, cy, thumb);
+              showHudSubtitle(getAnimText('p25', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx + 40, cy, thumb);
+              showHudSubtitle(getAnimText('p25', 'with', mode), 'success');
+            }
+          }, 900));
+          break;
+        }
 
-      // --- GENERIC SCENARIO ANIMATION ---
-      } else {
-        showGhostFinger(cx, cy, false);
-        showHudSubtitle(getAnimText(scenarioKey, 'step1', mode), 'info');
+        case 'p26': { // Textarea Cursor Auto-scroll
+          const ta = sandboxStage.querySelector('textarea');
+          showGhostFinger(cx, cy + 80, false);
+          showIntentPill(cx, cy + 80, '🔍 Caret at Bottom');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 80, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy + 80, ta);
+              showHudSubtitle(getAnimText('p26', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, ta);
+              showHudSubtitle(getAnimText('p26', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx, cy, true);
-        }, 600));
+        case 'p27': { // Sticky Column Jitter
+          const col = sandboxStage.querySelector('.sticky-column') || sandboxStage.querySelector('th');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '📐 Scroll Table Horizontally');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 80, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx - 80, cy, col);
+              showHudSubtitle(getAnimText('p27', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx - 80, cy, col);
+              showHudSubtitle(getAnimText('p27', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
 
-        timers.push(setTimeout(() => {
-          showGhostFinger(cx + 50, cy + 50, true);
-          showHudSubtitle(getAnimText(scenarioKey, 'result', mode), mode === 'without' ? 'danger' : 'success');
-        }, 1400));
+        case 'p28': { // User-select Suppression
+          const card = sandboxStage.querySelector('.draggable-card') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '👆 Hold Interactive Card');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, card);
+              showHudSubtitle(getAnimText('p28', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, card);
+              showHudSubtitle(getAnimText('p28', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
+
+        case 'p29': { // Drag auto-scroll runway
+          const item = sandboxStage.querySelector('.dnd-item') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy + 40, false);
+          showIntentPill(cx, cy + 40, '🚀 Drag to Boundary');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 180, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy + 180, item);
+              showHudSubtitle(getAnimText('p29', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy + 180, item);
+              showHudSubtitle(getAnimText('p29', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
+
+        case 'p30': { // Multi-touch Zoom Inertia
+          const img = sandboxStage.querySelector('img') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '🖼️ Release Fast Pinch');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 80, cy - 80, true);
+            if (mode === 'without') {
+              if (img) img.style.transform = 'translate3d(300px, -300px, 0) scale(1.8)';
+              triggerCollisionFriction(cx + 80, cy - 80, img);
+              showHudSubtitle(getAnimText('p30', 'without', mode), 'danger');
+            } else {
+              if (img) img.style.transform = 'translate3d(0, 0, 0) scale(1.4)';
+              triggerSatisfactionGlow(cx, cy, img);
+              showHudSubtitle(getAnimText('p30', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
+
+        case 'p31': { // Double-Tap Zoom Lock
+          const btn = sandboxStage.querySelector('#heartBtn') || sandboxStage.querySelector('button');
+          const container = sandboxStage.querySelector('#doubleTapContainer') || sandboxStage;
+          showGhostFinger(cx, cy - 20, false);
+          showIntentPill(cx, cy - 20, '❤️ Rapid Double-Tap');
+          timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 600));
+          timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, false); }, 750));
+          timers.push(setTimeout(() => { showGhostFinger(cx, cy - 20, true); }, 900));
+          timers.push(setTimeout(() => {
+            if (mode === 'without') {
+              if (container) container.style.transform = 'scale(2.0)';
+              triggerCollisionFriction(cx, cy, container);
+              showHudSubtitle(getAnimText('p31', 'without', mode), 'danger');
+            } else {
+              if (btn) btn.style.transform = 'scale(1.3)';
+              setTimeout(() => { if (btn) btn.style.transform = 'scale(1)'; }, 200);
+              triggerSatisfactionGlow(cx, cy - 20, btn);
+              showHudSubtitle(getAnimText('p31', 'with', mode), 'success');
+            }
+          }, 1100));
+          break;
+        }
+
+        case 'p32': { // Passive Listener Memory
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '🔄 Pan Canvas Repeatedly');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx + 40, cy - 40, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, sandboxStage);
+              showHudSubtitle(getAnimText('p32', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx + 40, cy - 40, sandboxStage);
+              showHudSubtitle(getAnimText('p32', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
+
+        case 'p33': { // Sheet Dual Threshold
+          const sheet = sandboxStage.querySelector('.sheet-container') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '🤏 10px Micro-Flick');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 15, true);
+            timers.push(setTimeout(() => showGhostFinger(cx, cy + 15, false), 150));
+            if (mode === 'without') {
+              if (sheet) sheet.style.transform = 'translate3d(0, 300px, 0)';
+              triggerCollisionFriction(cx, cy + 15, sheet);
+              showHudSubtitle(getAnimText('p33', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, sheet);
+              showHudSubtitle(getAnimText('p33', 'with', mode), 'success');
+            }
+          }, 900));
+          break;
+        }
+
+        case 'p34': { // Header Deadband
+          const header = sandboxStage.querySelector('.sticky-header') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '↕️ 1px Micro-Scroll');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx, cy + 2, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx, cy, header);
+              showHudSubtitle(getAnimText('p34', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx, cy, header);
+              showHudSubtitle(getAnimText('p34', 'with', mode), 'success');
+            }
+          }, 900));
+          break;
+        }
+
+        case 'p35': { // Commit Hysteresis 50%
+          const row = sandboxStage.querySelector('.swipe-row') || sandboxStage.querySelector('div');
+          showGhostFinger(cx, cy, false);
+          showIntentPill(cx, cy, '↔️ Swipe 20% & Release');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 30, cy, true); // 20% swipe
+            timers.push(setTimeout(() => {
+              showGhostFinger(cx - 30, cy, false); // release
+              if (mode === 'without') {
+                triggerCollisionFriction(cx - 30, cy, row);
+                showHudSubtitle(getAnimText('p35', 'without', mode), 'danger');
+              } else {
+                triggerSatisfactionGlow(cx, cy, row);
+                showHudSubtitle(getAnimText('p35', 'with', mode), 'success');
+              }
+            }, 300));
+          }, 900));
+          break;
+        }
+
+        case 'p36': { // Overscroll Containment
+          const swiper = sandboxStage.querySelector('.carousel-container') || sandboxStage.querySelector('div');
+          showGhostFinger(cx + 80, cy, false);
+          showIntentPill(cx + 80, cy, '➡️ Swipe Past End');
+          timers.push(setTimeout(() => {
+            showGhostFinger(cx - 100, cy, true);
+            if (mode === 'without') {
+              triggerCollisionFriction(cx - 100, cy, swiper);
+              showHudSubtitle(getAnimText('p36', 'without', mode), 'danger');
+            } else {
+              triggerSatisfactionGlow(cx - 100, cy, swiper);
+              showHudSubtitle(getAnimText('p36', 'with', mode), 'success');
+            }
+          }, 1000));
+          break;
+        }
       }
 
       // Finish sequence after 3.6s
