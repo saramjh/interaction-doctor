@@ -1232,6 +1232,126 @@
       }
     }
 
+  
+    /* ========================================================
+       ADAPTIVE MULTI-DEVICE SIMULATOR SHELL MODES
+       ======================================================== */
+
+    /* 1. PHONE SHELL (For Desktop simulating Mobile) */
+    .phone-mockup.mode-phone-shell {
+      width: 100%;
+      max-width: 380px;
+      height: 560px;
+      background: #020617;
+      border: 8px solid #334155;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7), inset 0 0 0 2px #0f172a;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+    }
+
+    .phone-mockup.mode-phone-shell .phone-status-bar {
+      display: flex;
+    }
+    .phone-mockup.mode-phone-shell .phone-home-indicator {
+      display: flex;
+    }
+
+    /* 2. DESKTOP WINDOW SHELL (For Desktop-specific scenarios like P15, P19, P36) */
+    .phone-mockup.mode-desktop-shell {
+      width: 100%;
+      height: 520px;
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-mockup.mode-desktop-shell .phone-status-bar {
+      display: flex;
+      height: 36px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 0 14px;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .phone-mockup.mode-desktop-shell .phone-notch {
+      display: none;
+    }
+
+    .phone-mockup.mode-desktop-shell .phone-home-indicator {
+      display: none;
+    }
+
+    /* 3. NATIVE MOBILE SHELL (When user is ALREADY ON a real mobile device) */
+    .phone-mockup.mode-native-mobile {
+      width: 100%;
+      height: 500px;
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-mockup.mode-native-mobile .phone-status-bar {
+      display: none !important;
+    }
+
+    .phone-mockup.mode-native-mobile .phone-home-indicator {
+      display: none !important;
+    }
+
+    /* macOS Window Controls for Desktop Shell */
+    .desktop-mac-dots {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .phone-mockup.mode-desktop-shell .desktop-mac-dots {
+      display: flex;
+    }
+    .mac-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mac-dot.red { background: #ef4444; }
+    .mac-dot.yellow { background: #f59e0b; }
+    .mac-dot.green { background: #10b981; }
+
+    .desktop-address-bar {
+      display: none;
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 11px;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 0 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .phone-mockup.mode-desktop-shell .desktop-address-bar {
+      display: block;
+    }
+
   </style>
 </head>
 <body>
@@ -1292,6 +1412,19 @@
 
       <div class="workstation-grid">
         <div class="simulator-box">
+          <!-- Adaptive Multi-Device Context Bar -->
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:11px; color:#94a3b8; padding:0 2px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span id="detectedEnvBadge" style="background:#090e1a; border:1px solid #334155; padding:3px 8px; border-radius:6px; font-weight:700; color:#60a5fa; font-family:'JetBrains Mono';">
+                Detecting Device...
+              </span>
+              <span id="targetEnvBadge" style="font-size:10px; color:#94a3b8;"></span>
+            </div>
+            <button id="btnToggleShell" style="background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:3px 10px; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+              <span>📱 Shell Mode</span>
+            </button>
+          </div>
+
           <div class="sim-toggle-bar">
             <button class="sim-toggle-btn without" id="btnModeWithout">
               ❌ Baseline (Defects)
@@ -1305,20 +1438,29 @@
             <strong>👉 <span id="missionHeading">Action Test</span>:</strong> <span id="missionText"></span>
           </div>
 
-          <!-- HARDWARE REALISTIC MOBILE DEVICE SHELL -->
-          <div class="phone-mockup" id="phoneMockup">
-            <div class="phone-status-bar">
-              <span>9:41</span>
-              <div class="phone-notch">
+          <!-- ADAPTIVE HARDWARE DEVICE SHELL -->
+          <div class="phone-mockup mode-phone-shell" id="phoneMockup">
+            <div class="phone-status-bar" id="phoneStatusBar">
+              <!-- Desktop macOS dots when in Desktop Shell -->
+              <div class="desktop-mac-dots">
+                <div class="mac-dot red"></div>
+                <div class="mac-dot yellow"></div>
+                <div class="mac-dot green"></div>
+              </div>
+              <div class="desktop-address-bar" id="desktopAddressBar">https://app.enterprise-workspace.local/viewport</div>
+
+              <!-- Mobile status items when in Phone Shell -->
+              <span class="mobile-status-item">9:41</span>
+              <div class="phone-notch mobile-status-item">
                 <div class="phone-camera"></div>
                 <div class="phone-speaker"></div>
               </div>
-              <span>5G 􀛨 100%</span>
+              <span class="mobile-status-item">5G 􀛨 100%</span>
             </div>
 
             <div class="sandbox-stage scroll-contained" id="sandboxStage"></div>
 
-            <div class="phone-home-indicator">
+            <div class="phone-home-indicator" id="phoneHomeIndicator">
               <div class="home-bar"></div>
             </div>
           </div>
@@ -2082,7 +2224,74 @@
       renderScenario();
     }
 
+    
+    // ========================================================
+    // ADAPTIVE MULTI-DEVICE CONTROLLER
+    // Distinguishes Real Mobile Device vs Desktop Simulation
+    // ========================================================
+    const isActualMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (window.innerWidth <= 768 && ('ontouchstart' in window));
+    let userManualShellOverride = null; // 'phone', 'desktop', 'native'
+
+    const detectedEnvBadge = document.getElementById('detectedEnvBadge');
+    const targetEnvBadge = document.getElementById('targetEnvBadge');
+    const btnToggleShell = document.getElementById('btnToggleShell');
+
+    function updateAdaptiveShell() {
+      const sc = rawCases.find(c => c.id.toLowerCase() === currentScenario) || rawCases[0];
+      const isDesktopScenario = sc.kw && (sc.kw.includes('trackpad') || sc.kw.includes('datatable') || sc.kw.includes('desktop'));
+
+      if (isActualMobile) {
+        detectedEnvBadge.textContent = '📱 Real Mobile Device';
+        detectedEnvBadge.style.color = '#34d399';
+        detectedEnvBadge.style.borderColor = '#10b981';
+      } else {
+        detectedEnvBadge.textContent = '💻 Desktop Browser';
+        detectedEnvBadge.style.color = '#60a5fa';
+        detectedEnvBadge.style.borderColor = '#3b82f6';
+      }
+
+      targetEnvBadge.textContent = isDesktopScenario ? 'Target: Desktop (macOS/Win)' : 'Target: Mobile (iOS/Android)';
+
+      // Determine active shell class
+      let activeClass = 'mode-phone-shell';
+      if (isActualMobile) {
+        // When on a REAL smartphone, NEVER trap user in a fake phone bezel!
+        activeClass = (userManualShellOverride === 'phone') ? 'mode-phone-shell' : 'mode-native-mobile';
+      } else {
+        // When on DESKTOP:
+        if (isDesktopScenario) {
+          activeClass = (userManualShellOverride === 'phone') ? 'mode-phone-shell' : 'mode-desktop-shell';
+        } else {
+          activeClass = (userManualShellOverride === 'native') ? 'mode-native-mobile' : 'mode-phone-shell';
+        }
+      }
+
+      phoneMockup.className = `phone-mockup ${activeClass}`;
+
+      // Update toggle button text
+      if (activeClass === 'mode-native-mobile') {
+        btnToggleShell.innerHTML = '<span>⚡️ Native View (Active)</span>';
+      } else if (activeClass === 'mode-desktop-shell') {
+        btnToggleShell.innerHTML = '<span>🖥️ Desktop Window (Active)</span>';
+      } else {
+        btnToggleShell.innerHTML = '<span>📱 Phone Mockup (Active)</span>';
+      }
+    }
+
+    btnToggleShell.addEventListener('click', () => {
+      if (phoneMockup.classList.contains('mode-native-mobile')) {
+        userManualShellOverride = 'phone';
+      } else if (phoneMockup.classList.contains('mode-phone-shell')) {
+        userManualShellOverride = isActualMobile ? 'native' : 'desktop';
+      } else {
+        userManualShellOverride = isActualMobile ? 'native' : 'phone';
+      }
+      updateAdaptiveShell();
+    });
+
+
     function renderScenario() {
+      updateAdaptiveShell();
       const db = database[currentLang] || database.en;
       const sc = db.scenarios[currentScenario] || db.scenarios.p03;
       
@@ -2155,11 +2364,32 @@
         const kbEnter = sandboxStage.querySelector('#kbEnter');
         const alertBox = sandboxStage.querySelector('#prematureAlert');
         const btnSend = sandboxStage.querySelector('#btnMobileSend');
-        const openKb = () => { kb.classList.add('open'); bar.style.bottom = mode === 'with' ? '220px' : '0px'; };
-        const closeKb = () => { kb.classList.remove('open'); bar.style.bottom = '0px'; };
-        input.addEventListener('focus', openKb);
-        input.addEventListener('click', openKb);
-        btnCloseKb.addEventListener('click', closeKb);
+        // REAL MOBILE VS DESKTOP SIMULATION SEPARATION
+        if (isActualMobile) {
+          // Real Mobile: Hide fake hardware keyboard graphic! Use REAL mobile keyboard!
+          kb.style.display = 'none';
+          
+          if (window.visualViewport) {
+            const onVpResize = () => {
+              if (mode === 'with') {
+                // With Doctor: 0ms GPU Lift tracking actual phone keyboard height
+                const actualKbHeight = Math.max(0, window.innerHeight - window.visualViewport.height);
+                bar.style.transform = `translate3d(0, -${actualKbHeight}px, 0)`;
+              } else {
+                // Without Doctor: 100vh Broken - bar stays hidden under real phone keyboard!
+                bar.style.transform = 'none';
+              }
+            };
+            window.visualViewport.addEventListener('resize', onVpResize);
+          }
+        } else {
+          // Desktop Browser: Use Simulated 220px Hardware Keyboard
+          const openKb = () => { kb.classList.add('open'); bar.style.bottom = mode === 'with' ? '220px' : '0px'; };
+          const closeKb = () => { kb.classList.remove('open'); bar.style.bottom = '0px'; };
+          input.addEventListener('focus', openKb);
+          input.addEventListener('click', openKb);
+          btnCloseKb.addEventListener('click', closeKb);
+        }
         const postMsg = (txt) => {
           if (!txt.trim()) return;
           const bubble = document.createElement('div');
