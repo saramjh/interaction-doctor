@@ -8,3 +8,8 @@ __pycache__/
 # this only keeps `git add benchmark/` from silently staging them. Small
 # summaries (results/smoke-summary.*) are intentionally still tracked.
 results/raw/
+
+# Paid v6 preflight infrastructure-qualification artifacts (3 runs +
+# aggregate gate) are diagnostic/result data, not part of the frozen
+# instrument commit either -- same reasoning as results/raw/ above.
+results/preflight/

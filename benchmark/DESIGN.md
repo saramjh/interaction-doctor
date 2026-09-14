@@ -247,22 +247,80 @@ archives the full event stream (one JSON object per line, including
 `tool_use`/`tool_result` content blocks) as `event_log.json` alongside
 `run_result.json` (`orchestrate.py`'s `archive()`), so Skill-invocation
 and other tool-level questions are answerable without a follow-up run.
+**v6 sandbox architecture (current, active).** The Claude Code PARENT
+process runs completely unsandboxed by the harness (ordinary
+`subprocess.run(cwd=workspace)`, normal host auth, normal model-service
+networking). Built-in file tools are governed by a trusted, per-run
+inline `--settings` JSON policy (`harness/settings_policy.py`) under
+`--permission-mode dontAsk` -- absolute filesystem paths in `Read(...)`/
+`Edit(...)` rules use Claude Code's `//<path>` syntax; `Glob`/`Grep` are
+covered by `Read` rules and `Write` by `Edit` rules, so no separate
+`Glob(...)`/`Grep(...)`/`Write(...)` path rules are used.
+`permissions.disableBypassPermissionsMode`/`disableAutoMode` are both set
+to `"disable"`. Bash (and everything it spawns) runs under Claude Code's
+OWN native Seatbelt sandbox (`sandbox.*` keys, confirmed present in the
+exact installed 2.1.270 binary via `strings`), fail-closed
+(`failIfUnavailable=true`, `allowUnsandboxedCommands=false`,
+`excludedCommands=[]`). The native sandbox defaults to broad filesystem
+read access, so the real read boundary is `sandbox.filesystem.denyRead`
+of the real `$HOME` and the real benchmark workspace-root tree, with
+`sandbox.filesystem.allowRead` re-opening only the current workspace and
+the frozen Node runtime paths as narrower exceptions; `denyWrite` covers
+`<workspace>/.claude` at the OS level, since the sandbox's working
+directory is writable by default and built-in permission rules alone
+don't close a Bash-originated write to the control plane. Credential
+protection uses the documented native `sandbox.credentials.envVars` key
+(name + `mode: "deny"` per protected variable, never a value) --
+real enforcement, not a harness-side convention. `--allowedTools` is
+absent entirely; `--tools` remains the availability boundary. Arm
+workspaces are strictly sequential during `--execute`: build, run,
+archive, destroy one arm completely before the next arm's workspace is
+even built (`orchestrate.run_execute_sequential`) -- no sibling
+coexistence during real execution. `--check-only`'s cross-arm-leakage
+diagnostic is the only place arms are ever built together, and it cleans
+up every workspace it builds before returning.
+
+A prior custom OUTER Seatbelt sandbox wrapping the entire Claude Code
+parent process (`harness/sandbox.py`, `harness/egress_proxy.py`,
+allowlisted via a local CONNECT proxy to `api.anthropic.com:443`) was
+designed, tested, and rejected: it created an unresolvable conflict
+between the parent's own OAuth/Keychain authentication needs and Bash's
+isolation needs, and a second, nested `sandbox_apply` from inside an
+already-sandboxed process proved unreliable under live testing (including
+a false-positive "Keychain revoked" result later traced to an unrelated
+profile-file-read failure). Those files are preserved on disk as inactive
+historical code -- not imported anywhere in the active v6 execution path.
+
 `harness/tool_surface_preflight.py` is the required live-preflight check
 against each arm's archived `system/init` event before the 90-run batch
-is allowed to proceed (see its module docstring). That preflight is
-EXACTLY 3 paid runs -- `config.PREFLIGHT_CASE_ID` under each of
-`config.PREFLIGHT_ARMS` (baseline, generic, doctor), same model/effort/
-budget/sandbox/proxy/tool-surface/event-logging as the real 90-run batch
--- never 1 run and never a dynamically-chosen case. The required
-sequence: commit the immutable snapshot, `verify_experiment_freeze.py`
-passes, the 3 preflight runs execute, all 3 archived `system/init` events
-are inspected, the doctor run's event log is confirmed to contain an
-actual Skill tool_use for interaction-doctor, only then are the remaining
-87 empirical runs authorized. The network egress allowlist
-(`api.anthropic.com:443`) is fixed before the preflight and is never
-widened during it -- a genuine need for another destination is a HOLD,
+is allowed to proceed (see its module docstring). `harness/preflight.py`
+and `harness/preflight_validator.py` implement the v6 preflight-only
+infrastructure-qualification mechanism: an external filesystem canary, a
+workspace symlink to it, a parent-only synthetic non-secret environment
+canary (its NAME protected via `sandbox.credentials.envVars`), and a
+frozen infrastructure-check prompt appendix instructing the model to
+exercise 9 frozen probes without skipping the primary task; the validator
+reads the archived event log and run record and assigns each of the 9
+assertions PASS/FAIL/HOLD deterministically -- never inferring PASS
+merely because the `--settings` JSON contains the intended values. That
+preflight is EXACTLY 3 paid runs -- `config.PREFLIGHT_CASE_ID` under each
+of `config.PREFLIGHT_ARMS` (baseline, generic, doctor), same model/
+effort/budget/sandbox/tool-surface/event-logging as the real 90-run batch
+-- never 1 run and never a dynamically-chosen case, legal only via
+`orchestrate.py --preflight`. The required sequence: commit the immutable
+snapshot, `verify_experiment_freeze.py` passes, the 3 preflight runs
+execute, `preflight_validator.py` scores all 9 infrastructure assertions,
+all 3 archived `system/init` events are inspected, the doctor run's event
+log is confirmed to contain an actual Skill tool_use for
+interaction-doctor, only then are the 90 FRESH empirical runs
+authorized. The Bash network allowlist is empty (`strictAllowlist=true`,
+`allowedDomains=[]`) -- Bash needs no network destination for any
+fixture; only the unsandboxed parent reaches the model service directly.
+A genuine need for a Bash network destination during preflight is a HOLD,
 reported with the exact attempted destination, not a silent addition; see
 `config.EXPERIMENT_PREFLIGHT_REQUIRED` for the authoritative statement.
+The preflight runs are infrastructure qualification only and are never
+counted as part of the 90-row empirical result table.
 
 Ambiguity-case grading (intent-guessing violations) cannot be fully
 automated from a file diff alone: the correct outcome is often "no

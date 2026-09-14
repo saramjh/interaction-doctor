@@ -61,12 +61,31 @@ def sha256_tree(root, exclude_names=(".DS_Store", "__pycache__")):
 
 
 def _installed_claude_version():
+    """CORRECTION (post-report): invokes the exact frozen launcher path,
+    never bare "claude" resolved through PATH."""
     try:
         out = subprocess.run(
-            ["claude", "--version"], capture_output=True, text=True, timeout=10
+            [config.CLAUDE_LAUNCHER_PATH, "--version"], capture_output=True, text=True, timeout=10
         ).stdout.strip()
         # e.g. "2.1.270 (Claude Code)" -> "2.1.270"
         return out.split()[0] if out else None
+    except Exception as e:
+        return f"<error: {e}>"
+
+
+def _installed_claude_executable_realpath():
+    try:
+        return os.path.realpath(config.CLAUDE_LAUNCHER_PATH)
+    except Exception as e:
+        return f"<error: {e}>"
+
+
+def _installed_claude_executable_sha256():
+    try:
+        real = os.path.realpath(config.CLAUDE_LAUNCHER_PATH)
+        if not os.path.exists(real):
+            return None
+        return sha256_file(real)
     except Exception as e:
         return f"<error: {e}>"
 
@@ -103,6 +122,16 @@ def verify_freeze(freeze_filename=None):
     for fn, h in (frozen.get("harness_files_sha256") or {}).items():
         p = os.path.join(HARNESS_DIR, fn)
         check(f"harness:{fn}", h, sha256_file(p) if os.path.exists(p) else None)
+
+    # The validation artifacts whose PASS result is used to authorize the
+    # commit (settings_policy_selftest.py) and the preflight-only
+    # infrastructure-qualification artifacts (preflight.py,
+    # preflight_validator.py, preflight_appendix.md) are frozen too --
+    # not just the runtime modules -- so nobody can silently edit the
+    # selftest or the preflight mechanism to make a failing check pass.
+    for fn, h in (frozen.get("preflight_files_sha256") or {}).items():
+        p = os.path.join(HARNESS_DIR, fn)
+        check(f"preflight_artifact:{fn}", h, sha256_file(p) if os.path.exists(p) else None)
 
     for fn, h in (frozen.get("needs_intent_scoring_protocol_sha256") or {}).items():
         p = os.path.join(DESIGN_DIR, fn)
@@ -147,11 +176,76 @@ def verify_freeze(freeze_filename=None):
     check("required_tools_all_arms", ts.get("required_tools_all_arms"),
           list(config.REQUIRED_TOOLS_ALL_ARMS))
 
-    ne = frozen.get("network_egress_configuration") or {}
-    check("model_service_egress_host", ne.get("host"), config.MODEL_SERVICE_EGRESS_HOST)
-    check("model_service_egress_port", ne.get("port"), config.MODEL_SERVICE_EGRESS_PORT)
-    check("wildcard_fallback_allowed", ne.get("wildcard_fallback_allowed"),
-          config.WILDCARD_EGRESS_FALLBACK_ALLOWED)
+    check("permission_mode", frozen.get("permission_mode"), config.PERMISSION_MODE)
+    check("active_sandbox_architecture", frozen.get("active_sandbox_architecture"),
+          config.ACTIVE_SANDBOX_ARCHITECTURE)
+    check("custom_outer_sandbox_active", frozen.get("custom_outer_sandbox_active"),
+          config.CUSTOM_OUTER_SANDBOX_ACTIVE)
+
+    sc = frozen.get("native_sandbox_configuration") or {}
+    check("sandbox.enabled", sc.get("enabled"), config.SANDBOX_ENABLED)
+    check("sandbox.failIfUnavailable", sc.get("failIfUnavailable"),
+          config.SANDBOX_FAIL_IF_UNAVAILABLE)
+    check("sandbox.allowUnsandboxedCommands", sc.get("allowUnsandboxedCommands"),
+          config.SANDBOX_ALLOW_UNSANDBOXED_COMMANDS)
+    check("sandbox.autoAllowBashIfSandboxed", sc.get("autoAllowBashIfSandboxed"),
+          config.SANDBOX_AUTO_ALLOW_BASH_IF_SANDBOXED)
+    check("sandbox.excludedCommands", sc.get("excludedCommands"),
+          list(config.SANDBOX_EXCLUDED_COMMANDS))
+    check("sandbox.filesystem.disabled", sc.get("filesystem_disabled"),
+          config.SANDBOX_FILESYSTEM_DISABLED)
+    check("sandbox.network.strictAllowlist", sc.get("network_strict_allowlist"),
+          config.SANDBOX_NETWORK_STRICT_ALLOWLIST)
+    check("sandbox.network.allowedDomains", sc.get("network_allowed_domains"),
+          list(config.SANDBOX_NETWORK_ALLOWED_DOMAINS))
+    check("sandbox.filesystem.denyRead contains the real HOME path and the real "
+          "benchmark workspace-root path (the native sandbox defaults to broad read "
+          "access; allowRead alone does not narrow it -- an explicit denyRead of both "
+          "is required, with allowRead carving out only the current workspace + "
+          "frozen Node runtime as exceptions -- the workspace-root entry is what "
+          "makes a stale sibling arm's workspace unreadable to Bash)",
+          sc.get("filesystem_deny_read"), [config.REAL_HOME_PATH, config.REAL_WORKSPACE_ROOT])
+    check("sandbox.filesystem.deny_write_control_plane_relative_path", sc.get("filesystem_deny_write_relative"),
+          ".claude")
+    check("sandbox.credentials.env_mode", sc.get("credentials_env_mode"),
+          config.SANDBOX_CREDENTIALS_ENV_MODE)
+    check("sandbox.credentials.envVars covers exactly config.SENSITIVE_ENV_VAR_NAMES "
+          "(the real, documented native enforcement mechanism -- confirmed via `strings` "
+          "on the installed binary -- not a harness-side bookkeeping key)",
+          set(sc.get("credentials_env_var_names") or []), set(config.SENSITIVE_ENV_VAR_NAMES))
+
+    check("permissions.disableBypassPermissionsMode",
+          frozen.get("permissions_disable_bypass_permissions_mode"),
+          config.PERMISSIONS_DISABLE_BYPASS_PERMISSIONS_MODE)
+    check("permissions.disableAutoMode",
+          frozen.get("permissions_disable_auto_mode"),
+          config.PERMISSIONS_DISABLE_AUTO_MODE)
+
+    nr = frozen.get("node_runtime_configuration") or {}
+    check("node_launcher_path", nr.get("launcher_path"), config.NODE_LAUNCHER_PATH)
+    check("node_executable_realpath", nr.get("executable_realpath"),
+          config.FROZEN_NODE_EXECUTABLE_REALPATH)
+    check("node_version", nr.get("version"), config.FROZEN_NODE_VERSION)
+    check("node_launcher_path exists on disk", True,
+          os.path.exists(config.NODE_LAUNCHER_PATH) or "MISSING")
+    check("node_executable_realpath exists on disk", True,
+          os.path.exists(config.FROZEN_NODE_EXECUTABLE_REALPATH) or "MISSING")
+    if nr.get("launcher_sha256"):
+        check("node_launcher_path.sha256", nr.get("launcher_sha256"),
+              sha256_file(config.NODE_LAUNCHER_PATH)
+              if os.path.exists(config.NODE_LAUNCHER_PATH) else None)
+    if nr.get("executable_realpath_sha256"):
+        check("node_executable_realpath.sha256", nr.get("executable_realpath_sha256"),
+              sha256_file(config.FROZEN_NODE_EXECUTABLE_REALPATH)
+              if os.path.exists(config.FROZEN_NODE_EXECUTABLE_REALPATH) else None)
+
+    check("sensitive_env_var_names", frozen.get("sensitive_env_var_names"),
+          list(config.SENSITIVE_ENV_VAR_NAMES))
+
+    check("sequential_arm_lifecycle_enforced", frozen.get("sequential_arm_lifecycle_enforced"), True)
+
+    check("builtin_symlink_containment_status", frozen.get("builtin_symlink_containment_status"),
+          "REQUIRES_LIVE_PREFLIGHT")
 
     pf = frozen.get("preflight_configuration") or {}
     check("preflight_case_id", pf.get("case_id"), config.PREFLIGHT_CASE_ID)
@@ -164,6 +258,36 @@ def verify_freeze(freeze_filename=None):
     check("claude_cli_version", frozen_cli_version, installed_version)
     check("config.FROZEN_CLAUDE_CLI_VERSION matches frozen file",
           frozen_cli_version, config.FROZEN_CLAUDE_CLI_VERSION)
+
+    # CORRECTION (post-report): pinning the version string alone does not
+    # freeze WHICH BINARY runs. Fail if the launcher is missing, resolves
+    # to a different real path than frozen, the executable is missing, or
+    # its content hash differs -- version equality is necessary but not
+    # sufficient.
+    check("CLAUDE_LAUNCHER_PATH exists on this host",
+          True, os.path.exists(config.CLAUDE_LAUNCHER_PATH) or "MISSING")
+    installed_realpath = _installed_claude_executable_realpath()
+    check("claude_executable_realpath", frozen.get("claude_executable_realpath"),
+          installed_realpath)
+    check("config.FROZEN_CLAUDE_EXECUTABLE_REALPATH matches frozen file",
+          frozen.get("claude_executable_realpath"), config.FROZEN_CLAUDE_EXECUTABLE_REALPATH)
+    _realpath_exists = (
+        isinstance(installed_realpath, str)
+        and installed_realpath.startswith("/")
+        and os.path.exists(installed_realpath)
+    )
+    check("claude_executable_realpath resolves to a file that exists",
+          True, _realpath_exists or "MISSING")
+    installed_exe_sha256 = _installed_claude_executable_sha256()
+    check("claude_executable_sha256", frozen.get("claude_executable_sha256"),
+          installed_exe_sha256)
+    check("config.FROZEN_CLAUDE_EXECUTABLE_SHA256 matches frozen file",
+          frozen.get("claude_executable_sha256"), config.FROZEN_CLAUDE_EXECUTABLE_SHA256)
+    check("claude_launcher_path", frozen.get("claude_launcher_path"), config.CLAUDE_LAUNCHER_PATH)
+    check("frozen_canonical_model", frozen.get("frozen_canonical_model"), config.FROZEN_CANONICAL_MODEL)
+    check("frozen_model_provider", frozen.get("frozen_model_provider"), config.FROZEN_MODEL_PROVIDER)
+    check("doctor_skill_success_content_prefix", frozen.get("doctor_skill_success_content_prefix"),
+          config.DOCTOR_SKILL_SUCCESS_CONTENT_PREFIX)
 
     # The freeze file must name itself as the authoritative filename, and
     # that name must match what config.py (and therefore runner.py) is
