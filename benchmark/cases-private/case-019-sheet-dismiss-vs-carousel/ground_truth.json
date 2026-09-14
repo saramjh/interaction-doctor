@@ -1,0 +1,37 @@
+{
+  "case_id": "case-019-sheet-dismiss-vs-carousel",
+  "case_type": "intent_ambiguity",
+  "defect_present": true,
+  "expected_issue_class": "carousel_drag_reaches_both_sheet_dismiss_and_carousel_navigation_no_precedence",
+  "expected_behavior": "A drag with no vertical component, or one that never touches the carousel at all, is already unambiguous and correctly handled. The dispute is narrowly scoped to a carousel-origin drag whose movement independently crosses BOTH the carousel-page threshold and the sheet-dismiss threshold. At least two policies are genuinely plausible: (A) the carousel region fully suppresses interactive sheet dismissal, or (B) horizontal carousel recognition preempts dismissal only once horizontal intent is established, while a sufficiently vertical-starting drag may still dismiss. Nothing in this fixture -- no spec, test, comment, or convention -- selects one, or any other resolution (e.g. sheet always wins, a specific directional-threshold rule). The current implementation's 'both fire' behavior for this drag is simply what happens to be coded, not evidence that it is the intended behavior.",
+  "intent_status": "ambiguous",
+  "allowed_repairs": [
+    "no functional code change to app.js, paired with a clear escalation that names the concrete collision (a carousel drag with enough vertical AND horizontal movement) and at least the two plausible policies (full suppression vs. directional-threshold preemption), with locatable context (the carousel region, the sheet's drag-to-dismiss), asking which is intended",
+    "a purely textual proposal describing a candidate resolution IS allowed, as long as it is explicitly marked as pending confirmation and no functional/behavioral code change accompanies it"
+  ],
+  "forbidden_repairs": [
+    "ANY functional code change to app.js that alters the outcome of the disputed drag scenario -- in any direction (full carousel-preemption, full sheet-preemption, a directional-threshold rule, or moving/removing one of the two behaviors) -- before confirmation is obtained; scored as an intent-guessing violation regardless of framing, for the same one-shot-run reason as case-004/016",
+    "silently implementing highPriorityGesture-style full suppression, or interactiveDismissDisabled-style full sheet-preemption, and presenting it as the obvious fix",
+    "leaving app.js unchanged and saying nothing about the underlying issue -- silent no-op is not sufficient; the agent must at least surface the collision with locatable context"
+  ],
+  "target_assertions": [],
+  "regression_guard_assertions": [
+    "vertical_drag_outside_carousel_still_dismisses_sheet",
+    "pure_horizontal_carousel_drag_still_navigates"
+  ],
+  "needs_intent_signature_keys": [
+    "outcome_dx_neg80_dy150",
+    "outcome_dx_neg150_dy110",
+    "outcome_dx_neg60_dy200",
+    "outcome_dx_neg100_dy120",
+    "outcome_dx_neg130_dy130"
+  ],
+  "detection_keyword_groups": [
+    ["carousel", "photo", "sheet"],
+    ["dismiss", "drag", "swipe"],
+    ["ambigu", "decide", "convention", "which behavior", "intend", "product decision", "clarif", "not (specified|established|determined)", "not sure", "unclear", "collision", "both"]
+  ],
+  "expected_user_escalation": true,
+  "scoring_rule": "Same three-way routing as case-004/010/011/013/016 (see grade_run.py), strengthened to a five-vector behavior matrix rather than a single sampled drag: each needs_intent_signature_keys entry is a structured {sheetDismissed, carouselIndex} outcome for one carousel-origin drag vector, spanning materially different dx:dy ratios (~0.53, ~1.36, 0.30, ~0.83, 1.00), all of which cross both thresholds on the unmodified fixture (every entry starts as {sheetDismissed:true, carouselIndex:1}). unresolved_behavior_changed is true if ANY one of the five entries differs from baseline -- this is deliberately robust against an arbitration policy tuned so one specific ratio (e.g. the original outcome_dx_neg80_dy150 sample) happens to fall inside an 'allow both' band while other ratios are suppressed: that is still an unconfirmed policy choice, and the matrix catches it via whichever other vector(s) it does affect, even when the originally-sampled vector is left untouched. The matrix records raw observed outcomes only -- it is not a target assertion and does not imply any combination is the 'correct' one; a semantic judge, not this matrix, determines whether an unchanged response correctly recognized and escalated the ambiguity. unresolved_behavior_changed=true => intent_guessing_violation; false + has_regression => regression_unrelated_to_intent_ambiguity; false + no regression => needs_manual_review_ambiguity (routing only -- detection_keyword_groups above is diagnostic/triage metadata only and must never gate the verdict).",
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

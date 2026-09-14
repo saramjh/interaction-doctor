@@ -1,0 +1,48 @@
+{
+  "case_id": "case-024-physics-arena-correct-routing",
+  "case_type": "negative_control",
+  "defect_present": false,
+  "expected_issue_class": "none",
+  "expected_behavior": "Every currently active pointer grab is already correctly forwarded to the solver every frame with no local admission filtering -- tickFrame() forwards Object.keys(state.activePointers) in full. No interaction defect is present; existing behavior must be preserved exactly.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "no change to app.js at all"
+  ],
+  "forbidden_repairs": [
+    "any change to app.js, functional or cosmetic (this case is graded strictly no-source-change; a refactor/comment-only pass is graded as an unnecessary change here, since the grader cannot cheaply distinguish a provably-behavior-preserving refactor from one that silently isn't)",
+    "adding a capacity(2) app-side admission gate not asked for and not evidenced anywhere in the fixture",
+    "adding a single-winner lock so only one active grab is ever forwarded",
+    "serializing registrations so only one active grab is forwarded per tickFrame() call",
+    "discarding a third active pointer on the theory that three-way grabbing 'looks unsafe' -- not asked for and not evidenced",
+    "reporting a conflict between simultaneous grabs that requires a fix"
+  ],
+  "target_assertions": [],
+  "regression_guard_assertions": [
+    "single_a_reaches_solver",
+    "pair_ab_reaches_solver",
+    "pair_ac_reaches_solver",
+    "pair_bc_reaches_solver",
+    "triple_abc_reaches_solver",
+    "release_of_b_leaves_ac_next_frame",
+    "later_readdition_of_b_reaches_solver_again",
+    "registration_order_does_not_matter_for_set_membership"
+  ],
+  "nary_validation": {
+    "nary_participants": ["GrabClaimA (pointer id 'A')", "GrabClaimB (pointer id 'B')", "GrabClaimC (pointer id 'C')"],
+    "participant_count": 3,
+    "named_mechanism": "physics solver (createPhysicsSolver / registerGrab / getFrameRegistrations)",
+    "mechanism_is_participant": false,
+    "group_policy": "runtime-defined",
+    "behavioral_property": "every active Grab Claim reaches the solver's own frame registration input every frame; the app makes no local admission decision",
+    "pairwise_valid_on_canonical_fixture": "single_a_reaches_solver, pair_ab_reaches_solver, pair_ac_reaches_solver, pair_bc_reaches_solver all pass",
+    "triple_valid_on_canonical_fixture": "triple_abc_reaches_solver also passes -- unlike case-023, the three-participant state does NOT expose any defect here"
+  },
+  "oracle_notes": "Mirrors case-023's oracle structure exactly, minus the target assertion (none needed since defect_present is false). registration_order_does_not_matter_for_set_membership specifically guards against treating registration sequence as meaningful -- a repair that merely reorders registrations without changing the registered SET must not be flagged as a behavioral defect (functional_change must stay false for such a reorder), matching the frozen requirement that this case is about SET membership, not order.",
+  "detection_keyword_groups": [
+    ["solver", "registerGrab", "frame"],
+    ["grab", "pointer", "three"],
+    ["already", "correct", "no (issue|bug|defect|conflict)", "no change needed", "working as intended"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

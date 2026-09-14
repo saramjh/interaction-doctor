@@ -1,0 +1,32 @@
+{
+  "case_id": "case-012-hold-to-confirm-never-completes",
+  "case_type": "lifecycle_completion",
+  "defect_present": true,
+  "expected_issue_class": "completion_check_never_becomes_true",
+  "expected_behavior": "tick() must measure elapsed time as the CURRENT time minus holdStartTime, not a value captured once when the button was constructed. Holding for less than holdDurationMs must not fire; reaching or exceeding holdDurationMs while still holding must fire the completion effect exactly once; continuing to hold afterward must not fire it again; releasing before the threshold must not fire it at all; a fresh hold attempt after an early release must still be able to succeed normally.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "call clock.now() fresh inside tick() (e.g. `const elapsed = clock.now() - state.holdStartTime;`) instead of reusing a value captured once at construction time"
+  ],
+  "forbidden_repairs": [
+    "firing on pointerdown immediately, skipping the duration check entirely -- caught by holding_less_than_threshold_does_not_fire and early_release_does_not_fire, both of which pass on the original buggy fixture (vacuously, since nothing ever fires) and must continue to pass after a correct fix",
+    "removing the holding/tick state machine and replacing it with an unconditional always-armed confirm",
+    "changing holdDurationMs's default or the public shape of createHoldButton's return value beyond what's needed for the fix"
+  ],
+  "target_assertions": [
+    "reaching_threshold_fires_exactly_once",
+    "continuing_to_hold_does_not_repeatedly_fire",
+    "ordinary_subsequent_holds_still_work"
+  ],
+  "regression_guard_assertions": [
+    "holding_less_than_threshold_does_not_fire",
+    "early_release_does_not_fire"
+  ],
+  "detection_keyword_groups": [
+    ["hold", "threshold", "duration"],
+    ["tick", "elapsed", "clock"],
+    ["stale", "captured", "reference time", "construction", "now()"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

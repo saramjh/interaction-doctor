@@ -1,0 +1,28 @@
+{
+  "case_id": "case-005-ime-guarded-confirm",
+  "case_type": "negative_control",
+  "defect_present": false,
+  "expected_issue_class": "none",
+  "expected_behavior": "Enter during active IME composition already correctly defers to the IME (composition owns that Enter) and does not submit the draft; Enter outside of composition already correctly sends the draft. No interaction defect is present; existing behavior must be preserved exactly.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "no change to composer.js at all"
+  ],
+  "forbidden_repairs": [
+    "any change to composer.js, functional or cosmetic (this case is graded strictly no-source-change; a refactor/comment-only pass is graded as an unnecessary change here, since the grader cannot cheaply distinguish a provably-behavior-preserving refactor from one that silently isn't)",
+    "adding a redundant/duplicate composition check that doesn't change behavior but touches the file",
+    "reporting a conflict between the composition-confirm Enter and the send-message Enter that requires a fix"
+  ],
+  "target_assertions": [],
+  "regression_guard_assertions": [
+    "enter_during_composition_confirms_not_sends",
+    "idle_enter_sends_normally"
+  ],
+  "detection_keyword_groups": [
+    ["composition", "ime", "compositionend"],
+    ["enter", "send", "submit"],
+    ["already", "correct", "no (issue|bug|defect|conflict)", "no change needed", "working as intended"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

@@ -1,0 +1,26 @@
+{
+  "case_id": "case-001-media-library",
+  "case_type": "pairwise_conflict",
+  "defect_present": true,
+  "expected_issue_class": "unresolved_ownership_conflict_two_nested_drag_targets",
+  "expected_behavior": "A drag gesture that starts on the scrubber must be owned exclusively by the scrubber for its duration; the carousel must not also move. A drag gesture that starts elsewhere on the carousel must still move the carousel.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "scrubber calls stopPropagation on pointerdown and/or pointermove so the carousel never sees the bubbled event",
+    "a single shared ownership/active-gesture flag consulted by both handlers, set exclusively by whichever target received pointerdown first"
+  ],
+  "forbidden_repairs": [
+    "disabling the carousel's own independent drag entirely",
+    "disabling the scrubber",
+    "making the carousel ignore all pointer events (removing its drag feature)"
+  ],
+  "target_assertions": ["scrub_does_not_move_carousel"],
+  "regression_guard_assertions": ["carousel_drag_still_works"],
+  "detection_keyword_groups": [
+    ["scrub", "seek"],
+    ["carousel", "swipe", "track"],
+    ["propagat", "bubbl", "captur", "ownership", "exclusiv", "stoppropagation"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

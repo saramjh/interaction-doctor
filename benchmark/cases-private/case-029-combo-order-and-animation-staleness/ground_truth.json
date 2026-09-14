@@ -1,0 +1,82 @@
+{
+  "case_id": "case-029-combo-order-and-animation-staleness",
+  "case_type": "nary_ordered_plus_effect_lifetime",
+  "defect_present": true,
+  "expected_issue_class": "unordered_sequence_membership_check_plus_animation_completion_reads_live_target_instead_of_trigger_time_target",
+  "expected_behavior": "TWO independently required fixes. (A) pressDirection()'s combo check must require the three directional inputs to occur in strict D1 -> D2 -> D3 order within the timing window -- not merely that all three occurred somewhere in the window (current behavior is window-wide set membership, order-insensitive). (B) completeAttackAnimation() must apply damage to the target that was selected at the moment the combo triggered, not whichever target happens to be selected when the animation completes -- the attack must commit to its target at trigger time and that binding must survive any number of later setCurrentTarget() calls before completion. A repair fixing only one of the two is incomplete.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "require pressDirection()'s trigger check to recognize only a genuine D1 -> D2 -> D3 order within the window (any internal representation is acceptable -- buffer inspection, a small state machine, etc.) AND capture the currently-selected target at trigger time (e.g. on the pendingAttack record) and have completeAttackAnimation() read that captured value instead of the live currentTarget",
+    "any equivalent behavioral fix for either half is acceptable as long as the observable behavior in every hidden-test scenario holds -- no particular internal representation (buffer/state machine/queue) or exact capture mechanism is required"
+  ],
+  "forbidden_repairs": [
+    "leaving the order check as window-wide set membership while only fixing target binding -- caught by all five permutation_* target assertions, none of which are affected by the target-binding fix",
+    "leaving completeAttackAnimation() reading the live currentTarget while only fixing ordering -- caught by attack_completion_hits_trigger_time_target and multi_switch_before_completion_still_hits_trigger_time_target, neither of which is affected by the ordering fix",
+    "sorting the input sequence before comparison -- still order-insensitive, permutations still collapse into the same sorted membership and still incorrectly trigger",
+    "special-casing only the one reported bad permutation -- the other four invalid permutations still incorrectly trigger",
+    "disabling the combo entirely -- caught by valid_combo_order_triggers, a regression",
+    "requiring order but dropping timing-window enforcement -- caught by timing_window_enforced_outside_window_does_not_trigger, a regression",
+    "resetting the input buffer after every single input (over-aggressive reset) -- caught by valid_combo_order_triggers, a regression",
+    "cancelling the pending attack whenever the selected target changes -- the already-triggered attack is required to still land on its original target, not be cancelled; caught by attack_completion_hits_trigger_time_target expecting T1 to actually take damage",
+    "applying damage to both the original and the current target -- caught by attack_completion_hits_trigger_time_target and multi_switch_before_completion_still_hits_trigger_time_target expecting the OTHER target's health to be unchanged",
+    "preventing target switching globally until the attack animation completes -- the public contract explicitly establishes that switching remains allowed during the animation; caught by attack_completion_hits_trigger_time_target and multi_switch_before_completion_still_hits_trigger_time_target, which switch targets mid-flight and still expect success",
+    "permanently binding all future attacks to the first target ever selected -- caught by fresh_combo_after_switch_uses_new_target, a regression",
+    "applying damage at combo-trigger time instead of at animation completion to sidestep the staleness problem -- the public contract establishes the delayed-completion timing as observable behavior; caught directly by damage_not_applied_before_completion, which observes entity health BETWEEN trigger and completion (this mutation can otherwise accidentally satisfy the target-binding assertions and the completion-repeatability guards, since those only compare health at or after completion, never in between)"
+  ],
+  "not_applicable_repairs": [
+    "accepting D1,D2,D3 as a subsequence despite an intervening non-D1/D2/D3-completing directional input (e.g. a duplicate or extra press) -- NOT scored. The frozen v3.1 behavioral property requires only strict D1 -> D2 -> D3 temporal order within the timing window and rejection of the five permutations; it does not resolve whether harmless extra/duplicate directional inputs invalidate an otherwise-ordered occurrence. No target assertion or forbidden-repair classification is made for this behavior in either direction."
+  ],
+  "target_assertions": [
+    "permutation_d1_d3_d2_rejected",
+    "permutation_d2_d1_d3_rejected",
+    "permutation_d2_d3_d1_rejected",
+    "permutation_d3_d1_d2_rejected",
+    "permutation_d3_d2_d1_rejected",
+    "attack_completion_hits_trigger_time_target",
+    "multi_switch_before_completion_still_hits_trigger_time_target"
+  ],
+  "regression_guard_assertions": [
+    "valid_combo_order_triggers",
+    "incomplete_single_input_does_not_trigger",
+    "incomplete_two_inputs_do_not_trigger",
+    "timing_window_enforced_outside_window_does_not_trigger",
+    "fresh_combo_after_reset_can_trigger",
+    "no_switch_applies_normal_damage_to_selected_target",
+    "fresh_combo_after_switch_uses_new_target",
+    "damage_not_applied_before_completion",
+    "attack_completion_executes_once",
+    "full_trigger_complete_cycle_is_repeatable"
+  ],
+  "part_a_target_assertions": [
+    "permutation_d1_d3_d2_rejected",
+    "permutation_d2_d1_d3_rejected",
+    "permutation_d2_d3_d1_rejected",
+    "permutation_d3_d1_d2_rejected",
+    "permutation_d3_d2_d1_rejected"
+  ],
+  "part_b_target_assertions": [
+    "attack_completion_hits_trigger_time_target",
+    "multi_switch_before_completion_still_hits_trigger_time_target"
+  ],
+  "nary_validation": {
+    "nary_participants": ["InputClaimD1", "InputClaimD2", "InputClaimD3"],
+    "participant_count": 3,
+    "named_mechanism": "app-level input-sequence buffer (recentInputBuffer inside createComboGame)",
+    "mechanism_is_participant": false,
+    "group_policy": "ordered",
+    "behavioral_invariant": "the special move triggers only for a genuine D1 -> D2 -> D3 temporal order within the timing window; the same three directions present in any other order must not trigger it. Whether extra/duplicate directional presses interleaved with an otherwise-correct order invalidate the occurrence is unresolved by the frozen design and is not scored (see not_applicable_repairs).",
+    "pairwise_representability_note": "This case does not claim that pairwise checks alone are insufficient to prove the ordered-sequence property -- the benchmark scores observable behavior only, and an evaluated agent does not need to say 'ordered group' or use any of this vocabulary to receive full credit for a behaviorally correct fix."
+  },
+  "effect_lifetime_validation": {
+    "effect": "delayed animation hit-impact/completion (completeAttackAnimation)",
+    "target_binding_property": "an attack remains bound to the target selected at the moment it was triggered, regardless of how many times the selected target changes before the attack's completion effect executes",
+    "mechanism_note": "the attack's target binding must be captured once, at trigger time, and read back unchanged at completion -- not re-read live from currentTarget at completion time"
+  },
+  "detection_keyword_groups": [
+    ["D1", "D2", "D3", "order"],
+    ["target", "lock-on", "animation"],
+    ["combo", "trigger", "completion"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

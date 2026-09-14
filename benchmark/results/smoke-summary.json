@@ -1,0 +1,497 @@
+[
+  {
+    "case_id": "case-001-media-library",
+    "arm": "baseline",
+    "run_dir": "results/raw/case-001-media-library/baseline/run-01-20260913T104916452380Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": false,
+      "results": {
+        "scrub_does_not_move_carousel": false,
+        "carousel_drag_still_works": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "scrub_does_not_move_carousel": true,
+        "carousel_drag_still_works": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": true,
+    "verdict": "correct_repair",
+    "detection_heuristic": true,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [
+        "app.js"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.092844,
+    "input_tokens": 10,
+    "output_tokens": 1531,
+    "cache_read_input_tokens": 133760,
+    "cache_creation_input_tokens": 12392,
+    "thinking_tokens": 10,
+    "num_turns": 6,
+    "wall_clock_seconds": 24.75349473953247,
+    "duration_api_ms": 23634,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      "app.js",
+      "dom-shim.js"
+    ]
+  },
+  {
+    "case_id": "case-001-media-library",
+    "arm": "doctor",
+    "run_dir": "results/raw/case-001-media-library/doctor/run-01-20260913T105029983376Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": false,
+      "results": {
+        "scrub_does_not_move_carousel": false,
+        "carousel_drag_still_works": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "scrub_does_not_move_carousel": true,
+        "carousel_drag_still_works": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": true,
+    "verdict": "correct_repair",
+    "detection_heuristic": true,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [
+        "app.js"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.1586792,
+    "input_tokens": 14,
+    "output_tokens": 3707,
+    "cache_read_input_tokens": 220711,
+    "cache_creation_input_tokens": 19049,
+    "thinking_tokens": 1279,
+    "num_turns": 9,
+    "wall_clock_seconds": 47.71890997886658,
+    "duration_api_ms": 47012,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      ".claude/skills/interaction-doctor/SKILL.md",
+      ".claude/skills/interaction-doctor/references/adversarial-validation.md",
+      ".claude/skills/interaction-doctor/references/audit-modes.md",
+      ".claude/skills/interaction-doctor/references/closure-contract.md",
+      ".claude/skills/interaction-doctor/references/competition-and-relations.md",
+      ".claude/skills/interaction-doctor/references/environment-model.md",
+      ".claude/skills/interaction-doctor/references/implementation-safety.md",
+      ".claude/skills/interaction-doctor/references/index-and-tooling.md",
+      ".claude/skills/interaction-doctor/references/intent-and-ambiguity.md",
+      ".claude/skills/interaction-doctor/references/ownership-model.md",
+      ".claude/skills/interaction-doctor/references/runtime-modeling.md",
+      "app.js",
+      "dom-shim.js"
+    ]
+  },
+  {
+    "case_id": "case-001-media-library",
+    "arm": "generic",
+    "run_dir": "results/raw/case-001-media-library/generic/run-01-20260913T104942259379Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": false,
+      "results": {
+        "scrub_does_not_move_carousel": false,
+        "carousel_drag_still_works": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "scrub_does_not_move_carousel": true,
+        "carousel_drag_still_works": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": true,
+    "verdict": "correct_repair",
+    "detection_heuristic": true,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [
+        "app.js"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.0979342,
+    "input_tokens": 10,
+    "output_tokens": 1923,
+    "cache_read_input_tokens": 134211,
+    "cache_creation_input_tokens": 12646,
+    "thinking_tokens": 507,
+    "num_turns": 6,
+    "wall_clock_seconds": 25.80156683921814,
+    "duration_api_ms": 25086,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      "app.js",
+      "dom-shim.js"
+    ]
+  },
+  {
+    "case_id": "case-002-kanban-board",
+    "arm": "baseline",
+    "run_dir": "results/raw/case-002-kanban-board/baseline/run-01-20260913T105056126064Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": false,
+      "results": {
+        "stale_response_does_not_clobber_newer_move": false,
+        "normal_in_order_resolution_still_works": true,
+        "server_rejection_is_honored_when_current": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "stale_response_does_not_clobber_newer_move": true,
+        "normal_in_order_resolution_still_works": true,
+        "server_rejection_is_honored_when_current": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": true,
+    "verdict": "correct_repair",
+    "detection_heuristic": true,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [
+        "board.js"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.0937288,
+    "input_tokens": 10,
+    "output_tokens": 1615,
+    "cache_read_input_tokens": 135194,
+    "cache_creation_input_tokens": 12301,
+    "thinking_tokens": 47,
+    "num_turns": 7,
+    "wall_clock_seconds": 26.112301111221313,
+    "duration_api_ms": 25501,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      "board.js",
+      "scheduler.js"
+    ]
+  },
+  {
+    "case_id": "case-002-kanban-board",
+    "arm": "doctor",
+    "run_dir": "results/raw/case-002-kanban-board/doctor/run-01-20260913T105230824168Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": false,
+      "results": {
+        "stale_response_does_not_clobber_newer_move": false,
+        "normal_in_order_resolution_still_works": true,
+        "server_rejection_is_honored_when_current": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "stale_response_does_not_clobber_newer_move": true,
+        "normal_in_order_resolution_still_works": true,
+        "server_rejection_is_honored_when_current": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": true,
+    "verdict": "correct_repair",
+    "detection_heuristic": true,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [
+        "board.js"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.1742706,
+    "input_tokens": 12,
+    "output_tokens": 5230,
+    "cache_read_input_tokens": 188618,
+    "cache_creation_input_tokens": 20712,
+    "thinking_tokens": 1987,
+    "num_turns": 9,
+    "wall_clock_seconds": 60.71307301521301,
+    "duration_api_ms": 59892,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      ".claude/skills/interaction-doctor/SKILL.md",
+      ".claude/skills/interaction-doctor/references/adversarial-validation.md",
+      ".claude/skills/interaction-doctor/references/audit-modes.md",
+      ".claude/skills/interaction-doctor/references/closure-contract.md",
+      ".claude/skills/interaction-doctor/references/competition-and-relations.md",
+      ".claude/skills/interaction-doctor/references/environment-model.md",
+      ".claude/skills/interaction-doctor/references/implementation-safety.md",
+      ".claude/skills/interaction-doctor/references/index-and-tooling.md",
+      ".claude/skills/interaction-doctor/references/intent-and-ambiguity.md",
+      ".claude/skills/interaction-doctor/references/ownership-model.md",
+      ".claude/skills/interaction-doctor/references/runtime-modeling.md",
+      "board.js",
+      "scheduler.js"
+    ]
+  },
+  {
+    "case_id": "case-002-kanban-board",
+    "arm": "generic",
+    "run_dir": "results/raw/case-002-kanban-board/generic/run-01-20260913T105130105980Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": false,
+      "results": {
+        "stale_response_does_not_clobber_newer_move": false,
+        "normal_in_order_resolution_still_works": true,
+        "server_rejection_is_honored_when_current": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "stale_response_does_not_clobber_newer_move": true,
+        "normal_in_order_resolution_still_works": true,
+        "server_rejection_is_honored_when_current": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": true,
+    "verdict": "correct_repair",
+    "detection_heuristic": true,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [
+        "board.js"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.11223899999999999,
+    "input_tokens": 8,
+    "output_tokens": 3336,
+    "cache_read_input_tokens": 106995,
+    "cache_creation_input_tokens": 14021,
+    "thinking_tokens": 1070,
+    "num_turns": 5,
+    "wall_clock_seconds": 33.97448682785034,
+    "duration_api_ms": 33328,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      "board.js",
+      "scheduler.js"
+    ]
+  },
+  {
+    "case_id": "case-003-drawing-canvas",
+    "arm": "baseline",
+    "run_dir": "results/raw/case-003-drawing-canvas/baseline/run-01-20260913T105334527931Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": true,
+      "results": {
+        "pan_while_space_held_does_not_draw": true,
+        "draw_without_space_does_not_pan": true,
+        "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "pan_while_space_held_does_not_draw": true,
+        "draw_without_space_does_not_pan": true,
+        "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": false,
+    "verdict": "correct_no_op",
+    "detection_heuristic": null,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.144704,
+    "input_tokens": 14,
+    "output_tokens": 4535,
+    "cache_read_input_tokens": 194135,
+    "cache_creation_input_tokens": 14853,
+    "thinking_tokens": 2937,
+    "num_turns": 7,
+    "wall_clock_seconds": 63.675053119659424,
+    "duration_api_ms": 62535,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      "canvas.js"
+    ]
+  },
+  {
+    "case_id": "case-003-drawing-canvas",
+    "arm": "doctor",
+    "run_dir": "results/raw/case-003-drawing-canvas/doctor/run-01-20260913T105733290632Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": true,
+      "results": {
+        "pan_while_space_held_does_not_draw": true,
+        "draw_without_space_does_not_pan": true,
+        "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "pan_while_space_held_does_not_draw": true,
+        "draw_without_space_does_not_pan": true,
+        "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": false,
+    "verdict": "correct_no_op",
+    "detection_heuristic": null,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.253044,
+    "input_tokens": 12,
+    "output_tokens": 11691,
+    "cache_read_input_tokens": 192000,
+    "cache_creation_input_tokens": 24141,
+    "thinking_tokens": 9972,
+    "num_turns": 7,
+    "wall_clock_seconds": 143.81936812400818,
+    "duration_api_ms": 143072,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      ".claude/skills/interaction-doctor/SKILL.md",
+      ".claude/skills/interaction-doctor/references/adversarial-validation.md",
+      ".claude/skills/interaction-doctor/references/audit-modes.md",
+      ".claude/skills/interaction-doctor/references/closure-contract.md",
+      ".claude/skills/interaction-doctor/references/competition-and-relations.md",
+      ".claude/skills/interaction-doctor/references/environment-model.md",
+      ".claude/skills/interaction-doctor/references/implementation-safety.md",
+      ".claude/skills/interaction-doctor/references/index-and-tooling.md",
+      ".claude/skills/interaction-doctor/references/intent-and-ambiguity.md",
+      ".claude/skills/interaction-doctor/references/ownership-model.md",
+      ".claude/skills/interaction-doctor/references/runtime-modeling.md",
+      "canvas.js"
+    ]
+  },
+  {
+    "case_id": "case-003-drawing-canvas",
+    "arm": "generic",
+    "run_dir": "results/raw/case-003-drawing-canvas/generic/run-01-20260913T105509464787Z",
+    "returncode": 0,
+    "status": "completed",
+    "hidden_test_baseline": {
+      "pass": true,
+      "results": {
+        "pan_while_space_held_does_not_draw": true,
+        "draw_without_space_does_not_pan": true,
+        "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+      }
+    },
+    "hidden_test_final": {
+      "pass": true,
+      "results": {
+        "pan_while_space_held_does_not_draw": true,
+        "draw_without_space_does_not_pan": true,
+        "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+      }
+    },
+    "hidden_test_pass": true,
+    "repair_success": true,
+    "regressions": [],
+    "made_functional_change": false,
+    "verdict": "correct_no_op",
+    "detection_heuristic": null,
+    "false_closure_heuristic": false,
+    "diff": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "total_cost_usd": 0.17952100000000001,
+    "input_tokens": 12,
+    "output_tokens": 8025,
+    "cache_read_input_tokens": 164415,
+    "cache_creation_input_tokens": 16302,
+    "thinking_tokens": 6502,
+    "num_turns": 6,
+    "wall_clock_seconds": 94.9314661026001,
+    "duration_api_ms": 93936,
+    "is_error": false,
+    "subtype": "success",
+    "stop_reason": "end_turn",
+    "files_after": [
+      "canvas.js"
+    ]
+  }
+]

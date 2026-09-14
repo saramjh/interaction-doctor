@@ -1,101 +1,245 @@
 ---
 name: interaction-doctor
 description: >
-  모바일 웹에서 터치·포인터 인터랙션이 의도대로 동작하지 않을 때 진단하고
-  수정한다. 실제로 조사·검증한 증상 언어로 트리거한다 — 드래그가 스크롤과
-  충돌한다(세로 리스트를 스크롤하려는데 항목이 끌려온다, 가로 캐러셀 안에
-  세로 페이지 스크롤이 같이 있다), 롱프레스가 플랫폼마다 다르게 동작한다
-  (iOS Reminders는 롱프레스로 바로 재정렬되는데 iOS Photos/Files의 다중
-  선택은 버튼으로만 들어가고, Android는 둘 다 롱프레스라 같은 항목에서
-  재정렬·다중선택·컨텍스트메뉴 중 뭐가 열려야 할지 겹친다), 스와이프
-  삭제/보관이 iOS는 끝까지 밀면 즉시 실행되고 Android는 항목 폭의 50%를
-  넘겨야 확정되는 등 판정 기준이 다르다, 바텀시트 안의 스크롤 가능한
-  리스트를 아래로 당기면 리스트가 아니라 시트 전체가 닫힌다, 캐러셀이
-  스냅되어야 하는지 자유 스크롤이어야 하는지 헷갈린다(정답은 콘텐츠
-  유형에 달렸다 — iOS/Android/CSS 스펙 모두 스펙트럼으로 지원), 탭
-  전환에 좌우 스와이프를 기대했는데 iOS 표준 탭 바는 이를 지원하지 않고
-  Android는 반대로 표준 패턴이다, 사이드 드로어의 엣지 스와이프가 iOS
-  시스템 뒤로가기 제스처와 같은 화면 영역을 두고 겹친다. 이런 증상이
-  나오거나, 위 컴포넌트(재정렬 리스트/스와이프 액션/바텀시트/캐러셀/
-  다중선택/컨텍스트메뉴/탭 전환/사이드 드로어)의 모바일 터치·포인터
-  기반 구현을 처음부터 새로 만들 때 사용한다. 데스크톱 마우스 우클릭
-  컨텍스트 메뉴, 키보드 단축키처럼 터치/포인터 충돌이 애초에 존재하지
-  않는 데스크톱 전용 구현은 이 스킬의 대상이 아니다.
+  Audits and fixes interaction ownership and integrity defects in any
+  interaction-capable codebase — not just touch/pointer web UI. Use it
+  whenever input ownership is ambiguous or broken: a drag competing with
+  scroll or with another drag/reorder gesture; a long-press racing a
+  native context menu, text selection, or another long-press-triggered
+  action on the same element; tap/double-tap/drag recognition order;
+  pinch/rotate vs. pan; pointer capture never released, or a drag/rotate
+  that keeps running after pointer-cancel, focus loss, device disconnect,
+  or a mode switch; a modal command (CAD/3D/DAW-style: grab, axis
+  constraint, tool mode) that never exits; keyboard shortcuts competing
+  with a focused text field or with IME composition; a screen
+  reader/switch-control activation path that doesn't exist for a
+  pointer-only interaction; multiple gamepads or XR controllers whose
+  inputs are indistinguishable; nested scroll containers fighting each
+  other; a synthesized/compatibility event (touch→mouse→click,
+  keyboard→semantic activation) being treated as an independent
+  competing input instead of the same user action. Also use it when
+  building a new interaction from a reference/design with no stated
+  mechanism, or when asked for a full interaction/UX audit before a
+  release. Works across web/DOM, React/Vue/Svelte, SwiftUI, Jetpack
+  Compose, Flutter, Unity, Godot, Qt, CAD/3D tools, and other custom
+  interaction runtimes — the programming language and framework are not
+  the boundary of this skill; interaction/runtime semantics are.
 ---
 
 # interaction-doctor
 
-모바일 웹 터치·포인터 인터랙션 진단·구현 스킬. **이 스킬이 내놓는 모든
-판단은 `research/ux-standards/patterns/ux-standards-architecture.md`
-§1~§5.5(우선순위 5단계 → 식별 신호 → 오염 방지 → 확신도 라벨 → 자체
-점검/런타임 검증 구분)와
-`research/ux-standards/common-pitfalls.md`(§4.5 게이트)를 그대로
-따른다.** 이 문서는 그 절차를 요약하지 않는다 — 원본 절차 문서를 직접
-참조한다.
+Interaction Doctor is a post-generation **Interaction Ownership & Integrity
+Audit**. It does not reason in terms of gesture names ("swipe", "long
+press"). It reasons in terms of **Interaction Claims** — hypotheses about how
+a user action could own input resources — and the relationships between
+them. Gesture names are labels for common Claim shapes, never the model
+itself.
 
-## 언제 이 스킬을 쓰는가
+## Core principle
 
-`description`에 적힌 증상 언어와 일치할 때. 증상 언어는 추측이 아니라
-`research/ux-standards/patterns/*.md` 8개 문서와
-`research/ux-standards/nested-interactions/*.md` 3개 문서의 실제
-조사·검증 결과에서 그대로 가져왔다 — CONFLICTS.md의 C1~C13(터치 제스처
-2자 충돌)까지 포함해 이 스킬의 진단 대상이다.
+> Every interaction-capable scope and every relevant ownership relationship
+> within the audited scope must be accounted for before the interaction can
+> be certified.
 
-**단, C1~C13은 전부 터치/포인터 입력을 전제한다는 것을 명시한다.**
-C6(LongPress ↔ Drag)이 다루는 "커스텀 메뉴와 브라우저 기본
-`contextmenu`의 충돌"은 모바일 롱프레스가 `contextmenu`를 유발하는
-상황(Android Chrome 494–513ms 실측, `context-menu.md` 참조)에
-한정된다:
+Interaction Doctor MUST NOT, at any point:
 
-> "Desktop browsers have no long-press concept whatsoever; holding
-> the mouse button for two seconds produces an ordinary `click` on
-> release."
-> — CONFLICTS.md#C6
+- silently ignore an interaction-capable scope
+- assume an ambiguous ownership priority
+- certify an unexamined relationship as safe
+- invent product intent
+- assume existing functionality must be preserved by default
+- collapse an unknown product decision into an arbitrary predefined choice
+- declare success right after a code change without rebuilding and
+  revalidating the affected interaction graph
 
-이 문장이 근거다 — C6/context-menu.md가 실측하고 해소하는 건 롱프레스
-타이밍(494–513ms), 경합하는 다른 제스처(드래그·재정렬·다중선택),
-`touch-action`처럼 **모바일 롱프레스에만 존재하는 것들**이다. 데스크톱
-우클릭에는 이 중 어느 것도 없다는 걸 C6 원문이 스스로 확인해 준다.
-그래서 이 스킬은 C6/context-menu.md의 범위를 모바일 롱프레스로
-한정한다 — **데스크톱 마우스 우클릭으로 여는 커스텀 컨텍스트 메뉴는
-이 스킬의 대상이 아니다.** `contextmenu` 이벤트 이름은 같아도 경합할
-타이밍·제스처·`touch-action` 자체가 없는 별개의(그리고 이미 사소한)
-문제이기 때문이다.
+## Reference map
 
-## 무엇을 참조하는가
+This file is the operational entry point. Depth lives in `references/` —
+read the relevant one before acting, don't re-derive it from memory:
 
+| File | Covers |
+|---|---|
+| `references/ownership-model.md` | The Interaction Claim schema: source, activation expression, recognition state, claimed resources, routing, provenance, effect, state transitions, ownership lifecycle (with generalized scope/resource invalidation), and Effect Lifetime for deferred/async effects that outlive their Claim. |
+| `references/competition-and-relations.md` | The six relations (COMPETES, COOPERATES, PREEMPTS, CONDITIONAL, SEQUENCES, DERIVES_FROM), the pairwise competition predicate, and Ownership Constraint Groups for N-ary (3+) arbitration. |
+| `references/environment-model.md` | Environmental/native claims, capability-based environments, raw→transformed→semantic input, analog input, multi-identity input. |
+| `references/intent-and-ambiguity.md` | Source-of-truth hierarchy, product-intent evidence hierarchy, the ambiguity rule, the user-question protocol, the resolution protocol. |
+| `references/audit-modes.md` | Audit Scope (TARGETED/FULL) vs. Analysis Strategy (FRESH/INCREMENTAL) — orthogonal dimensions — and the recursive/fixpoint revalidation loop. |
+| `references/closure-contract.md` | Disposition (SAFE/RESOLVED/CONFLICT/NEEDS_INTENT/UNMODELED) vs. verification level (STATIC/RUNTIME) as separate axes, the two closure statements, the output-report contract, what "100%" means here. |
+| `references/runtime-modeling.md` | Where each Claim field lives in specific runtimes (DOM, SwiftUI, Compose, Flutter, Unity, Godot, Qt, CAD/3D, XR, a11y). |
+| `references/implementation-safety.md` | Generation Surface Minimization and secondary (non-normative) HCI checks. |
+| `references/index-and-tooling.md` | The `.interaction-doctor/` cache format and the LLM/deterministic-tooling division of responsibility. |
+| `references/adversarial-validation.md` | The adversarial case log this architecture was validated against — read it to see why a new gesture-specific rule is almost never the right fix. |
+
+## Execution protocol
+
+### 1. Pick the audit scope and analysis strategy
+
+Read `references/audit-modes.md`. These are two independent choices — do not
+let one determine the other:
+
+- **Audit scope** — what the task actually asks for: **TARGETED** (a
+  specific reported problem; scope to the affected graph, don't sweep the
+  whole repo) or **FULL** (cleanup, release readiness, or an explicit
+  request for a complete audit; cover the whole declared universe).
+- **Analysis strategy** — whether a `.interaction-doctor/` index exists for
+  this project: **FRESH** (no trustworthy index — build from source) or
+  **INCREMENTAL** (an index exists — use it to locate/seed the graph, but
+  invalidate and rebuild anything touching changed source; the index is a
+  cache, source is truth). An index existing does not narrow a `FULL`
+  request, and a narrow bug report does not become `FULL` just because an
+  index is available.
+
+### 2. Identify scopes and extract Claims
+
+Find every interaction-capable scope relevant to the chosen scope's
+boundary. For each, extract Claims per `references/ownership-model.md`. Use
+`references/runtime-modeling.md` to know where to look in the specific
+runtime.
+
+If a reference/design image is the only spec, a visual affordance (e.g. a
+drag-handle icon) may provide evidence that *some* interaction capability
+exists — it does not by itself establish the exact activation expression,
+ownership priority, or complete interaction contract (exact timing, input
+source, immediate vs. delayed activation, keyboard equivalence, priority
+over surrounding input). Record what the affordance actually establishes —
+`capability evidence: present, exact mechanism: unresolved` — and route the
+unresolved mechanism through `references/intent-and-ambiguity.md` as
+`NEEDS_INTENT`. Do not treat a visual affordance as license to infer a
+complete mechanism; that reintroduces exactly the invented-intent failure
+mode this skill exists to prevent.
+
+### 3. Add environmental Claims
+
+Per `references/environment-model.md`, add the platform/runtime Claims that
+apply — native scroll, native context menu, IME, accessibility activation
+paths, OS gestures, etc. — for every capability combination relevant to the
+scope (not a single assumed device class). A scope audited without its
+environmental claims cannot reach closure.
+
+### 4. Build relationships
+
+For every pair of Claims sharing a resource, apply the competition predicate
+in `references/competition-and-relations.md` and classify: `COMPETES`,
+`COOPERATES`, `PREEMPTS`, `CONDITIONAL`, `SEQUENCES`, or `DERIVES_FROM`.
+Resolve provenance (`DERIVES_FROM`) before judging competition — a
+compatibility/synthesized event is not an independent competitor of its
+origin. **Also** check for Ownership Constraint Groups
+(`references/competition-and-relations.md` § Ownership Constraint Groups) —
+N-ary (3+) participant constraints that no pairwise check can see (e.g. any
+two of three Claims coexist safely, but all three together violate a
+capacity limit). If no such group exists for the scope, pairwise analysis
+alone is sufficient; do not invent group constraints where none exist. A
+relationship that fits none of the six relations, and is not a group
+constraint, stays `UNMODELED` — never invent a private, one-off relation
+name to force it closed (`references/competition-and-relations.md` §
+canonical vocabulary discipline).
+
+### 5. Check ownership lifecycle and effect lifetime
+
+For every Claim that reaches `acquire`, verify a release/transfer path
+exists for each baseline category (completion, cancellation, focus loss,
+device loss, mode change, runtime interruption) *and* for every reachable
+scope/resource invalidation condition specific to the runtime (component
+unmount, target deletion, route change, permission loss, etc. — the six
+baseline categories are a mandatory floor, not the entire list; see
+`references/ownership-model.md` § Ownership Lifecycle). A missing path is a
+`CONFLICT`, not `UNMODELED`.
+
+Separately, for every Claim with a delayed/scheduled/asynchronous
+`spawned_effects` entry (a timer, a debounce, a promise, a queued command,
+an animation-completion handler), verify it carries its own
+cancellation/invalidation path tied to the Claim's termination
+(`references/ownership-model.md` § Effect Lifetime). A Claim can pass every
+lifecycle check and still fail this one — audit both, they are not the same
+check.
+
+### 6. Resolve
+
+Per `references/intent-and-ambiguity.md`:
+
+- If intent is established (explicit instruction, spec, recorded decision,
+  clear test, strong in-app convention, then platform convention, then
+  general heuristic — in that order) — make the smallest robust fix that
+  satisfies it, and nothing more.
+- If intent is not established — stop that resolution path, ask using the
+  user-question protocol (locatable context first, no invented option menus
+  unless asked), record the decision, then continue.
+
+### 7. Recursively revalidate
+
+Per `references/audit-modes.md` § Recursive Revalidation:
+
+```text
+analyze → modify → rebuild affected graph → rediscover relationships →
+validate → repeat
 ```
-skills/interaction-doctor/
-├── SKILL.md                 이 파일
-└── references/
-    ├── symptoms.md           증상 → 원인 → 수정, 확신도 라벨 포함
-    ├── recipes.md            오염 방지 3유형의 실제 검증된(런타임 통과) 해소 규칙
-    └── platform.md           플랫폼 상수 표 (500ms, 8px, 280dp 등) + 출처
-```
 
-증상이 `references/symptoms.md`에서 매칭되면 그 항목의 확신도 라벨을
-그대로 노출한다. 라벨이 [미확정]이거나 항목 자체가 없으면 "이 부분은
-아직 확신 있게 답할 수 없다"고 명시한다 — 추측으로 채우지 않는다
-(architecture.md §1의 5순위, §4의 라벨 규율).
+until the affected graph is stable. Re-check the original relationship, its
+neighbors, state transitions, other capability combinations, lifecycle
+termination, effect lifetime, group constraints, and any relationship the
+fix itself introduced. A fix is not done because the reported symptom
+disappeared — it is done when the graph reaches a fixpoint with no open item
+inside its boundary.
 
-같은 항목에 여러 제스처가 겹칠 수 있는 컴포넌트(재정렬 리스트, 다중
-선택, 컨텍스트 메뉴 — 전부 롱프레스 트리거를 공유할 수 있음)를 다룰
-때는 `references/symptoms.md`의 상호 참조를 반드시 같이 노출한다.
-하나만 답하고 나머지 겹침 정보를 누락하지 않는다.
+For every item, record both its **disposition** (`SAFE` / `RESOLVED` /
+`CONFLICT` / `NEEDS_INTENT` / `UNMODELED`) and its **verification level**
+(`STATIC` — read the code, the logic holds; or `RUNTIME` — actually
+exercised: a test run, a driven browser/simulator, an interactive check).
+These are independent axes (`references/closure-contract.md`) — never call
+`STATIC`-only work `RUNTIME`-verified, and never withhold a closed
+disposition just because verification is only `STATIC` unless the task
+explicitly required runtime verification.
 
-코드 예시를 새로 작성할 때는 `references/recipes.md`에 있는, 이미
-런타임 검증을 통과한 형태를 우선 재사용한다. 새 코드를 처음부터
-작성해야 한다면 `common-pitfalls.md`의 §4.5 체크리스트(pointerdown
-미확인, 멀티 포인터 미처리)를 통과시키기 전에는 "자체 점검 완료"라고
-표시하지 않는다.
+### 8. Report and certify closure
 
-## 이 스킬이 답하지 못하는 것
+Use the output contract in `references/closure-contract.md`. Certify
+"Affected Interaction Closure" (TARGETED) or "Project Interaction Closure"
+(FULL) only when every item inside the declared universe carries a closed
+disposition (`SAFE` or `RESOLVED`) — no `CONFLICT`, `NEEDS_INTENT`, or
+`UNMODELED` left inside that boundary. State the declared universe
+explicitly; a closure claim with no stated denominator is not valid. Report
+verification coverage (`STATIC`/`RUNTIME`/mixed) alongside closure status,
+as two separate facts.
 
-- `references/symptoms.md`에 없는 컴포넌트나 조합 — 추측 대신 미조사
-  상태임을 밝힌다.
-- 미확정 비중이 높은 컴포넌트(예: 사이드 드로어)는 symptoms.md 본표에서
-  제외돼 있다 — 별도 "🚧 조사 중" 목록을 참조하고, 확신 있게 답할 수
-  없다는 걸 먼저 말한다.
-- 브라우저 크롬(시스템 뒤로가기 제스처 등) 레벨의 동작은 이 스킬이
-  가진 도구(Playwright)로 검증할 수 없다는 게 이미 확인돼 있다 —
-  `nested-interactions/side-drawer-back-gesture.md` §5 참조.
+## MUST / MUST NOT summary
+
+- MUST express every interaction as one or more Claims, never as a bare
+  gesture name.
+- MUST resolve provenance (`DERIVES_FROM`) before judging competition.
+- MUST NOT report a `COMPETES` finding for a pair that fails the
+  competition predicate (reachability, resource overlap, effect
+  interference) — that manufactures conflicts that cannot occur.
+- MUST check for N-ary Ownership Constraint Groups in addition to pairwise
+  relationships; MUST NOT assume every integrity constraint is pairwise.
+- MUST check the Ownership Lifecycle invariant (baseline categories plus any
+  reachable scope/resource invalidation) for every acquired Claim, AND
+  separately check Effect Lifetime for every spawned deferred/async effect —
+  these are two distinct checks, not one.
+- MUST ask, with locatable context, when intent evidence tiers 1–5 are all
+  silent — MUST NOT guess, MUST NOT invent a binary choice menu, MUST NOT
+  assume all existing capabilities must be preserved. A visual affordance is
+  evidence a capability exists, never evidence of its exact mechanism.
+- MUST recursively revalidate after every fix; MUST NOT declare closure
+  immediately after a symptom disappears.
+- MUST record disposition and verification level as two separate facts for
+  every item; MUST NOT report `STATIC`-only work as `RUNTIME`-verified, and
+  MUST NOT withhold a closed disposition solely for lacking runtime
+  verification unless the task's declared denominator required it.
+- MUST NOT invent a new relation, disposition, or construct ad hoc during an
+  audit — an unmodeled relationship stays `UNMODELED` until the canonical
+  vocabulary is deliberately extended (`references/competition-and-relations.md`).
+- MUST NOT fold advisory HCI checks (`implementation-safety.md`) into a
+  Closure claim.
+- MUST NOT let Generation Surface Minimization override correct interaction
+  semantics.
+
+## What this skill does not attempt
+
+It does not guarantee all conceivable UX quality. Per
+`references/closure-contract.md` § Meaning of "100%", the guarantee is:
+within the declared audit universe, every relevant Interaction Ownership &
+Integrity relationship (pairwise, group, and effect-lifetime) gets an
+explicit, closed disposition before closure is certified — not that every
+fix is automatic, not that everything has been runtime-verified (`STATIC`
+alone can close, unless the task required otherwise), and not that every
+advisory HCI concern is covered.

@@ -1,0 +1,31 @@
+{
+  "case_id": "case-008-midi-dual-blend",
+  "case_type": "negative_control",
+  "defect_present": false,
+  "expected_issue_class": "none",
+  "expected_behavior": "Both continuous controllers correctly and safely co-determine filterCutoff via a deterministic, order-independent blend; ownership_interference is false (the joint effect is always well-defined), so no arbitration, priority, threshold, or exclusivity logic is needed or correct here. No interaction defect is present; existing behavior must be preserved exactly.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "no change to synth.js at all"
+  ],
+  "forbidden_repairs": [
+    "any change to synth.js, functional or cosmetic (this case is graded strictly no-source-change; a refactor/comment-only pass is graded as an unnecessary change here, since the grader cannot cheaply distinguish a provably-behavior-preserving refactor from one that silently isn't)",
+    "adding a discrete override/threshold rule (e.g. 'if modWheel exceeds some value, ignore breath entirely') not asked for and not evidenced anywhere in the fixture",
+    "adding a lock/exclusivity mechanism so only one controller can affect cutoff at a time",
+    "reporting a conflict between the two controllers that requires a fix"
+  ],
+  "target_assertions": [],
+  "regression_guard_assertions": [
+    "concurrent_updates_blend_deterministically_regardless_of_order",
+    "both_controllers_remain_independently_live",
+    "blend_matches_deterministic_formula_across_full_grid"
+  ],
+  "oracle_notes": "blend_matches_deterministic_formula_across_full_grid sweeps the full 0..127 MIDI value space for both controllers at two mix ratios in both update orders (see §4 of the v3.1 correction pass). This closes the gap where a threshold/arbitration/exclusivity mutation previously passed the (too-narrow) behavioral hidden test and was only caught by source-diff -- it is now caught behaviorally too, which is what makes functional_change (see grade_run.py) detect it as a real behavioral mutation rather than merely source_modified churn.",
+  "detection_keyword_groups": [
+    ["mod wheel", "breath", "controller", "midi"],
+    ["blend", "cutoff", "weighted"],
+    ["already", "correct", "no (issue|bug|defect|conflict)", "no change needed", "working as intended", "deterministic"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

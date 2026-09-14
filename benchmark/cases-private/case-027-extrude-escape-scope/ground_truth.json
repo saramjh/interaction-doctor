@@ -1,0 +1,45 @@
+{
+  "case_id": "case-027-extrude-escape-scope",
+  "case_type": "sequences_mode_change",
+  "defect_present": true,
+  "expected_issue_class": "escape_from_nested_modal_substate_pops_one_level_instead_of_fully_cancelling",
+  "expected_behavior": "pressEscape() in the EXTRUDE_NUMERIC branch must produce the same full-cancellation outcome the ROTATE_NUMERIC and SCALE_NUMERIC branches already produce: mode becomes IDLE and preview/numericValue are cleared -- not merely popping back to the parent EXTRUDE state. This is derivable purely from the ROTATE and SCALE branches already present in the same file, which handle their own base and numeric sub-states identically and correctly; the EXTRUDE_NUMERIC branch is the sole inconsistent implementation. No product-intent question exists here -- the convention is already established and consistent across every other modal command in this fixture.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "in pressEscape()'s EXTRUDE_NUMERIC branch, set mode = 'IDLE' and clear preview/numericValue, exactly matching the pattern already used by the ROTATE/ROTATE_NUMERIC and SCALE/SCALE_NUMERIC branches",
+    "merging the EXTRUDE_NUMERIC handling into the same branch as EXTRUDE (as ROTATE/ROTATE_NUMERIC and SCALE/SCALE_NUMERIC already do) so both reach IDLE with a cleared preview",
+    "any equivalent fix producing the same observable outcome for the nested EXTRUDE path"
+  ],
+  "forbidden_repairs": [
+    "clearing preview/numericValue but leaving mode = 'EXTRUDE' -- caught by extrude_numeric_escape_returns_to_idle",
+    "setting mode = 'IDLE' but leaving preview/numericValue stale -- caught by extrude_numeric_escape_clears_preview",
+    "making Escape a no-op in EXTRUDE_NUMERIC (removing the branch) -- caught by both target assertions",
+    "disabling beginNumericEntry() / numeric-entry mode entirely as a workaround -- caught by numeric_entry_actually_changes_mode, and would also change ROTATE/SCALE's own numeric-entry behavior even though those are already correct",
+    "breaking confirm() while fixing pressEscape() -- caught by extrude_confirm_still_works",
+    "fixing only the already-correct plain-EXTRUDE Escape branch and leaving EXTRUDE_NUMERIC untouched -- indistinguishable from the unmodified fixture; both target assertions still fail",
+    "declining to make any change on the theory that product intent is unclear -- this case's intent_status is 'specified', not 'ambiguous'; the fix is fully determined by the ROTATE/SCALE siblings already present in the same file, so a no-op response still leaves both target assertions failing and is scored as an unfixed defect, not as a legitimate escalation"
+  ],
+  "target_assertions": [
+    "extrude_numeric_escape_returns_to_idle",
+    "extrude_numeric_escape_clears_preview"
+  ],
+  "regression_guard_assertions": [
+    "extrude_plain_escape_returns_to_idle_and_clears_preview",
+    "rotate_numeric_escape_follows_convention",
+    "scale_numeric_escape_follows_convention",
+    "extrude_confirm_still_works",
+    "fresh_extrude_after_cancellation_works",
+    "numeric_entry_updates_preview_normally_before_cancellation",
+    "numeric_entry_actually_changes_mode",
+    "escape_while_idle_is_harmless"
+  ],
+  "sequence_coverage_note": "The target scenario genuinely requires the nested path: startExtrude() -> beginNumericEntry() -> pressEscape(). extrude_plain_escape_returns_to_idle_and_clears_preview (startExtrude() -> pressEscape(), no numeric entry) already PASSES on the unmodified fixture, proving the defect is specific to the EXTRUDE -> EXTRUDE_NUMERIC sequence, not to EXTRUDE or Escape in general -- SEQUENCES is the relevant construct (the EXTRUDE_NUMERIC branch's correctness is only reachable/meaningful in the context beginNumericEntry() established), though this label is private metadata only and the evaluated agent never needs to name it.",
+  "intent_evidence_note": "Product intent for this case is established entirely by tier-5 in-app convention (ROTATE_NUMERIC and SCALE_NUMERIC already handle the identical scenario correctly and consistently in the same file) -- this is deliberately NOT an ambiguous/NEEDS_INTENT case. A correct response fixes the inconsistency using the sibling evidence already present; asking the user for intent here would be unnecessary escalation on a deterministically-derivable fix, and is scored as a failure (target assertions remain unmet) exactly like any other unfixed defect -- no special grader vocabulary logic exists or is needed for this distinction.",
+  "detection_keyword_groups": [
+    ["extrude", "numeric", "escape"],
+    ["rotate", "scale", "sibling"],
+    ["idle", "preview", "cancel"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

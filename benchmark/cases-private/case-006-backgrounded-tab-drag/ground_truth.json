@@ -1,0 +1,29 @@
+{
+  "case_id": "case-006-backgrounded-tab-drag",
+  "case_type": "lifecycle_runtime_interruption",
+  "defect_present": true,
+  "expected_issue_class": "active_drag_claim_not_released_on_runtime_interruption",
+  "expected_behavior": "An in-progress panel drag must be released (dragging set to false / no further pointermove deltas applied) when the tab is backgrounded (visibilitychange with hidden:true). A visibilitychange event reporting hidden:false (foregrounding) must NOT itself cancel or otherwise affect an in-progress drag that started after foregrounding. Ordinary drag start/move/release via pointerdown/pointermove/pointerup must continue to work exactly as before.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "in the visibilitychange handler, when e.hidden is true, set state.dragging = false (and any equivalent release/cancel of the in-progress gesture)",
+    "a broader 'release on interruption' helper invoked from the visibilitychange handler that has the same net effect"
+  ],
+  "forbidden_repairs": [
+    "ignoring all pointermove events after any visibilitychange has ever fired (over-broad; breaks a fresh drag started after foregrounding)",
+    "releasing the drag on every visibilitychange regardless of e.hidden (breaks nothing functionally observable here but is not the targeted fix -- flagged only if it also breaks the foregrounding-does-not-cancel assertion, which a same-tick spurious release would)",
+    "removing pointermove handling from panel entirely"
+  ],
+  "target_assertions": ["drag_releases_on_backgrounding"],
+  "regression_guard_assertions": [
+    "normal_drag_still_works",
+    "foregrounding_event_does_not_spuriously_cancel_drag"
+  ],
+  "detection_keyword_groups": [
+    ["visibilitychange", "backgrounded", "background", "tab switch", "hidden"],
+    ["drag", "panel", "pointermove"],
+    ["release", "cancel", "stop", "interrupt"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

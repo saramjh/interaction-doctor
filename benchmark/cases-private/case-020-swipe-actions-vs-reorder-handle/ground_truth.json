@@ -1,0 +1,38 @@
+{
+  "case_id": "case-020-swipe-actions-vs-reorder-handle",
+  "case_type": "pairwise_conflict_plus_accessibility_gap",
+  "defect_present": true,
+  "expected_issue_class": "reorder_recognizer_scoped_to_whole_row_instead_of_handle_plus_missing_accessibility_activation",
+  "expected_behavior": "TWO required, independent fixes. Part A: a drag originating anywhere on the row OTHER than the reorder handle must be recognized as a native swipe-action gesture, never a reorder; a drag originating on the handle must still reorder. Part B: accessibilityReorder(rowId, direction) must apply the same reorder effect a handle-drag would apply in that direction, and using it must not disturb Part A's routing. A fix that only addresses Part A (routing) without implementing Part B (accessibility), or vice versa, is incomplete and must not be credited as a correct repair.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "Part A: scope reorder recognition to originRegion === 'handle' (kind = 'reorder' only when originRegion is 'handle', 'swipe' otherwise) rather than always defaulting to reorder",
+    "Part B: implement accessibilityReorder(rowId, direction) to call the same reorder logic rowDragEnd() uses (moveInOrder), rather than leaving it a no-op",
+    "any equivalent implementation of both parts that satisfies the same behavioral contract"
+  ],
+  "forbidden_repairs": [
+    "disabling native swipe actions globally (e.g. removing the 'swipe' kind path entirely) instead of scoping reorder to the handle -- caught by off_handle_swipe_reveals_native_action",
+    "disabling reorder entirely (e.g. removing the 'reorder' kind path) instead of scoping it -- caught by on_handle_drag_reorders",
+    "implementing only Part A and leaving accessibilityReorder as a no-op -- caught by accessibility_reorder_matches_physical_reorder, which must fail for repair_success to be false",
+    "implementing only Part B (accessibilityReorder) and leaving rowDragStart unscoped -- caught by off_handle_swipe_reveals_native_action / off_handle_drag_does_not_reorder",
+    "an accessibility implementation that also, as a side effect, changes or disables the physical drag routing -- caught by native_swipe_remains_available_after_accessibility_addition"
+  ],
+  "target_assertions": [
+    "off_handle_swipe_reveals_native_action",
+    "off_handle_drag_does_not_reorder",
+    "accessibility_reorder_matches_physical_reorder",
+    "native_swipe_remains_available_after_accessibility_addition"
+  ],
+  "regression_guard_assertions": [
+    "on_handle_drag_reorders",
+    "ordinary_row_state_intact_on_creation",
+    "repeated_reorder_operations_remain_valid"
+  ],
+  "detection_keyword_groups": [
+    ["handle", "reorder", "row"],
+    ["swipe", "native", "action"],
+    ["accessibility", "screen reader", "voiceover", "talkback", "assistive"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

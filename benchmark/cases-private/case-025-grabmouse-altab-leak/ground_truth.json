@@ -1,0 +1,38 @@
+{
+  "case_id": "case-025-grabmouse-altab-leak",
+  "case_type": "lifecycle_focus_loss",
+  "defect_present": true,
+  "expected_issue_class": "active_resize_not_released_on_native_focus_loss",
+  "expected_behavior": "The focus-change listener must, when isActive is false and a resize is currently in progress, immediately set state.resizing = false -- without applying any extra delta as a side effect of releasing. Regaining focus must not resume the released resize; a subsequent mousePress() starts a genuinely new one. Ordinary press/move/release and focus-loss-with-nothing-active must be unaffected.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "in the onFocusChange listener, when isActive is false, set state.resizing = false",
+    "any equivalent fix that releases the in-progress resize exactly at the moment focus is lost, without deferring to the next mouse event and without applying any stale/queued delta"
+  ],
+  "forbidden_repairs": [
+    "deferring the release to the next mouseMove/mousePress call instead of releasing inside the focus-change listener itself -- caught by stale_delta_after_focus_loss_does_not_mutate_size, since a delta applied by that next call before releasing still mutates size",
+    "releasing only in the isActive===true (refocus) branch instead of at the moment of loss -- caught by focus_loss_during_active_resize_ends_it, which checks resizing===false immediately after setActive(false), before any refocus",
+    "permanently disabling resize after one focus-loss event -- caught by fresh_resize_after_refocus_works",
+    "disabling mouseMove globally after any focus-change event -- also caught by fresh_resize_after_refocus_works",
+    "applying one last queued/stale delta as part of the release itself -- caught by focus_loss_during_active_resize_ends_it, which requires width/height to be unchanged immediately after the release, not just resizing===false",
+    "removing mouseRelease()/resize support entirely -- caught by ordinary_resize_works"
+  ],
+  "target_assertions": [
+    "focus_loss_during_active_resize_ends_it",
+    "stale_delta_after_focus_loss_does_not_mutate_size",
+    "refocus_alone_does_not_resume_resize"
+  ],
+  "regression_guard_assertions": [
+    "ordinary_resize_works",
+    "fresh_resize_after_refocus_works",
+    "focus_loss_with_no_active_resize_is_harmless",
+    "normal_release_then_stale_move_has_no_effect"
+  ],
+  "detection_keyword_groups": [
+    ["focus", "active", "window"],
+    ["resize", "grab", "mouse"],
+    ["release", "stale", "alt-tab", "alttab"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

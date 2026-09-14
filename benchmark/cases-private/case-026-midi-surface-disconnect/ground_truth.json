@@ -1,0 +1,40 @@
+{
+  "case_id": "case-026-midi-surface-disconnect",
+  "case_type": "lifecycle_device_loss",
+  "defect_present": true,
+  "expected_issue_class": "external_control_not_released_on_device_disconnect",
+  "expected_behavior": "The onDisconnect listener must, when the disconnecting deviceId matches state.externalDeviceId, immediately set state.externalDeviceId = null -- without resetting state.value. Local UI input (localSet) must work again immediately after that release, before any new MIDI event. Disconnecting an unrelated device that never controlled the fader must have no effect. Reconnecting the same device and starting a fresh midiControl() interaction must work normally, as must a clean midiControlEnd() ending without any disconnect.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "in the onDisconnect listener, when deviceId === state.externalDeviceId, set state.externalDeviceId = null",
+    "any equivalent fix that releases external control exactly at the moment of disconnect (not deferred to the next MIDI event), preserves state.value, and does not affect an unrelated still-connected device's control"
+  ],
+  "forbidden_repairs": [
+    "ignoring disconnect entirely (the original defect)",
+    "releasing external control only inside midiControl()/midiControlEnd() (i.e. only when another MIDI event eventually arrives) instead of inside onDisconnect() itself -- caught by device_a_disconnect_mid_interaction_releases_control and local_ui_works_immediately_after_disconnect, both checked immediately after disconnect with no further MIDI event",
+    "permanently disabling MIDI control after one disconnect -- caught by reconnect_and_fresh_interaction_works",
+    "permanently disabling local UI once any device has ever controlled the fader -- caught by local_ui_works_immediately_after_disconnect and clean_midi_end_without_disconnect_still_works",
+    "resetting state.value to an arbitrary default on disconnect -- caught by device_a_disconnect_mid_interaction_releases_control, which requires value to remain 80 (unchanged) immediately after the release, not reset",
+    "releasing external control on ANY device's disconnect regardless of which device currently owns it -- caught by unrelated_device_disconnect_does_not_cancel_active_interaction",
+    "leaving local UI suppressed via some mechanism other than externalDeviceId that the release doesn't clear -- caught by local_ui_works_immediately_after_disconnect, which directly exercises localSet() right after disconnect"
+  ],
+  "target_assertions": [
+    "device_a_disconnect_mid_interaction_releases_control",
+    "local_ui_works_immediately_after_disconnect"
+  ],
+  "regression_guard_assertions": [
+    "connected_device_controls_fader_normally",
+    "local_ui_works_when_no_external_control_active",
+    "reconnect_and_fresh_interaction_works",
+    "clean_midi_end_without_disconnect_still_works",
+    "disconnect_with_no_active_interaction_is_harmless",
+    "unrelated_device_disconnect_does_not_cancel_active_interaction"
+  ],
+  "detection_keyword_groups": [
+    ["midi", "device", "disconnect"],
+    ["fader", "external", "control"],
+    ["release", "local", "reconnect"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

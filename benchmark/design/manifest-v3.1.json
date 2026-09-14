@@ -1,0 +1,293 @@
+[
+  {
+    "case_id": "001", "name": "media-library", "outcome": "YES", "difficulty": "T1",
+    "runtime": "vanilla-js",
+    "relations": ["COMPETES"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["scripted pointer sequences: scrub-bar drag mutates scrubberValue only; carousel drag elsewhere mutates carouselIndex only"]
+  },
+  {
+    "case_id": "002", "name": "kanban-board", "outcome": "YES", "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": ["DERIVES_FROM"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": ["async_request"],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["resolve save-responses out of order; assert final column reflects latest drag, not response arrival order"]
+  },
+  {
+    "case_id": "003", "name": "drawing-canvas", "outcome": "NO", "difficulty": "T1",
+    "runtime": "vanilla-js",
+    "relations": ["CONDITIONAL"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["keyboard"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["drag+spacebar-toggle sequences produce output identical to a fixed snapshot; empty diff asserted"]
+  },
+  {
+    "case_id": "004", "name": "hotkey-vs-literal", "outcome": "NEEDS_INTENT", "difficulty": "T1",
+    "runtime": "vanilla-js",
+    "relations": ["COMPETES"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["keyboard"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["transcript/manual oracle: correctly identifies undetermined suppression scope, asks or flags rather than silently picking one convention"]
+  },
+  {
+    "case_id": "005", "name": "ime-guarded-confirm", "outcome": "NO", "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": ["DERIVES_FROM"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["ime_composition"],
+    "requires_recursive_revalidation": false, "contamination_risk": "MEDIUM",
+    "primary_hidden_oracles": ["dispatch keydown mid-composition: no spurious create/confirm side-effect fires; idle-state key still fires normally"]
+  },
+  {
+    "case_id": "006", "name": "backgrounded-tab-drag", "outcome": "YES", "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["runtime_interruption"], "effect_lifetime_categories": [],
+    "environmental_claims": ["native_page_visibility"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate visibilitychange during active drag; assert no further deltas applied after backgrounding and drag state is released"]
+  },
+  {
+    "case_id": "007", "name": "offline-autosave-queue", "outcome": "YES", "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": ["DERIVES_FROM"], "group_policy": null,
+    "lifecycle_categories": ["scope_resource_invalidation"], "effect_lifetime_categories": ["queued_work"],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["flush a queued autosave command whose target was deleted before flush; assert no-op, not misapplied to a reused ID"]
+  },
+  {
+    "case_id": "008", "name": "midi-dual-blend", "outcome": "NO", "difficulty": "T2",
+    "runtime": "vanilla-js-midi-shim",
+    "relations": ["COOPERATES"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["analog_continuous_input"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["verify blended parameter output remains internally consistent under concurrent capture from both controllers; assert no arbitration/lock code path was introduced"]
+  },
+  {
+    "case_id": "009", "name": "debounce-unmount-leak", "outcome": "YES", "difficulty": "T2",
+    "runtime": "react",
+    "relations": ["DERIVES_FROM"], "group_policy": null,
+    "lifecycle_categories": ["scope_resource_invalidation"], "effect_lifetime_categories": ["timer", "debounce"],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["fake-timer harness: unmount before debounce fires, advance clock; assert no post-unmount state mutation or error"]
+  },
+  {
+    "case_id": "010", "name": "focus-restore-after-trigger-removal", "outcome": "NEEDS_INTENT", "difficulty": "T2",
+    "runtime": "react",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["mode_change"], "effect_lifetime_categories": [],
+    "environmental_claims": ["accessibility_focus"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["transcript/manual oracle: names the undetermined re-focus target with locatable context rather than silently picking one"]
+  },
+  {
+    "case_id": "011", "name": "shared-canvas-bifurcation", "outcome": "NEEDS_INTENT", "difficulty": "T2",
+    "runtime": "react",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["scope_resource_invalidation"], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["transcript/manual oracle: recognizes the safe release/cancel floor already exists, and treats successor-choice specifically as the open question rather than guessing a heuristic"]
+  },
+  {
+    "case_id": "012", "name": "hold-to-confirm-never-completes", "outcome": "YES", "difficulty": "T1",
+    "runtime": "vue",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["completion"], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["advance fake clock through full hold duration; assert completion effect fires exactly once, not never"]
+  },
+  {
+    "case_id": "013", "name": "live-value-vs-drag", "outcome": "NEEDS_INTENT", "difficulty": "T2",
+    "runtime": "vue",
+    "relations": ["COMPETES"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["transcript/manual oracle: surfaces both defer-vs-interrupt resolutions with locatable context, does not default silently"]
+  },
+  {
+    "case_id": "014", "name": "independent-toast-stack", "outcome": "NO", "difficulty": "T2",
+    "runtime": "vue",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate concurrent swipe-starts on two different toasts; assert both dismiss independently and no shared-lock code is introduced"]
+  },
+  {
+    "case_id": "015", "name": "backbutton-doesnt-cancel-rename", "outcome": "YES", "difficulty": "T2",
+    "runtime": "react-native",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["cancellation"], "effect_lifetime_categories": [],
+    "environmental_claims": ["native_back_button"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate Back press mid-rename, then an unrelated tap; assert rename Claim was cancelled, not silently committed"]
+  },
+  {
+    "case_id": "016", "name": "swipe-left-double-bound", "outcome": "NEEDS_INTENT", "difficulty": "T2",
+    "runtime": "react-native",
+    "relations": ["COMPETES"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["touch_pointer"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["transcript/manual oracle: names both existing features bound to the gesture, asks/flags rather than picking one"]
+  },
+  {
+    "case_id": "017", "name": "three-finger-transform-cap", "outcome": "YES", "difficulty": "T3",
+    "runtime": "react-native",
+    "relations": [], "group_policy": "capacity(2)",
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["multi_touch_identity"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["register A+B (valid transform); register C mid-gesture; assert transform continues reflecting only A+B, C has no additional contribution"],
+    "nary_participants": ["FingerClaimA", "FingerClaimB", "FingerClaimC"],
+    "nary_mechanism": "app-level capacity gate on concurrent transform-manipulator count",
+    "nary_behavioral_property": "at most 2 of 3 concurrent contacts drive the transform; the 3rd is excluded without corrupting the other two"
+  },
+  {
+    "case_id": "018", "name": "highlight-slot-capacity-leak", "outcome": "YES", "difficulty": "T2",
+    "runtime": "react-native",
+    "relations": ["COOPERATES"], "group_policy": "simultaneous",
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["multi_touch_identity"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["activate A, then B, then C; assert all three remain independently represented after C joins"],
+    "nary_participants": ["HighlightClaimA", "HighlightClaimB", "HighlightClaimC"],
+    "nary_mechanism": "app-level unbounded highlight-set membership (should have no real capacity cap)",
+    "nary_behavioral_property": "all 3 concurrent highlighters remain independently represented; no eviction occurs when a 3rd participant joins"
+  },
+  {
+    "case_id": "019", "name": "sheet-dismiss-vs-carousel", "outcome": "NEEDS_INTENT", "difficulty": "T2",
+    "runtime": "swiftui-shim",
+    "relations": ["PREEMPTS"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["native_sheet_dismiss"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["transcript/manual oracle: names both plausible dismiss-priority resolutions with locatable context, asks rather than picking one"]
+  },
+  {
+    "case_id": "020", "name": "swipe-actions-vs-reorder-handle", "outcome": "YES", "difficulty": "T2",
+    "runtime": "swiftui-shim",
+    "relations": ["PREEMPTS"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["native_swipe_actions", "accessibility_activation"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate off-handle horizontal drag (assert swipeActions fires, not reorder) and on-handle drag (assert reorder fires); invoke accessibility custom action, assert same effect as physical reorder"]
+  },
+  {
+    "case_id": "021", "name": "palm-rejection-recognition-timing", "outcome": "YES", "difficulty": "T2",
+    "runtime": "compose-shim",
+    "relations": ["CONDITIONAL"], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": ["transformed_semantic_input"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["trigger a classifier misread that self-corrects before promotion; assert the wrong recognizer does not promote"]
+  },
+  {
+    "case_id": "022", "name": "swipe-complete-recompose-staleness", "outcome": "YES", "difficulty": "T3",
+    "runtime": "compose-shim",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": ["stale_callback"],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate a re-key/resort event mid-swipe; assert the originally-swiped item completes, not whatever now occupies that list position"]
+  },
+  {
+    "case_id": "023", "name": "physics-arena-registration-bypass", "outcome": "YES", "difficulty": "T3",
+    "runtime": "flutter-shim",
+    "relations": [], "group_policy": "runtime-defined",
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["register A, B, then C in an order the buggy local filter would drop; assert the solver's own registration list contains all 3 active claims at the moment C registers"],
+    "nary_participants": ["GrabClaimA", "GrabClaimB", "GrabClaimC"],
+    "nary_mechanism": "physics engine's native joint-constraint admission (delegated, not app-implemented)",
+    "nary_behavioral_property": "all active grab registrations reach the solver's own registration list every frame; the app performs no local pre-filtering admission decision"
+  },
+  {
+    "case_id": "024", "name": "physics-arena-correct-routing", "outcome": "NO", "difficulty": "T3",
+    "runtime": "flutter-shim",
+    "relations": [], "group_policy": "runtime-defined",
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["same registration sequence as 023; assert the solver's registration list already contains all 3 with no app-level filtering code present"],
+    "nary_participants": ["GrabClaimA", "GrabClaimB", "GrabClaimC"],
+    "nary_mechanism": "physics engine's native joint-constraint admission (delegated, not app-implemented)",
+    "nary_behavioral_property": "same property as 023, already correctly satisfied; oracle confirms no regression is introduced"
+  },
+  {
+    "case_id": "025", "name": "grabmouse-altab-leak", "outcome": "YES", "difficulty": "T1",
+    "runtime": "qt-shim",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["focus_loss"], "effect_lifetime_categories": [],
+    "environmental_claims": ["native_focus"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate grabMouse() then synthetic OS focus-loss; assert the grab is released and no further deltas are applied"]
+  },
+  {
+    "case_id": "026", "name": "midi-surface-disconnect", "outcome": "YES", "difficulty": "T2",
+    "runtime": "qt-shim",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": ["device_loss"], "effect_lifetime_categories": [],
+    "environmental_claims": ["midi_hardware"],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate MIDI device disconnect mid-fader-drag; assert the Claim releases and the fader is not permanently marked externally-controlled"]
+  },
+  {
+    "case_id": "027", "name": "extrude-escape-scope", "outcome": "YES", "difficulty": "T2",
+    "runtime": "cad-viewport-shim",
+    "relations": ["SEQUENCES"], "group_policy": null,
+    "lifecycle_categories": ["mode_change"], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["enter EXTRUDE, enter numeric sub-state, press Escape; assert state is IDLE and no stale preview remains, matching ROTATE/SCALE's existing Escape behavior in the same fixture"]
+  },
+  {
+    "case_id": "028", "name": "canvas-tool-arena-exclusivity-bypass", "outcome": "YES", "difficulty": "T3",
+    "runtime": "canvas-arena-shim",
+    "relations": [], "group_policy": "exclusive",
+    "lifecycle_categories": [], "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["start pen-draw (assert active); dispatch lasso-select's activation condition; assert concurrent-active-claim-count <= 1 at every tick"],
+    "nary_participants": ["PenDrawClaim", "PanCanvasClaim", "LassoSelectClaim"],
+    "nary_mechanism": "app-level recognizer arena, single active-claim slot",
+    "nary_behavioral_property": "at most 1 of 3 registered recognizers is active at any tick, measured by concurrent-active-count, not by which one 'wins'"
+  },
+  {
+    "case_id": "029", "name": "combo-order-and-animation-staleness", "outcome": "YES", "difficulty": "T3",
+    "runtime": "game-ecs-shim",
+    "relations": [], "group_policy": "ordered",
+    "lifecycle_categories": [], "effect_lifetime_categories": ["animation_completion"],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false, "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "(a) dispatch D3,D1,D2 within window, assert no trigger; dispatch D1,D2,D3, assert trigger",
+      "(b) trigger a valid combo vs target T1, swap lock-on to T2 before the animation completes; assert damage applied to T1, not T2"
+    ],
+    "nary_participants": ["InputClaimD1", "InputClaimD2", "InputClaimD3"],
+    "nary_mechanism": "app-level sequence buffer with a timing window",
+    "nary_behavioral_property": "the special move triggers only for strict D1->D2->D3 order within the window; any permutation of the same 3 inputs within the window must not trigger it"
+  },
+  {
+    "case_id": "030", "name": "timeline-autoscroll-causal-staleness", "outcome": "YES", "difficulty": "T3",
+    "runtime": "scene-graph-timeline-shim",
+    "relations": [], "group_policy": null,
+    "lifecycle_categories": [], "effect_lifetime_categories": ["timer"],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": true, "contamination_risk": "LOW",
+    "primary_hidden_oracles": ["simulate scrub-drag-with-autoscroll, pointerup, immediate click; assert (a) no scrolling occurs after release and (b) the keyframe lands at the actual click-time position, not a stale cached offset"]
+  }
+]

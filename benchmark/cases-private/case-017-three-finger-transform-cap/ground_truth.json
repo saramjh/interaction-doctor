@@ -1,0 +1,43 @@
+{
+  "case_id": "case-017-three-finger-transform-cap",
+  "case_type": "nary_capacity",
+  "defect_present": true,
+  "expected_issue_class": "transform_recognizer_admits_unbounded_touches_instead_of_capacity_2",
+  "expected_behavior": "At most two concurrent touch contacts may drive the transform at once. Every pairwise combination of {A, B, C} is independently valid (this is not a pairwise-detectable defect). A third touch arriving while two are already active must contribute zero additional effect to the transform -- the transform must keep reflecting only the two admitted touches, and those two must continue to update correctly while the third is present. Releasing one of the two admitted touches, or starting a fresh pair later, must continue to work normally.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "track which touch ids were admitted as manipulators (e.g. the first two touches to start, in start order) and only include those ids' positions in recomputeTransform(), ignoring any additional touch ids present on the bus beyond capacity 2",
+    "any equivalent capacity(2) admission gate applied before the transform math, that does not affect pairwise-only scenarios and does not cancel or freeze the admitted pair when a third touch arrives"
+  ],
+  "forbidden_repairs": [
+    "cancelling/freezing all transform activity whenever a third touch is present -- caught by ab_continue_correctly_while_capacity_full, which requires A/B to keep updating normally while C is present",
+    "allowing C to replace one of A/B arbitrarily instead of being excluded -- caught by capacity_held_when_third_joins, which requires the transform to stay exactly at the pre-C A+B value even as C moves",
+    "globally reducing the transform to a single finger (capacity 1) -- caught by pair_ab_works/pair_ac_works/pair_bc_works, which require two-touch centroids to work correctly",
+    "clearing/resetting activeManipulatorIds or the touch bus itself when a third touch arrives, instead of just excluding the third id from the transform math"
+  ],
+  "target_assertions": [
+    "capacity_held_when_third_joins",
+    "ab_continue_correctly_while_capacity_full"
+  ],
+  "regression_guard_assertions": [
+    "pair_ab_works",
+    "pair_ac_works",
+    "pair_bc_works",
+    "releasing_one_participant_does_not_corrupt_remaining",
+    "future_ordinary_two_finger_transform_still_works"
+  ],
+  "nary_validation": {
+    "nary_participants": ["FingerClaimA (touch id 'A')", "FingerClaimB (touch id 'B')", "FingerClaimC (touch id 'C')"],
+    "group_policy": "capacity(2)",
+    "pairwise_valid": "pair_ab_works, pair_ac_works, pair_bc_works all pass on BOTH the buggy and the fixed implementation -- pairwise reasoning alone cannot see this defect",
+    "triple_invalid_on_buggy_fixture": "capacity_held_when_third_joins and ab_continue_correctly_while_capacity_full both FAIL on the unmodified fixture (recomputeTransform includes all touches on the bus, unbounded) and both PASS after a correct capacity(2) admission gate is added",
+    "no_mechanism_as_participant": "createTouchBus/touchBus is the routing/tracking mechanism, never asserted against as a participant; the three participants are exclusively the touch ids A, B, C"
+  },
+  "detection_keyword_groups": [
+    ["third", "finger", "touch"],
+    ["transform", "translate", "centroid"],
+    ["capacity", "two", "limit", "cap"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

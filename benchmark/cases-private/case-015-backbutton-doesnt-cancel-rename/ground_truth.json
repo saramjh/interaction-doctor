@@ -1,0 +1,34 @@
+{
+  "case_id": "case-015-backbutton-doesnt-cancel-rename",
+  "case_type": "lifecycle_cancellation",
+  "defect_present": true,
+  "expected_issue_class": "hardware_back_dismisses_keyboard_without_cancelling_interaction",
+  "expected_behavior": "The Back-press handler must cancel the in-progress rename interaction (state.renaming becomes false, the draft is discarded, nothing is written to state.items) when it fires while a rename is active -- not merely dismiss the keyboard-visibility flag while leaving the rename Claim internally active. Explicit commit/cancel must continue to work exactly as before, and a fresh rename started after a Back cancellation must work normally.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "in the Back listener, when a rename is active, also set state.renaming = false (and any equivalent full release of the in-progress interaction) rather than only clearing keyboardVisible",
+    "any equivalent per-interaction cancellation tied to the Back event that does not commit the draft and does not affect other interactions"
+  ],
+  "forbidden_repairs": [
+    "making Back commit the draft instead of discarding it -- caught by back_cancellation_does_not_commit_draft_by_itself",
+    "permanently disabling rename (or the Back listener) after the first Back press -- caught by new_rename_after_back_cancellation_works_normally",
+    "removing the Back listener entirely so it no longer dismisses the keyboard at all"
+  ],
+  "target_assertions": [
+    "back_cancels_rename_interaction",
+    "back_then_unrelated_tap_does_not_commit_stale_draft"
+  ],
+  "regression_guard_assertions": [
+    "back_cancellation_does_not_commit_draft_by_itself",
+    "explicit_commit_still_works",
+    "explicit_cancel_preserves_original_value",
+    "new_rename_after_back_cancellation_works_normally"
+  ],
+  "detection_keyword_groups": [
+    ["back", "hardware", "android"],
+    ["rename", "renaming", "draft"],
+    ["cancel", "keyboardVisible", "stale"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

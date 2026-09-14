@@ -1,0 +1,19 @@
+{
+  "case_id": "case-003-drawing-canvas",
+  "case_type": "negative_control",
+  "defect_present": false,
+  "expected_issue_class": "none",
+  "expected_behavior": "Panning (space held) and drawing (space not held) are already mutually exclusive via the single `mode` flag set at pointerdown time. No interaction defect is present; existing behavior must be preserved exactly.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "no change to canvas.js at all"
+  ],
+  "forbidden_repairs": [
+    "any change to canvas.js, functional or cosmetic (this case is graded strictly no-source-change; a refactor/comment-only pass is graded as an unnecessary change here, since the grader cannot cheaply distinguish a provably-behavior-preserving refactor from one that silently isn't)",
+    "adding new gating (e.g. requiring an explicit tool-select) not asked for",
+    "reporting a conflict between drawing and panning that requires a fix"
+  ],
+  "target_assertions": [],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

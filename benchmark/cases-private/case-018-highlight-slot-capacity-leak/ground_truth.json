@@ -1,0 +1,43 @@
+{
+  "case_id": "case-018-highlight-slot-capacity-leak",
+  "case_type": "nary_simultaneous",
+  "defect_present": true,
+  "expected_issue_class": "artificial_capacity_2_limit_where_policy_is_unbounded_simultaneous",
+  "expected_behavior": "All highlights (any number, not just two) may remain active simultaneously; the product policy for this resource is unbounded/simultaneous, not capacity-limited. Starting a third highlight while two are already active must not evict either existing one. Each highlight must remain independently addressable and updatable (moveHighlight on one must not affect another's offset), ending one must not affect the others, and highlighting again later must continue to work.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "represent active highlights by participant/claim identity (e.g. a Map or object keyed by id) instead of two fixed slots, so any number can coexist",
+    "any equivalent unbounded per-id storage structure that does not evict an existing entry when a new one is added"
+  ],
+  "forbidden_repairs": [
+    "a global single-active-highlight lock (only one highlight allowed at a time) -- caught by a_and_b_both_present, which already requires two to coexist",
+    "keeping a two-slot structure but choosing differently which old highlight to evict when a third arrives -- still fails all_three_present_after_c_starts regardless of which one is evicted",
+    "rejecting the third highlight entirely (startHighlight becomes a no-op when 'full') -- still fails all_three_present_after_c_starts, since C never becomes active",
+    "merging all highlight identities into one shared mutable stroke (e.g. a single shared offset) -- caught by updating_c_does_not_mutate_others, which requires each id's offset to be independently trackable"
+  ],
+  "target_assertions": [
+    "all_three_present_after_c_starts",
+    "updating_c_does_not_mutate_others"
+  ],
+  "regression_guard_assertions": [
+    "a_starts_then_present",
+    "a_and_b_both_present",
+    "ending_one_does_not_remove_others",
+    "later_highlight_still_works"
+  ],
+  "nary_validation": {
+    "nary_participants": ["HighlightClaimA (id 'A')", "HighlightClaimB (id 'B')", "HighlightClaimC (id 'C')"],
+    "group_policy": "simultaneous",
+    "two_participant_pass_on_buggy_fixture": "a_starts_then_present and a_and_b_both_present both PASS on the unmodified two-slot fixture -- the artificial cap is never exercised by only two participants",
+    "third_participant_eviction_on_buggy_fixture": "all_three_present_after_c_starts and updating_c_does_not_mutate_others both FAIL on the unmodified fixture (A is silently evicted when C starts)",
+    "three_participant_coexistence_on_legitimate_repair": "both target assertions PASS once active highlights are represented by an unbounded per-id structure",
+    "no_mechanism_as_participant": "the annotation surface / storage structure itself is never asserted against as a participant; the three participants are exclusively the highlight ids A, B, C"
+  },
+  "detection_keyword_groups": [
+    ["third", "highlight", "stroke"],
+    ["evict", "disappear", "slot"],
+    ["simultaneous", "unbounded", "coexist"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

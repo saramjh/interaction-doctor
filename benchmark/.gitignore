@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Historical/empirical raw run archives are NOT part of the frozen
+# instrument -- do not mix them into the immutable benchmark-instrument
+# commit. They remain on disk locally (or can be archived separately);
+# this only keeps `git add benchmark/` from silently staging them. Small
+# summaries (results/smoke-summary.*) are intentionally still tracked.
+results/raw/

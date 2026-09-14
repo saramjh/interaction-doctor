@@ -1,0 +1,38 @@
+{
+  "case_id": "case-022-swipe-complete-recompose-staleness",
+  "case_type": "effect_lifetime_stale_callback",
+  "defect_present": true,
+  "expected_issue_class": "swipe_completion_bound_to_stale_list_position_instead_of_item_identity",
+  "expected_behavior": "swipeStart(itemId) must retain the item's stable identity for the duration of the gesture, not merely the position it happened to occupy at gesture-start. swipeComplete() must mark done the item that was actually swiped, regardless of any resort() that occurs before the gesture finishes -- including multiple resorts during a single gesture.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "store the itemId itself in swipeInProgress instead of a position snapshot, and look the item up by id (not by position) in swipeComplete()",
+    "any equivalent fix that binds the deferred completion effect to the item's stable identity rather than a position captured at swipe-start"
+  ],
+  "forbidden_repairs": [
+    "cancelling/clearing swipeInProgress whenever any reorder occurs instead of correctly resolving the completion -- avoiding a wrong completion by cancelling the intended effect entirely is not the required behavior; caught by every target assertion, since the swiped item is never marked done at all",
+    "disabling swipeComplete() (or making it a no-op) whenever any resort occurred during the gesture, instead of correctly resolving to the right item -- caught by originally_swiped_item_completes_not_whatever_is_now_at_that_position, which requires the ORIGINAL item to actually complete, not merely that the wrong one doesn't",
+    "disabling swipe completion entirely -- caught by swipe_complete_without_resort_still_works",
+    "freezing or rejecting resort() while a swipe completion is pending, instead of fixing what completes -- caught by reorder_still_applies_while_swipe_pending, which requires the list to actually reorder regardless of a pending completion",
+    "removing resort() or changing its public signature beyond what's needed for the fix"
+  ],
+  "target_assertions": [
+    "originally_swiped_item_completes_not_whatever_is_now_at_that_position",
+    "reorder_twice_during_one_swipe_still_completes_original_item",
+    "target_moving_to_front_still_completes_correctly",
+    "target_moving_to_back_still_completes_correctly"
+  ],
+  "regression_guard_assertions": [
+    "reorder_still_applies_while_swipe_pending",
+    "swipe_complete_without_resort_still_works",
+    "resort_without_active_swipe_does_not_complete_anything",
+    "swiping_a_different_item_after_a_completed_one_still_works"
+  ],
+  "detection_keyword_groups": [
+    ["swipe", "complete", "resort"],
+    ["position", "identity", "itemId"],
+    ["stale", "recompose", "re-key", "reorder"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

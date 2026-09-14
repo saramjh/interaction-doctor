@@ -1,0 +1,32 @@
+{
+  "case_id": "case-007-offline-autosave-queue",
+  "case_type": "effect_lifetime_queued_work",
+  "defect_present": true,
+  "expected_issue_class": "queued_command_applied_to_invalidated_or_reused_target",
+  "expected_behavior": "A queued edit command must only be applied by flushQueue() if the note it targeted is still the same note instance it was queued for -- i.e. the note was not deleted (and not deleted-then-recreated, since a recreated note under a reused id is a different, unrelated note) in the interim. A queued edit to a still-current, never-deleted note must still apply normally.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "compare cmd.generation to state.noteGeneration[cmd.id] in flushQueue() and skip applying the command when they differ or the note no longer exists",
+    "any equivalent validity/generation check performed at flush time before mutating state.notes[cmd.id]"
+  ],
+  "forbidden_repairs": [
+    "never applying any queued command (trivially avoids the stale-overwrite bug but silently drops legitimate queued edits -- caught by the normal_queued_edit_still_applies regression assertion, not by grader inspection)",
+    "removing the queue/offline-batching mechanism (applying edits synchronously instead)",
+    "clearing the queue on every deleteNote() call (over-broad -- would also drop queued edits for OTHER, unrelated notes still in the queue)"
+  ],
+  "target_assertions": [
+    "queued_edit_to_deleted_note_is_dropped",
+    "queued_edit_to_recreated_note_does_not_overwrite_new_content"
+  ],
+  "regression_guard_assertions": [
+    "normal_queued_edit_still_applies",
+    "unrelated_queued_edits_survive_a_sibling_deletion"
+  ],
+  "detection_keyword_groups": [
+    ["queue", "queued", "flush", "offline", "batch"],
+    ["delete", "deleted", "reuse", "reused", "recreat"],
+    ["generation", "stale", "version", "valid", "current"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

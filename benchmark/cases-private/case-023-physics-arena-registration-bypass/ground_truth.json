@@ -1,0 +1,47 @@
+{
+  "case_id": "case-023-physics-arena-registration-bypass",
+  "case_type": "nary_runtime_defined",
+  "defect_present": true,
+  "expected_issue_class": "app_side_local_admission_filter_hides_active_claims_from_named_solver",
+  "expected_behavior": "Every currently active pointer grab must reach the solver's own frame registration input, every frame, regardless of how many are simultaneously active. The application must forward all active grabs and never pre-select a subset -- the solver, not the app, owns how simultaneous grabs are resolved. tickFrame() currently forwards only the first two active pointer ids (Object.keys(...).slice(0, 2)), so a third simultaneously-active grab never reaches the solver at all.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "forward every id in Object.keys(state.activePointers) to solver.registerGrab() in tickFrame(), removing the .slice(0, 2) (or any equivalent local admission cap)",
+    "any equivalent fix that forwards the full set of currently active pointer ids to the solver every frame, with no local pre-filtering"
+  ],
+  "forbidden_repairs": [
+    "continuing to forward only two of three active grabs, however chosen (first two, newest two, or any other subset) -- caught by triple_abc_reaches_solver, which requires the exact set {A,B,C}, not any 2-of-3 subset",
+    "locally choosing a single 'winner' pointer to forward -- caught by triple_abc_reaches_solver (also breaks pair_ab/ac/bc_reaches_solver if applied whenever 2+ are active)",
+    "locally serializing active grabs so only one reaches the solver per tickFrame() call -- caught by triple_abc_reaches_solver (all three must reach the solver in the SAME frame/call)",
+    "cancelling/clearing all active grabs whenever three are simultaneously present -- caught by triple_abc_reaches_solver and is also an outright regression on basic grab tracking",
+    "moving the admission filter into the solver itself (physics-shim.js) instead of removing it from the app -- the requirement is observable through solver.getFrameRegistrations(), so filtering there is caught exactly the same way filtering in app.js is; the fix belongs in the app, but the oracle only cares what the solver ends up receiving"
+  ],
+  "target_assertions": ["triple_abc_reaches_solver"],
+  "regression_guard_assertions": [
+    "single_a_reaches_solver",
+    "pair_ab_reaches_solver",
+    "pair_ac_reaches_solver",
+    "pair_bc_reaches_solver",
+    "registration_data_preserved",
+    "releasing_one_removes_only_that_one_next_frame",
+    "remaining_claims_continue_reaching_solver_after_release",
+    "fresh_later_set_of_grabs_still_works"
+  ],
+  "nary_validation": {
+    "nary_participants": ["GrabClaimA (pointer id 'A')", "GrabClaimB (pointer id 'B')", "GrabClaimC (pointer id 'C')"],
+    "participant_count": 3,
+    "named_mechanism": "physics solver (createPhysicsSolver / registerGrab / getFrameRegistrations)",
+    "mechanism_is_participant": false,
+    "group_policy": "runtime-defined",
+    "behavioral_property": "every active Grab Claim reaches the solver's own frame registration input every frame; the app makes no local admission decision",
+    "pairwise_valid_on_buggy_fixture": "single_a_reaches_solver, pair_ab_reaches_solver, pair_ac_reaches_solver, pair_bc_reaches_solver all pass on the unmodified fixture -- pairwise reasoning alone cannot see this defect",
+    "triple_invalid_on_buggy_fixture": "triple_abc_reaches_solver fails on the unmodified fixture (the solver receives only 2 of 3) and passes once the local .slice(0,2) filter is removed"
+  },
+  "detection_keyword_groups": [
+    ["solver", "registerGrab", "frame"],
+    ["grab", "pointer", "three"],
+    ["slice", "first two", "filter", "forward all"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

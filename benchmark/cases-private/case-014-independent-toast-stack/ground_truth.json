@@ -1,0 +1,32 @@
+{
+  "case_id": "case-014-independent-toast-stack",
+  "case_type": "negative_control",
+  "defect_present": false,
+  "expected_issue_class": "none",
+  "expected_behavior": "Each toast's swipe-dismiss state is independent (keyed per-toast in a Map); no shared/global arbitration exists or is needed, since each toast's resource (its own offset/swiping/dismissed state) is disjoint from every other toast's. Multiple toasts may be simultaneously mid-swipe; dismissing one has no effect on any other; a toast created after other activity behaves identically to one created first. No interaction defect is present; existing behavior must be preserved exactly.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "no change to app.js at all"
+  ],
+  "forbidden_repairs": [
+    "any change to app.js, functional or cosmetic (this case is graded strictly no-source-change; a refactor/comment-only pass is graded as an unnecessary change here, since the grader cannot cheaply distinguish a provably-behavior-preserving refactor from one that silently isn't)",
+    "introducing a shared/global active-swipe lock or serialization mechanism (e.g. a module-level 'currently swiping toast id' that rejects/cancels swipeStart on a second toast while one is already mid-swipe) -- not asked for, not evidenced anywhere in the fixture, and breaks both_toasts_can_be_actively_swiping_simultaneously and two_toasts_interleaved_swipe_both_dismiss_independently",
+    "reporting a conflict between concurrently-swiped toasts that requires a fix"
+  ],
+  "target_assertions": [],
+  "regression_guard_assertions": [
+    "single_toast_dismisses_alone",
+    "both_toasts_can_be_actively_swiping_simultaneously",
+    "two_toasts_interleaved_swipe_both_dismiss_independently",
+    "dismissing_one_does_not_affect_other",
+    "later_created_toast_still_works_after_earlier_activity"
+  ],
+  "oracle_notes": "both_toasts_can_be_actively_swiping_simultaneously and two_toasts_interleaved_swipe_both_dismiss_independently are the assertions that specifically reject a shared/global active-swipe lock behaviorally (functional_change=true under that mutation), not merely via source diff -- see benchmark/graders/grade_run_selftest.py for the deterministic validation of this against exactly that mutation shape.",
+  "detection_keyword_groups": [
+    ["toast", "swipe", "dismiss"],
+    ["independent", "concurrent", "simultaneous"],
+    ["already", "correct", "no (issue|bug|defect|conflict)", "no change needed", "working as intended"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

@@ -1,0 +1,111 @@
+{
+  "case_id": "case-030-timeline-autoscroll-causal-staleness",
+  "case_type": "recursive_revalidation",
+  "defect_present": true,
+  "requires_recursive_revalidation": true,
+  "expected_issue_class": "leaked_drag_autoscroll_timer_masks_stale_cached_scroll_offset_used_for_click_coordinate_conversion",
+  "expected_behavior": "TWO defects, causally linked. (1) pointerUp() must stop the drag-driven auto-scroll contribution immediately -- once released, no further advanceFrame() call may attribute any of its scroll movement to drag-autoscroll, though native settle (also driven through advanceFrame(), the single public runtime-frame scheduler) is intentionally allowed to keep contributing. (2) clickTimeline() must place a keyframe using the CURRENT actual scroll offset, not a cached offset -- the buggy implementation's cache is only ever refreshed inside the leaked drag-autoscroll work, so on the unmodified baseline the leak accidentally keeps the cache synchronized with the real offset every frame and defect 2 is masked for every supported schedule. Once defect 1 is fixed and the leaked work stops running, the cache freezes while native settle (still running inside the same advanceFrame() calls) keeps moving the real viewport, and an immediate click now computes the wrong content position -- a placement failure that was not reachable on baseline through any supported public schedule. A repair fixing only defect 1 newly exposes defect 2; a repair fixing only defect 2 leaves defect 1's post-release contribution unfixed. Both must be fixed for a correct repair.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "stop drag-driven auto-scroll on pointerUp (e.g. clear/deactivate whatever drives advanceFrame()'s effect) AND make clickTimeline() read the current actual scroll offset directly (or otherwise keep any cached value correctly synchronized through the legitimate native-settle path, not only through the leaked autoscroll tick)",
+    "any equivalent behavioral fix for either half is acceptable -- no particular internal representation (a live-read coordinate transform, a cache kept correctly synchronized via the settle path itself, etc.) is required, as long as every hidden-test scenario's observable behavior holds"
+  ],
+  "forbidden_repairs": [
+    "fixing only the timer/release behavior and leaving click coordinate conversion on the stale cache -- caught by click_during_native_settle_uses_current_visual_content_position and its variant, which newly fail once the leak that was masking them is removed",
+    "fixing only the coordinate conversion (reading the live offset) and leaving the leaked timer running past pointerUp -- caught by drag_autoscroll_stops_at_release",
+    "disabling edge auto-scroll entirely -- caught by edge_autoscroll_works_during_active_drag, a regression",
+    "stopping both the leaked drag-autoscroll AND the legitimate native settle on pointerUp -- caught by native_settle_still_occurs_after_release, a regression; the public contract explicitly allows settle to continue after release",
+    "preventing clicks while native settle is still in progress -- the public contract explicitly supports clicking during settle; caught because this mutation, applied even on top of a correct fix, causes click_during_native_settle_uses_current_visual_content_position to newly fail (no keyframe/wrong keyframe placed) instead of passing",
+    "snapping the actual viewport scroll back to the cached value (e.g. inside the settle tick) merely to avoid a stale mismatch -- caught by native_settle_still_occurs_after_release, since it defeats the real settle motion",
+    "delaying timer cancellation until some later unrelated event/frame instead of at pointerUp itself -- caught by drag_autoscroll_stops_at_release, which checks the very next frame right after pointerUp with nothing else in between",
+    "cancelling the timer correctly but only refreshing the cached offset once settle fully completes -- still caught by click_during_native_settle_uses_current_visual_content_position, which observes the click DURING settle, before it completes",
+    "guessing a fixed numeric correction (e.g. a hardcoded settle-delta offset added to the stale cache) instead of reading/tracking the real value -- caught by using two click scenarios with different accumulated settle deltas (1 vs 2 frames before the click); a fixed guess that happens to match one cannot match both",
+    "placing the keyframe at the stale coordinate and silently correcting it later once settle finishes -- caught because the assertion snapshots the placed keyframe's coordinate immediately after the click call, before any further settle frames run",
+    "permanently disabling all future auto-scroll after the first cleanup -- caught by autoscroll_not_permanently_disabled_after_cleanup and fresh_scrub_after_release_works, both regressions"
+  ],
+  "not_applicable_repairs": [
+    "exposing a second public method to advance native settle independently of drag-autoscroll -- explicitly disallowed by the frozen causal-scheduler design; the public fixture defines exactly one runtime-frame advance operation (advanceFrame()) so masking is a reachability property of the scheduler itself, not a hidden-test call-order artifact"
+  ],
+  "target_assertions": [
+    "drag_autoscroll_stops_at_release",
+    "click_during_native_settle_uses_current_visual_content_position",
+    "click_during_native_settle_uses_current_visual_content_position_variant",
+    "causal_adversarial_masking_check"
+  ],
+  "regression_guard_assertions": [
+    "edge_autoscroll_works_during_active_drag",
+    "pointer_movement_during_scrub_still_works",
+    "pointerup_ends_dragging_state",
+    "native_settle_still_occurs_after_release",
+    "ordinary_click_with_no_pending_settle_correct",
+    "click_placement_after_settle_fully_completes_correct",
+    "fresh_scrub_after_release_works",
+    "later_ordinary_click_still_works",
+    "no_duplicate_keyframe_from_one_click",
+    "autoscroll_not_permanently_disabled_after_cleanup"
+  ],
+  "defect_family_map": {
+    "defect_1_timer_release": ["drag_autoscroll_stops_at_release"],
+    "defect_2_stale_coordinate": [
+      "click_during_native_settle_uses_current_visual_content_position",
+      "click_during_native_settle_uses_current_visual_content_position_variant",
+      "causal_adversarial_masking_check"
+    ]
+  },
+  "causal_pattern_note": "click_during_native_settle_* and causal_adversarial_masking_check are TARGET assertions, not regression guards, specifically because their baseline value is TRUE (masked) and they become FALSE under a defect-1-only repair. This non-monotonic baseline->fix1 transition is the causal proof of recursive revalidation this case exists to test -- it must never be reclassified as an ordinary regression, and the shared grader is not special-cased for it: it already excludes target assertions from regression classification generically, and repair_success already requires every target_assertions entry to be true, which correctly yields defect_not_fixed when fix 1 alone exposes defect 2.",
+  "causal_reachability_note": "The public scheduler exposes exactly one way to advance time -- advanceFrame() -- which internally runs native settle (if still scheduled) then drag-autoscroll (if still active) within the SAME frame. There is no supported public sequence that advances native settle while skipping the still-active drag-autoscroll work on baseline; masking is therefore a reachability property of the runtime scheduler itself, proven exhaustively across 0-4 post-release frames by causal_adversarial_masking_check, not an artifact of a chosen hidden-test call order.",
+  "recursive_revalidation_proof": {
+    "causal_chain": [
+      "fix defect 1 (pointerUp stops the drag-autoscroll tick)",
+      "-> removes the leaked tick's per-frame activity",
+      "-> removes the leaked tick's incidental cache = actual synchronization",
+      "-> native settle continues moving the real offset while the cache no longer follows it",
+      "-> the cache becomes observably stale",
+      "-> an immediate click during settle now computes the wrong content position",
+      "-> a second, independent repair (read the live offset, or keep the cache synchronized via the settle path) is required"
+    ],
+    "state_traces_generated_by": "one public advanceFrame() call per frame -- no separate settle-only advance exists",
+    "baseline_state_trace": {
+      "before_pointerup": { "dragging": true, "autoscroll_active": true, "settle_frames_remaining": 0, "actual_scroll": 0, "cached_scroll": 0 },
+      "immediately_after_pointerup": { "dragging": false, "autoscroll_active": true, "settle_frames_remaining": 3, "actual_scroll": 0, "cached_scroll": 0 },
+      "after_frame_1": { "dragging": false, "autoscroll_active": true, "settle_frames_remaining": 2, "actual_scroll": 8, "cached_scroll": 8, "note": "settle +3 then leaked drag-autoscroll +5 within the SAME advanceFrame() call; the leaked work re-syncs cached=actual" },
+      "at_immediate_click_x10": { "placed_content_x": 18, "expected_content_x": 18, "placement_correct": true, "note": "masked -- cached happens to equal actual" }
+    },
+    "fix_1_only_state_trace": {
+      "before_pointerup": { "dragging": true, "autoscroll_active": true, "settle_frames_remaining": 0, "actual_scroll": 0, "cached_scroll": 0 },
+      "immediately_after_pointerup": { "dragging": false, "autoscroll_active": false, "settle_frames_remaining": 3, "actual_scroll": 0, "cached_scroll": 0 },
+      "after_frame_1": { "dragging": false, "autoscroll_active": false, "settle_frames_remaining": 2, "actual_scroll": 3, "cached_scroll": 0, "note": "settle +3; drag-autoscroll is a no-op now (fixed), so cached is never refreshed and freezes at 0" },
+      "at_immediate_click_x10": { "placed_content_x": 10, "expected_content_x": 13, "placement_correct": false, "note": "newly observable failure -- NOT observable in the baseline trace above, which passed at the same step" }
+    },
+    "fix_2_only_state_trace": {
+      "before_pointerup": { "dragging": true, "autoscroll_active": true, "settle_frames_remaining": 0, "actual_scroll": 0, "cached_scroll": 0 },
+      "immediately_after_pointerup": { "dragging": false, "autoscroll_active": true, "settle_frames_remaining": 3, "actual_scroll": 0, "cached_scroll": 0 },
+      "after_frame_1": { "dragging": false, "autoscroll_active": true, "settle_frames_remaining": 2, "actual_scroll": 8, "cached_scroll": 8, "note": "identical to baseline -- defect 1 untouched" },
+      "at_immediate_click_x10": { "placed_content_x": 18, "expected_content_x": 18, "placement_correct": true, "note": "correct because clickTimeline now reads the live actual offset directly, independent of the cache" }
+    },
+    "complete_fix_state_trace": {
+      "before_pointerup": { "dragging": true, "autoscroll_active": true, "settle_frames_remaining": 0, "actual_scroll": 0, "cached_scroll": 0 },
+      "immediately_after_pointerup": { "dragging": false, "autoscroll_active": false, "settle_frames_remaining": 3, "actual_scroll": 0, "cached_scroll": 0 },
+      "after_frame_1": { "dragging": false, "autoscroll_active": false, "settle_frames_remaining": 2, "actual_scroll": 3, "cached_scroll": 0, "note": "drag-autoscroll correctly a no-op; cache is simply unused by the fixed clickTimeline" },
+      "at_immediate_click_x10": { "placed_content_x": 13, "expected_content_x": 13, "placement_correct": true }
+    },
+    "BASELINE_SUPPORTED_SCHEDULE_MASKING": "PASS",
+    "BASELINE_SUPPORTED_SCHEDULE_MASKING_note": "causal_adversarial_masking_check exhaustively tries every supported frame count (0 through 4, i.e. through and beyond full settle completion) between pointerUp() and clickTimeline() using only the public advanceFrame() scheduler, and placement is correct at every one of them on the unmodified baseline -- no supported evaluator-visible schedule exposes defect 2 before defect 1 is repaired.",
+    "FIX1_CREATES_NEW_REACHABILITY": "PASS",
+    "FIX1_CREATES_NEW_REACHABILITY_note": "Under the defect-1-only repair, the placement failure at click_x10 after 1 frame (placed 10 vs expected 13) is reachable through the identical public sequence (pointerDownScrubber -> pointerUp -> advanceFrame -> clickTimeline) that produced a correct, masked result on baseline -- this is a state reachable after fix 1 that was not reachable on baseline."
+  },
+  "public_intent_sufficiency": {
+    "can_derive_drag_autoscroll_must_stop_on_release": true,
+    "can_derive_native_settle_separately_allowed_to_continue": true,
+    "can_derive_intended_click_content_coordinate_formula": true,
+    "task_announces_fixing_autoscroll_reveals_second_defect": false,
+    "can_know_exact_source_repairs_without_inspecting_implementation": false
+  },
+  "detection_keyword_groups": [
+    ["autoscroll", "pointerup", "release"],
+    ["settle", "click", "offset"],
+    ["timeline", "scroll", "keyframe"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

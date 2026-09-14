@@ -1,0 +1,31 @@
+{
+  "case_id": "case-009-debounce-unmount-leak",
+  "case_type": "effect_lifetime_timer_debounce",
+  "defect_present": true,
+  "expected_issue_class": "debounce_timer_not_cancelled_on_unmount",
+  "expected_behavior": "type() schedules a deferred suggestions update via clock.setTimeout(). That deferred effect must be cancelled (via clock.clearTimeout or an equivalent guard) when harness.unmount() runs, so it never mutates state after the component is gone. Ordinary debounce behavior while mounted is unaffected, and the cancellation must be scoped to the specific instance/harness that unmounted -- a fresh, separately-mounted instance's own debounce must still work normally afterward.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "capture the setTimeout id returned by clock.setTimeout and call clock.clearTimeout(id) from a cleanup function registered via harness.registerCleanup()",
+    "any equivalent per-instance cancellation/invalidation-guard tied to this harness's own unmount, that does not affect other instances"
+  ],
+  "forbidden_repairs": [
+    "removing the debounce delay entirely (firing synchronously or immediately) -- caught by normal_debounce_still_works_while_mounted, which specifically checks that nothing has fired before the delay elapses",
+    "a module-level or globally-shared flag/guard that suppresses ALL delayed callbacks once ANY instance has unmounted -- caught by cancel_on_unmount_does_not_disable_future_instance",
+    "removing state.requestCount / state.suggestions tracking, or otherwise changing the public shape of createSearchBox's return value, beyond what's needed for the fix"
+  ],
+  "target_assertions": [
+    "unmount_before_expiry_prevents_stale_mutation"
+  ],
+  "regression_guard_assertions": [
+    "normal_debounce_still_works_while_mounted",
+    "cancel_on_unmount_does_not_disable_future_instance"
+  ],
+  "detection_keyword_groups": [
+    ["debounce", "timer", "setTimeout"],
+    ["unmount", "cleanup", "harness"],
+    ["cancel", "clearTimeout", "cleanup"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

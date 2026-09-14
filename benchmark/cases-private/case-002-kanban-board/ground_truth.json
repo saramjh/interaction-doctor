@@ -1,0 +1,27 @@
+{
+  "case_id": "case-002-kanban-board",
+  "case_type": "lifecycle_cancellation",
+  "defect_present": true,
+  "expected_issue_class": "stale_async_completion_overwrites_newer_state",
+  "expected_behavior": "When a card is moved more than once before earlier save requests resolve, a stale (superseded) save response must not overwrite the state written by a more recent move, regardless of response arrival order. A response for the card's current (not superseded) request must still be applied, including a server rejection/adjustment.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "track the latest request id per card and ignore a save completion whose id is not the current one for that card",
+    "cancel the previous in-flight request via scheduler.cancel() when a new move for the same card starts",
+    "generation counter per card compared at completion time"
+  ],
+  "forbidden_repairs": [
+    "removing the optimistic update (making the UI wait for the save to complete before reflecting the move)",
+    "making moveCard synchronous / removing the scheduler indirection",
+    "always ignoring save responses (never applying server state) -- caught by the server_rejection_is_honored_when_current hidden-test assertion, not by grader inspection"
+  ],
+  "target_assertions": ["stale_response_does_not_clobber_newer_move"],
+  "regression_guard_assertions": ["normal_in_order_resolution_still_works", "server_rejection_is_honored_when_current"],
+  "detection_keyword_groups": [
+    ["stale", "race", "out-of-order", "out of order", "superseded", "order of"],
+    ["save", "request", "response"],
+    ["latest", "current", "cancel", "ignore stale", "request id", "requestid"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

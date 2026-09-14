@@ -1,0 +1,56 @@
+{
+  "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+  "case_type": "nary_exclusive",
+  "defect_present": true,
+  "expected_issue_class": "legacy_activation_route_bypasses_shared_exclusivity_mechanism",
+  "expected_behavior": "quickLassoActivate() must participate in the same exclusivity mechanism pen and pan already use (arena.tryStart()/arena.end()) instead of setting state.lassoSelectActive directly. The required property is purely behavioral: getActiveGestures().length must never exceed 1, in every order and combination of activation (pen-then-lasso, pan-then-lasso, lasso-then-pen, lasso-then-pan). No particular recognizer is required to 'win' -- a fix that makes lasso participate in the arena and consistently loses to whichever recognizer is already active is just as valid as a fix that makes lasso preempt and cleanly hands off the other recognizer's ownership, as long as the concurrent-active-count invariant holds and normal standalone/lifecycle behavior is preserved.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "route quickLassoActivate() through arena.tryStart('lasso') (only setting lassoSelectActive if it succeeds), matching the pattern pointerDown() already uses for pen and pan",
+    "any equivalent fix that makes lasso's activation consult and participate in the same exclusivity mechanism as pen/pan, in both activation orders",
+    "a clean preemption/handoff design (lasso activating cleanly ends whichever other recognizer was active) is also acceptable, provided the invariant (concurrent active count <= 1) holds and lifecycle/standalone behavior is preserved -- winner identity is not scored"
+  ],
+  "forbidden_repairs": [
+    "disabling lasso select entirely -- caught by lasso_select_works_standalone",
+    "disabling pen or pan globally -- caught by pen_draw_works_standalone / pan_canvas_works_standalone",
+    "patching lasso only against pen (checking penDrawActive before activating) while leaving the pan+lasso overlap unfixed -- caught by pan_active_then_lasso_condition_stays_exclusive, a genuinely group-wide check",
+    "patching lasso only against pan while leaving the pen+lasso overlap unfixed -- caught by pen_active_then_lasso_condition_stays_exclusive",
+    "allowing a one-tick overlap that gets cleaned up on a later call -- caught because every assertion snapshots getActiveGestures() immediately after each activation step, not only at a final settled state",
+    "changing only arena bookkeeping (e.g. arena's internal activeId) while the actual gesture effect flags (penDrawActive/panCanvasActive/lassoSelectActive) still both remain true -- caught because every assertion reads getActiveGestures(), which is derived from the actual effect flags, never from arena.getActive() directly",
+    "permanently locking the first gesture that ever activates, forever -- caught by ending_gesture_releases_slot_and_another_can_start_afterward and repeated_interactions_do_not_leave_stuck_state",
+    "globally ignoring all overlapping activation forever after the first conflict is detected once -- caught by lasso_still_works_after_an_earlier_conflict_resolves, which exercises a fresh standalone attempt after a prior conflicting attempt has come and gone"
+  ],
+  "target_assertions": [
+    "pen_active_then_lasso_condition_stays_exclusive",
+    "pan_active_then_lasso_condition_stays_exclusive",
+    "lasso_active_then_pen_condition_stays_exclusive",
+    "lasso_active_then_pan_condition_stays_exclusive"
+  ],
+  "regression_guard_assertions": [
+    "pen_draw_works_standalone",
+    "pan_canvas_works_standalone",
+    "lasso_select_works_standalone",
+    "pen_active_then_pan_condition_stays_exclusive",
+    "ending_gesture_releases_slot_and_another_can_start_afterward",
+    "repeated_interactions_do_not_leave_stuck_state",
+    "pointer_up_does_not_leave_phantom_activity",
+    "cancel_gesture_releases_slot",
+    "lasso_still_works_after_an_earlier_conflict_resolves"
+  ],
+  "nary_validation": {
+    "nary_participants": ["PenDrawClaim", "PanCanvasClaim", "LassoSelectClaim"],
+    "participant_count": 3,
+    "named_mechanism": "app-level recognizer arena (createArena / tryStart / end)",
+    "mechanism_is_participant": false,
+    "group_policy": "exclusive",
+    "behavioral_invariant": "concurrent active gesture count (getActiveGestures().length) never exceeds 1, across the whole 3-participant set, in every reachable ordering",
+    "honest_pairwise_representability_statement": "This is NOT a pairwise-valid/triple-only shape like case-017/018. The lasso bypass is universal -- quickLassoActivate() never consults the arena at all, so it breaks exclusivity against EITHER pen OR pan individually, in EITHER activation order (pen_active_then_lasso, pan_active_then_lasso, lasso_active_then_pen, lasso_active_then_pan all fail on the unmodified fixture). Pen vs Pan alone (pen_active_then_pan_condition_stays_exclusive) is already correctly exclusive and is not part of the defect. The genuine N-ary property under test is that all three recognizers belong to one exclusive set and the invariant is enforced group-wide -- not that pairwise checks alone are insufficient to detect the specific bug (they are, in fact, sufficient here, since lasso's bypass is pairwise-observable against either other recognizer). Reporting this as 'all pairs valid, only the triple fails' would be false and is explicitly not claimed."
+  },
+  "detection_keyword_groups": [
+    ["pen", "pan", "lasso"],
+    ["arena", "recognizer", "exclusive"],
+    ["quickLasso", "concurrent", "active"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}

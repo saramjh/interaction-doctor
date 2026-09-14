@@ -1,0 +1,33 @@
+{
+  "case_id": "case-021-palm-rejection-recognition-timing",
+  "case_type": "conditional_activation_timing",
+  "defect_present": true,
+  "expected_issue_class": "promotion_uses_stale_classification_captured_at_pointerdown",
+  "expected_behavior": "The first pointerMove after pointerDown must commit to drawing/rejecting based on the classifier's MOST CURRENT reading at that moment (state.lastClassification), not the reading captured at pointerDown. Once promoted, the decision must not be re-evaluated on later classifierUpdate calls -- only the pre-promotion window is in scope.",
+  "intent_status": "specified",
+  "allowed_repairs": [
+    "in pointerMove's promotion branch, use state.lastClassification instead of the classifiedAsAtStart value captured at pointerDown",
+    "any equivalent fix that reads the current classification at the moment of promotion rather than the pointerDown-time snapshot"
+  ],
+  "forbidden_repairs": [
+    "continuously re-evaluating classification after promotion (letting a late classifierUpdate flip an already-committed decision) -- caught by once_promoted_later_classifier_updates_do_not_flip_decision",
+    "removing the palm-rejection classifier check entirely (always drawing, or always rejecting)",
+    "changing pointerDown to require an already-correct classification up front instead of fixing the promotion-time read"
+  ],
+  "target_assertions": [
+    "misread_palm_then_corrected_to_pen_before_promotion_draws_normally",
+    "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally"
+  ],
+  "regression_guard_assertions": [
+    "correct_pen_classification_still_draws_normally",
+    "correct_palm_classification_still_rejected_normally",
+    "once_promoted_later_classifier_updates_do_not_flip_decision"
+  ],
+  "detection_keyword_groups": [
+    ["classifier", "palm", "pen"],
+    ["promote", "promotion", "pointerMove"],
+    ["stale", "current", "lastClassification", "pointerDown"]
+  ],
+  "expected_user_escalation": false,
+  "hidden_test_command": "node hidden-tests/test.js {workspace}"
+}
