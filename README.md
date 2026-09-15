@@ -1,5 +1,7 @@
 # Interaction Doctor Benchmark
 
+
+[English](README.md) | [한국어](README.ko.md)
 > **STATUS NOTICE: SKILL DISCONTINUED &bull; BENCHMARK RETAINED**  
 > Interaction Doctor was an experimental coding-agent skill designed to audit and repair interaction ownership, gesture conflicts, and UI lifecycle behaviors.  
 > In an empirical, 30-case, 90-run controlled benchmark against `claude-sonnet-5`, the skill **did not improve repair success over the baseline model** (19/19 in all arms) and imposed **~1.91&times; token cost** and **~2.44&times; execution latency**.  
