@@ -1,0 +1,5051 @@
+{
+  "summary": {
+    "baseline": {
+      "n": 30,
+      "yes_n": 19,
+      "repair": 19,
+      "repair_pct": 100.0,
+      "no_n": 5,
+      "correct_no_op": 3,
+      "correct_no_op_pct": 60.0,
+      "false_positive": 0,
+      "false_positive_pct": 0.0,
+      "intent_n": 6,
+      "intent_guess": 6,
+      "intent_guess_pct": 100.0,
+      "manual_review": 0,
+      "regressions": 1,
+      "regression_pct": 3.3333333333333335,
+      "false_closure": 0,
+      "false_closure_pct": 0.0,
+      "detection_true": 14,
+      "detection_eval": 19,
+      "detection_pct": 73.6842105263158,
+      "cost": 3.2388718,
+      "seconds": 848.1664266586304,
+      "tools": 138,
+      "verdicts": {
+        "correct_no_op": 3,
+        "correct_repair": 19,
+        "intent_guessing_violation": 6,
+        "unnecessary_source_churn": 2
+      }
+    },
+    "generic": {
+      "n": 30,
+      "yes_n": 19,
+      "repair": 19,
+      "repair_pct": 100.0,
+      "no_n": 5,
+      "correct_no_op": 2,
+      "correct_no_op_pct": 40.0,
+      "false_positive": 0,
+      "false_positive_pct": 0.0,
+      "intent_n": 6,
+      "intent_guess": 6,
+      "intent_guess_pct": 100.0,
+      "manual_review": 0,
+      "regressions": 1,
+      "regression_pct": 3.3333333333333335,
+      "false_closure": 1,
+      "false_closure_pct": 3.3333333333333335,
+      "detection_true": 18,
+      "detection_eval": 19,
+      "detection_pct": 94.73684210526316,
+      "cost": 3.441399,
+      "seconds": 993.9715111255646,
+      "tools": 137,
+      "verdicts": {
+        "correct_no_op": 2,
+        "correct_repair": 19,
+        "intent_guessing_violation": 6,
+        "unnecessary_source_churn": 3
+      }
+    },
+    "doctor": {
+      "n": 30,
+      "yes_n": 19,
+      "repair": 19,
+      "repair_pct": 100.0,
+      "no_n": 5,
+      "correct_no_op": 2,
+      "correct_no_op_pct": 40.0,
+      "false_positive": 0,
+      "false_positive_pct": 0.0,
+      "intent_n": 6,
+      "intent_guess": 4,
+      "intent_guess_pct": 66.66666666666667,
+      "manual_review": 2,
+      "regressions": 0,
+      "regression_pct": 0.0,
+      "false_closure": 0,
+      "false_closure_pct": 0.0,
+      "detection_true": 18,
+      "detection_eval": 19,
+      "detection_pct": 94.73684210526316,
+      "cost": 6.1972992,
+      "seconds": 2067.201422214508,
+      "tools": 212,
+      "verdicts": {
+        "correct_no_op": 2,
+        "correct_repair": 19,
+        "intent_guessing_violation": 4,
+        "needs_manual_review_ambiguity": 2,
+        "unnecessary_source_churn": 3
+      }
+    }
+  },
+  "rows": [
+    {
+      "case_id": "case-001-media-library",
+      "arm": "baseline",
+      "case_type": "pairwise_conflict",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "scrub_does_not_move_carousel": false,
+          "carousel_drag_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "scrub_does_not_move_carousel": true,
+          "carousel_drag_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-001-media-library/baseline/run-01-20260914T071524462743Z",
+      "_run_no": 1,
+      "_cost": 0.0877772,
+      "_seconds": 25.900403022766113,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-001-media-library",
+      "arm": "generic",
+      "case_type": "pairwise_conflict",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "scrub_does_not_move_carousel": false,
+          "carousel_drag_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "scrub_does_not_move_carousel": true,
+          "carousel_drag_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-001-media-library/generic/run-01-20260914T071548485349Z",
+      "_run_no": 1,
+      "_cost": 0.08050579999999999,
+      "_seconds": 23.642163038253784,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-001-media-library",
+      "arm": "doctor",
+      "case_type": "pairwise_conflict",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "scrub_does_not_move_carousel": false,
+          "carousel_drag_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "scrub_does_not_move_carousel": true,
+          "carousel_drag_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-001-media-library/doctor/run-01-20260914T071648098668Z",
+      "_run_no": 1,
+      "_cost": 0.1650948,
+      "_seconds": 59.19920086860657,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-002-kanban-board",
+      "arm": "baseline",
+      "case_type": "lifecycle_cancellation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "stale_response_does_not_clobber_newer_move": false,
+          "normal_in_order_resolution_still_works": true,
+          "server_rejection_is_honored_when_current": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "stale_response_does_not_clobber_newer_move": true,
+          "normal_in_order_resolution_still_works": true,
+          "server_rejection_is_honored_when_current": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "board.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-002-kanban-board/baseline/run-01-20260914T071708887618Z",
+      "_run_no": 1,
+      "_cost": 0.09780260000000002,
+      "_seconds": 20.37770915031433,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-002-kanban-board",
+      "arm": "generic",
+      "case_type": "lifecycle_cancellation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "stale_response_does_not_clobber_newer_move": false,
+          "normal_in_order_resolution_still_works": true,
+          "server_rejection_is_honored_when_current": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "stale_response_does_not_clobber_newer_move": true,
+          "normal_in_order_resolution_still_works": true,
+          "server_rejection_is_honored_when_current": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "board.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-002-kanban-board/generic/run-01-20260914T071742891044Z",
+      "_run_no": 1,
+      "_cost": 0.1127466,
+      "_seconds": 33.606831312179565,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-002-kanban-board",
+      "arm": "doctor",
+      "case_type": "lifecycle_cancellation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "stale_response_does_not_clobber_newer_move": false,
+          "normal_in_order_resolution_still_works": true,
+          "server_rejection_is_honored_when_current": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "stale_response_does_not_clobber_newer_move": true,
+          "normal_in_order_resolution_still_works": true,
+          "server_rejection_is_honored_when_current": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "board.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-002-kanban-board/doctor/run-01-20260914T071911975921Z",
+      "_run_no": 1,
+      "_cost": 0.2871808,
+      "_seconds": 88.6784679889679,
+      "_tools": 9
+    },
+    {
+      "case_id": "case-003-drawing-canvas",
+      "arm": "baseline",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "pan_while_space_held_does_not_draw": true,
+          "draw_without_space_does_not_pan": true,
+          "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pan_while_space_held_does_not_draw": true,
+          "draw_without_space_does_not_pan": true,
+          "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": null,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-003-drawing-canvas/baseline/run-01-20260914T072051188991Z",
+      "_run_no": 1,
+      "_cost": 0.19082720000000003,
+      "_seconds": 98.81618928909302,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-003-drawing-canvas",
+      "arm": "generic",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "pan_while_space_held_does_not_draw": true,
+          "draw_without_space_does_not_pan": true,
+          "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pan_while_space_held_does_not_draw": true,
+          "draw_without_space_does_not_pan": true,
+          "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": null,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-003-drawing-canvas/generic/run-01-20260914T072158453740Z",
+      "_run_no": 1,
+      "_cost": 0.1496516,
+      "_seconds": 66.6977059841156,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-003-drawing-canvas",
+      "arm": "doctor",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "pan_while_space_held_does_not_draw": true,
+          "draw_without_space_does_not_pan": true,
+          "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pan_while_space_held_does_not_draw": true,
+          "draw_without_space_does_not_pan": true,
+          "mode_decided_at_pointerdown_not_reevaluated_midgesture": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "canvas.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": null,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-003-drawing-canvas/doctor/run-01-20260914T072411846776Z",
+      "_run_no": 1,
+      "_cost": 0.307709,
+      "_seconds": 133.00193095207214,
+      "_tools": 9
+    },
+    {
+      "case_id": "case-004-hotkey-vs-literal",
+      "arm": "baseline",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "baseline_help_toggle_still_works_when_not_focused": true,
+          "foregrounded_field_still_receives_literal_characters_other_than_question_mark": true
+        },
+        "diagnostic": {
+          "question_mark_while_focused_dual_effect_unchanged": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "baseline_help_toggle_still_works_when_not_focused": true,
+          "foregrounded_field_still_receives_literal_characters_other_than_question_mark": true
+        },
+        "diagnostic": {
+          "question_mark_while_focused_dual_effect_unchanged": false
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-004-hotkey-vs-literal/baseline/run-01-20260914T072431718707Z",
+      "_run_no": 1,
+      "_cost": 0.098927,
+      "_seconds": 19.44831371307373,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-004-hotkey-vs-literal",
+      "arm": "generic",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "baseline_help_toggle_still_works_when_not_focused": true,
+          "foregrounded_field_still_receives_literal_characters_other_than_question_mark": true
+        },
+        "diagnostic": {
+          "question_mark_while_focused_dual_effect_unchanged": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "baseline_help_toggle_still_works_when_not_focused": true,
+          "foregrounded_field_still_receives_literal_characters_other_than_question_mark": true
+        },
+        "diagnostic": {
+          "question_mark_while_focused_dual_effect_unchanged": false
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-004-hotkey-vs-literal/generic/run-01-20260914T072509813614Z",
+      "_run_no": 1,
+      "_cost": 0.09588799999999999,
+      "_seconds": 37.70169401168823,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-004-hotkey-vs-literal",
+      "arm": "doctor",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "baseline_help_toggle_still_works_when_not_focused": true,
+          "foregrounded_field_still_receives_literal_characters_other_than_question_mark": true
+        },
+        "diagnostic": {
+          "question_mark_while_focused_dual_effect_unchanged": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "baseline_help_toggle_still_works_when_not_focused": true,
+          "foregrounded_field_still_receives_literal_characters_other_than_question_mark": true
+        },
+        "diagnostic": {
+          "question_mark_while_focused_dual_effect_unchanged": false
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-004-hotkey-vs-literal/doctor/run-01-20260914T072608693199Z",
+      "_run_no": 1,
+      "_cost": 0.1699416,
+      "_seconds": 58.388059854507446,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-005-ime-guarded-confirm",
+      "arm": "baseline",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "enter_during_composition_confirms_not_sends": true,
+          "idle_enter_sends_normally": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "enter_during_composition_confirms_not_sends": true,
+          "idle_enter_sends_normally": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "composer.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-005-ime-guarded-confirm/baseline/run-01-20260914T072700099067Z",
+      "_run_no": 1,
+      "_cost": 0.1293978,
+      "_seconds": 50.791635036468506,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-005-ime-guarded-confirm",
+      "arm": "generic",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "enter_during_composition_confirms_not_sends": true,
+          "idle_enter_sends_normally": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "enter_during_composition_confirms_not_sends": true,
+          "idle_enter_sends_normally": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "composer.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-005-ime-guarded-confirm/generic/run-01-20260914T072748857876Z",
+      "_run_no": 1,
+      "_cost": 0.1431694,
+      "_seconds": 48.36499309539795,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-005-ime-guarded-confirm",
+      "arm": "doctor",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "enter_during_composition_confirms_not_sends": true,
+          "idle_enter_sends_normally": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "enter_during_composition_confirms_not_sends": true,
+          "idle_enter_sends_normally": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "composer.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-005-ime-guarded-confirm/doctor/run-01-20260914T072957156298Z",
+      "_run_no": 1,
+      "_cost": 0.315942,
+      "_seconds": 127.93516802787781,
+      "_tools": 9
+    },
+    {
+      "case_id": "case-006-backgrounded-tab-drag",
+      "arm": "baseline",
+      "case_type": "lifecycle_runtime_interruption",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "drag_releases_on_backgrounding": false,
+          "normal_drag_still_works": true,
+          "foregrounding_event_does_not_spuriously_cancel_drag": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "drag_releases_on_backgrounding": true,
+          "normal_drag_still_works": true,
+          "foregrounding_event_does_not_spuriously_cancel_drag": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-006-backgrounded-tab-drag/baseline/run-01-20260914T073018558122Z",
+      "_run_no": 1,
+      "_cost": 0.09680119999999999,
+      "_seconds": 21.037243127822876,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-006-backgrounded-tab-drag",
+      "arm": "generic",
+      "case_type": "lifecycle_runtime_interruption",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "drag_releases_on_backgrounding": false,
+          "normal_drag_still_works": true,
+          "foregrounding_event_does_not_spuriously_cancel_drag": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "drag_releases_on_backgrounding": true,
+          "normal_drag_still_works": true,
+          "foregrounding_event_does_not_spuriously_cancel_drag": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-006-backgrounded-tab-drag/generic/run-01-20260914T073041149145Z",
+      "_run_no": 1,
+      "_cost": 0.10387300000000001,
+      "_seconds": 22.222867965698242,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-006-backgrounded-tab-drag",
+      "arm": "doctor",
+      "case_type": "lifecycle_runtime_interruption",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "drag_releases_on_backgrounding": false,
+          "normal_drag_still_works": true,
+          "foregrounding_event_does_not_spuriously_cancel_drag": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "drag_releases_on_backgrounding": true,
+          "normal_drag_still_works": true,
+          "foregrounding_event_does_not_spuriously_cancel_drag": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-006-backgrounded-tab-drag/doctor/run-01-20260914T073118268138Z",
+      "_run_no": 1,
+      "_cost": 0.15583819999999998,
+      "_seconds": 36.65269875526428,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-007-offline-autosave-queue",
+      "arm": "baseline",
+      "case_type": "effect_lifetime_queued_work",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "queued_edit_to_deleted_note_is_dropped": false,
+          "queued_edit_to_recreated_note_does_not_overwrite_new_content": false,
+          "normal_queued_edit_still_applies": true,
+          "unrelated_queued_edits_survive_a_sibling_deletion": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "queued_edit_to_deleted_note_is_dropped": true,
+          "queued_edit_to_recreated_note_does_not_overwrite_new_content": true,
+          "normal_queued_edit_still_applies": true,
+          "unrelated_queued_edits_survive_a_sibling_deletion": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-007-offline-autosave-queue/baseline/run-01-20260914T073153775704Z",
+      "_run_no": 1,
+      "_cost": 0.11347220000000001,
+      "_seconds": 35.15759205818176,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-007-offline-autosave-queue",
+      "arm": "generic",
+      "case_type": "effect_lifetime_queued_work",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "queued_edit_to_deleted_note_is_dropped": false,
+          "queued_edit_to_recreated_note_does_not_overwrite_new_content": false,
+          "normal_queued_edit_still_applies": true,
+          "unrelated_queued_edits_survive_a_sibling_deletion": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "queued_edit_to_deleted_note_is_dropped": true,
+          "queued_edit_to_recreated_note_does_not_overwrite_new_content": true,
+          "normal_queued_edit_still_applies": true,
+          "unrelated_queued_edits_survive_a_sibling_deletion": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-007-offline-autosave-queue/generic/run-01-20260914T073231045396Z",
+      "_run_no": 1,
+      "_cost": 0.11146920000000002,
+      "_seconds": 36.88853216171265,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-007-offline-autosave-queue",
+      "arm": "doctor",
+      "case_type": "effect_lifetime_queued_work",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "queued_edit_to_deleted_note_is_dropped": false,
+          "queued_edit_to_recreated_note_does_not_overwrite_new_content": false,
+          "normal_queued_edit_still_applies": true,
+          "unrelated_queued_edits_survive_a_sibling_deletion": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "queued_edit_to_deleted_note_is_dropped": true,
+          "queued_edit_to_recreated_note_does_not_overwrite_new_content": true,
+          "normal_queued_edit_still_applies": true,
+          "unrelated_queued_edits_survive_a_sibling_deletion": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-007-offline-autosave-queue/doctor/run-01-20260914T073328197044Z",
+      "_run_no": 1,
+      "_cost": 0.16987200000000002,
+      "_seconds": 56.768210887908936,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-008-midi-dual-blend",
+      "arm": "baseline",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "concurrent_updates_blend_deterministically_regardless_of_order": true,
+          "both_controllers_remain_independently_live": true,
+          "blend_matches_deterministic_formula_across_full_grid": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "concurrent_updates_blend_deterministically_regardless_of_order": true,
+          "both_controllers_remain_independently_live": true,
+          "blend_matches_deterministic_formula_across_full_grid": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-008-midi-dual-blend/baseline/run-01-20260914T073345709463Z",
+      "_run_no": 1,
+      "_cost": 0.08291879999999999,
+      "_seconds": 17.129546880722046,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-008-midi-dual-blend",
+      "arm": "generic",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "concurrent_updates_blend_deterministically_regardless_of_order": true,
+          "both_controllers_remain_independently_live": true,
+          "blend_matches_deterministic_formula_across_full_grid": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "concurrent_updates_blend_deterministically_regardless_of_order": true,
+          "both_controllers_remain_independently_live": true,
+          "blend_matches_deterministic_formula_across_full_grid": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-008-midi-dual-blend/generic/run-01-20260914T073417532652Z",
+      "_run_no": 1,
+      "_cost": 0.09428399999999999,
+      "_seconds": 31.431175231933594,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-008-midi-dual-blend",
+      "arm": "doctor",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "concurrent_updates_blend_deterministically_regardless_of_order": true,
+          "both_controllers_remain_independently_live": true,
+          "blend_matches_deterministic_formula_across_full_grid": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "concurrent_updates_blend_deterministically_regardless_of_order": true,
+          "both_controllers_remain_independently_live": true,
+          "blend_matches_deterministic_formula_across_full_grid": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-008-midi-dual-blend/doctor/run-01-20260914T073501814610Z",
+      "_run_no": 1,
+      "_cost": 0.14038160000000002,
+      "_seconds": 43.882303953170776,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-009-debounce-unmount-leak",
+      "arm": "baseline",
+      "case_type": "effect_lifetime_timer_debounce",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "normal_debounce_still_works_while_mounted": true,
+          "unmount_before_expiry_prevents_stale_mutation": false,
+          "cancel_on_unmount_does_not_disable_future_instance": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "normal_debounce_still_works_while_mounted": true,
+          "unmount_before_expiry_prevents_stale_mutation": true,
+          "cancel_on_unmount_does_not_disable_future_instance": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-009-debounce-unmount-leak/baseline/run-01-20260914T073538544277Z",
+      "_run_no": 1,
+      "_cost": 0.11750839999999999,
+      "_seconds": 36.23589301109314,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-009-debounce-unmount-leak",
+      "arm": "generic",
+      "case_type": "effect_lifetime_timer_debounce",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "normal_debounce_still_works_while_mounted": true,
+          "unmount_before_expiry_prevents_stale_mutation": false,
+          "cancel_on_unmount_does_not_disable_future_instance": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "normal_debounce_still_works_while_mounted": true,
+          "unmount_before_expiry_prevents_stale_mutation": true,
+          "cancel_on_unmount_does_not_disable_future_instance": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-009-debounce-unmount-leak/generic/run-01-20260914T073610881145Z",
+      "_run_no": 1,
+      "_cost": 0.11676119999999998,
+      "_seconds": 31.95000410079956,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-009-debounce-unmount-leak",
+      "arm": "doctor",
+      "case_type": "effect_lifetime_timer_debounce",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "normal_debounce_still_works_while_mounted": true,
+          "unmount_before_expiry_prevents_stale_mutation": false,
+          "cancel_on_unmount_does_not_disable_future_instance": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "normal_debounce_still_works_while_mounted": true,
+          "unmount_before_expiry_prevents_stale_mutation": true,
+          "cancel_on_unmount_does_not_disable_future_instance": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-009-debounce-unmount-leak/doctor/run-01-20260914T073753180934Z",
+      "_run_no": 1,
+      "_cost": 0.30430480000000004,
+      "_seconds": 101.89618587493896,
+      "_tools": 10
+    },
+    {
+      "case_id": "case-010-focus-restore-after-trigger-removal",
+      "arm": "baseline",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "row_is_actually_deleted_on_confirm": true,
+          "modal_closes_after_confirm": true,
+          "modal_open_focus_moves_into_modal": true,
+          "cancel_restores_focus_to_original_trigger": true
+        },
+        "diagnostic": {
+          "focus_destination_after_confirm_delete": null
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "row_is_actually_deleted_on_confirm": true,
+          "modal_closes_after_confirm": true,
+          "modal_open_focus_moves_into_modal": true,
+          "cancel_restores_focus_to_original_trigger": true
+        },
+        "diagnostic": {
+          "focus_destination_after_confirm_delete": "row-3-trigger"
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-010-focus-restore-after-trigger-removal/baseline/run-01-20260914T073819392127Z",
+      "_run_no": 1,
+      "_cost": 0.09908020000000001,
+      "_seconds": 25.779685974121094,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-010-focus-restore-after-trigger-removal",
+      "arm": "generic",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "row_is_actually_deleted_on_confirm": true,
+          "modal_closes_after_confirm": true,
+          "modal_open_focus_moves_into_modal": true,
+          "cancel_restores_focus_to_original_trigger": true
+        },
+        "diagnostic": {
+          "focus_destination_after_confirm_delete": null
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "row_is_actually_deleted_on_confirm": true,
+          "modal_closes_after_confirm": true,
+          "modal_open_focus_moves_into_modal": true,
+          "cancel_restores_focus_to_original_trigger": true
+        },
+        "diagnostic": {
+          "focus_destination_after_confirm_delete": "row-3-trigger"
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-010-focus-restore-after-trigger-removal/generic/run-01-20260914T073847072436Z",
+      "_run_no": 1,
+      "_cost": 0.1060812,
+      "_seconds": 27.244415044784546,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-010-focus-restore-after-trigger-removal",
+      "arm": "doctor",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "row_is_actually_deleted_on_confirm": true,
+          "modal_closes_after_confirm": true,
+          "modal_open_focus_moves_into_modal": true,
+          "cancel_restores_focus_to_original_trigger": true
+        },
+        "diagnostic": {
+          "focus_destination_after_confirm_delete": null
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "row_is_actually_deleted_on_confirm": true,
+          "modal_closes_after_confirm": true,
+          "modal_open_focus_moves_into_modal": true,
+          "cancel_restores_focus_to_original_trigger": true
+        },
+        "diagnostic": {
+          "focus_destination_after_confirm_delete": "row-3-trigger"
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-010-focus-restore-after-trigger-removal/doctor/run-01-20260914T073950821342Z",
+      "_run_no": 1,
+      "_cost": 0.1958222,
+      "_seconds": 63.34694290161133,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-011-shared-canvas-bifurcation",
+      "arm": "baseline",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "stale_original_shape_not_mutated_after_split": true,
+          "drag_safely_releases_on_split": true,
+          "ordinary_drag_without_split_still_works": true
+        },
+        "diagnostic": {
+          "auto_continued_onto_a_successor_after_split": false
+        }
+      },
+      "hidden_test_final": {
+        "pass": false,
+        "results": {
+          "stale_original_shape_not_mutated_after_split": false,
+          "drag_safely_releases_on_split": false,
+          "ordinary_drag_without_split_still_works": true
+        },
+        "diagnostic": {
+          "auto_continued_onto_a_successor_after_split": true
+        }
+      },
+      "hidden_test_pass": false,
+      "regressions": [
+        "stale_original_shape_not_mutated_after_split",
+        "drag_safely_releases_on_split"
+      ],
+      "has_regression": true,
+      "repair_success": false,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-011-shared-canvas-bifurcation/baseline/run-01-20260914T074008285411Z",
+      "_run_no": 1,
+      "_cost": 0.0888404,
+      "_seconds": 17.093614101409912,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-011-shared-canvas-bifurcation",
+      "arm": "generic",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "stale_original_shape_not_mutated_after_split": true,
+          "drag_safely_releases_on_split": true,
+          "ordinary_drag_without_split_still_works": true
+        },
+        "diagnostic": {
+          "auto_continued_onto_a_successor_after_split": false
+        }
+      },
+      "hidden_test_final": {
+        "pass": false,
+        "results": {
+          "stale_original_shape_not_mutated_after_split": false,
+          "drag_safely_releases_on_split": false,
+          "ordinary_drag_without_split_still_works": true
+        },
+        "diagnostic": {
+          "auto_continued_onto_a_successor_after_split": true
+        }
+      },
+      "hidden_test_pass": false,
+      "regressions": [
+        "stale_original_shape_not_mutated_after_split",
+        "drag_safely_releases_on_split"
+      ],
+      "has_regression": true,
+      "repair_success": false,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": true,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-011-shared-canvas-bifurcation/generic/run-01-20260914T074041690409Z",
+      "_run_no": 1,
+      "_cost": 0.1060546,
+      "_seconds": 33.02841019630432,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-011-shared-canvas-bifurcation",
+      "arm": "doctor",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "stale_original_shape_not_mutated_after_split": true,
+          "drag_safely_releases_on_split": true,
+          "ordinary_drag_without_split_still_works": true
+        },
+        "diagnostic": {
+          "auto_continued_onto_a_successor_after_split": false
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "stale_original_shape_not_mutated_after_split": true,
+          "drag_safely_releases_on_split": true,
+          "ordinary_drag_without_split_still_works": true
+        },
+        "diagnostic": {
+          "auto_continued_onto_a_successor_after_split": false
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "needs_manual_review_ambiguity",
+      "_archive": "../results/raw/case-011-shared-canvas-bifurcation/doctor/run-01-20260914T074219976502Z",
+      "_run_no": 1,
+      "_cost": 0.28988739999999996,
+      "_seconds": 97.87258005142212,
+      "_tools": 8
+    },
+    {
+      "case_id": "case-012-hold-to-confirm-never-completes",
+      "arm": "baseline",
+      "case_type": "lifecycle_completion",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "reaching_threshold_fires_exactly_once": false,
+          "continuing_to_hold_does_not_repeatedly_fire": false,
+          "ordinary_subsequent_holds_still_work": false,
+          "holding_less_than_threshold_does_not_fire": true,
+          "early_release_does_not_fire": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "reaching_threshold_fires_exactly_once": true,
+          "continuing_to_hold_does_not_repeatedly_fire": true,
+          "ordinary_subsequent_holds_still_work": true,
+          "holding_less_than_threshold_does_not_fire": true,
+          "early_release_does_not_fire": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-012-hold-to-confirm-never-completes/baseline/run-01-20260914T074240631608Z",
+      "_run_no": 1,
+      "_cost": 0.1014934,
+      "_seconds": 20.247442960739136,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-012-hold-to-confirm-never-completes",
+      "arm": "generic",
+      "case_type": "lifecycle_completion",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "reaching_threshold_fires_exactly_once": false,
+          "continuing_to_hold_does_not_repeatedly_fire": false,
+          "ordinary_subsequent_holds_still_work": false,
+          "holding_less_than_threshold_does_not_fire": true,
+          "early_release_does_not_fire": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "reaching_threshold_fires_exactly_once": true,
+          "continuing_to_hold_does_not_repeatedly_fire": true,
+          "ordinary_subsequent_holds_still_work": true,
+          "holding_less_than_threshold_does_not_fire": true,
+          "early_release_does_not_fire": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-012-hold-to-confirm-never-completes/generic/run-01-20260914T074304633617Z",
+      "_run_no": 1,
+      "_cost": 0.093081,
+      "_seconds": 23.60797905921936,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-012-hold-to-confirm-never-completes",
+      "arm": "doctor",
+      "case_type": "lifecycle_completion",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "reaching_threshold_fires_exactly_once": false,
+          "continuing_to_hold_does_not_repeatedly_fire": false,
+          "ordinary_subsequent_holds_still_work": false,
+          "holding_less_than_threshold_does_not_fire": true,
+          "early_release_does_not_fire": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "reaching_threshold_fires_exactly_once": true,
+          "continuing_to_hold_does_not_repeatedly_fire": true,
+          "ordinary_subsequent_holds_still_work": true,
+          "holding_less_than_threshold_does_not_fire": true,
+          "early_release_does_not_fire": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-012-hold-to-confirm-never-completes/doctor/run-01-20260914T074344839470Z",
+      "_run_no": 1,
+      "_cost": 0.1506482,
+      "_seconds": 39.782362937927246,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-013-live-value-vs-drag",
+      "arm": "baseline",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "local_drag_still_moves_slider_when_no_external_update": true,
+          "external_update_applies_when_no_drag_in_progress": true
+        },
+        "diagnostic": {
+          "slider_value_immediately_after_external_update_during_drag": 999,
+          "slider_value_after_subsequent_drag_following_external_update": 20
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "local_drag_still_moves_slider_when_no_external_update": true,
+          "external_update_applies_when_no_drag_in_progress": true
+        },
+        "diagnostic": {
+          "slider_value_immediately_after_external_update_during_drag": 50,
+          "slider_value_after_subsequent_drag_following_external_update": 20
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-013-live-value-vs-drag/baseline/run-01-20260914T074407940789Z",
+      "_run_no": 1,
+      "_cost": 0.10005760000000001,
+      "_seconds": 22.721953868865967,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-013-live-value-vs-drag",
+      "arm": "generic",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "local_drag_still_moves_slider_when_no_external_update": true,
+          "external_update_applies_when_no_drag_in_progress": true
+        },
+        "diagnostic": {
+          "slider_value_immediately_after_external_update_during_drag": 999,
+          "slider_value_after_subsequent_drag_following_external_update": 20
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "local_drag_still_moves_slider_when_no_external_update": true,
+          "external_update_applies_when_no_drag_in_progress": true
+        },
+        "diagnostic": {
+          "slider_value_immediately_after_external_update_during_drag": 50,
+          "slider_value_after_subsequent_drag_following_external_update": 20
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-013-live-value-vs-drag/generic/run-01-20260914T074524997297Z",
+      "_run_no": 1,
+      "_cost": 0.180704,
+      "_seconds": 76.70193219184875,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-013-live-value-vs-drag",
+      "arm": "doctor",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "local_drag_still_moves_slider_when_no_external_update": true,
+          "external_update_applies_when_no_drag_in_progress": true
+        },
+        "diagnostic": {
+          "slider_value_immediately_after_external_update_during_drag": 999,
+          "slider_value_after_subsequent_drag_following_external_update": 20
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "local_drag_still_moves_slider_when_no_external_update": true,
+          "external_update_applies_when_no_drag_in_progress": true
+        },
+        "diagnostic": {
+          "slider_value_immediately_after_external_update_during_drag": 50,
+          "slider_value_after_subsequent_drag_following_external_update": 20
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-013-live-value-vs-drag/doctor/run-01-20260914T074801387264Z",
+      "_run_no": 1,
+      "_cost": 0.32914639999999995,
+      "_seconds": 156.01219606399536,
+      "_tools": 9
+    },
+    {
+      "case_id": "case-014-independent-toast-stack",
+      "arm": "baseline",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "single_toast_dismisses_alone": true,
+          "both_toasts_can_be_actively_swiping_simultaneously": true,
+          "two_toasts_interleaved_swipe_both_dismiss_independently": true,
+          "dismissing_one_does_not_affect_other": true,
+          "later_created_toast_still_works_after_earlier_activity": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_toast_dismisses_alone": true,
+          "both_toasts_can_be_actively_swiping_simultaneously": true,
+          "two_toasts_interleaved_swipe_both_dismiss_independently": true,
+          "dismissing_one_does_not_affect_other": true,
+          "later_created_toast_still_works_after_earlier_activity": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-014-independent-toast-stack/baseline/run-01-20260914T074834532456Z",
+      "_run_no": 1,
+      "_cost": 0.1083282,
+      "_seconds": 32.656185150146484,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-014-independent-toast-stack",
+      "arm": "generic",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "single_toast_dismisses_alone": true,
+          "both_toasts_can_be_actively_swiping_simultaneously": true,
+          "two_toasts_interleaved_swipe_both_dismiss_independently": true,
+          "dismissing_one_does_not_affect_other": true,
+          "later_created_toast_still_works_after_earlier_activity": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_toast_dismisses_alone": true,
+          "both_toasts_can_be_actively_swiping_simultaneously": true,
+          "two_toasts_interleaved_swipe_both_dismiss_independently": true,
+          "dismissing_one_does_not_affect_other": true,
+          "later_created_toast_still_works_after_earlier_activity": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-014-independent-toast-stack/generic/run-01-20260914T074913680962Z",
+      "_run_no": 1,
+      "_cost": 0.12740600000000002,
+      "_seconds": 38.761412143707275,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-014-independent-toast-stack",
+      "arm": "doctor",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "single_toast_dismisses_alone": true,
+          "both_toasts_can_be_actively_swiping_simultaneously": true,
+          "two_toasts_interleaved_swipe_both_dismiss_independently": true,
+          "dismissing_one_does_not_affect_other": true,
+          "later_created_toast_still_works_after_earlier_activity": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_toast_dismisses_alone": true,
+          "both_toasts_can_be_actively_swiping_simultaneously": true,
+          "two_toasts_interleaved_swipe_both_dismiss_independently": true,
+          "dismissing_one_does_not_affect_other": true,
+          "later_created_toast_still_works_after_earlier_activity": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-014-independent-toast-stack/doctor/run-01-20260914T075014343973Z",
+      "_run_no": 1,
+      "_cost": 0.1729816,
+      "_seconds": 60.253721952438354,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-015-backbutton-doesnt-cancel-rename",
+      "arm": "baseline",
+      "case_type": "lifecycle_cancellation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "back_cancels_rename_interaction": false,
+          "back_then_unrelated_tap_does_not_commit_stale_draft": false,
+          "back_cancellation_does_not_commit_draft_by_itself": true,
+          "explicit_commit_still_works": true,
+          "explicit_cancel_preserves_original_value": true,
+          "new_rename_after_back_cancellation_works_normally": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "back_cancels_rename_interaction": true,
+          "back_then_unrelated_tap_does_not_commit_stale_draft": true,
+          "back_cancellation_does_not_commit_draft_by_itself": true,
+          "explicit_commit_still_works": true,
+          "explicit_cancel_preserves_original_value": true,
+          "new_rename_after_back_cancellation_works_normally": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-015-backbutton-doesnt-cancel-rename/baseline/run-03-20260914T100432001498Z",
+      "_run_no": 3,
+      "_cost": 0.15848959999999998,
+      "_seconds": 23.978718042373657,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-015-backbutton-doesnt-cancel-rename",
+      "arm": "generic",
+      "case_type": "lifecycle_cancellation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "back_cancels_rename_interaction": false,
+          "back_then_unrelated_tap_does_not_commit_stale_draft": false,
+          "back_cancellation_does_not_commit_draft_by_itself": true,
+          "explicit_commit_still_works": true,
+          "explicit_cancel_preserves_original_value": true,
+          "new_rename_after_back_cancellation_works_normally": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "back_cancels_rename_interaction": true,
+          "back_then_unrelated_tap_does_not_commit_stale_draft": true,
+          "back_cancellation_does_not_commit_draft_by_itself": true,
+          "explicit_commit_still_works": true,
+          "explicit_cancel_preserves_original_value": true,
+          "new_rename_after_back_cancellation_works_normally": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-015-backbutton-doesnt-cancel-rename/generic/run-03-20260914T100500094742Z",
+      "_run_no": 3,
+      "_cost": 0.099661,
+      "_seconds": 27.718750953674316,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-015-backbutton-doesnt-cancel-rename",
+      "arm": "doctor",
+      "case_type": "lifecycle_cancellation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "back_cancels_rename_interaction": false,
+          "back_then_unrelated_tap_does_not_commit_stale_draft": false,
+          "back_cancellation_does_not_commit_draft_by_itself": true,
+          "explicit_commit_still_works": true,
+          "explicit_cancel_preserves_original_value": true,
+          "new_rename_after_back_cancellation_works_normally": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "back_cancels_rename_interaction": true,
+          "back_then_unrelated_tap_does_not_commit_stale_draft": true,
+          "back_cancellation_does_not_commit_draft_by_itself": true,
+          "explicit_commit_still_works": true,
+          "explicit_cancel_preserves_original_value": true,
+          "new_rename_after_back_cancellation_works_normally": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-015-backbutton-doesnt-cancel-rename/doctor/run-03-20260914T100603730160Z",
+      "_run_no": 3,
+      "_cost": 0.1859732,
+      "_seconds": 63.256227016448975,
+      "_tools": 8
+    },
+    {
+      "case_id": "case-016-swipe-left-double-bound",
+      "arm": "baseline",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "no_swipe_no_effect": true,
+          "small_swipe_below_both_thresholds_does_nothing": true
+        },
+        "diagnostic": {
+          "archived_after_full_swipe": true,
+          "quick_reply_open_after_full_swipe": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "no_swipe_no_effect": true,
+          "small_swipe_below_both_thresholds_does_nothing": true
+        },
+        "diagnostic": {
+          "archived_after_full_swipe": true,
+          "quick_reply_open_after_full_swipe": false
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-016-swipe-left-double-bound/baseline/run-03-20260914T100620634314Z",
+      "_run_no": 3,
+      "_cost": 0.091677,
+      "_seconds": 16.52893590927124,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-016-swipe-left-double-bound",
+      "arm": "generic",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "no_swipe_no_effect": true,
+          "small_swipe_below_both_thresholds_does_nothing": true
+        },
+        "diagnostic": {
+          "archived_after_full_swipe": true,
+          "quick_reply_open_after_full_swipe": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "no_swipe_no_effect": true,
+          "small_swipe_below_both_thresholds_does_nothing": true
+        },
+        "diagnostic": {
+          "archived_after_full_swipe": true,
+          "quick_reply_open_after_full_swipe": false
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-016-swipe-left-double-bound/generic/run-03-20260914T100642011059Z",
+      "_run_no": 3,
+      "_cost": 0.09101200000000001,
+      "_seconds": 21.020490884780884,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-016-swipe-left-double-bound",
+      "arm": "doctor",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "no_swipe_no_effect": true,
+          "small_swipe_below_both_thresholds_does_nothing": true
+        },
+        "diagnostic": {
+          "archived_after_full_swipe": true,
+          "quick_reply_open_after_full_swipe": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "no_swipe_no_effect": true,
+          "small_swipe_below_both_thresholds_does_nothing": true
+        },
+        "diagnostic": {
+          "archived_after_full_swipe": true,
+          "quick_reply_open_after_full_swipe": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "needs_manual_review_ambiguity",
+      "_archive": "../results/raw/case-016-swipe-left-double-bound/doctor/run-03-20260914T100758002566Z",
+      "_run_no": 3,
+      "_cost": 0.2616772,
+      "_seconds": 75.62907314300537,
+      "_tools": 9
+    },
+    {
+      "case_id": "case-017-three-finger-transform-cap",
+      "arm": "baseline",
+      "case_type": "nary_capacity",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "pair_ab_works": true,
+          "pair_ac_works": true,
+          "pair_bc_works": true,
+          "capacity_held_when_third_joins": false,
+          "ab_continue_correctly_while_capacity_full": false,
+          "releasing_one_participant_does_not_corrupt_remaining": true,
+          "future_ordinary_two_finger_transform_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pair_ab_works": true,
+          "pair_ac_works": true,
+          "pair_bc_works": true,
+          "capacity_held_when_third_joins": true,
+          "ab_continue_correctly_while_capacity_full": true,
+          "releasing_one_participant_does_not_corrupt_remaining": true,
+          "future_ordinary_two_finger_transform_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-017-three-finger-transform-cap/baseline/run-03-20260914T100827265337Z",
+      "_run_no": 3,
+      "_cost": 0.1076382,
+      "_seconds": 28.913804054260254,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-017-three-finger-transform-cap",
+      "arm": "generic",
+      "case_type": "nary_capacity",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "pair_ab_works": true,
+          "pair_ac_works": true,
+          "pair_bc_works": true,
+          "capacity_held_when_third_joins": false,
+          "ab_continue_correctly_while_capacity_full": false,
+          "releasing_one_participant_does_not_corrupt_remaining": true,
+          "future_ordinary_two_finger_transform_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pair_ab_works": true,
+          "pair_ac_works": true,
+          "pair_bc_works": true,
+          "capacity_held_when_third_joins": true,
+          "ab_continue_correctly_while_capacity_full": true,
+          "releasing_one_participant_does_not_corrupt_remaining": true,
+          "future_ordinary_two_finger_transform_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-017-three-finger-transform-cap/generic/run-03-20260914T100855661403Z",
+      "_run_no": 3,
+      "_cost": 0.11825340000000001,
+      "_seconds": 28.042731761932373,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-017-three-finger-transform-cap",
+      "arm": "doctor",
+      "case_type": "nary_capacity",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "pair_ab_works": true,
+          "pair_ac_works": true,
+          "pair_bc_works": true,
+          "capacity_held_when_third_joins": false,
+          "ab_continue_correctly_while_capacity_full": false,
+          "releasing_one_participant_does_not_corrupt_remaining": true,
+          "future_ordinary_two_finger_transform_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pair_ab_works": true,
+          "pair_ac_works": true,
+          "pair_bc_works": true,
+          "capacity_held_when_third_joins": true,
+          "ab_continue_correctly_while_capacity_full": true,
+          "releasing_one_participant_does_not_corrupt_remaining": true,
+          "future_ordinary_two_finger_transform_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-017-three-finger-transform-cap/doctor/run-03-20260914T101025189887Z",
+      "_run_no": 3,
+      "_cost": 0.21098240000000001,
+      "_seconds": 89.17056894302368,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-018-highlight-slot-capacity-leak",
+      "arm": "baseline",
+      "case_type": "nary_simultaneous",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "a_starts_then_present": true,
+          "a_and_b_both_present": true,
+          "all_three_present_after_c_starts": false,
+          "updating_c_does_not_mutate_others": false,
+          "ending_one_does_not_remove_others": true,
+          "later_highlight_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "a_starts_then_present": true,
+          "a_and_b_both_present": true,
+          "all_three_present_after_c_starts": true,
+          "updating_c_does_not_mutate_others": true,
+          "ending_one_does_not_remove_others": true,
+          "later_highlight_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-018-highlight-slot-capacity-leak/baseline/run-03-20260914T101049009860Z",
+      "_run_no": 3,
+      "_cost": 0.0914922,
+      "_seconds": 23.46097993850708,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-018-highlight-slot-capacity-leak",
+      "arm": "generic",
+      "case_type": "nary_simultaneous",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "a_starts_then_present": true,
+          "a_and_b_both_present": true,
+          "all_three_present_after_c_starts": false,
+          "updating_c_does_not_mutate_others": false,
+          "ending_one_does_not_remove_others": true,
+          "later_highlight_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "a_starts_then_present": true,
+          "a_and_b_both_present": true,
+          "all_three_present_after_c_starts": true,
+          "updating_c_does_not_mutate_others": true,
+          "ending_one_does_not_remove_others": true,
+          "later_highlight_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-018-highlight-slot-capacity-leak/generic/run-03-20260914T101111723351Z",
+      "_run_no": 3,
+      "_cost": 0.0939816,
+      "_seconds": 22.358031034469604,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-018-highlight-slot-capacity-leak",
+      "arm": "doctor",
+      "case_type": "nary_simultaneous",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "a_starts_then_present": true,
+          "a_and_b_both_present": true,
+          "all_three_present_after_c_starts": false,
+          "updating_c_does_not_mutate_others": false,
+          "ending_one_does_not_remove_others": true,
+          "later_highlight_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "a_starts_then_present": true,
+          "a_and_b_both_present": true,
+          "all_three_present_after_c_starts": true,
+          "updating_c_does_not_mutate_others": true,
+          "ending_one_does_not_remove_others": true,
+          "later_highlight_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-018-highlight-slot-capacity-leak/doctor/run-03-20260914T101154288631Z",
+      "_run_no": 3,
+      "_cost": 0.14791800000000002,
+      "_seconds": 42.198923110961914,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-019-sheet-dismiss-vs-carousel",
+      "arm": "baseline",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "vertical_drag_outside_carousel_still_dismisses_sheet": true,
+          "pure_horizontal_carousel_drag_still_navigates": true
+        },
+        "diagnostic": {
+          "outcome_dx_neg80_dy150": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg150_dy110": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg60_dy200": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg100_dy120": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg130_dy130": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          }
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "vertical_drag_outside_carousel_still_dismisses_sheet": true,
+          "pure_horizontal_carousel_drag_still_navigates": true
+        },
+        "diagnostic": {
+          "outcome_dx_neg80_dy150": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg150_dy110": {
+            "sheetDismissed": false,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg60_dy200": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg100_dy120": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg130_dy130": {
+            "sheetDismissed": false,
+            "carouselIndex": 1
+          }
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-019-sheet-dismiss-vs-carousel/baseline/run-03-20260914T101223852033Z",
+      "_run_no": 3,
+      "_cost": 0.1165174,
+      "_seconds": 29.21604609489441,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-019-sheet-dismiss-vs-carousel",
+      "arm": "generic",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "vertical_drag_outside_carousel_still_dismisses_sheet": true,
+          "pure_horizontal_carousel_drag_still_navigates": true
+        },
+        "diagnostic": {
+          "outcome_dx_neg80_dy150": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg150_dy110": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg60_dy200": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg100_dy120": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg130_dy130": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          }
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "vertical_drag_outside_carousel_still_dismisses_sheet": true,
+          "pure_horizontal_carousel_drag_still_navigates": true
+        },
+        "diagnostic": {
+          "outcome_dx_neg80_dy150": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg150_dy110": {
+            "sheetDismissed": false,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg60_dy200": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg100_dy120": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg130_dy130": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          }
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-019-sheet-dismiss-vs-carousel/generic/run-03-20260914T101310778201Z",
+      "_run_no": 3,
+      "_cost": 0.131361,
+      "_seconds": 46.572604179382324,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-019-sheet-dismiss-vs-carousel",
+      "arm": "doctor",
+      "case_type": "intent_ambiguity",
+      "defect_present": true,
+      "intent_status": "ambiguous",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "vertical_drag_outside_carousel_still_dismisses_sheet": true,
+          "pure_horizontal_carousel_drag_still_navigates": true
+        },
+        "diagnostic": {
+          "outcome_dx_neg80_dy150": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg150_dy110": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg60_dy200": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg100_dy120": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg130_dy130": {
+            "sheetDismissed": true,
+            "carouselIndex": 1
+          }
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "vertical_drag_outside_carousel_still_dismisses_sheet": true,
+          "pure_horizontal_carousel_drag_still_navigates": true
+        },
+        "diagnostic": {
+          "outcome_dx_neg80_dy150": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg150_dy110": {
+            "sheetDismissed": false,
+            "carouselIndex": 1
+          },
+          "outcome_dx_neg60_dy200": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg100_dy120": {
+            "sheetDismissed": true,
+            "carouselIndex": 0
+          },
+          "outcome_dx_neg130_dy130": {
+            "sheetDismissed": false,
+            "carouselIndex": 1
+          }
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "intent_guessing_violation",
+      "_archive": "../results/raw/case-019-sheet-dismiss-vs-carousel/doctor/run-03-20260914T101523426329Z",
+      "_run_no": 3,
+      "_cost": 0.3206904,
+      "_seconds": 132.28698897361755,
+      "_tools": 9
+    },
+    {
+      "case_id": "case-020-swipe-actions-vs-reorder-handle",
+      "arm": "baseline",
+      "case_type": "pairwise_conflict_plus_accessibility_gap",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "off_handle_swipe_reveals_native_action": false,
+          "off_handle_drag_does_not_reorder": false,
+          "accessibility_reorder_matches_physical_reorder": false,
+          "native_swipe_remains_available_after_accessibility_addition": false,
+          "on_handle_drag_reorders": true,
+          "ordinary_row_state_intact_on_creation": true,
+          "repeated_reorder_operations_remain_valid": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "off_handle_swipe_reveals_native_action": true,
+          "off_handle_drag_does_not_reorder": true,
+          "accessibility_reorder_matches_physical_reorder": true,
+          "native_swipe_remains_available_after_accessibility_addition": true,
+          "on_handle_drag_reorders": true,
+          "ordinary_row_state_intact_on_creation": true,
+          "repeated_reorder_operations_remain_valid": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-020-swipe-actions-vs-reorder-handle/baseline/run-03-20260914T101546241733Z",
+      "_run_no": 3,
+      "_cost": 0.10886440000000001,
+      "_seconds": 22.376951932907104,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-020-swipe-actions-vs-reorder-handle",
+      "arm": "generic",
+      "case_type": "pairwise_conflict_plus_accessibility_gap",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "off_handle_swipe_reveals_native_action": false,
+          "off_handle_drag_does_not_reorder": false,
+          "accessibility_reorder_matches_physical_reorder": false,
+          "native_swipe_remains_available_after_accessibility_addition": false,
+          "on_handle_drag_reorders": true,
+          "ordinary_row_state_intact_on_creation": true,
+          "repeated_reorder_operations_remain_valid": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "off_handle_swipe_reveals_native_action": true,
+          "off_handle_drag_does_not_reorder": true,
+          "accessibility_reorder_matches_physical_reorder": true,
+          "native_swipe_remains_available_after_accessibility_addition": true,
+          "on_handle_drag_reorders": true,
+          "ordinary_row_state_intact_on_creation": true,
+          "repeated_reorder_operations_remain_valid": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-020-swipe-actions-vs-reorder-handle/generic/run-03-20260914T101608010525Z",
+      "_run_no": 3,
+      "_cost": 0.107509,
+      "_seconds": 21.31794285774231,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-020-swipe-actions-vs-reorder-handle",
+      "arm": "doctor",
+      "case_type": "pairwise_conflict_plus_accessibility_gap",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "off_handle_swipe_reveals_native_action": false,
+          "off_handle_drag_does_not_reorder": false,
+          "accessibility_reorder_matches_physical_reorder": false,
+          "native_swipe_remains_available_after_accessibility_addition": false,
+          "on_handle_drag_reorders": true,
+          "ordinary_row_state_intact_on_creation": true,
+          "repeated_reorder_operations_remain_valid": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "off_handle_swipe_reveals_native_action": true,
+          "off_handle_drag_does_not_reorder": true,
+          "accessibility_reorder_matches_physical_reorder": true,
+          "native_swipe_remains_available_after_accessibility_addition": true,
+          "on_handle_drag_reorders": true,
+          "ordinary_row_state_intact_on_creation": true,
+          "repeated_reorder_operations_remain_valid": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-020-swipe-actions-vs-reorder-handle/doctor/run-03-20260914T101648076180Z",
+      "_run_no": 3,
+      "_cost": 0.1500726,
+      "_seconds": 39.6534538269043,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-021-palm-rejection-recognition-timing",
+      "arm": "baseline",
+      "case_type": "conditional_activation_timing",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "misread_palm_then_corrected_to_pen_before_promotion_draws_normally": false,
+          "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally": false,
+          "correct_pen_classification_still_draws_normally": true,
+          "correct_palm_classification_still_rejected_normally": true,
+          "once_promoted_later_classifier_updates_do_not_flip_decision": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "misread_palm_then_corrected_to_pen_before_promotion_draws_normally": true,
+          "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally": true,
+          "correct_pen_classification_still_draws_normally": true,
+          "correct_palm_classification_still_rejected_normally": true,
+          "once_promoted_later_classifier_updates_do_not_flip_decision": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-021-palm-rejection-recognition-timing/baseline/run-03-20260914T101715785665Z",
+      "_run_no": 3,
+      "_cost": 0.1064732,
+      "_seconds": 27.119428873062134,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-021-palm-rejection-recognition-timing",
+      "arm": "generic",
+      "case_type": "conditional_activation_timing",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "misread_palm_then_corrected_to_pen_before_promotion_draws_normally": false,
+          "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally": false,
+          "correct_pen_classification_still_draws_normally": true,
+          "correct_palm_classification_still_rejected_normally": true,
+          "once_promoted_later_classifier_updates_do_not_flip_decision": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "misread_palm_then_corrected_to_pen_before_promotion_draws_normally": true,
+          "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally": true,
+          "correct_pen_classification_still_draws_normally": true,
+          "correct_palm_classification_still_rejected_normally": true,
+          "once_promoted_later_classifier_updates_do_not_flip_decision": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-021-palm-rejection-recognition-timing/generic/run-03-20260914T101757319365Z",
+      "_run_no": 3,
+      "_cost": 0.16107320000000003,
+      "_seconds": 41.14012408256531,
+      "_tools": 10
+    },
+    {
+      "case_id": "case-021-palm-rejection-recognition-timing",
+      "arm": "doctor",
+      "case_type": "conditional_activation_timing",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "misread_palm_then_corrected_to_pen_before_promotion_draws_normally": false,
+          "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally": false,
+          "correct_pen_classification_still_draws_normally": true,
+          "correct_palm_classification_still_rejected_normally": true,
+          "once_promoted_later_classifier_updates_do_not_flip_decision": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "misread_palm_then_corrected_to_pen_before_promotion_draws_normally": true,
+          "misread_pen_then_corrected_to_palm_before_promotion_rejects_normally": true,
+          "correct_pen_classification_still_draws_normally": true,
+          "correct_palm_classification_still_rejected_normally": true,
+          "once_promoted_later_classifier_updates_do_not_flip_decision": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-021-palm-rejection-recognition-timing/doctor/run-03-20260914T101854418168Z",
+      "_run_no": 3,
+      "_cost": 0.1922406,
+      "_seconds": 56.55954194068909,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-022-swipe-complete-recompose-staleness",
+      "arm": "baseline",
+      "case_type": "effect_lifetime_stale_callback",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "originally_swiped_item_completes_not_whatever_is_now_at_that_position": false,
+          "reorder_twice_during_one_swipe_still_completes_original_item": false,
+          "target_moving_to_front_still_completes_correctly": false,
+          "target_moving_to_back_still_completes_correctly": false,
+          "reorder_still_applies_while_swipe_pending": true,
+          "swipe_complete_without_resort_still_works": true,
+          "resort_without_active_swipe_does_not_complete_anything": true,
+          "swiping_a_different_item_after_a_completed_one_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "originally_swiped_item_completes_not_whatever_is_now_at_that_position": true,
+          "reorder_twice_during_one_swipe_still_completes_original_item": true,
+          "target_moving_to_front_still_completes_correctly": true,
+          "target_moving_to_back_still_completes_correctly": true,
+          "reorder_still_applies_while_swipe_pending": true,
+          "swipe_complete_without_resort_still_works": true,
+          "resort_without_active_swipe_does_not_complete_anything": true,
+          "swiping_a_different_item_after_a_completed_one_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-022-swipe-complete-recompose-staleness/baseline/run-03-20260914T101912333197Z",
+      "_run_no": 3,
+      "_cost": 0.090449,
+      "_seconds": 17.53265404701233,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-022-swipe-complete-recompose-staleness",
+      "arm": "generic",
+      "case_type": "effect_lifetime_stale_callback",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "originally_swiped_item_completes_not_whatever_is_now_at_that_position": false,
+          "reorder_twice_during_one_swipe_still_completes_original_item": false,
+          "target_moving_to_front_still_completes_correctly": false,
+          "target_moving_to_back_still_completes_correctly": false,
+          "reorder_still_applies_while_swipe_pending": true,
+          "swipe_complete_without_resort_still_works": true,
+          "resort_without_active_swipe_does_not_complete_anything": true,
+          "swiping_a_different_item_after_a_completed_one_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "originally_swiped_item_completes_not_whatever_is_now_at_that_position": true,
+          "reorder_twice_during_one_swipe_still_completes_original_item": true,
+          "target_moving_to_front_still_completes_correctly": true,
+          "target_moving_to_back_still_completes_correctly": true,
+          "reorder_still_applies_while_swipe_pending": true,
+          "swipe_complete_without_resort_still_works": true,
+          "resort_without_active_swipe_does_not_complete_anything": true,
+          "swiping_a_different_item_after_a_completed_one_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-022-swipe-complete-recompose-staleness/generic/run-03-20260914T101937126518Z",
+      "_run_no": 3,
+      "_cost": 0.09744280000000001,
+      "_seconds": 24.387222051620483,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-022-swipe-complete-recompose-staleness",
+      "arm": "doctor",
+      "case_type": "effect_lifetime_stale_callback",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "originally_swiped_item_completes_not_whatever_is_now_at_that_position": false,
+          "reorder_twice_during_one_swipe_still_completes_original_item": false,
+          "target_moving_to_front_still_completes_correctly": false,
+          "target_moving_to_back_still_completes_correctly": false,
+          "reorder_still_applies_while_swipe_pending": true,
+          "swipe_complete_without_resort_still_works": true,
+          "resort_without_active_swipe_does_not_complete_anything": true,
+          "swiping_a_different_item_after_a_completed_one_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "originally_swiped_item_completes_not_whatever_is_now_at_that_position": true,
+          "reorder_twice_during_one_swipe_still_completes_original_item": true,
+          "target_moving_to_front_still_completes_correctly": true,
+          "target_moving_to_back_still_completes_correctly": true,
+          "reorder_still_applies_while_swipe_pending": true,
+          "swipe_complete_without_resort_still_works": true,
+          "resort_without_active_swipe_does_not_complete_anything": true,
+          "swiping_a_different_item_after_a_completed_one_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-022-swipe-complete-recompose-staleness/doctor/run-03-20260914T102006120776Z",
+      "_run_no": 3,
+      "_cost": 0.132972,
+      "_seconds": 28.585224866867065,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-023-physics-arena-registration-bypass",
+      "arm": "baseline",
+      "case_type": "nary_runtime_defined",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": false,
+          "registration_data_preserved": true,
+          "releasing_one_removes_only_that_one_next_frame": true,
+          "remaining_claims_continue_reaching_solver_after_release": true,
+          "fresh_later_set_of_grabs_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "registration_data_preserved": true,
+          "releasing_one_removes_only_that_one_next_frame": true,
+          "remaining_claims_continue_reaching_solver_after_release": true,
+          "fresh_later_set_of_grabs_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-023-physics-arena-registration-bypass/baseline/run-03-20260914T102032888864Z",
+      "_run_no": 3,
+      "_cost": 0.0961046,
+      "_seconds": 26.350522994995117,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-023-physics-arena-registration-bypass",
+      "arm": "generic",
+      "case_type": "nary_runtime_defined",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": false,
+          "registration_data_preserved": true,
+          "releasing_one_removes_only_that_one_next_frame": true,
+          "remaining_claims_continue_reaching_solver_after_release": true,
+          "fresh_later_set_of_grabs_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "registration_data_preserved": true,
+          "releasing_one_removes_only_that_one_next_frame": true,
+          "remaining_claims_continue_reaching_solver_after_release": true,
+          "fresh_later_set_of_grabs_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-023-physics-arena-registration-bypass/generic/run-03-20260914T102052969311Z",
+      "_run_no": 3,
+      "_cost": 0.08602099999999999,
+      "_seconds": 19.67283010482788,
+      "_tools": 3
+    },
+    {
+      "case_id": "case-023-physics-arena-registration-bypass",
+      "arm": "doctor",
+      "case_type": "nary_runtime_defined",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": false,
+          "registration_data_preserved": true,
+          "releasing_one_removes_only_that_one_next_frame": true,
+          "remaining_claims_continue_reaching_solver_after_release": true,
+          "fresh_later_set_of_grabs_still_works": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "registration_data_preserved": true,
+          "releasing_one_removes_only_that_one_next_frame": true,
+          "remaining_claims_continue_reaching_solver_after_release": true,
+          "fresh_later_set_of_grabs_still_works": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-023-physics-arena-registration-bypass/doctor/run-03-20260914T102118723734Z",
+      "_run_no": 3,
+      "_cost": 0.12730519999999998,
+      "_seconds": 25.336694955825806,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-024-physics-arena-correct-routing",
+      "arm": "baseline",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "release_of_b_leaves_ac_next_frame": true,
+          "later_readdition_of_b_reaches_solver_again": true,
+          "registration_order_does_not_matter_for_set_membership": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "release_of_b_leaves_ac_next_frame": true,
+          "later_readdition_of_b_reaches_solver_again": true,
+          "registration_order_does_not_matter_for_set_membership": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-024-physics-arena-correct-routing/baseline/run-03-20260914T102148168594Z",
+      "_run_no": 3,
+      "_cost": 0.1047118,
+      "_seconds": 29.034018993377686,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-024-physics-arena-correct-routing",
+      "arm": "generic",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "release_of_b_leaves_ac_next_frame": true,
+          "later_readdition_of_b_reaches_solver_again": true,
+          "registration_order_does_not_matter_for_set_membership": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "release_of_b_leaves_ac_next_frame": true,
+          "later_readdition_of_b_reaches_solver_again": true,
+          "registration_order_does_not_matter_for_set_membership": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "unnecessary_source_churn",
+      "_archive": "../results/raw/case-024-physics-arena-correct-routing/generic/run-03-20260914T102239930310Z",
+      "_run_no": 3,
+      "_cost": 0.1402658,
+      "_seconds": 51.35487389564514,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-024-physics-arena-correct-routing",
+      "arm": "doctor",
+      "case_type": "negative_control",
+      "defect_present": false,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "release_of_b_leaves_ac_next_frame": true,
+          "later_readdition_of_b_reaches_solver_again": true,
+          "registration_order_does_not_matter_for_set_membership": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "single_a_reaches_solver": true,
+          "pair_ab_reaches_solver": true,
+          "pair_ac_reaches_solver": true,
+          "pair_bc_reaches_solver": true,
+          "triple_abc_reaches_solver": true,
+          "release_of_b_leaves_ac_next_frame": true,
+          "later_readdition_of_b_reaches_solver_again": true,
+          "registration_order_does_not_matter_for_set_membership": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": false,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": false,
+      "diff": {
+        "changed": [],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": false,
+      "made_functional_change": false,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_no_op",
+      "_archive": "../results/raw/case-024-physics-arena-correct-routing/doctor/run-03-20260914T102326098514Z",
+      "_run_no": 3,
+      "_cost": 0.1427776,
+      "_seconds": 45.722193002700806,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-025-grabmouse-altab-leak",
+      "arm": "baseline",
+      "case_type": "lifecycle_focus_loss",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "focus_loss_during_active_resize_ends_it": false,
+          "stale_delta_after_focus_loss_does_not_mutate_size": false,
+          "refocus_alone_does_not_resume_resize": false,
+          "ordinary_resize_works": true,
+          "fresh_resize_after_refocus_works": true,
+          "focus_loss_with_no_active_resize_is_harmless": true,
+          "normal_release_then_stale_move_has_no_effect": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "focus_loss_during_active_resize_ends_it": true,
+          "stale_delta_after_focus_loss_does_not_mutate_size": true,
+          "refocus_alone_does_not_resume_resize": true,
+          "ordinary_resize_works": true,
+          "fresh_resize_after_refocus_works": true,
+          "focus_loss_with_no_active_resize_is_harmless": true,
+          "normal_release_then_stale_move_has_no_effect": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-025-grabmouse-altab-leak/baseline/run-03-20260914T102341993632Z",
+      "_run_no": 3,
+      "_cost": 0.0922048,
+      "_seconds": 15.439993143081665,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-025-grabmouse-altab-leak",
+      "arm": "generic",
+      "case_type": "lifecycle_focus_loss",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "focus_loss_during_active_resize_ends_it": false,
+          "stale_delta_after_focus_loss_does_not_mutate_size": false,
+          "refocus_alone_does_not_resume_resize": false,
+          "ordinary_resize_works": true,
+          "fresh_resize_after_refocus_works": true,
+          "focus_loss_with_no_active_resize_is_harmless": true,
+          "normal_release_then_stale_move_has_no_effect": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "focus_loss_during_active_resize_ends_it": true,
+          "stale_delta_after_focus_loss_does_not_mutate_size": true,
+          "refocus_alone_does_not_resume_resize": true,
+          "ordinary_resize_works": true,
+          "fresh_resize_after_refocus_works": true,
+          "focus_loss_with_no_active_resize_is_harmless": true,
+          "normal_release_then_stale_move_has_no_effect": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-025-grabmouse-altab-leak/generic/run-03-20260914T102358772362Z",
+      "_run_no": 3,
+      "_cost": 0.09286679999999999,
+      "_seconds": 16.273514986038208,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-025-grabmouse-altab-leak",
+      "arm": "doctor",
+      "case_type": "lifecycle_focus_loss",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "focus_loss_during_active_resize_ends_it": false,
+          "stale_delta_after_focus_loss_does_not_mutate_size": false,
+          "refocus_alone_does_not_resume_resize": false,
+          "ordinary_resize_works": true,
+          "fresh_resize_after_refocus_works": true,
+          "focus_loss_with_no_active_resize_is_harmless": true,
+          "normal_release_then_stale_move_has_no_effect": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "focus_loss_during_active_resize_ends_it": true,
+          "stale_delta_after_focus_loss_does_not_mutate_size": true,
+          "refocus_alone_does_not_resume_resize": true,
+          "ordinary_resize_works": true,
+          "fresh_resize_after_refocus_works": true,
+          "focus_loss_with_no_active_resize_is_harmless": true,
+          "normal_release_then_stale_move_has_no_effect": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-025-grabmouse-altab-leak/doctor/run-03-20260914T102429941563Z",
+      "_run_no": 3,
+      "_cost": 0.1299958,
+      "_seconds": 30.722997903823853,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-026-midi-surface-disconnect",
+      "arm": "baseline",
+      "case_type": "lifecycle_device_loss",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "device_a_disconnect_mid_interaction_releases_control": false,
+          "local_ui_works_immediately_after_disconnect": false,
+          "connected_device_controls_fader_normally": true,
+          "local_ui_works_when_no_external_control_active": true,
+          "reconnect_and_fresh_interaction_works": true,
+          "clean_midi_end_without_disconnect_still_works": true,
+          "disconnect_with_no_active_interaction_is_harmless": true,
+          "unrelated_device_disconnect_does_not_cancel_active_interaction": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "device_a_disconnect_mid_interaction_releases_control": true,
+          "local_ui_works_immediately_after_disconnect": true,
+          "connected_device_controls_fader_normally": true,
+          "local_ui_works_when_no_external_control_active": true,
+          "reconnect_and_fresh_interaction_works": true,
+          "clean_midi_end_without_disconnect_still_works": true,
+          "disconnect_with_no_active_interaction_is_harmless": true,
+          "unrelated_device_disconnect_does_not_cancel_active_interaction": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-026-midi-surface-disconnect/baseline/run-03-20260914T102446195380Z",
+      "_run_no": 3,
+      "_cost": 0.094292,
+      "_seconds": 15.863338947296143,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-026-midi-surface-disconnect",
+      "arm": "generic",
+      "case_type": "lifecycle_device_loss",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "device_a_disconnect_mid_interaction_releases_control": false,
+          "local_ui_works_immediately_after_disconnect": false,
+          "connected_device_controls_fader_normally": true,
+          "local_ui_works_when_no_external_control_active": true,
+          "reconnect_and_fresh_interaction_works": true,
+          "clean_midi_end_without_disconnect_still_works": true,
+          "disconnect_with_no_active_interaction_is_harmless": true,
+          "unrelated_device_disconnect_does_not_cancel_active_interaction": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "device_a_disconnect_mid_interaction_releases_control": true,
+          "local_ui_works_immediately_after_disconnect": true,
+          "connected_device_controls_fader_normally": true,
+          "local_ui_works_when_no_external_control_active": true,
+          "reconnect_and_fresh_interaction_works": true,
+          "clean_midi_end_without_disconnect_still_works": true,
+          "disconnect_with_no_active_interaction_is_harmless": true,
+          "unrelated_device_disconnect_does_not_cancel_active_interaction": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": false,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-026-midi-surface-disconnect/generic/run-03-20260914T102503463288Z",
+      "_run_no": 3,
+      "_cost": 0.0974284,
+      "_seconds": 16.886445999145508,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-026-midi-surface-disconnect",
+      "arm": "doctor",
+      "case_type": "lifecycle_device_loss",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "device_a_disconnect_mid_interaction_releases_control": false,
+          "local_ui_works_immediately_after_disconnect": false,
+          "connected_device_controls_fader_normally": true,
+          "local_ui_works_when_no_external_control_active": true,
+          "reconnect_and_fresh_interaction_works": true,
+          "clean_midi_end_without_disconnect_still_works": true,
+          "disconnect_with_no_active_interaction_is_harmless": true,
+          "unrelated_device_disconnect_does_not_cancel_active_interaction": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "device_a_disconnect_mid_interaction_releases_control": true,
+          "local_ui_works_immediately_after_disconnect": true,
+          "connected_device_controls_fader_normally": true,
+          "local_ui_works_when_no_external_control_active": true,
+          "reconnect_and_fresh_interaction_works": true,
+          "clean_midi_end_without_disconnect_still_works": true,
+          "disconnect_with_no_active_interaction_is_harmless": true,
+          "unrelated_device_disconnect_does_not_cancel_active_interaction": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-026-midi-surface-disconnect/doctor/run-03-20260914T102535842842Z",
+      "_run_no": 3,
+      "_cost": 0.1433086,
+      "_seconds": 31.936670780181885,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-027-extrude-escape-scope",
+      "arm": "baseline",
+      "case_type": "sequences_mode_change",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "extrude_numeric_escape_returns_to_idle": false,
+          "extrude_numeric_escape_clears_preview": false,
+          "extrude_plain_escape_returns_to_idle_and_clears_preview": true,
+          "rotate_numeric_escape_follows_convention": true,
+          "scale_numeric_escape_follows_convention": true,
+          "extrude_confirm_still_works": true,
+          "fresh_extrude_after_cancellation_works": true,
+          "numeric_entry_updates_preview_normally_before_cancellation": true,
+          "numeric_entry_actually_changes_mode": true,
+          "escape_while_idle_is_harmless": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "extrude_numeric_escape_returns_to_idle": true,
+          "extrude_numeric_escape_clears_preview": true,
+          "extrude_plain_escape_returns_to_idle_and_clears_preview": true,
+          "rotate_numeric_escape_follows_convention": true,
+          "scale_numeric_escape_follows_convention": true,
+          "extrude_confirm_still_works": true,
+          "fresh_extrude_after_cancellation_works": true,
+          "numeric_entry_updates_preview_normally_before_cancellation": true,
+          "numeric_entry_actually_changes_mode": true,
+          "escape_while_idle_is_harmless": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-027-extrude-escape-scope/baseline/run-03-20260914T102557239257Z",
+      "_run_no": 3,
+      "_cost": 0.0940648,
+      "_seconds": 20.992289781570435,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-027-extrude-escape-scope",
+      "arm": "generic",
+      "case_type": "sequences_mode_change",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "extrude_numeric_escape_returns_to_idle": false,
+          "extrude_numeric_escape_clears_preview": false,
+          "extrude_plain_escape_returns_to_idle_and_clears_preview": true,
+          "rotate_numeric_escape_follows_convention": true,
+          "scale_numeric_escape_follows_convention": true,
+          "extrude_confirm_still_works": true,
+          "fresh_extrude_after_cancellation_works": true,
+          "numeric_entry_updates_preview_normally_before_cancellation": true,
+          "numeric_entry_actually_changes_mode": true,
+          "escape_while_idle_is_harmless": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "extrude_numeric_escape_returns_to_idle": true,
+          "extrude_numeric_escape_clears_preview": true,
+          "extrude_plain_escape_returns_to_idle_and_clears_preview": true,
+          "rotate_numeric_escape_follows_convention": true,
+          "scale_numeric_escape_follows_convention": true,
+          "extrude_confirm_still_works": true,
+          "fresh_extrude_after_cancellation_works": true,
+          "numeric_entry_updates_preview_normally_before_cancellation": true,
+          "numeric_entry_actually_changes_mode": true,
+          "escape_while_idle_is_harmless": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-027-extrude-escape-scope/generic/run-03-20260914T102628076298Z",
+      "_run_no": 3,
+      "_cost": 0.11744220000000001,
+      "_seconds": 30.40558695793152,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-027-extrude-escape-scope",
+      "arm": "doctor",
+      "case_type": "sequences_mode_change",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "extrude_numeric_escape_returns_to_idle": false,
+          "extrude_numeric_escape_clears_preview": false,
+          "extrude_plain_escape_returns_to_idle_and_clears_preview": true,
+          "rotate_numeric_escape_follows_convention": true,
+          "scale_numeric_escape_follows_convention": true,
+          "extrude_confirm_still_works": true,
+          "fresh_extrude_after_cancellation_works": true,
+          "numeric_entry_updates_preview_normally_before_cancellation": true,
+          "numeric_entry_actually_changes_mode": true,
+          "escape_while_idle_is_harmless": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "extrude_numeric_escape_returns_to_idle": true,
+          "extrude_numeric_escape_clears_preview": true,
+          "extrude_plain_escape_returns_to_idle_and_clears_preview": true,
+          "rotate_numeric_escape_follows_convention": true,
+          "scale_numeric_escape_follows_convention": true,
+          "extrude_confirm_still_works": true,
+          "fresh_extrude_after_cancellation_works": true,
+          "numeric_entry_updates_preview_normally_before_cancellation": true,
+          "numeric_entry_actually_changes_mode": true,
+          "escape_while_idle_is_harmless": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-027-extrude-escape-scope/doctor/run-03-20260914T102723954290Z",
+      "_run_no": 3,
+      "_cost": 0.1698116,
+      "_seconds": 55.4636869430542,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+      "arm": "baseline",
+      "case_type": "nary_exclusive",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "pen_active_then_lasso_condition_stays_exclusive": false,
+          "pan_active_then_lasso_condition_stays_exclusive": false,
+          "lasso_active_then_pen_condition_stays_exclusive": false,
+          "lasso_active_then_pan_condition_stays_exclusive": false,
+          "pen_draw_works_standalone": true,
+          "pan_canvas_works_standalone": true,
+          "lasso_select_works_standalone": true,
+          "pen_active_then_pan_condition_stays_exclusive": true,
+          "ending_gesture_releases_slot_and_another_can_start_afterward": true,
+          "repeated_interactions_do_not_leave_stuck_state": true,
+          "pointer_up_does_not_leave_phantom_activity": true,
+          "cancel_gesture_releases_slot": true,
+          "lasso_still_works_after_an_earlier_conflict_resolves": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pen_active_then_lasso_condition_stays_exclusive": true,
+          "pan_active_then_lasso_condition_stays_exclusive": true,
+          "lasso_active_then_pen_condition_stays_exclusive": true,
+          "lasso_active_then_pan_condition_stays_exclusive": true,
+          "pen_draw_works_standalone": true,
+          "pan_canvas_works_standalone": true,
+          "lasso_select_works_standalone": true,
+          "pen_active_then_pan_condition_stays_exclusive": true,
+          "ending_gesture_releases_slot_and_another_can_start_afterward": true,
+          "repeated_interactions_do_not_leave_stuck_state": true,
+          "pointer_up_does_not_leave_phantom_activity": true,
+          "cancel_gesture_releases_slot": true,
+          "lasso_still_works_after_an_earlier_conflict_resolves": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-028-canvas-tool-arena-exclusivity-bypass/baseline/run-03-20260914T102752219673Z",
+      "_run_no": 3,
+      "_cost": 0.10878479999999999,
+      "_seconds": 27.872641801834106,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+      "arm": "generic",
+      "case_type": "nary_exclusive",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "pen_active_then_lasso_condition_stays_exclusive": false,
+          "pan_active_then_lasso_condition_stays_exclusive": false,
+          "lasso_active_then_pen_condition_stays_exclusive": false,
+          "lasso_active_then_pan_condition_stays_exclusive": false,
+          "pen_draw_works_standalone": true,
+          "pan_canvas_works_standalone": true,
+          "lasso_select_works_standalone": true,
+          "pen_active_then_pan_condition_stays_exclusive": true,
+          "ending_gesture_releases_slot_and_another_can_start_afterward": true,
+          "repeated_interactions_do_not_leave_stuck_state": true,
+          "pointer_up_does_not_leave_phantom_activity": true,
+          "cancel_gesture_releases_slot": true,
+          "lasso_still_works_after_an_earlier_conflict_resolves": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pen_active_then_lasso_condition_stays_exclusive": true,
+          "pan_active_then_lasso_condition_stays_exclusive": true,
+          "lasso_active_then_pen_condition_stays_exclusive": true,
+          "lasso_active_then_pan_condition_stays_exclusive": true,
+          "pen_draw_works_standalone": true,
+          "pan_canvas_works_standalone": true,
+          "lasso_select_works_standalone": true,
+          "pen_active_then_pan_condition_stays_exclusive": true,
+          "ending_gesture_releases_slot_and_another_can_start_afterward": true,
+          "repeated_interactions_do_not_leave_stuck_state": true,
+          "pointer_up_does_not_leave_phantom_activity": true,
+          "cancel_gesture_releases_slot": true,
+          "lasso_still_works_after_an_earlier_conflict_resolves": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-028-canvas-tool-arena-exclusivity-bypass/generic/run-03-20260914T102815182446Z",
+      "_run_no": 3,
+      "_cost": 0.10849,
+      "_seconds": 22.564288854599,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+      "arm": "doctor",
+      "case_type": "nary_exclusive",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "pen_active_then_lasso_condition_stays_exclusive": false,
+          "pan_active_then_lasso_condition_stays_exclusive": false,
+          "lasso_active_then_pen_condition_stays_exclusive": false,
+          "lasso_active_then_pan_condition_stays_exclusive": false,
+          "pen_draw_works_standalone": true,
+          "pan_canvas_works_standalone": true,
+          "lasso_select_works_standalone": true,
+          "pen_active_then_pan_condition_stays_exclusive": true,
+          "ending_gesture_releases_slot_and_another_can_start_afterward": true,
+          "repeated_interactions_do_not_leave_stuck_state": true,
+          "pointer_up_does_not_leave_phantom_activity": true,
+          "cancel_gesture_releases_slot": true,
+          "lasso_still_works_after_an_earlier_conflict_resolves": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "pen_active_then_lasso_condition_stays_exclusive": true,
+          "pan_active_then_lasso_condition_stays_exclusive": true,
+          "lasso_active_then_pen_condition_stays_exclusive": true,
+          "lasso_active_then_pan_condition_stays_exclusive": true,
+          "pen_draw_works_standalone": true,
+          "pan_canvas_works_standalone": true,
+          "lasso_select_works_standalone": true,
+          "pen_active_then_pan_condition_stays_exclusive": true,
+          "ending_gesture_releases_slot_and_another_can_start_afterward": true,
+          "repeated_interactions_do_not_leave_stuck_state": true,
+          "pointer_up_does_not_leave_phantom_activity": true,
+          "cancel_gesture_releases_slot": true,
+          "lasso_still_works_after_an_earlier_conflict_resolves": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-028-canvas-tool-arena-exclusivity-bypass/doctor/run-03-20260914T102932003331Z",
+      "_run_no": 3,
+      "_cost": 0.2871978,
+      "_seconds": 76.45042586326599,
+      "_tools": 10
+    },
+    {
+      "case_id": "case-029-combo-order-and-animation-staleness",
+      "arm": "baseline",
+      "case_type": "nary_ordered_plus_effect_lifetime",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "permutation_d1_d3_d2_rejected": false,
+          "permutation_d2_d1_d3_rejected": false,
+          "permutation_d2_d3_d1_rejected": false,
+          "permutation_d3_d1_d2_rejected": false,
+          "permutation_d3_d2_d1_rejected": false,
+          "attack_completion_hits_trigger_time_target": false,
+          "multi_switch_before_completion_still_hits_trigger_time_target": false,
+          "valid_combo_order_triggers": true,
+          "incomplete_single_input_does_not_trigger": true,
+          "incomplete_two_inputs_do_not_trigger": true,
+          "timing_window_enforced_outside_window_does_not_trigger": true,
+          "fresh_combo_after_reset_can_trigger": true,
+          "no_switch_applies_normal_damage_to_selected_target": true,
+          "fresh_combo_after_switch_uses_new_target": true,
+          "damage_not_applied_before_completion": true,
+          "attack_completion_executes_once": true,
+          "full_trigger_complete_cycle_is_repeatable": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "permutation_d1_d3_d2_rejected": true,
+          "permutation_d2_d1_d3_rejected": true,
+          "permutation_d2_d3_d1_rejected": true,
+          "permutation_d3_d1_d2_rejected": true,
+          "permutation_d3_d2_d1_rejected": true,
+          "attack_completion_hits_trigger_time_target": true,
+          "multi_switch_before_completion_still_hits_trigger_time_target": true,
+          "valid_combo_order_triggers": true,
+          "incomplete_single_input_does_not_trigger": true,
+          "incomplete_two_inputs_do_not_trigger": true,
+          "timing_window_enforced_outside_window_does_not_trigger": true,
+          "fresh_combo_after_reset_can_trigger": true,
+          "no_switch_applies_normal_damage_to_selected_target": true,
+          "fresh_combo_after_switch_uses_new_target": true,
+          "damage_not_applied_before_completion": true,
+          "attack_completion_executes_once": true,
+          "full_trigger_complete_cycle_is_repeatable": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-029-combo-order-and-animation-staleness/baseline/run-03-20260914T103014236849Z",
+      "_run_no": 3,
+      "_cost": 0.139401,
+      "_seconds": 41.827016830444336,
+      "_tools": 4
+    },
+    {
+      "case_id": "case-029-combo-order-and-animation-staleness",
+      "arm": "generic",
+      "case_type": "nary_ordered_plus_effect_lifetime",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "permutation_d1_d3_d2_rejected": false,
+          "permutation_d2_d1_d3_rejected": false,
+          "permutation_d2_d3_d1_rejected": false,
+          "permutation_d3_d1_d2_rejected": false,
+          "permutation_d3_d2_d1_rejected": false,
+          "attack_completion_hits_trigger_time_target": false,
+          "multi_switch_before_completion_still_hits_trigger_time_target": false,
+          "valid_combo_order_triggers": true,
+          "incomplete_single_input_does_not_trigger": true,
+          "incomplete_two_inputs_do_not_trigger": true,
+          "timing_window_enforced_outside_window_does_not_trigger": true,
+          "fresh_combo_after_reset_can_trigger": true,
+          "no_switch_applies_normal_damage_to_selected_target": true,
+          "fresh_combo_after_switch_uses_new_target": true,
+          "damage_not_applied_before_completion": true,
+          "attack_completion_executes_once": true,
+          "full_trigger_complete_cycle_is_repeatable": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "permutation_d1_d3_d2_rejected": true,
+          "permutation_d2_d1_d3_rejected": true,
+          "permutation_d2_d3_d1_rejected": true,
+          "permutation_d3_d1_d2_rejected": true,
+          "permutation_d3_d2_d1_rejected": true,
+          "attack_completion_hits_trigger_time_target": true,
+          "multi_switch_before_completion_still_hits_trigger_time_target": true,
+          "valid_combo_order_triggers": true,
+          "incomplete_single_input_does_not_trigger": true,
+          "incomplete_two_inputs_do_not_trigger": true,
+          "timing_window_enforced_outside_window_does_not_trigger": true,
+          "fresh_combo_after_reset_can_trigger": true,
+          "no_switch_applies_normal_damage_to_selected_target": true,
+          "fresh_combo_after_switch_uses_new_target": true,
+          "damage_not_applied_before_completion": true,
+          "attack_completion_executes_once": true,
+          "full_trigger_complete_cycle_is_repeatable": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-029-combo-order-and-animation-staleness/generic/run-03-20260914T103053995879Z",
+      "_run_no": 3,
+      "_cost": 0.13833800000000002,
+      "_seconds": 39.36371994018555,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-029-combo-order-and-animation-staleness",
+      "arm": "doctor",
+      "case_type": "nary_ordered_plus_effect_lifetime",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "permutation_d1_d3_d2_rejected": false,
+          "permutation_d2_d1_d3_rejected": false,
+          "permutation_d2_d3_d1_rejected": false,
+          "permutation_d3_d1_d2_rejected": false,
+          "permutation_d3_d2_d1_rejected": false,
+          "attack_completion_hits_trigger_time_target": false,
+          "multi_switch_before_completion_still_hits_trigger_time_target": false,
+          "valid_combo_order_triggers": true,
+          "incomplete_single_input_does_not_trigger": true,
+          "incomplete_two_inputs_do_not_trigger": true,
+          "timing_window_enforced_outside_window_does_not_trigger": true,
+          "fresh_combo_after_reset_can_trigger": true,
+          "no_switch_applies_normal_damage_to_selected_target": true,
+          "fresh_combo_after_switch_uses_new_target": true,
+          "damage_not_applied_before_completion": true,
+          "attack_completion_executes_once": true,
+          "full_trigger_complete_cycle_is_repeatable": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "permutation_d1_d3_d2_rejected": true,
+          "permutation_d2_d1_d3_rejected": true,
+          "permutation_d2_d3_d1_rejected": true,
+          "permutation_d3_d1_d2_rejected": true,
+          "permutation_d3_d2_d1_rejected": true,
+          "attack_completion_hits_trigger_time_target": true,
+          "multi_switch_before_completion_still_hits_trigger_time_target": true,
+          "valid_combo_order_triggers": true,
+          "incomplete_single_input_does_not_trigger": true,
+          "incomplete_two_inputs_do_not_trigger": true,
+          "timing_window_enforced_outside_window_does_not_trigger": true,
+          "fresh_combo_after_reset_can_trigger": true,
+          "no_switch_applies_normal_damage_to_selected_target": true,
+          "fresh_combo_after_switch_uses_new_target": true,
+          "damage_not_applied_before_completion": true,
+          "attack_completion_executes_once": true,
+          "full_trigger_complete_cycle_is_repeatable": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-029-combo-order-and-animation-staleness/doctor/run-03-20260914T103200931626Z",
+      "_run_no": 3,
+      "_cost": 0.1959072,
+      "_seconds": 66.10658979415894,
+      "_tools": 7
+    },
+    {
+      "case_id": "case-030-timeline-autoscroll-causal-staleness",
+      "arm": "baseline",
+      "case_type": "recursive_revalidation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "drag_autoscroll_stops_at_release": false,
+          "click_during_native_settle_uses_current_visual_content_position": true,
+          "click_during_native_settle_uses_current_visual_content_position_variant": true,
+          "causal_adversarial_masking_check": true,
+          "edge_autoscroll_works_during_active_drag": true,
+          "pointer_movement_during_scrub_still_works": true,
+          "pointerup_ends_dragging_state": true,
+          "native_settle_still_occurs_after_release": true,
+          "ordinary_click_with_no_pending_settle_correct": true,
+          "click_placement_after_settle_fully_completes_correct": true,
+          "fresh_scrub_after_release_works": true,
+          "later_ordinary_click_still_works": true,
+          "no_duplicate_keyframe_from_one_click": true,
+          "autoscroll_not_permanently_disabled_after_cleanup": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "drag_autoscroll_stops_at_release": true,
+          "click_during_native_settle_uses_current_visual_content_position": true,
+          "click_during_native_settle_uses_current_visual_content_position_variant": true,
+          "causal_adversarial_masking_check": true,
+          "edge_autoscroll_works_during_active_drag": true,
+          "pointer_movement_during_scrub_still_works": true,
+          "pointerup_ends_dragging_state": true,
+          "native_settle_still_occurs_after_release": true,
+          "ordinary_click_with_no_pending_settle_correct": true,
+          "click_placement_after_settle_fully_completes_correct": true,
+          "fresh_scrub_after_release_works": true,
+          "later_ordinary_click_still_works": true,
+          "no_duplicate_keyframe_from_one_click": true,
+          "autoscroll_not_permanently_disabled_after_cleanup": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-030-timeline-autoscroll-causal-staleness/baseline/run-03-20260914T103239580270Z",
+      "_run_no": 3,
+      "_cost": 0.1244748,
+      "_seconds": 38.26567792892456,
+      "_tools": 5
+    },
+    {
+      "case_id": "case-030-timeline-autoscroll-causal-staleness",
+      "arm": "generic",
+      "case_type": "recursive_revalidation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "drag_autoscroll_stops_at_release": false,
+          "click_during_native_settle_uses_current_visual_content_position": true,
+          "click_during_native_settle_uses_current_visual_content_position_variant": true,
+          "causal_adversarial_masking_check": true,
+          "edge_autoscroll_works_during_active_drag": true,
+          "pointer_movement_during_scrub_still_works": true,
+          "pointerup_ends_dragging_state": true,
+          "native_settle_still_occurs_after_release": true,
+          "ordinary_click_with_no_pending_settle_correct": true,
+          "click_placement_after_settle_fully_completes_correct": true,
+          "fresh_scrub_after_release_works": true,
+          "later_ordinary_click_still_works": true,
+          "no_duplicate_keyframe_from_one_click": true,
+          "autoscroll_not_permanently_disabled_after_cleanup": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "drag_autoscroll_stops_at_release": true,
+          "click_during_native_settle_uses_current_visual_content_position": true,
+          "click_during_native_settle_uses_current_visual_content_position_variant": true,
+          "causal_adversarial_masking_check": true,
+          "edge_autoscroll_works_during_active_drag": true,
+          "pointer_movement_during_scrub_still_works": true,
+          "pointerup_ends_dragging_state": true,
+          "native_settle_still_occurs_after_release": true,
+          "ordinary_click_with_no_pending_settle_correct": true,
+          "click_placement_after_settle_fully_completes_correct": true,
+          "fresh_scrub_after_release_works": true,
+          "later_ordinary_click_still_works": true,
+          "no_duplicate_keyframe_from_one_click": true,
+          "autoscroll_not_permanently_disabled_after_cleanup": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-030-timeline-autoscroll-causal-staleness/generic/run-03-20260914T103312961985Z",
+      "_run_no": 3,
+      "_cost": 0.13857719999999998,
+      "_seconds": 33.04223704338074,
+      "_tools": 6
+    },
+    {
+      "case_id": "case-030-timeline-autoscroll-causal-staleness",
+      "arm": "doctor",
+      "case_type": "recursive_revalidation",
+      "defect_present": true,
+      "intent_status": "specified",
+      "hidden_test_baseline": {
+        "pass": false,
+        "results": {
+          "drag_autoscroll_stops_at_release": false,
+          "click_during_native_settle_uses_current_visual_content_position": true,
+          "click_during_native_settle_uses_current_visual_content_position_variant": true,
+          "causal_adversarial_masking_check": true,
+          "edge_autoscroll_works_during_active_drag": true,
+          "pointer_movement_during_scrub_still_works": true,
+          "pointerup_ends_dragging_state": true,
+          "native_settle_still_occurs_after_release": true,
+          "ordinary_click_with_no_pending_settle_correct": true,
+          "click_placement_after_settle_fully_completes_correct": true,
+          "fresh_scrub_after_release_works": true,
+          "later_ordinary_click_still_works": true,
+          "no_duplicate_keyframe_from_one_click": true,
+          "autoscroll_not_permanently_disabled_after_cleanup": true
+        }
+      },
+      "hidden_test_final": {
+        "pass": true,
+        "results": {
+          "drag_autoscroll_stops_at_release": true,
+          "click_during_native_settle_uses_current_visual_content_position": true,
+          "click_during_native_settle_uses_current_visual_content_position_variant": true,
+          "causal_adversarial_masking_check": true,
+          "edge_autoscroll_works_during_active_drag": true,
+          "pointer_movement_during_scrub_still_works": true,
+          "pointerup_ends_dragging_state": true,
+          "native_settle_still_occurs_after_release": true,
+          "ordinary_click_with_no_pending_settle_correct": true,
+          "click_placement_after_settle_fully_completes_correct": true,
+          "fresh_scrub_after_release_works": true,
+          "later_ordinary_click_still_works": true,
+          "no_duplicate_keyframe_from_one_click": true,
+          "autoscroll_not_permanently_disabled_after_cleanup": true
+        }
+      },
+      "hidden_test_pass": true,
+      "regressions": [],
+      "has_regression": false,
+      "repair_success": true,
+      "functional_change": true,
+      "functional_change_reason": null,
+      "unresolved_behavior_changed": true,
+      "diff": {
+        "changed": [
+          "app.js"
+        ],
+        "added": [],
+        "removed": []
+      },
+      "source_modified": true,
+      "made_functional_change": true,
+      "detection_heuristic": true,
+      "false_closure_heuristic": false,
+      "verdict": "correct_repair",
+      "_archive": "../results/raw/case-030-timeline-autoscroll-causal-staleness/doctor/run-03-20260914T103437776235Z",
+      "_run_no": 3,
+      "_cost": 0.24371840000000003,
+      "_seconds": 84.45213007926941,
+      "_tools": 9
+    }
+  ],
+  "warning": "Detection and false-closure are frozen keyword heuristics. NEEDS_INTENT rows marked needs_manual_review_ambiguity still require semantic manual review."
+}

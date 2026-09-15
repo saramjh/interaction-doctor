@@ -1,0 +1,2635 @@
+[
+  {
+    "case_id": "001",
+    "slug": "case-001-media-library",
+    "name": "media-library",
+    "outcome": "YES",
+    "difficulty": "T1",
+    "runtime": "vanilla-js",
+    "relations": [
+      "COMPETES"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "scripted pointer sequences: scrub-bar drag mutates scrubberValue only; carousel drag elsewhere mutates carouselIndex only"
+    ],
+    "task_description": "You are working in a small media library UI. `app.js` builds a track card:\na `scrubber` element (drag to seek within the track) nested inside a\n`carousel` element (drag to swipe between tracks). `dom-shim.js` is a tiny\nfake DOM (fake elements with `addEventListener`/`dispatch`, bubbling\npointer events) that stands in for the real browser DOM in this exercise \u2014\ntreat it as equivalent to real pointer events on real nested elements.\n\nUsers report that dragging the scrub bar to seek within the current track\nalso shifts the carousel to a different track at the same time.\n\nInvestigate and fix the implementation in this project so that:\n- dragging the scrub bar seeks within the track and does not move the\n  carousel\n- dragging the carousel elsewhere (not starting on the scrub bar) still\n  swipes between tracks as before\n\nMake the smallest appropriate change. You may run `node` against the files\nin this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.0877772,
+        "seconds": 25.900403022766113,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.08050579999999999,
+        "seconds": 23.642163038253784,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1650948,
+        "seconds": 59.19920086860657,
+        "tools": 7,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "002",
+    "slug": "case-002-kanban-board",
+    "name": "kanban-board",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": [
+      "DERIVES_FROM"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [
+      "async_request"
+    ],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "resolve save-responses out of order; assert final column reflects latest drag, not response arrival order"
+    ],
+    "task_description": "This is a kanban board. `board.js` implements `createBoard(scheduler)`:\ndragging a card to a new column updates `state.cardColumn[cardId]`\nimmediately (optimistic UI), then fires a save request via\n`scheduler.schedule(fn)`, which represents a network round trip \u2014 the\ncaller later delivers the server's response by calling\n`scheduler.resolve(requestId, serverColumn)` whenever it actually arrives,\npassing whatever column the server confirms. `scheduler.js` is a\ndeterministic stand-in for the network layer, used so this can be tested\nwithout real timers.\n\nUsers report that if they drag a card twice in quick succession (e.g. from\n\"To Do\" to \"In Progress\", then immediately to \"Done\"), the card sometimes\nsnaps back to \"In Progress\" a moment later, even though they left it in\n\"Done\". This appears to depend on which save request's network response\nhappens to arrive first, which the user has no control over.\n\nInvestigate and fix `board.js` (and `scheduler.js` if needed) so that a\ncard's column always ends up reflecting the user's most recent drag,\nregardless of what order in-flight save responses arrive in \u2014 while still\ncorrectly applying a server response (e.g. a rejection that reverts the\ncolumn) when that response is for the card's current, still-relevant\nrequest. Do not change the public shape of `createBoard`/`moveCard`\nunless necessary. You may run `node` against the files in this project to\ncheck your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.09780260000000002,
+        "seconds": 20.37770915031433,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "board.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1127466,
+        "seconds": 33.606831312179565,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "board.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.2871808,
+        "seconds": 88.6784679889679,
+        "tools": 9,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "board.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "003",
+    "slug": "case-003-drawing-canvas",
+    "name": "drawing-canvas",
+    "outcome": "NO",
+    "difficulty": "T1",
+    "runtime": "vanilla-js",
+    "relations": [
+      "CONDITIONAL"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "keyboard"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "drag+spacebar-toggle sequences produce output identical to a fixed snapshot; empty diff asserted"
+    ],
+    "task_description": "This is a drawing canvas. `canvas.js` implements `createCanvas()`: holding\nthe spacebar and dragging pans the canvas; dragging without the spacebar\nheld draws a freehand stroke. `keydownSpace`/`keyupSpace` track the\nspacebar; `pointerdown`/`pointermove`/`pointerup` drive drawing/panning.\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken. You may run `node` against the files\nin this project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": null,
+        "false_closure_heuristic": false,
+        "cost": 0.19082720000000003,
+        "seconds": 98.81618928909302,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": null,
+        "false_closure_heuristic": false,
+        "cost": 0.1496516,
+        "seconds": 66.6977059841156,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": null,
+        "false_closure_heuristic": false,
+        "cost": 0.307709,
+        "seconds": 133.00193095207214,
+        "tools": 9,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "canvas.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "004",
+    "slug": "case-004-hotkey-vs-literal",
+    "name": "hotkey-vs-literal",
+    "outcome": "NEEDS_INTENT",
+    "difficulty": "T1",
+    "runtime": "vanilla-js",
+    "relations": [
+      "COMPETES"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "keyboard"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "transcript/manual oracle: correctly identifies undetermined suppression scope, asks or flags rather than silently picking one convention"
+    ],
+    "task_description": "This is a small app with a document-level \"?\" keyboard shortcut that opens\na help overlay, and a search input where users can type freely (including\na literal \"?\" character, e.g. searching for \"how do I export csv?\").\n`dom-shim.js` is a tiny fake DOM (fake elements with `addEventListener`/\n`dispatch`, bubbling keyboard events) that stands in for the real browser\nDOM in this exercise -- treat it as equivalent to real keydown events on\nreal nested elements, where an event dispatched on a focused child bubbles\nup to any listener registered on the document unless something stops it.\n\nUsers report that typing \"?\" into the search box sometimes also opens the\nhelp overlay at the same time.\n\nInvestigate and address this in `app.js`. You may run `node` against the\nfiles in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.098927,
+        "seconds": 19.44831371307373,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.09588799999999999,
+        "seconds": 37.70169401168823,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1699416,
+        "seconds": 58.388059854507446,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "005",
+    "slug": "case-005-ime-guarded-confirm",
+    "name": "ime-guarded-confirm",
+    "outcome": "NO",
+    "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": [
+      "DERIVES_FROM"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "ime_composition"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "MEDIUM",
+    "primary_hidden_oracles": [
+      "dispatch keydown mid-composition: no spurious create/confirm side-effect fires; idle-state key still fires normally"
+    ],
+    "task_description": "This is a chat message composer. `composer.js` implements `createComposer()`:\ntyping characters builds up a draft; pressing Enter normally sends the\ndraft as a message. The composer also supports IME composition for\nlanguages like Japanese, Chinese, or Korean, via `compositionstart`,\n`compositionupdate`, and `compositionend` calls that mirror what a real\nbrowser's IME dispatches while a user is composing text through a\ncandidate window.\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken. You may run `node` against the files\nin this project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1293978,
+        "seconds": 50.791635036468506,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "composer.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1431694,
+        "seconds": 48.36499309539795,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "composer.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.315942,
+        "seconds": 127.93516802787781,
+        "tools": 9,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "composer.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "006",
+    "slug": "case-006-backgrounded-tab-drag",
+    "name": "backgrounded-tab-drag",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "runtime_interruption"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "native_page_visibility"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate visibilitychange during active drag; assert no further deltas applied after backgrounding and drag state is released"
+    ],
+    "task_description": "This is a draggable side panel. `app.js` builds a `panel` element that\naccumulates a `panelOffset` from pointer drag deltas while the pointer is\nheld down, and a `document` element that dispatches a `visibilitychange`\nevent whenever the browser tab is backgrounded or foregrounded (`hidden:\ntrue` / `hidden: false`), matching the real\n`document.addEventListener('visibilitychange', ...)` / `document.hidden`\nAPI. `dom-shim.js` is a tiny fake DOM (fake elements with\n`addEventListener`/`dispatch`, bubbling events) that stands in for the\nreal browser DOM in this exercise -- treat it as equivalent to real\npointer and visibility events.\n\nUsers report that if they start dragging the panel and then switch to a\ndifferent browser tab mid-drag, the panel sometimes keeps moving on its\nown once they switch back, as if the drag never ended.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.09680119999999999,
+        "seconds": 21.037243127822876,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.10387300000000001,
+        "seconds": 22.222867965698242,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.15583819999999998,
+        "seconds": 36.65269875526428,
+        "tools": 7,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "007",
+    "slug": "case-007-offline-autosave-queue",
+    "name": "offline-autosave-queue",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "vanilla-js",
+    "relations": [
+      "DERIVES_FROM"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "scope_resource_invalidation"
+    ],
+    "effect_lifetime_categories": [
+      "queued_work"
+    ],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "flush a queued autosave command whose target was deleted before flush; assert no-op, not misapplied to a reused ID"
+    ],
+    "task_description": "This is a small offline-first notes app. `app.js` implements `createApp()`:\n`createNote(id, text)` creates a note, `deleteNote(id)` removes one,\n`queueEdit(id, text)` queues an edit command (used while offline, or while\na save is batched rather than applied immediately), and `flushQueue()`\napplies every queued command in order once connectivity/batching allows.\n\nUsers report that occasionally, after a note is deleted, content\nreappears in that note's slot later -- and in one report, a brand-new\nnote (created with a since-reused id) ended up showing old content from a\ncompletely different, already-deleted note instead of what was just\ntyped into it.\n\nInvestigate and fix the implementation in this project so that a queued\nedit only ever applies to the note it was actually meant for, and never\nresurrects or corrupts an unrelated note. Do not change the public shape\nof `createApp()` unless necessary. You may run `node` against the files\nin this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.11347220000000001,
+        "seconds": 35.15759205818176,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.11146920000000002,
+        "seconds": 36.88853216171265,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.16987200000000002,
+        "seconds": 56.768210887908936,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "008",
+    "slug": "case-008-midi-dual-blend",
+    "name": "midi-dual-blend",
+    "outcome": "NO",
+    "difficulty": "T2",
+    "runtime": "vanilla-js-midi-shim",
+    "relations": [
+      "COOPERATES"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "analog_continuous_input"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "verify blended parameter output remains internally consistent under concurrent capture from both controllers; assert no arbitration/lock code path was introduced"
+    ],
+    "task_description": "This is a small synth control surface. `synth.js` implements\n`createSynth(mixRatio)`: a filter-cutoff parameter is continuously driven\nby two simultaneous analog MIDI controllers -- a mod wheel and a breath\ncontroller. Both controllers are always \"live\" at once (a performer can\nmove either, or both, at any time, in any order); the current cutoff\nvalue is a deterministic weighted blend of both controllers' latest\nreadings.\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken. You may run `node` against the files\nin this project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.08291879999999999,
+        "seconds": 17.129546880722046,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.09428399999999999,
+        "seconds": 31.431175231933594,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.14038160000000002,
+        "seconds": 43.882303953170776,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "009",
+    "slug": "case-009-debounce-unmount-leak",
+    "name": "debounce-unmount-leak",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "react",
+    "relations": [
+      "DERIVES_FROM"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "scope_resource_invalidation"
+    ],
+    "effect_lifetime_categories": [
+      "timer",
+      "debounce"
+    ],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "fake-timer harness: unmount before debounce fires, advance clock; assert no post-unmount state mutation or error"
+    ],
+    "task_description": "This is a search box component built against a small React-style component\nharness. `app.js` implements `createSearchBox(harness, clock)`:\n`harness.registerCleanup(fn)` mirrors React's `useEffect(() => { ...; return\ncleanup })` contract -- whatever cleanup functions are registered must run\nwhen `harness.unmount()` is called. `clock` is a deterministic fake timer\n(`clock.setTimeout(fn, delay)` / `clock.advance(ms)`) used in place of the\nreal browser timer so this can be tested without waiting on wall-clock time.\nTyping into the search box schedules a debounced request for suggestions;\nafter the delay, `state.suggestions` and `state.requestCount` update with\nthe result.\n\nTesters report that if a user types into the search box and then navigates\naway (the component unmounts) before the debounce delay elapses, something\nstill updates a short while later even though the search box is gone, and a\nfreshly opened search box on the next screen can end up in a confusing\nstate.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.11750839999999999,
+        "seconds": 36.23589301109314,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.11676119999999998,
+        "seconds": 31.95000410079956,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.30430480000000004,
+        "seconds": 101.89618587493896,
+        "tools": 10,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "010",
+    "slug": "case-010-focus-restore-after-trigger-removal",
+    "name": "focus-restore-after-trigger-removal",
+    "outcome": "NEEDS_INTENT",
+    "difficulty": "T2",
+    "runtime": "react",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "mode_change"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "accessibility_focus"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "transcript/manual oracle: names the undetermined re-focus target with locatable context rather than silently picking one"
+    ],
+    "task_description": "This is a list of items, each with a \"...\" trigger button that opens a\nconfirm-delete dialog for that row. `app.js` implements `createApp()`:\n`openDeleteModal(rowId)` opens the dialog for a row and moves focus to its\nconfirm button, `confirmDelete()` removes that row and closes the dialog,\n`cancelDeleteModal()` closes the dialog without removing anything and\nreturns focus to the row's trigger. `state.focusedElementId` tracks which\nelement currently has keyboard focus (standing in for\n`document.activeElement`, by element id, since there's no real DOM here).\n\nTesters report that after confirming a delete, keyboard focus is no longer\nrestored to a usable destination.\n\nInvestigate and address this in `app.js`. You may run `node` against the\nfiles in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.09908020000000001,
+        "seconds": 25.779685974121094,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.1060812,
+        "seconds": 27.244415044784546,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1958222,
+        "seconds": 63.34694290161133,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "011",
+    "slug": "case-011-shared-canvas-bifurcation",
+    "name": "shared-canvas-bifurcation",
+    "outcome": "NEEDS_INTENT",
+    "difficulty": "T2",
+    "runtime": "react",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "scope_resource_invalidation"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "transcript/manual oracle: recognizes the safe release/cancel floor already exists, and treats successor-choice specifically as the open question rather than guessing a heuristic"
+    ],
+    "task_description": "This is a collaborative canvas app. `app.js` implements `createApp()`:\n`startDrag(shapeId)` / `moveDrag(dx, dy)` / `endDrag()` drive dragging a\nshape, and `splitShape(id)` simulates an incoming collaborative edit that\nstructurally replaces a shape with two new shapes elsewhere in the app\n(used when a shape is divided into two pieces).\n\nTesters report that if another collaborator's edit splits the shape you are\ncurrently dragging, the drag simply stops -- moving the pointer further has\nno effect on anything, and you have to start a new drag on one of the\nresulting pieces if you want to keep moving it.\n\nInvestigate and address this in `app.js` if appropriate. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": true,
+    "runs": {
+      "baseline": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": false,
+        "hidden_test_pass": false,
+        "has_regression": true,
+        "regressions": [
+          "stale_original_shape_not_mutated_after_split",
+          "drag_safely_releases_on_split"
+        ],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.0888404,
+        "seconds": 17.093614101409912,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": false,
+        "hidden_test_pass": false,
+        "has_regression": true,
+        "regressions": [
+          "stale_original_shape_not_mutated_after_split",
+          "drag_safely_releases_on_split"
+        ],
+        "detection_heuristic": true,
+        "false_closure_heuristic": true,
+        "cost": 0.1060546,
+        "seconds": 33.02841019630432,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "needs_manual_review_ambiguity",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.28988739999999996,
+        "seconds": 97.87258005142212,
+        "tools": 8,
+        "run_no": 1,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "012",
+    "slug": "case-012-hold-to-confirm-never-completes",
+    "name": "hold-to-confirm-never-completes",
+    "outcome": "YES",
+    "difficulty": "T1",
+    "runtime": "vue",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "completion"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "advance fake clock through full hold duration; assert completion effect fires exactly once, not never"
+    ],
+    "task_description": "This is a hold-to-confirm delete button. `app.js` implements\n`createHoldButton(clock, holdDurationMs)`: `pointerdown()` starts tracking a\nhold, `tick()` checks progress (standing in for a periodic timer/animation\ncheck in a real app), and `pointerup()` releases the hold. Holding for the\nfull `holdDurationMs` without releasing should confirm the action exactly\nonce. `clock.js` is a small deterministic fake timer used so this can be\ntested without waiting on wall-clock time.\n\nTesters report that holding the button down, even well past the expected\nduration, never actually confirms anything -- the action just never fires,\nno matter how long they hold it.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1014934,
+        "seconds": 20.247442960739136,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.093081,
+        "seconds": 23.60797905921936,
+        "tools": 3,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1506482,
+        "seconds": 39.782362937927246,
+        "tools": 7,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "013",
+    "slug": "case-013-live-value-vs-drag",
+    "name": "live-value-vs-drag",
+    "outcome": "NEEDS_INTENT",
+    "difficulty": "T2",
+    "runtime": "vue",
+    "relations": [
+      "COMPETES"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "transcript/manual oracle: surfaces both defer-vs-interrupt resolutions with locatable context, does not default silently"
+    ],
+    "task_description": "This is a slider control bound to a shared value. `app.js` implements\n`createApp()`: `startDrag()` / `dragTo(value)` / `endDrag()` drive a local\ndrag of the slider, and `applyExternalUpdate(value)` simulates a live\nupdate arriving from an external source (e.g. another collaborator, or a\nserver push) that can update the same underlying value at any time,\nincluding while a local drag is in progress.\n\nWhen an external update arrives while a local drag is active, the current\nimplementation immediately replaces the slider value with the external\nvalue. A subsequent local drag update (before the drag ends) then changes\nit again to whatever the user drags to next.\n\nInvestigate and address this in `app.js` if appropriate. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.10005760000000001,
+        "seconds": 22.721953868865967,
+        "tools": 4,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.180704,
+        "seconds": 76.70193219184875,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.32914639999999995,
+        "seconds": 156.01219606399536,
+        "tools": 9,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "014",
+    "slug": "case-014-independent-toast-stack",
+    "name": "independent-toast-stack",
+    "outcome": "NO",
+    "difficulty": "T2",
+    "runtime": "vue",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate concurrent swipe-starts on two different toasts; assert both dismiss independently and no shared-lock code is introduced"
+    ],
+    "task_description": "This is a stack of dismissible toast notifications. `app.js` implements\n`createApp()`: `createToast(label)` adds a new toast and returns its id;\n`swipeStart(id)` / `swipeMove(id, dx)` / `swipeEnd(id)` drive swiping a\nspecific toast to dismiss it (past a distance threshold, releasing\ndismisses it; short of the threshold, it snaps back).\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken. You may run `node` against the files\nin this project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.1083282,
+        "seconds": 32.656185150146484,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.12740600000000002,
+        "seconds": 38.761412143707275,
+        "tools": 5,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1729816,
+        "seconds": 60.253721952438354,
+        "tools": 6,
+        "run_no": 1,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "015",
+    "slug": "case-015-backbutton-doesnt-cancel-rename",
+    "name": "backbutton-doesnt-cancel-rename",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "react-native",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "cancellation"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "native_back_button"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate Back press mid-rename, then an unrelated tap; assert rename Claim was cancelled, not silently committed"
+    ],
+    "task_description": "This is an inline rename interaction for a list of items. `app.js`\nimplements `createRenameFlow(backHandler)`: `longPressStart(itemId,\ncurrentValue)` begins renaming an item (as if triggered by a long-press),\n`typeText(text)` edits the draft, `commitRename()` explicitly saves the\ndraft, `cancelRename()` explicitly discards it, and `unrelatedTapElsewhere()`\nrepresents the user tapping somewhere else in the list, unrelated to the\nrename. `rn-shim.js` provides `createBackHandler()`, a small model of\nAndroid's hardware Back button dispatch (`BackHandler.addEventListener` /\na handler returning `true` marks the press handled).\n\nIn this screen, hardware Back while renaming is defined to leave the item\nunchanged and exit the rename flow -- the same outcome as pressing an\nexplicit cancel control.\n\nTesters report that occasionally, after pressing the Android Back button\nwhile renaming an item and then tapping elsewhere in the list, that item's\nname changes to whatever had been typed -- even though the rename was\nnever explicitly confirmed.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.15848959999999998,
+        "seconds": 23.978718042373657,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.099661,
+        "seconds": 27.718750953674316,
+        "tools": 3,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1859732,
+        "seconds": 63.256227016448975,
+        "tools": 8,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "016",
+    "slug": "case-016-swipe-left-double-bound",
+    "name": "swipe-left-double-bound",
+    "outcome": "NEEDS_INTENT",
+    "difficulty": "T2",
+    "runtime": "react-native",
+    "relations": [
+      "COMPETES"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "touch_pointer"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "transcript/manual oracle: names both existing features bound to the gesture, asks/flags rather than picking one"
+    ],
+    "task_description": "This is a message list row. `app.js` implements `createMessageRow()`:\n`swipeLeftStart()` / `swipeLeftMove(dx)` / `swipeLeftEnd()` drive a\nleft-swipe gesture on the row. Two existing features both react to the\nsame left-swipe gesture on this row: an archive action and a quick-reply\naction.\n\nTesters report that swiping a message row to the left can trigger both the\narchive behavior and the quick-reply behavior from what feels like a single\nswipe.\n\nInvestigate and address this in `app.js` if appropriate. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": true,
+    "runs": {
+      "baseline": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.091677,
+        "seconds": 16.52893590927124,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.09101200000000001,
+        "seconds": 21.020490884780884,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "needs_manual_review_ambiguity",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.2616772,
+        "seconds": 75.62907314300537,
+        "tools": 9,
+        "run_no": 3,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "017",
+    "slug": "case-017-three-finger-transform-cap",
+    "name": "three-finger-transform-cap",
+    "outcome": "YES",
+    "difficulty": "T3",
+    "runtime": "react-native",
+    "relations": [],
+    "group_policy": "capacity(2)",
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "multi_touch_identity"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "register A+B (valid transform); register C mid-gesture; assert transform continues reflecting only A+B, C has no additional contribution"
+    ],
+    "task_description": "This is a photo transform surface. `app.js` implements\n`createTransformApp(touchBus)`: `touchStart(id, x, y)` / `touchMove(id, x,\ny)` / `touchEnd(id)` drive touch contacts, each identified by its own id,\nand the transform's `translateX`/`translateY` track the current\nmanipulation. `rn-shim.js` provides `createTouchBus()`, a small\nmodel of multi-touch identity tracking (each touch has its own id,\nposition, and lifecycle), used so this can be tested without a real\ntouchscreen.\n\nThe photo transform is a two-contact manipulation. Once a two-contact\ntransform is active, additional concurrent contacts must not alter that\nactive transform.\n\nTesters report that the photo transform behaves correctly with any two\nfingers on it, but if a third finger lands on the screen while two fingers\nare already manipulating the photo, the transform suddenly jumps to a\ndifferent position, even though the two original fingers haven't moved.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1076382,
+        "seconds": 28.913804054260254,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.11825340000000001,
+        "seconds": 28.042731761932373,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.21098240000000001,
+        "seconds": 89.17056894302368,
+        "tools": 7,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "018",
+    "slug": "case-018-highlight-slot-capacity-leak",
+    "name": "highlight-slot-capacity-leak",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "react-native",
+    "relations": [
+      "COOPERATES"
+    ],
+    "group_policy": "simultaneous",
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "multi_touch_identity"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "activate A, then B, then C; assert all three remain independently represented after C joins"
+    ],
+    "task_description": "This is a shared annotation surface. `app.js` implements\n`createAnnotationSurface()`: `startHighlight(id)` begins a highlight stroke\nidentified by its own id, `moveHighlight(id, dx)` extends it,\n`endHighlight(id)` ends it, `isActive(id)` reports whether a given\nhighlight is currently active, and `getOffset(id)` reports its current\nextent.\n\nThe annotation surface supports at least three simultaneous active\nhighlight strokes; starting another highlight must not end an existing\nactive stroke.\n\nTesters report that when a third highlight is started while two others are\nalready in progress, one of the existing highlights disappears.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.0914922,
+        "seconds": 23.46097993850708,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.0939816,
+        "seconds": 22.358031034469604,
+        "tools": 3,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.14791800000000002,
+        "seconds": 42.198923110961914,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "019",
+    "slug": "case-019-sheet-dismiss-vs-carousel",
+    "name": "sheet-dismiss-vs-carousel",
+    "outcome": "NEEDS_INTENT",
+    "difficulty": "T2",
+    "runtime": "swiftui-shim",
+    "relations": [
+      "PREEMPTS"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "native_sheet_dismiss"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "transcript/manual oracle: names both plausible dismiss-priority resolutions with locatable context, asks rather than picking one"
+    ],
+    "task_description": "This is a semantic model of a bottom sheet that supports native interactive\ndrag-to-dismiss, containing a horizontally-scrolling photo carousel.\n`app.js` implements `createSheetWithCarousel()`: `dragStart(region)` begins\na drag, with `region` being `'carousel'` (the drag started over the photo\ncarousel) or `'sheet'` (anywhere else on the sheet); `dragMove(dx, dy)`\nreports incremental horizontal/vertical movement; `dragEnd()` finishes the\ndrag. The sheet's vertical drag-to-dismiss and the carousel's horizontal\npaging both track movement from drags that start in the carousel region.\n\nTesters report that a drag starting on the photo carousel, when it also\nhas enough vertical movement, can both change which photo is showing and\ndismiss the sheet at the same time.\n\nInvestigate and address this in `app.js` if appropriate. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1165174,
+        "seconds": 29.21604609489441,
+        "tools": 3,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.131361,
+        "seconds": 46.572604179382324,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "intent_guessing_violation",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.3206904,
+        "seconds": 132.28698897361755,
+        "tools": 9,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "020",
+    "slug": "case-020-swipe-actions-vs-reorder-handle",
+    "name": "swipe-actions-vs-reorder-handle",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "swiftui-shim",
+    "relations": [
+      "PREEMPTS"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "native_swipe_actions",
+      "accessibility_activation"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate off-handle horizontal drag (assert swipeActions fires, not reorder) and on-handle drag (assert reorder fires); invoke accessibility custom action, assert same effect as physical reorder"
+    ],
+    "task_description": "This is a semantic model of a reorderable list row that also has native\nswipe actions. `app.js` implements `createReorderableRow(initialOrder)`:\n`rowDragStart(rowId, originRegion)` begins a drag, with `originRegion`\nbeing `'handle'` (the drag started on the row's visible reorder handle) or\n`'row'` (anywhere else on the row); `rowDragMove(dx)` reports incremental\nhorizontal movement; `rowDragEnd()` finishes the drag, applying either a\nreorder or a native swipe-action reveal depending on how the drag was\nrecognized. `accessibilityReorder(rowId, direction)` is the accessibility\nactivation path for reordering (`direction` is `-1` to move a row earlier\nor `1` to move it later).\n\nDrag-to-reorder belongs specifically to the reorder handle; a drag starting\nanywhere else on the row is a native swipe action, not a reorder gesture.\nReordering must also be available to assistive-technology users through\n`accessibilityReorder`, producing the same result as dragging the handle,\nnot only through physical dragging.\n\nTesters report that swiping a row from somewhere other than the handle\nsometimes triggers a reorder instead of revealing the row's swipe actions.\nTesters using accessibility tools report that there is currently no way to\nreorder a row at all.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.10886440000000001,
+        "seconds": 22.376951932907104,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.107509,
+        "seconds": 21.31794285774231,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1500726,
+        "seconds": 39.6534538269043,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "021",
+    "slug": "case-021-palm-rejection-recognition-timing",
+    "name": "palm-rejection-recognition-timing",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "compose-shim",
+    "relations": [
+      "CONDITIONAL"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "transformed_semantic_input"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "trigger a classifier misread that self-corrects before promotion; assert the wrong recognizer does not promote"
+    ],
+    "task_description": "This is a semantic model of a stylus drawing surface with a palm-rejection\nclassifier. `app.js` implements `createDrawingSurface()`: `pointerDown(\nclassification)` begins tracking a touch with the classifier's reading at\nthat instant (`'PEN'` or `'PALM'`), `classifierUpdate(classification)`\nreports a revised reading from the classifier before the surface has\ncommitted to a decision, `pointerMove(x, y)` reports movement (the surface\ncommits to drawing or rejecting the touch the first time movement is\nreported), and `pointerUp()` ends the touch.\n\nThe surface is defined to draw with a touch's stylus stroke only when the\nclassifier's most current reading, at the moment the surface commits to a\ndecision, is `'PEN'` -- not necessarily whatever the classifier's very\nfirst reading was.\n\nTesters report that an initial brief misread which the classifier corrects\na moment later -- before any movement is reported -- can still cause the\nstroke to be silently rejected (or, in the other direction, an accidental\npalm touch to draw), because the surface already committed to its\ndecision using the classifier's very first reading.\n\nInvestigate and fix the implementation in this project. You may run `node`\nagainst the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.1064732,
+        "seconds": 27.119428873062134,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.16107320000000003,
+        "seconds": 41.14012408256531,
+        "tools": 10,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1922406,
+        "seconds": 56.55954194068909,
+        "tools": 7,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "022",
+    "slug": "case-022-swipe-complete-recompose-staleness",
+    "name": "swipe-complete-recompose-staleness",
+    "outcome": "YES",
+    "difficulty": "T3",
+    "runtime": "compose-shim",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [
+      "stale_callback"
+    ],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate a re-key/resort event mid-swipe; assert the originally-swiped item completes, not whatever now occupies that list position"
+    ],
+    "task_description": "This is a semantic model of a to-do list with swipe-to-complete rows.\n`app.js` implements `createTodoList(initialItemIds)`: `swipeStart(itemId)`\nbegins a swipe gesture on a specific item, `swipeComplete()` finishes the\ngesture and marks an item done, and `resort(newOrderIds)` represents the\nlist being reordered (e.g. by a sort change or a real-time update) while a\nswipe may still be in progress.\n\nIf a completion was started on a given item, that same item must still be\nthe one that completes, even if the list changes order one or more times\nbefore the completion actually finishes.\n\nTesters report that reordering the list while a swipe-to-complete gesture\nis still in progress can cause the wrong item to end up marked done when\nthe gesture finishes.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.090449,
+        "seconds": 17.53265404701233,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.09744280000000001,
+        "seconds": 24.387222051620483,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.132972,
+        "seconds": 28.585224866867065,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "023",
+    "slug": "case-023-physics-arena-registration-bypass",
+    "name": "physics-arena-registration-bypass",
+    "outcome": "YES",
+    "difficulty": "T3",
+    "runtime": "flutter-shim",
+    "relations": [],
+    "group_policy": "runtime-defined",
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "register A, B, then C in an order the buggy local filter would drop; assert the solver's own registration list contains all 3 active claims at the moment C registers"
+    ],
+    "task_description": "This is a semantic model of a shared rigid-body manipulation surface,\nbacked by a physics solver. `physics-shim.js` provides\n`createPhysicsSolver()`: `registerGrab(pointerId, data)` records a grab\nregistration for the current frame, `clearFrameRegistrations()` clears the\nframe's registrations, and `getFrameRegistrations()` returns whatever was\nregistered. `app.js` implements `createGrabApp(solver)`: `pointerDown(\npointerId, x, y)` / `pointerMove(pointerId, x, y)` / `pointerUp(pointerId)`\ntrack active pointer grabs on the body, and `tickFrame()` is called once\nper frame to forward the currently active grabs to the solver.\n\nEvery currently active pointer grab must be forwarded to the solver every\nframe; the solver, not the application, is responsible for deciding how\nsimultaneous grabs on the same body are resolved. The application must\nnot pre-select which active grabs the solver is allowed to see.\n\nTesters report that when three fingers are simultaneously grabbing the\nbody, the solver ends up only seeing two of them -- the third finger's\nmovement has no effect at all, even though it's still actively held down.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.0961046,
+        "seconds": 26.350522994995117,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.08602099999999999,
+        "seconds": 19.67283010482788,
+        "tools": 3,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.12730519999999998,
+        "seconds": 25.336694955825806,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "024",
+    "slug": "case-024-physics-arena-correct-routing",
+    "name": "physics-arena-correct-routing",
+    "outcome": "NO",
+    "difficulty": "T3",
+    "runtime": "flutter-shim",
+    "relations": [],
+    "group_policy": "runtime-defined",
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "same registration sequence as 023; assert the solver's registration list already contains all 3 with no app-level filtering code present"
+    ],
+    "task_description": "This is a semantic model of a shared rigid-body manipulation surface,\nbacked by a physics solver. `physics-shim.js` provides\n`createPhysicsSolver()`: `registerGrab(pointerId, data)` records a grab\nregistration for the current frame, `clearFrameRegistrations()` clears the\nframe's registrations, and `getFrameRegistrations()` returns whatever was\nregistered. `app.js` implements `createGrabApp(solver)`: `pointerDown(\npointerId, x, y)` / `pointerMove(pointerId, x, y)` / `pointerUp(pointerId)`\ntrack active pointer grabs on the body, and `tickFrame()` is called once\nper frame to forward the currently active grabs to the solver.\n\nEvery currently active pointer grab must be forwarded to the solver every\nframe; the solver, not the application, is responsible for deciding how\nsimultaneous grabs on the same body are resolved. The application must\nnot pre-select which active grabs the solver is allowed to see.\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken. You may run `node` against the files\nin this project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1047118,
+        "seconds": 29.034018993377686,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "unnecessary_source_churn",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1402658,
+        "seconds": 51.35487389564514,
+        "tools": 7,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_no_op",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1427776,
+        "seconds": 45.722193002700806,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": false,
+        "diff": {
+          "changed": [],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "025",
+    "slug": "case-025-grabmouse-altab-leak",
+    "name": "grabmouse-altab-leak",
+    "outcome": "YES",
+    "difficulty": "T1",
+    "runtime": "qt-shim",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "focus_loss"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "native_focus"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate grabMouse() then synthetic OS focus-loss; assert the grab is released and no further deltas are applied"
+    ],
+    "task_description": "This is a semantic model of a tool window with a custom drag-to-resize\nborder. `app.js` implements `createResizableWindow(focusTracker)`:\n`mousePress()` begins a resize (as if the user pressed on the window's\nresize border, comparable to Qt's `grabMouse()` semantics), `mouseMove(dx,\ndy)` extends the resize, and `mouseRelease()` ends it normally.\n`focus-shim.js` provides `createFocusTracker()`: `onFocusChange(fn)`\nregisters a listener, and `setActive(isActive)` reports the window\ngaining (`true`) or losing (`false`) native active-window focus (e.g. the\nuser switches to another application via Alt-Tab).\n\nA resize is only active while the window retains active focus. If the\nwindow loses active focus while a resize is in progress, that resize ends\nimmediately; regaining focus afterward does not resume it, and the user\nmay begin a fresh resize once focus returns.\n\nTesters report that if the window loses focus (e.g. via Alt-Tab) partway\nthrough a resize and then regains focus, further pointer movement can\ncontinue resizing the window from where the interrupted drag left off,\neven though the user never pressed again.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.0922048,
+        "seconds": 15.439993143081665,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.09286679999999999,
+        "seconds": 16.273514986038208,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1299958,
+        "seconds": 30.722997903823853,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "026",
+    "slug": "case-026-midi-surface-disconnect",
+    "name": "midi-surface-disconnect",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "qt-shim",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "device_loss"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [
+      "midi_hardware"
+    ],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate MIDI device disconnect mid-fader-drag; assert the Claim releases and the fader is not permanently marked externally-controlled"
+    ],
+    "task_description": "This is a semantic model of an on-screen fader that can be controlled\neither locally or by a connected physical MIDI device. `app.js`\nimplements `createFaderApp(midiBus)`: `midiControl(deviceId, value)`\nreports the named device actively driving the fader, `midiControlEnd(\ndeviceId)` reports that device's control ending normally, and `localSet(\nvalue)` represents local UI input. `midi-shim.js` provides\n`createMidiBus()`: `connect(deviceId)` / `disconnect(deviceId)` report a\ndevice's connection state, and `onDisconnect(fn)` registers a listener\nfor disconnection events.\n\nWhile a connected device is actively driving the fader, local UI input is\nsuppressed so it doesn't fight the hardware. If that device physically\ndisconnects while it is still actively driving the fader, its control\nover the fader ends immediately; local UI input becomes usable again\nright away, and the device may start a fresh interaction later if it\nreconnects. A device disconnecting while it is NOT the one currently\ndriving the fader has no effect on whichever device is.\n\nTesters report that if the MIDI device driving the fader is unplugged\nmid-interaction, the fader stays locked to that device's control\nindefinitely -- local UI input has no effect even though nothing is\nconnected anymore.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.094292,
+        "seconds": 15.863338947296143,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": false,
+        "false_closure_heuristic": false,
+        "cost": 0.0974284,
+        "seconds": 16.886445999145508,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1433086,
+        "seconds": 31.936670780181885,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "027",
+    "slug": "case-027-extrude-escape-scope",
+    "name": "extrude-escape-scope",
+    "outcome": "YES",
+    "difficulty": "T2",
+    "runtime": "cad-viewport-shim",
+    "relations": [
+      "SEQUENCES"
+    ],
+    "group_policy": null,
+    "lifecycle_categories": [
+      "mode_change"
+    ],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "enter EXTRUDE, enter numeric sub-state, press Escape; assert state is IDLE and no stale preview remains, matching ROTATE/SCALE's existing Escape behavior in the same fixture"
+    ],
+    "task_description": "This is a small CAD-style viewport with modal commands. `app.js`\nimplements `createViewport()`: `startExtrude()` / `startRotate()` /\n`startScale()` begin their respective modal commands; `beginNumericEntry()`\nenters a nested numeric-entry sub-state for typing an exact value while a\ncommand is active; `typeNumericValue(value)` updates the live preview;\n`confirm()` commits the current command; `pressEscape()` cancels.\n`getMode()`, `hasPreview()`, and `getPreviewValue()` report the current\nstate.\n\nTesters report that after starting EXTRUDE, entering the numeric sub-state,\ntyping an exact distance, and pressing Escape, the application remains in\nEXTRUDE mode and a preview can remain visible.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.0940648,
+        "seconds": 20.992289781570435,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.11744220000000001,
+        "seconds": 30.40558695793152,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1698116,
+        "seconds": 55.4636869430542,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "028",
+    "slug": "case-028-canvas-tool-arena-exclusivity-bypass",
+    "name": "canvas-tool-arena-exclusivity-bypass",
+    "outcome": "YES",
+    "difficulty": "T3",
+    "runtime": "canvas-arena-shim",
+    "relations": [],
+    "group_policy": "exclusive",
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "start pen-draw (assert active); dispatch lasso-select's activation condition; assert concurrent-active-claim-count <= 1 at every tick"
+    ],
+    "task_description": "This is a small canvas editor with three gesture recognizers that share\none pointer input stream: pen drawing, canvas panning, and lasso\nselection. `app.js` implements `createCanvasEditor()`: `setTool(tool)`\nselects `'pen'` or `'lasso'` as the active tool, `setPanModifier(held)`\nreports whether the pan modifier is currently held, `pointerDown(x, y)` /\n`pointerMove(x, y)` / `pointerUp()` drive an ordinary pointer gesture\nthrough whichever recognizer its activation condition selects,\n`quickLassoActivate(x, y)` represents a dedicated shortcut that starts a\nlasso selection directly, and `cancelGesture()` cancels whatever is\ncurrently active. `getActiveGestures()` reports which of `'pen'` /\n`'pan'` / `'lasso'` are currently active.\n\nA single pointer stream must never drive more than one of these three\ncanvas editing gestures at once -- when their activation conditions\noverlap, only one may be active at a time.\n\nTesters report that starting a pen stroke and then triggering the lasso\nshortcut while that stroke is still in progress leaves both the stroke\nand the lasso selection active at the same time.\n\nInvestigate and fix the implementation in this project. You may run\n`node` against the files in this project to check your work.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.10878479999999999,
+        "seconds": 27.872641801834106,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.10849,
+        "seconds": 22.564288854599,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.2871978,
+        "seconds": 76.45042586326599,
+        "tools": 10,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "029",
+    "slug": "case-029-combo-order-and-animation-staleness",
+    "name": "combo-order-and-animation-staleness",
+    "outcome": "YES",
+    "difficulty": "T3",
+    "runtime": "game-ecs-shim",
+    "relations": [],
+    "group_policy": "ordered",
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [
+      "animation_completion"
+    ],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": false,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "(a) dispatch D3,D1,D2 within window, assert no trigger; dispatch D1,D2,D3, assert trigger",
+      "(b) trigger a valid combo vs target T1, swap lock-on to T2 before the animation completes; assert damage applied to T1, not T2"
+    ],
+    "task_description": "This is a semantic model of a small action game's combo-attack system.\n`app.js` implements `createComboGame()`, returning: `pressDirection(direction)`\n(register a single directional input -- valid directions are `'D1'`, `'D2'`,\n`'D3'`), `setCurrentTarget(id)` (change which entity is currently locked on\n-- targets are identified by stable ids such as `'T1'`, `'T2'`, `'T3'`),\n`advanceTime(ms)` (advance a deterministic fake clock, e.g. to simulate a\npause between presses), `completeAttackAnimation()` (called once the attack's\nanimation reaches its hit-impact moment), `getTriggerCount()` (how many times\nthe special move has triggered so far), and `getEntityHealth(id)` (an\nentity's current health).\n\nThe special move's input is the three directional presses `D1`, then `D2`,\nthen `D3`, in that order, within a limited timing window. Only that order\ncounts as performing the move -- pressing the same three directions in a\ndifferent order does not trigger it, even though all three directions\nwere eventually pressed. Incomplete sequences (only one or two of the\nthree directions) never trigger it either. Once the timing window has\nelapsed without completing the sequence, a later fresh attempt can still\ntrigger the move normally.\n\nWhen the move triggers, the resulting attack commits to whichever target is\ncurrently selected (via `setCurrentTarget`) at the moment the combo\ntriggers. The attack's damage isn't applied immediately -- it lands later,\nwhen `completeAttackAnimation()` is called, representing the hit landing at\nthe animation's moment of impact. The player is free to change the\nselected target at any point before that hit lands, including while the\nattack's animation is still playing. Changing the selected target after an\nattack has already triggered must not change who that attack hits: it\nshould still land on whichever target was selected at the moment the combo\ntriggered, not whichever target happens to be selected when the animation\nfinishes. A later, freshly-triggered attack is of course free to hit\nwhatever target is selected at the time it triggers.\n\nTesters report two things going wrong: (1) pressing the three directions in\nsome order other than D1, D2, D3 can still incorrectly trigger the special\nmove, and (2) switching targets while an already-triggered attack's\nanimation is still playing can cause the hit to land on the newly-selected\ntarget instead of the one that was selected when the attack was triggered.\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken. You may run `node` against the files\nin this project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.139401,
+        "seconds": 41.827016830444336,
+        "tools": 4,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.13833800000000002,
+        "seconds": 39.36371994018555,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1959072,
+        "seconds": 66.10658979415894,
+        "tools": 7,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "case_id": "030",
+    "slug": "case-030-timeline-autoscroll-causal-staleness",
+    "name": "timeline-autoscroll-causal-staleness",
+    "outcome": "YES",
+    "difficulty": "T3",
+    "runtime": "scene-graph-timeline-shim",
+    "relations": [],
+    "group_policy": null,
+    "lifecycle_categories": [],
+    "effect_lifetime_categories": [
+      "timer"
+    ],
+    "environmental_claims": [],
+    "requires_recursive_revalidation": true,
+    "contamination_risk": "LOW",
+    "primary_hidden_oracles": [
+      "simulate scrub-drag-with-autoscroll, pointerup, immediate click; assert (a) no scrolling occurs after release and (b) the keyframe lands at the actual click-time position, not a stale cached offset"
+    ],
+    "task_description": "This is a semantic model of a timeline/editor viewport. `app.js` implements\n`createTimelineEditor()`, returning: `pointerDownScrubber(x)` / `pointerMoveScrubber(x)`\n/ `pointerUp()` (a scrub-drag near the timeline edge), `advanceFrame()`\n(advances one runtime frame, including any native-settle and periodic\ndrag-autoscroll work that are still scheduled for that frame),\n`clickTimeline(viewportX)` (click the timeline at a viewport-relative x,\nplacing a keyframe), `getActualScrollOffset()`, `getPlacedKeyframes()`,\nand `isDragging()`.\n\nWhile a scrub-drag near the timeline edge is active, the viewport\nauto-scrolls periodically to keep following it. Releasing the pointer ends\nthat drag-driven auto-scroll immediately -- no further auto-scroll work\nattributable to the drag should move the viewport after release.\n\nSeparately, the viewport also has its own native scroll-settle behavior\nthat can continue briefly on its own after the pointer is released --\nthis is independent of the drag and is expected to keep running even\nafter drag-driven auto-scroll has correctly stopped. Clicking the\ntimeline while that settle is still in progress is supported and should\nwork normally.\n\nClicking the timeline places a keyframe at the timeline content position\nthat is visually under the pointer at the moment of the click -- i.e. the\nclicked viewport coordinate plus whatever the viewport's current scroll\noffset actually is at that moment.\n\nTesters report that auto-scroll driven by an edge scrub-drag sometimes\nkeeps moving the viewport even after the pointer has already been\nreleased.\n\nPlease audit the interaction handling in this project for correctness and\nfix anything that's actually broken, then verify the surrounding timeline\nbehavior still works correctly. You may run `node` against the files in\nthis project to check your work. Do not make unnecessary changes.",
+    "doctor_intent_stopped": false,
+    "runs": {
+      "baseline": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.1244748,
+        "seconds": 38.26567792892456,
+        "tools": 5,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "generic": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.13857719999999998,
+        "seconds": 33.04223704338074,
+        "tools": 6,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      },
+      "doctor": {
+        "verdict": "correct_repair",
+        "repair_success": true,
+        "hidden_test_pass": true,
+        "has_regression": false,
+        "regressions": [],
+        "detection_heuristic": true,
+        "false_closure_heuristic": false,
+        "cost": 0.24371840000000003,
+        "seconds": 84.45213007926941,
+        "tools": 9,
+        "run_no": 3,
+        "source_modified": true,
+        "diff": {
+          "changed": [
+            "app.js"
+          ],
+          "added": [],
+          "removed": []
+        }
+      }
+    }
+  }
+]

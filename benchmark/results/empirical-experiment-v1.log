@@ -1,0 +1,823 @@
+EXPERIMENT_FREEZE_HASH_VERIFY = PASS
+QUALIFICATION_GATE_OVERRIDE = PREFLIGHT_PROBE_COMPLIANCE_HOLD
+FROZEN_EXECUTION_PATH = run_execute_sequential
+CASES = 30
+ARMS = ['baseline', 'generic', 'doctor']
+PLANNED_EMPIRICAL_OBSERVATIONS = 90
+
+=== EMPIRICAL SUMMARY ===
+[
+  {
+    "case_id": "case-001-media-library",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-001-media-library/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-001-media-library/baseline/run-01-20260914T071524462743Z"
+  },
+  {
+    "case_id": "case-001-media-library",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-001-media-library/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-001-media-library/generic/run-01-20260914T071548485349Z"
+  },
+  {
+    "case_id": "case-001-media-library",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-001-media-library/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-001-media-library/doctor/run-01-20260914T071648098668Z"
+  },
+  {
+    "case_id": "case-002-kanban-board",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-002-kanban-board/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-002-kanban-board/baseline/run-01-20260914T071708887618Z"
+  },
+  {
+    "case_id": "case-002-kanban-board",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-002-kanban-board/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-002-kanban-board/generic/run-01-20260914T071742891044Z"
+  },
+  {
+    "case_id": "case-002-kanban-board",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-002-kanban-board/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-002-kanban-board/doctor/run-01-20260914T071911975921Z"
+  },
+  {
+    "case_id": "case-003-drawing-canvas",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-003-drawing-canvas/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-003-drawing-canvas/baseline/run-01-20260914T072051188991Z"
+  },
+  {
+    "case_id": "case-003-drawing-canvas",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-003-drawing-canvas/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-003-drawing-canvas/generic/run-01-20260914T072158453740Z"
+  },
+  {
+    "case_id": "case-003-drawing-canvas",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-003-drawing-canvas/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-003-drawing-canvas/doctor/run-01-20260914T072411846776Z"
+  },
+  {
+    "case_id": "case-004-hotkey-vs-literal",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-004-hotkey-vs-literal/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-004-hotkey-vs-literal/baseline/run-01-20260914T072431718707Z"
+  },
+  {
+    "case_id": "case-004-hotkey-vs-literal",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-004-hotkey-vs-literal/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-004-hotkey-vs-literal/generic/run-01-20260914T072509813614Z"
+  },
+  {
+    "case_id": "case-004-hotkey-vs-literal",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-004-hotkey-vs-literal/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-004-hotkey-vs-literal/doctor/run-01-20260914T072608693199Z"
+  },
+  {
+    "case_id": "case-005-ime-guarded-confirm",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-005-ime-guarded-confirm/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-005-ime-guarded-confirm/baseline/run-01-20260914T072700099067Z"
+  },
+  {
+    "case_id": "case-005-ime-guarded-confirm",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-005-ime-guarded-confirm/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-005-ime-guarded-confirm/generic/run-01-20260914T072748857876Z"
+  },
+  {
+    "case_id": "case-005-ime-guarded-confirm",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-005-ime-guarded-confirm/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-005-ime-guarded-confirm/doctor/run-01-20260914T072957156298Z"
+  },
+  {
+    "case_id": "case-006-backgrounded-tab-drag",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-006-backgrounded-tab-drag/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-006-backgrounded-tab-drag/baseline/run-01-20260914T073018558122Z"
+  },
+  {
+    "case_id": "case-006-backgrounded-tab-drag",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-006-backgrounded-tab-drag/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-006-backgrounded-tab-drag/generic/run-01-20260914T073041149145Z"
+  },
+  {
+    "case_id": "case-006-backgrounded-tab-drag",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-006-backgrounded-tab-drag/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-006-backgrounded-tab-drag/doctor/run-01-20260914T073118268138Z"
+  },
+  {
+    "case_id": "case-007-offline-autosave-queue",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-007-offline-autosave-queue/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-007-offline-autosave-queue/baseline/run-01-20260914T073153775704Z"
+  },
+  {
+    "case_id": "case-007-offline-autosave-queue",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-007-offline-autosave-queue/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-007-offline-autosave-queue/generic/run-01-20260914T073231045396Z"
+  },
+  {
+    "case_id": "case-007-offline-autosave-queue",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-007-offline-autosave-queue/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-007-offline-autosave-queue/doctor/run-01-20260914T073328197044Z"
+  },
+  {
+    "case_id": "case-008-midi-dual-blend",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-008-midi-dual-blend/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-008-midi-dual-blend/baseline/run-01-20260914T073345709463Z"
+  },
+  {
+    "case_id": "case-008-midi-dual-blend",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-008-midi-dual-blend/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-008-midi-dual-blend/generic/run-01-20260914T073417532652Z"
+  },
+  {
+    "case_id": "case-008-midi-dual-blend",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-008-midi-dual-blend/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-008-midi-dual-blend/doctor/run-01-20260914T073501814610Z"
+  },
+  {
+    "case_id": "case-009-debounce-unmount-leak",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-009-debounce-unmount-leak/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-009-debounce-unmount-leak/baseline/run-01-20260914T073538544277Z"
+  },
+  {
+    "case_id": "case-009-debounce-unmount-leak",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-009-debounce-unmount-leak/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-009-debounce-unmount-leak/generic/run-01-20260914T073610881145Z"
+  },
+  {
+    "case_id": "case-009-debounce-unmount-leak",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-009-debounce-unmount-leak/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-009-debounce-unmount-leak/doctor/run-01-20260914T073753180934Z"
+  },
+  {
+    "case_id": "case-010-focus-restore-after-trigger-removal",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-010-focus-restore-after-trigger-removal/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-010-focus-restore-after-trigger-removal/baseline/run-01-20260914T073819392127Z"
+  },
+  {
+    "case_id": "case-010-focus-restore-after-trigger-removal",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-010-focus-restore-after-trigger-removal/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-010-focus-restore-after-trigger-removal/generic/run-01-20260914T073847072436Z"
+  },
+  {
+    "case_id": "case-010-focus-restore-after-trigger-removal",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-010-focus-restore-after-trigger-removal/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-010-focus-restore-after-trigger-removal/doctor/run-01-20260914T073950821342Z"
+  },
+  {
+    "case_id": "case-011-shared-canvas-bifurcation",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-011-shared-canvas-bifurcation/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-011-shared-canvas-bifurcation/baseline/run-01-20260914T074008285411Z"
+  },
+  {
+    "case_id": "case-011-shared-canvas-bifurcation",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-011-shared-canvas-bifurcation/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-011-shared-canvas-bifurcation/generic/run-01-20260914T074041690409Z"
+  },
+  {
+    "case_id": "case-011-shared-canvas-bifurcation",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-011-shared-canvas-bifurcation/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-011-shared-canvas-bifurcation/doctor/run-01-20260914T074219976502Z"
+  },
+  {
+    "case_id": "case-012-hold-to-confirm-never-completes",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-012-hold-to-confirm-never-completes/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-012-hold-to-confirm-never-completes/baseline/run-01-20260914T074240631608Z"
+  },
+  {
+    "case_id": "case-012-hold-to-confirm-never-completes",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-012-hold-to-confirm-never-completes/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-012-hold-to-confirm-never-completes/generic/run-01-20260914T074304633617Z"
+  },
+  {
+    "case_id": "case-012-hold-to-confirm-never-completes",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-012-hold-to-confirm-never-completes/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-012-hold-to-confirm-never-completes/doctor/run-01-20260914T074344839470Z"
+  },
+  {
+    "case_id": "case-013-live-value-vs-drag",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-013-live-value-vs-drag/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-013-live-value-vs-drag/baseline/run-01-20260914T074407940789Z"
+  },
+  {
+    "case_id": "case-013-live-value-vs-drag",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-013-live-value-vs-drag/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-013-live-value-vs-drag/generic/run-01-20260914T074524997297Z"
+  },
+  {
+    "case_id": "case-013-live-value-vs-drag",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-013-live-value-vs-drag/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-013-live-value-vs-drag/doctor/run-01-20260914T074801387264Z"
+  },
+  {
+    "case_id": "case-014-independent-toast-stack",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-014-independent-toast-stack/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-014-independent-toast-stack/baseline/run-01-20260914T074834532456Z"
+  },
+  {
+    "case_id": "case-014-independent-toast-stack",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-014-independent-toast-stack/generic/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-014-independent-toast-stack/generic/run-01-20260914T074913680962Z"
+  },
+  {
+    "case_id": "case-014-independent-toast-stack",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-014-independent-toast-stack/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "completed",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-014-independent-toast-stack/doctor/run-01-20260914T075014343973Z"
+  },
+  {
+    "case_id": "case-015-backbutton-doesnt-cancel-rename",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-015-backbutton-doesnt-cancel-rename/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-015-backbutton-doesnt-cancel-rename/baseline/run-01-20260914T075022054199Z"
+  },
+  {
+    "case_id": "case-015-backbutton-doesnt-cancel-rename",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-015-backbutton-doesnt-cancel-rename/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-015-backbutton-doesnt-cancel-rename/generic/run-01-20260914T075024496720Z"
+  },
+  {
+    "case_id": "case-015-backbutton-doesnt-cancel-rename",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-015-backbutton-doesnt-cancel-rename/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-015-backbutton-doesnt-cancel-rename/doctor/run-01-20260914T075026696313Z"
+  },
+  {
+    "case_id": "case-016-swipe-left-double-bound",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-016-swipe-left-double-bound/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-016-swipe-left-double-bound/baseline/run-01-20260914T075029021539Z"
+  },
+  {
+    "case_id": "case-016-swipe-left-double-bound",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-016-swipe-left-double-bound/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-016-swipe-left-double-bound/generic/run-01-20260914T075031343031Z"
+  },
+  {
+    "case_id": "case-016-swipe-left-double-bound",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-016-swipe-left-double-bound/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-016-swipe-left-double-bound/doctor/run-01-20260914T075033647796Z"
+  },
+  {
+    "case_id": "case-017-three-finger-transform-cap",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-017-three-finger-transform-cap/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-017-three-finger-transform-cap/baseline/run-01-20260914T075035862260Z"
+  },
+  {
+    "case_id": "case-017-three-finger-transform-cap",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-017-three-finger-transform-cap/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-017-three-finger-transform-cap/generic/run-01-20260914T075038096952Z"
+  },
+  {
+    "case_id": "case-017-three-finger-transform-cap",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-017-three-finger-transform-cap/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-017-three-finger-transform-cap/doctor/run-01-20260914T075040341732Z"
+  },
+  {
+    "case_id": "case-018-highlight-slot-capacity-leak",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-018-highlight-slot-capacity-leak/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-018-highlight-slot-capacity-leak/baseline/run-01-20260914T075042512287Z"
+  },
+  {
+    "case_id": "case-018-highlight-slot-capacity-leak",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-018-highlight-slot-capacity-leak/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-018-highlight-slot-capacity-leak/generic/run-01-20260914T075044831661Z"
+  },
+  {
+    "case_id": "case-018-highlight-slot-capacity-leak",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-018-highlight-slot-capacity-leak/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-018-highlight-slot-capacity-leak/doctor/run-01-20260914T075047205993Z"
+  },
+  {
+    "case_id": "case-019-sheet-dismiss-vs-carousel",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-019-sheet-dismiss-vs-carousel/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-019-sheet-dismiss-vs-carousel/baseline/run-01-20260914T075049507375Z"
+  },
+  {
+    "case_id": "case-019-sheet-dismiss-vs-carousel",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-019-sheet-dismiss-vs-carousel/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-019-sheet-dismiss-vs-carousel/generic/run-01-20260914T075051759762Z"
+  },
+  {
+    "case_id": "case-019-sheet-dismiss-vs-carousel",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-019-sheet-dismiss-vs-carousel/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-019-sheet-dismiss-vs-carousel/doctor/run-01-20260914T075053999312Z"
+  },
+  {
+    "case_id": "case-020-swipe-actions-vs-reorder-handle",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-020-swipe-actions-vs-reorder-handle/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-020-swipe-actions-vs-reorder-handle/baseline/run-01-20260914T075056326057Z"
+  },
+  {
+    "case_id": "case-020-swipe-actions-vs-reorder-handle",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-020-swipe-actions-vs-reorder-handle/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-020-swipe-actions-vs-reorder-handle/generic/run-01-20260914T075058554560Z"
+  },
+  {
+    "case_id": "case-020-swipe-actions-vs-reorder-handle",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-020-swipe-actions-vs-reorder-handle/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-020-swipe-actions-vs-reorder-handle/doctor/run-01-20260914T075100851269Z"
+  },
+  {
+    "case_id": "case-021-palm-rejection-recognition-timing",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-021-palm-rejection-recognition-timing/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-021-palm-rejection-recognition-timing/baseline/run-01-20260914T075103271613Z"
+  },
+  {
+    "case_id": "case-021-palm-rejection-recognition-timing",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-021-palm-rejection-recognition-timing/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-021-palm-rejection-recognition-timing/generic/run-01-20260914T075105472676Z"
+  },
+  {
+    "case_id": "case-021-palm-rejection-recognition-timing",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-021-palm-rejection-recognition-timing/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-021-palm-rejection-recognition-timing/doctor/run-01-20260914T075109058636Z"
+  },
+  {
+    "case_id": "case-022-swipe-complete-recompose-staleness",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-022-swipe-complete-recompose-staleness/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-022-swipe-complete-recompose-staleness/baseline/run-01-20260914T075111406746Z"
+  },
+  {
+    "case_id": "case-022-swipe-complete-recompose-staleness",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-022-swipe-complete-recompose-staleness/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-022-swipe-complete-recompose-staleness/generic/run-01-20260914T075114301070Z"
+  },
+  {
+    "case_id": "case-022-swipe-complete-recompose-staleness",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-022-swipe-complete-recompose-staleness/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-022-swipe-complete-recompose-staleness/doctor/run-01-20260914T075116519127Z"
+  },
+  {
+    "case_id": "case-023-physics-arena-registration-bypass",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-023-physics-arena-registration-bypass/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-023-physics-arena-registration-bypass/baseline/run-01-20260914T075119124453Z"
+  },
+  {
+    "case_id": "case-023-physics-arena-registration-bypass",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-023-physics-arena-registration-bypass/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-023-physics-arena-registration-bypass/generic/run-01-20260914T075121338472Z"
+  },
+  {
+    "case_id": "case-023-physics-arena-registration-bypass",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-023-physics-arena-registration-bypass/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-023-physics-arena-registration-bypass/doctor/run-01-20260914T075123622210Z"
+  },
+  {
+    "case_id": "case-024-physics-arena-correct-routing",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-024-physics-arena-correct-routing/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-024-physics-arena-correct-routing/baseline/run-01-20260914T075126037747Z"
+  },
+  {
+    "case_id": "case-024-physics-arena-correct-routing",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-024-physics-arena-correct-routing/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-024-physics-arena-correct-routing/generic/run-01-20260914T075128419518Z"
+  },
+  {
+    "case_id": "case-024-physics-arena-correct-routing",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-024-physics-arena-correct-routing/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-024-physics-arena-correct-routing/doctor/run-01-20260914T075130765687Z"
+  },
+  {
+    "case_id": "case-025-grabmouse-altab-leak",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-025-grabmouse-altab-leak/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-025-grabmouse-altab-leak/baseline/run-01-20260914T075133154198Z"
+  },
+  {
+    "case_id": "case-025-grabmouse-altab-leak",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-025-grabmouse-altab-leak/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-025-grabmouse-altab-leak/generic/run-01-20260914T075135691132Z"
+  },
+  {
+    "case_id": "case-025-grabmouse-altab-leak",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-025-grabmouse-altab-leak/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-025-grabmouse-altab-leak/doctor/run-01-20260914T075138053545Z"
+  },
+  {
+    "case_id": "case-026-midi-surface-disconnect",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-026-midi-surface-disconnect/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-026-midi-surface-disconnect/baseline/run-01-20260914T075140604694Z"
+  },
+  {
+    "case_id": "case-026-midi-surface-disconnect",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-026-midi-surface-disconnect/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-026-midi-surface-disconnect/generic/run-01-20260914T075142835879Z"
+  },
+  {
+    "case_id": "case-026-midi-surface-disconnect",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-026-midi-surface-disconnect/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-026-midi-surface-disconnect/doctor/run-01-20260914T075145201055Z"
+  },
+  {
+    "case_id": "case-027-extrude-escape-scope",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-027-extrude-escape-scope/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-027-extrude-escape-scope/baseline/run-01-20260914T075147425408Z"
+  },
+  {
+    "case_id": "case-027-extrude-escape-scope",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-027-extrude-escape-scope/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-027-extrude-escape-scope/generic/run-01-20260914T075149897676Z"
+  },
+  {
+    "case_id": "case-027-extrude-escape-scope",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-027-extrude-escape-scope/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-027-extrude-escape-scope/doctor/run-01-20260914T075152203642Z"
+  },
+  {
+    "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-028-canvas-tool-arena-exclusivity-bypass/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-028-canvas-tool-arena-exclusivity-bypass/baseline/run-01-20260914T075154411531Z"
+  },
+  {
+    "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-028-canvas-tool-arena-exclusivity-bypass/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-028-canvas-tool-arena-exclusivity-bypass/generic/run-01-20260914T075156785855Z"
+  },
+  {
+    "case_id": "case-028-canvas-tool-arena-exclusivity-bypass",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-028-canvas-tool-arena-exclusivity-bypass/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-028-canvas-tool-arena-exclusivity-bypass/doctor/run-01-20260914T075159119566Z"
+  },
+  {
+    "case_id": "case-029-combo-order-and-animation-staleness",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-029-combo-order-and-animation-staleness/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-029-combo-order-and-animation-staleness/baseline/run-01-20260914T075201471433Z"
+  },
+  {
+    "case_id": "case-029-combo-order-and-animation-staleness",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-029-combo-order-and-animation-staleness/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-029-combo-order-and-animation-staleness/generic/run-01-20260914T075203932712Z"
+  },
+  {
+    "case_id": "case-029-combo-order-and-animation-staleness",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-029-combo-order-and-animation-staleness/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-029-combo-order-and-animation-staleness/doctor/run-01-20260914T075206422708Z"
+  },
+  {
+    "case_id": "case-030-timeline-autoscroll-causal-staleness",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-030-timeline-autoscroll-causal-staleness/baseline/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-030-timeline-autoscroll-causal-staleness/baseline/run-01-20260914T075208767671Z"
+  },
+  {
+    "case_id": "case-030-timeline-autoscroll-causal-staleness",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-030-timeline-autoscroll-causal-staleness/generic/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-030-timeline-autoscroll-causal-staleness/generic/run-01-20260914T075211059565Z"
+  },
+  {
+    "case_id": "case-030-timeline-autoscroll-causal-staleness",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-030-timeline-autoscroll-causal-staleness/doctor/run-01",
+    "contamination_check": "clean",
+    "status": "nonzero_exit",
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/raw/case-030-timeline-autoscroll-causal-staleness/doctor/run-01-20260914T075213319232Z"
+  }
+]
+
+EMPIRICAL_COMPLETED = 42/90
+EMPIRICAL_RUN_COMPLETE = FALSE

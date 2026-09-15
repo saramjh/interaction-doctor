@@ -1,217 +1,137 @@
-# interaction-doctor
+# Interaction Doctor Benchmark
 
-**Other skills help agents *build* UI. This one helps them *fix* interactions that broke.**
-
-![demo](docs/demo.gif)
-<!-- TODO before launch: record a 6–8s screen capture — drag a card in a
-     scrolling list, show it scrolling the page instead of moving the card,
-     then apply touch-action: pan-y and show it working. Kap on macOS. -->
-
----
-
-## Sound familiar?
-
-- Dragging a card in a scrolling list scrolls the page instead of moving the card.
-- The same drag code works on your iPhone and does something completely different
-  on Android — or the reverse.
-- A swipe-to-delete row sometimes scrolls, sometimes deletes, and you can't tell why.
-- Pinch-to-zoom works in your dev build and then zooms the whole page in production —
-  on one platform only.
-- The AI agent building your UI fixes drag, breaks scroll. Fixes scroll, breaks tap.
-  Fixes tap, breaks long-press. You're playing whack-a-mole with pointer events.
-
-None of this is a bug in your code. It's five platforms disagreeing about what a
-touch means, and nobody told your coding agent.
+> **STATUS NOTICE: SKILL DISCONTINUED &bull; BENCHMARK RETAINED**  
+> Interaction Doctor was an experimental coding-agent skill designed to audit and repair interaction ownership, gesture conflicts, and UI lifecycle behaviors.  
+> In an empirical, 30-case, 90-run controlled benchmark against `claude-sonnet-5`, the skill **did not improve repair success over the baseline model** (19/19 in all arms) and imposed **~1.91&times; token cost** and **~2.44&times; execution latency**.  
+> The skill has therefore been **discontinued as a product**.  
+> This repository is retained as an open benchmark, evaluation harness, and engineering postmortem.
 
 ---
 
-## Install
+## Benchmark Showroom
 
-**Claude Code (plugin)**
-```
-/plugin marketplace add interaction-doctor/interaction-doctor
-/plugin install interaction-doctor@interaction-doctor
-```
+An interactive research dossier and postmortem showroom is published on GitHub Pages:
 
-**Any agent (skills.sh)**
-```
-npx skills add interaction-doctor/interaction-doctor
-```
+👉 **[https://saramjh.github.io/interaction-doctor/](https://saramjh.github.io/interaction-doctor/)**
 
-**Manual**
+- **Executive Report (`index.html`):** Narrative breakdown of empirical results, resource overhead, and why three productization mitigation attempts failed.
+- **Case Explorer (`cases.html`):** Interactive matrix of all 30 benchmark cases, filterable by outcome, difficulty, and runtime, with complete task prompts, hidden oracles, and per-arm telemetry.
+- **Methodology & Replication (`methodology.html`):** Complete isolation architecture, scoring protocols, preflight caveats, and exact replication instructions.
+
+---
+
+## Executive Results
+
+The experiment evaluated 30 cases across 3 experimental conditions (arms) for a total of 90 sequential, sandboxed observations using `claude-sonnet-5` (medium effort):
+
+1. **Arm A (Baseline):** The pure coding model with task prompt only.
+2. **Arm B (Generic Rigor):** The model with a generic careful audit prompt (no specialized terminology).
+3. **Arm C (Doctor v1):** The model with the frozen Interaction Doctor v1 skill injected into the workspace.
+
+| Metric | Baseline (Arm A) | Generic Rigor (Arm B) | Interaction Doctor (Arm C) | Observed Delta |
+| :--- | :---: | :---: | :---: | :--- |
+| **Repair Success (Specified Defects)** | **19 / 19 (100%)** | **19 / 19 (100%)** | **19 / 19 (100%)** | **0% lift** (exact parity) |
+| **Correct NO-Op (Benign Controls)** | 3 / 5 (60.0%) | 2 / 5 (40.0%) | 2 / 5 (40.0%) | Baseline slightly less prone to churn |
+| **Functional False Positives** | 0 / 5 (0.0%) | 0 / 5 (0.0%) | 0 / 5 (0.0%) | No arm broke benign control logic |
+| **Intent Guessing Rate (NEEDS_INTENT)** | 6 / 6 (100%) | 6 / 6 (100%) | 4 / 6 (66.7%) | Doctor stopped on 2 cases (011, 016) |
+| **Manual Review Ambiguity Halts** | 0 / 6 (0.0%) | 0 / 6 (0.0%) | 2 / 6 (33.3%) | Isolated positive signal on ambiguity |
+| **Apparent Regressions** | 1 / 30 (3.3%) | 1 / 30 (3.3%) | 0 / 30 (0.0%) | *Non-independent:* solely on case-011 |
+| **False Closure Claims** | 0 / 30 (0.0%) | 1 / 30 (3.3%) | 0 / 30 (0.0%) | Generic claimed closure on failing case |
+| **Total Cost (30 Runs)** | **$3.2389** | **$3.4414** | **$6.1973** | **~1.91&times; cost overhead** |
+| **Mean Cost per Run** | ~$0.1080 | ~$0.1147 | ~$0.2066 | +$0.0986 / run |
+| **Total Wall-Clock Time** | **848.2s** | **994.0s** | **2067.2s** | **~2.44&times; latency overhead** |
+| **Mean Wall Time per Run** | ~28.3s | ~33.1s | ~68.9s | +40.6s / run |
+| **Total Tool Invocations** | **138** | **137** | **212** | **~1.54&times; tool calls** |
+
+### Key Takeaways
+
+1. **Zero Repair Advantage:** Modern frontier models already possess sufficient latent knowledge to fix well-specified interaction bugs without specialized prompt frameworks.
+2. **Substantial Execution Overhead:** Doctor required nearly double the tokens and 2.44&times; the wall time, driven by recursive ownership auditing.
+3. **Narrow Ambiguity Signal:** The only genuine positive signal was on ambiguous policy tasks (`case-011` and `case-016`), where Doctor stopped for human clarification while Baseline and Generic guessed.
+4. **Regression Signal is Not Independent Evidence:** The only regression across all 90 runs occurred on `case-011` under Baseline and Generic. Doctor avoided it solely because it refused to guess the unresolved policy.
+
+---
+
+## Why the Benchmark Remains a Valuable Research Asset
+
+Even though the skill itself is discontinued, the benchmark provides lasting value for AI coding evaluations:
+
+- **Measures Causal Skill Utility:** Establishes whether a domain skill actually helps a frontier model or merely burns tokens.
+- **Separates Repair from Compliance:** Grades actual runtime behavior via private oracles, rather than checking if the model recited skill jargon.
+- **Separates Functional Change from Churn:** Distinguishes benign comments or whitespace edits from observable state-machine changes.
+- **Scores Underspecified Intent:** Penalizes models that silently guess arbitrary product policies when requirements are ambiguous.
+- **Comprehensive Interaction Topology:** Covers pairwise gesture conflicts, N-ary input competition, lifecycle interruptions (backgrounding, unmounts, aborts), and analog event queues.
+
+---
+
+## Repository Structure
+
 ```
-git clone https://github.com/interaction-doctor/interaction-doctor
-cp -r interaction-doctor/skills/interaction-doctor ~/.claude/skills/
+.
+├── README.md                           # This document: benchmark overview & postmortem
+├── benchmark/                          # The core reproducible research instrument
+│   ├── README.md                       # Complete benchmark guide & scoring specification
+│   ├── DESIGN.md                       # Experimental design, threats to validity, isolation
+│   ├── cases/                          # 30 public test fixtures and task instructions
+│   ├── cases-private/                  # Private hidden tests and ground truth oracles
+│   ├── design/                         # Authoring freezes, manifest-v3.1.json, freeze v6
+│   ├── graders/                        # Automated scoring scripts (grade_run.py)
+│   ├── harness/                        # Isolated sequential runner and sandboxing config
+│   ├── prompts/                        # Prompts for Baseline, Generic, and Doctor arms
+│   └── results/                        # Raw per-run archives and empirical summary
+├── showroom/                           # The static GitHub Pages presentation layer
+│   ├── index.html                      # Executive report & postmortem
+│   ├── cases.html                      # Interactive 30-case matrix explorer
+│   ├── methodology.html                # Detailed methodology & replication protocol
+│   ├── assets/                         # Bespoke typography and CSS
+│   └── data/                           # Machine-derived JSON data from benchmark truth
+├── scripts/
+│   ├── build_showroom_data.py          # Deterministic data compilation script
+│   ├── validate_showroom_data.py       # Zero-drift validation against frozen empirical results
+│   └── build_pages.py                  # Static showroom page generation script
+├── archive/
+│   ├── README.md                       # Archive overview
+│   ├── interaction-doctor-v1/          # Verbatim archive of the discontinued v1 skill
+│   └── experimental-tooling/           # Early measurement tools, evals, and manuals
+└── .github/
+    └── workflows/
+        └── pages.yml                   # Automated GitHub Pages CI/CD deployment
 ```
 
 ---
 
-## Before / After
+## Reproducibility & Validation
 
-**Before** — prompt only:
-
-```
-> My drag handler works on desktop but on mobile the page scrolls
-  while I'm trying to drag the card.
-
-< I'll add preventDefault() to stop the scroll...
-> Now the whole page won't scroll at all, even outside the card.
-< Let me make it conditional on the drag state...
-> Now dragging feels laggy and sometimes doesn't start.
-< I'll add a delay before activating the drag...
-> Now long-pressing opens the browser context menu instead.
-  (5 turns, still broken)
+### Validate Data Integrity
+Verify that the showroom dataset exactly reflects the frozen benchmark numbers:
+```bash
+python3 scripts/validate_showroom_data.py
 ```
 
-**After** — same prompt, skill installed:
-
-```
-> My drag handler works on desktop but on mobile the page scrolls
-  while I'm trying to drag the card.
-
-< This is C10 in the conflict matrix — the browser owns touch
-  scrolling by default. Set touch-action: pan-y on the draggable
-  element: vertical scroll stays with the browser, your handler
-  gets the horizontal axis. Also add a pointercancel listener —
-  the browser can reclaim the pointer mid-drag on iOS specifically,
-  and without it the element gets stuck mid-transform.
-  (1 turn, matches the measured behavior on iOS/Android/desktop)
+### Run Grader Self-Tests
+Verify that the automated hidden test graders pass all behavioral assertions:
+```bash
+python3 benchmark/graders/grade_run_selftest.py
 ```
 
-*(Illustrative — see [Numbers](#numbers) for the measured version of this comparison.)*
+### Re-verify Experiment Freeze
+Verify file hashes against the frozen benchmark configuration:
+```bash
+python3 benchmark/design/verify_experiment_freeze.py
+```
 
 ---
 
-## Numbers
+## Important Empirical Limitations
 
-🚧 Not yet measured. The next step for this project is running the eval
-harness (`evals/`) across a broken-component test set with and without the
-skill installed, using Claude Code's `--output-format json` to get exact
-turn counts and cost per session — see the roadmap below. This section will
-report real numbers, not estimates, once that run is complete.
-
----
-
-## The conflict matrix
-
-Ten of the twenty-one possible gesture-pair conflicts are documented below,
-each verified on real hardware — desktop Chrome, iOS Safari, Android Chrome,
-and iPadOS Safari — not simulators. Every cell links to symptom, cause,
-platform-by-platform measured behavior, a working fix, and how to verify it
-yourself. The three still marked `🚧` are open — see
-[Contributing](#contributing).
-
-| | Tap | DoubleTap | LongPress | Drag | Swipe | Scroll | Pinch |
-|---|---|---|---|---|---|---|---|
-| **Tap** | — | [C1](CONFLICTS.md#c1--tap--doubletap) | [C2](CONFLICTS.md#c2--tap--longpress) | [C3](CONFLICTS.md#c3--tap--drag) | 🚧 | 🚧 | 🚧 |
-| **DoubleTap** | C1 | — | 🚧 | 🚧 | 🚧 | 🚧 | 🚧 |
-| **LongPress** | C2 | 🚧 | — | [C6](CONFLICTS.md#c6--longpress--drag) | 🚧 | [C8](CONFLICTS.md#c8--longpress--scroll) | 🚧 |
-| **Drag** | C3 | 🚧 | C6 | — | [C9](CONFLICTS.md#c9--drag--swipe) | [C10](CONFLICTS.md#c10--drag--scroll) | [C11](CONFLICTS.md#c11--drag--pinch) |
-| **Swipe** | 🚧 | 🚧 | 🚧 | C9 | — | [C12](CONFLICTS.md#c12--swipe--scroll) | 🚧 |
-| **Scroll** | 🚧 | 🚧 | C8 | C10 | C12 | — | [C13](CONFLICTS.md#c13--scroll--pinch) |
-| **Pinch** | 🚧 | 🚧 | 🚧 | C11 | 🚧 | C13 | — |
-
-Full detail, with per-platform trial counts and raw measurement logs, is in
-[`CONFLICTS.md`](CONFLICTS.md).
-
-**The finding worth reading first**: [C13](CONFLICTS.md#c13--scroll--pinch).
-`touch-action: pan-y` — the standard fix for drag-vs-scroll — has the
-*opposite* effect on pinch-zoom depending on platform. On Android it zooms
-just like `touch-action: auto` would (6 of 6 measured trials). On iOS and
-iPadOS it blocks zoom completely, identically to `touch-action: none` (0 of
-13 combined trials). A developer who tests only on iPhone will ship code that
-zooms uncontrollably on every Android device that runs it.
+1. **Qualification Gate Limitation:** Before the final 90 runs, the preflight qualification gate registered `HOLD` (`READY_FOR_EMPIRICAL_90_RUNS = False`) because the evaluated models omitted certain prompt diagnostic probes. The empirical run was executed under an explicit qualification waiver; freeze verification and workspace isolation remained active.
+2. **Retry History:** Cases 001–014 were gathered on initial execution (`run-01`). Cases 015–030 hit Anthropic API 429 session limits; their completed observations were gathered on `run-03` after rate-limit reset. No successful run was ever rerun to cherry-pick a score.
+3. **Scope Constraint (`UNMODELED = 0`):** All 30 cases evaluated modeled interaction paradigms. The benchmark contains **zero unmodeled cases** and makes no claim about unmodeled hardware handling.
+4. **Descriptive Pilot:** n = 30 cases per arm, single repetition. This is a descriptive pilot establishing negative product utility rather than a formal hypothesis-testing study with p-values.
 
 ---
 
-## Try it live
+## License & Provenance
 
-**[Interaction Inspector →](https://interaction-doctor.dev)**
-<!-- TODO before launch: point this at the deployed apps/inspector build -->
-
-Drag, tap, and pinch against real pointer events in your own browser. Toggle
-`touch-action` live and watch the verdict change in front of you — this is
-the same tool used to produce every number in the matrix.
-
----
-
-## Why this exists
-
-Four mature, actively maintained gesture libraries — dnd-kit, Framer Motion,
-embla-carousel, and vaul — have collectively closed roughly **168 GitHub
-issues** touching `touch-action`, drag-vs-scroll conflicts, and mobile drag
-failures. Teams with funding, maintainers, and years of production traffic
-needed that many issues to get pointer-event handling right.
-
-A coding agent asked to "make this card draggable" writes that logic from
-scratch, in one shot, with none of that history. The quotes below are from
-real issues in those libraries — the exact failure modes this project's
-matrix documents, reported by real users of production software:
-
-> *"when I touch and hold a draggable, it gets 'stuck' and cannot move
-> anymore... If I have touch action set to none, then I am able to drag the
-> draggable around, but the list doesn't scroll normally anymore"*
-> — [dnd-kit #453](https://github.com/clauderic/dnd-kit/issues/453) (see [C10](CONFLICTS.md#c10--drag--scroll))
-
-> *"it interprets my finger's scroll input with a drag input... it would be
-> great if the interface understood the natural difference between a drag
-> and a scroll"*
-> — [motion #1506](https://github.com/motiondivision/motion/issues/1506) (see [C10](CONFLICTS.md#c10--drag--scroll))
-
-> *"it will begin dragging, but suddenly stop when the dock opens and the
-> pointercancel event is called, at which point the drawer remains 'stuck'"*
-> — [vaul #555](https://github.com/emilkowalski/vaul/issues/555)
-
-This isn't a criticism of those projects — quite the opposite. It's evidence
-of how much platform-specific knowledge production-grade touch handling
-actually requires, and how little of it is written down in one place, in a
-form an AI agent can act on before the code ships.
-
-Full methodology and limitations: [`research/demand.md`](research/demand.md).
-
----
-
-## Prior art — what this doesn't replace
-
-This project enforces existing standards; it doesn't invent new ones.
-
-- **[W3C Pointer Events](https://www.w3.org/TR/pointerevents3/)** — the
-  `touch-action` property and pointer-capture semantics this whole matrix is
-  built on.
-- **[MDN `touch-action`](https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action)**
-  — the authoritative reference for the property itself.
-- **[WCAG 2.5.1 / 2.5.2 / 2.5.7](https://www.w3.org/WAI/WCAG22/quickref/)**
-  — pointer-gesture and dragging-movement accessibility requirements this
-  project treats as non-negotiable, not optional.
-- **[dnd-kit](https://dndkit.com/)** — the reference implementation for
-  accessible, cross-platform drag-and-drop reordering. If your use case is
-  reordering a list, use it; don't hand-roll C10's fix yourself.
-- **[React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)**
-  and **[Flutter's Gesture Arena](https://docs.flutter.dev/ui/interactivity/gestures)**
-  — the native-mobile equivalents of the conflict-resolution problem this
-  project documents for the web.
-
-If a library already solves your specific problem well, the skill points you
-to it instead of asking you to reinvent it.
-
----
-
-## Contributing
-
-Three matrix cells are undocumented — Tap↔Swipe, DoubleTap↔Pinch, and
-LongPress↔Swipe. Filling one in means measuring it on real hardware
-(desktop, iOS, Android at minimum) using the harnesses in `tools/`, following
-the format of any completed section in `CONFLICTS.md`, and submitting the raw
-logs alongside the write-up — see
-[`research/measurements/README.md`](research/measurements/README.md) for the
-provenance conventions this project holds every figure to.
-
-Corrections to a completed cell are just as welcome. Every number in
-`CONFLICTS.md` traces to a raw log in `research/measurements/`; if you can't
-find the source for a claim, that's a bug — open an issue.
-
----
-
-## License
-
-MIT
+Frozen benchmark assets and empirical run archives are preserved for academic and industry research.  
+Authoritative frozen commit: `dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb`.

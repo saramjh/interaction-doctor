@@ -1,0 +1,26 @@
+Interaction Doctor benchmark v1 qualification note
+
+Frozen commit:
+dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb
+
+Paid preflight:
+- 3/3 processes completed successfully
+- tool surface: PASS
+- arm isolation: PASS
+- doctor Skill invocation: PASS
+- provenance: PASS
+- runtime assertions: HOLD, not FAIL
+
+Reason for HOLD:
+baseline and generic did not execute the diagnostic probes embedded in the
+preflight prompt. Doctor executed Bash probes 1,2,5,6,7,8 and all passed,
+but did not execute builtin Read probes 3,4.
+
+This is treated as probe-compliance insufficiency rather than evidence of
+sandbox failure. The frozen benchmark instrument is not modified.
+
+The empirical run therefore bypasses ONLY the preflight qualification gate
+and directly invokes the already-frozen run_execute_sequential() execution
+path. Freeze verification, workspace isolation, contamination checks,
+runner configuration, archiving, and per-arm workspace destruction remain
+unchanged.

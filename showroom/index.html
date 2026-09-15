@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaction Doctor Benchmark &bull; Empirical Postmortem</title>
+  <link rel="stylesheet" href="./assets/showroom.css">
+</head>
+<body>
+  <div class="site-wrapper">
+    
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div>DOSSIER: EXP-ID-2026-V1 &bull; REPO: saramjh/interaction-doctor</div>
+        <div class="masthead-badge-group">
+          <span class="archival-badge discontinued">Skill: Discontinued</span>
+          <span class="archival-badge retained">Benchmark: Retained</span>
+          <span>N = 30 &times; 3 = 90 Runs</span>
+        </div>
+      </div>
+      <div class="masthead-nav-bar">
+        <div class="masthead-title">
+          <a href="./index.html">Interaction Doctor Benchmark</a>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="./index.html" class="active">Executive Report</a></li>
+            <li><a href="./cases.html" class="">Case Matrix (30)</a></li>
+            <li><a href="./methodology.html" class="">Methodology &amp; Replication</a></li>
+            <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub Archive &rarr;</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+
+    <!-- Hero Dossier -->
+    <section class="hero-dossier">
+      <div class="hero-grid">
+        <div>
+          <div class="section-label">Empirical Evaluation Dossier</div>
+          <h1 class="hero-headline">A coding-agent skill experiment that failed to justify its cost.</h1>
+          <p class="hero-subtitle">
+            A 30-case, 90-run controlled benchmark measuring interaction-defect diagnosis, repair, and ambiguity handling on frontier models.
+          </p>
+          <div class="lead-statement">
+            The specialized Interaction Doctor skill provided zero measured repair advantage over the baseline model, nearly doubled token expenditure (~1.91&times;), and more than doubled latency (~2.44&times;). The skill has been <strong>discontinued</strong>. The benchmark is preserved as an independent research asset.
+          </div>
+        </div>
+
+        <div>
+          <div class="hero-parameters">
+            <div style="font-weight: 700; border-bottom: 1px solid var(--rule-border); padding-bottom: 6px; margin-bottom: 8px; text-transform: uppercase; font-size: 11px;">
+              Experiment Parameters
+            </div>
+            <dl>
+              <dt>Evaluated Model</dt><dd>claude-sonnet-5</dd><br>
+              <dt>Effort Setting</dt><dd>medium</dd><br>
+              <dt>Benchmark Corpus</dt><dd>30 cases (19 Defect, 5 Control, 6 Ambiguous)</dd><br>
+              <dt>Experimental Arms</dt><dd>3 (Baseline, Generic Rigor, Doctor v1)</dd><br>
+              <dt>Valid Observations</dt><dd>90 runs (1 per case &times; arm)</dd><br>
+              <dt>Execution Sandbox</dt><dd>macOS Seatbelt (Fail-closed native)</dd><br>
+              <dt>Frozen Commit</dt><dd><code>dfb9f79</code></dd><br>
+              <dt>Product Outcome</dt><dd style="color: var(--arm-doctor);">DISCONTINUED</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Executive Result Cards -->
+    <section class="section-block">
+      <div class="section-label">Primary Findings</div>
+      <h2 class="section-title">Executive Summary</h2>
+
+      <div class="findings-grid">
+        <div class="finding-card">
+          <div class="finding-num parity">19 / 19</div>
+          <div class="finding-label">Repair Success in Every Arm</div>
+          <div class="finding-desc">
+            Baseline, Generic, and Doctor each achieved 100% repair success on all 19 defective cases. The specialized skill provided <strong>zero incremental repair capability</strong>.
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-num cost">~1.91&times;</div>
+          <div class="finding-label">Doctor Execution Cost Ratio</div>
+          <div class="finding-desc">
+            Total cost of $6.20 ($0.207/run) vs Baseline's $3.24 ($0.108/run). Tool calls increased by 1.54&times; and wall-clock execution latency increased by 2.44&times;.
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-num signal">2 / 6</div>
+          <div class="finding-label">Ambiguous Cases Stopped by Doctor</div>
+          <div class="finding-desc">
+            Doctor halted for manual review on 2 of 6 ambiguous cases (case-011 and case-016). Baseline and Generic unilaterally guessed product policy on all 6 cases (0/6).
+          </div>
+        </div>
+      </div>
+
+      <div class="verdict-callout">
+        <div class="verdict-callout-title">Final Empirical Verdict</div>
+        <div class="verdict-callout-text">
+          "The specialized skill did not improve repair capability on this benchmark and imposed substantial execution cost. It showed a limited signal in preventing unsupported product-intent decisions on two specific cases, but this was insufficient to support product viability."
+        </div>
+      </div>
+    </section>
+
+    <!-- Three-Arm Controlled Comparison Table -->
+    <section class="section-block">
+      <div class="section-label">Empirical Measurements</div>
+      <h2 class="section-title">Three-Arm Controlled Comparison</h2>
+      <p class="prose">
+        All 90 runs were evaluated with the same frontier model (<code>claude-sonnet-5</code>) at medium effort. The only independent variable was the intervention injected into the agent environment.
+      </p>
+
+      <div class="archival-table-wrap">
+        <table class="archival-table">
+          <thead>
+            <tr>
+              <th>Evaluation Metric</th>
+              <th class="num"><span class="arm-dot baseline"></span> Arm A: Baseline</th>
+              <th class="num"><span class="arm-dot generic"></span> Arm B: Generic Rigor</th>
+              <th class="num"><span class="arm-dot doctor"></span> Arm C: Interaction Doctor</th>
+              <th>Experimental Delta &amp; Interpretation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Repair Success (Specified Defects)</strong></td>
+              <td class="num"><strong>19 / 19</strong> (100%)</td>
+              <td class="num"><strong>19 / 19</strong> (100%)</td>
+              <td class="num"><strong>19 / 19</strong> (100%)</td>
+              <td>0% lift. Pure parity on well-specified defects.</td>
+            </tr>
+            <tr>
+              <td><strong>Correct NO-Op (Benign Controls)</strong></td>
+              <td class="num">3 / 5 (60.0%)</td>
+              <td class="num">2 / 5 (40.0%)</td>
+              <td class="num">2 / 5 (40.0%)</td>
+              <td>Baseline was slightly less prone to unnecessary churn.</td>
+            </tr>
+            <tr>
+              <td><strong>Functional False Positives</strong></td>
+              <td class="num">0 / 5 (0.0%)</td>
+              <td class="num">0 / 5 (0.0%)</td>
+              <td class="num">0 / 5 (0.0%)</td>
+              <td>No arm broke the underlying logic of benign controls.</td>
+            </tr>
+            <tr>
+              <td><strong>Intent Guessing Rate (NEEDS_INTENT)</strong></td>
+              <td class="num">6 / 6 (100%)</td>
+              <td class="num">6 / 6 (100%)</td>
+              <td class="num">4 / 6 (66.7%)</td>
+              <td>Doctor reduced guessing by 33.3% (stopped on 011, 016).</td>
+            </tr>
+            <tr>
+              <td><strong>Manual Review Ambiguity Halts</strong></td>
+              <td class="num">0 / 6 (0.0%)</td>
+              <td class="num">0 / 6 (0.0%)</td>
+              <td class="num">2 / 6 (33.3%)</td>
+              <td>Sole positive signal: Doctor stopped on 2 underspecified cases.</td>
+            </tr>
+            <tr>
+              <td><strong>Measured Regressions</strong></td>
+              <td class="num">1 / 30 (3.3%)</td>
+              <td class="num">1 / 30 (3.3%)</td>
+              <td class="num">0 / 30 (0.0%)</td>
+              <td><em>Non-independent:</em> The only regression occurred on 011, which Doctor avoided solely by pausing.</td>
+            </tr>
+            <tr>
+              <td><strong>False Closure Claims</strong></td>
+              <td class="num">0 / 30 (0.0%)</td>
+              <td class="num">1 / 30 (3.3%)</td>
+              <td class="num">0 / 30 (0.0%)</td>
+              <td>Generic arm claimed completion on case-011 while failing.</td>
+            </tr>
+            <tr>
+              <td><strong>Detection Heuristic (Keyword Match)</strong></td>
+              <td class="num">14 / 19 (73.7%)</td>
+              <td class="num">18 / 19 (94.7%)</td>
+              <td class="num">18 / 19 (94.7%)</td>
+              <td>Diagnostic keyword presence only; NOT semantic recall.</td>
+            </tr>
+            <tr style="background: var(--bg-secondary); font-weight: 600;">
+              <td><strong>Total Cost (30 Runs)</strong></td>
+              <td class="num">$3.2389</td>
+              <td class="num">$3.4414</td>
+              <td class="num" style="color: var(--arm-doctor);">$6.1973</td>
+              <td><strong>1.91&times;</strong> cost increase for Doctor intervention.</td>
+            </tr>
+            <tr>
+              <td>Mean Cost per Case Run</td>
+              <td class="num">$0.1080</td>
+              <td class="num">$0.1147</td>
+              <td class="num" style="color: var(--arm-doctor);">$0.2066</td>
+              <td>+$0.0986 extra per case.</td>
+            </tr>
+            <tr style="background: var(--bg-secondary); font-weight: 600;">
+              <td><strong>Total Wall Clock Time</strong></td>
+              <td class="num">848.2s</td>
+              <td class="num">994.0s</td>
+              <td class="num" style="color: var(--arm-doctor);">2067.2s</td>
+              <td><strong>2.44&times;</strong> execution latency multiplier.</td>
+            </tr>
+            <tr>
+              <td>Mean Wall Time per Run</td>
+              <td class="num">28.3s</td>
+              <td class="num">33.1s</td>
+              <td class="num" style="color: var(--arm-doctor);">68.9s</td>
+              <td>+40.6s added delay per run.</td>
+            </tr>
+            <tr style="background: var(--bg-secondary); font-weight: 600;">
+              <td><strong>Total Tool Calls</strong></td>
+              <td class="num">138</td>
+              <td class="num">137</td>
+              <td class="num" style="color: var(--arm-doctor);">212</td>
+              <td><strong>1.54&times;</strong> tool invocation overhead.</td>
+            </tr>
+            <tr>
+              <td>Mean Tool Invocations per Run</td>
+              <td class="num">4.6</td>
+              <td class="num">4.6</td>
+              <td class="num" style="color: var(--arm-doctor);">7.1</td>
+              <td>+2.5 roundtrips per case.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Data Visualizations -->
+    <section class="section-block">
+      <div class="section-label">Comparative Data Graphics</div>
+      <h2 class="section-title">Cost, Latency &amp; Repair Visualizations</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Repair Parity Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <div class="chart-title">Figure 1: Repair Success on Specified Defects (n=19)</div>
+            <div class="chart-subtitle">Denom: 19 YES cases</div>
+          </div>
+          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Repair success chart showing 19/19 parity in all arms">
+            <!-- Baseline -->
+            <text x="10" y="32" font-family="IBM Plex Mono" font-size="12" fill="#161616">Baseline</text>
+            <rect x="120" y="18" width="300" height="20" fill="#252525" rx="1" />
+            <text x="430" y="33" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">19/19 (100%)</text>
+
+            <!-- Generic -->
+            <text x="10" y="77" font-family="IBM Plex Mono" font-size="12" fill="#161616">Generic</text>
+            <rect x="120" y="63" width="300" height="20" fill="#6B7075" rx="1" />
+            <text x="430" y="78" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">19/19 (100%)</text>
+
+            <!-- Doctor -->
+            <text x="10" y="122" font-family="IBM Plex Mono" font-size="12" fill="#A33A2B">Doctor v1</text>
+            <rect x="120" y="108" width="300" height="20" fill="#A33A2B" rx="1" />
+            <text x="430" y="123" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">19/19 (100%)</text>
+          </svg>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px;">
+            Identical bar lengths depict exact parity. No repair delta was observed.
+          </div>
+        </div>
+
+        <!-- Cost Overhead Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <div class="chart-title">Figure 2: Total API Cost across 30 Runs ($ USD)</div>
+            <div class="chart-subtitle">Denom: 30 runs per arm</div>
+          </div>
+          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Cost comparison chart showing Doctor at nearly 2x baseline cost">
+            <!-- Baseline -->
+            <text x="10" y="32" font-family="IBM Plex Mono" font-size="12" fill="#161616">Baseline</text>
+            <rect x="120" y="18" width="156" height="20" fill="#252525" rx="1" />
+            <text x="286" y="33" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">$3.24 (1.00&times;)</text>
+
+            <!-- Generic -->
+            <text x="10" y="77" font-family="IBM Plex Mono" font-size="12" fill="#161616">Generic</text>
+            <rect x="120" y="63" width="166" height="20" fill="#6B7075" rx="1" />
+            <text x="296" y="78" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">$3.44 (1.06&times;)</text>
+
+            <!-- Doctor -->
+            <text x="10" y="122" font-family="IBM Plex Mono" font-size="12" fill="#A33A2B">Doctor v1</text>
+            <rect x="120" y="108" width="300" height="20" fill="#A33A2B" rx="1" />
+            <text x="430" y="123" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">$6.20 (1.91&times;)</text>
+          </svg>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px;">
+            Doctor imposed an 81% cost penalty over generic audit and 91% over baseline.
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- Wall Time Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <div class="chart-title">Figure 3: Mean Wall-Clock Latency per Run (Seconds)</div>
+            <div class="chart-subtitle">Lower is faster</div>
+          </div>
+          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Wall time comparison chart">
+            <text x="10" y="32" font-family="IBM Plex Mono" font-size="12" fill="#161616">Baseline</text>
+            <rect x="120" y="18" width="123" height="20" fill="#252525" rx="1" />
+            <text x="253" y="33" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">28.3s (1.00&times;)</text>
+
+            <text x="10" y="77" font-family="IBM Plex Mono" font-size="12" fill="#161616">Generic</text>
+            <rect x="120" y="63" width="144" height="20" fill="#6B7075" rx="1" />
+            <text x="274" y="78" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">33.1s (1.17&times;)</text>
+
+            <text x="10" y="122" font-family="IBM Plex Mono" font-size="12" fill="#A33A2B">Doctor v1</text>
+            <rect x="120" y="108" width="300" height="20" fill="#A33A2B" rx="1" />
+            <text x="430" y="123" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">68.9s (2.44&times;)</text>
+          </svg>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px;">
+            Doctor required 2.44&times; longer to complete execution due to auditing overhead.
+          </div>
+        </div>
+
+        <!-- Intent Guessing Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <div class="chart-title">Figure 4: Intent Guessing Rate on Ambiguous Tasks (n=6)</div>
+            <div class="chart-subtitle">Lower guessing is better</div>
+          </div>
+          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Intent guessing comparison chart">
+            <text x="10" y="32" font-family="IBM Plex Mono" font-size="12" fill="#161616">Baseline</text>
+            <rect x="120" y="18" width="300" height="20" fill="#A33A2B" rx="1" />
+            <text x="430" y="33" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">6/6 (100%)</text>
+
+            <text x="10" y="77" font-family="IBM Plex Mono" font-size="12" fill="#161616">Generic</text>
+            <rect x="120" y="63" width="300" height="20" fill="#A33A2B" rx="1" />
+            <text x="430" y="78" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">6/6 (100%)</text>
+
+            <text x="10" y="122" font-family="IBM Plex Mono" font-size="12" fill="#2F5B4D">Doctor v1</text>
+            <rect x="120" y="108" width="200" height="20" fill="#2F5B4D" rx="1" />
+            <text x="330" y="123" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#2F5B4D">4/6 (66.7%)</text>
+          </svg>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px;">
+            Doctor uniquely stopped on 2 cases (011, 016), while baseline/generic guessed on all 6.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEEDS_INTENT Detail -->
+    <section class="section-block">
+      <div class="section-label">Ambiguity Analysis</div>
+      <h2 class="section-title">NEEDS_INTENT Case Breakdown</h2>
+      <p class="prose">
+        Six benchmark cases contain fundamentally underspecified interaction policy choices where multiple plausible product decisions exist. Agents were scored on whether they recognized the ambiguity and stopped to ask rather than unilaterally implementing an ungrounded preference.
+      </p>
+
+      <div class="archival-table-wrap">
+        <table class="archival-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Case Title</th>
+              <th>Baseline</th>
+              <th>Generic</th>
+              <th>Doctor</th>
+              <th>Observed Behavioral Outcome under Doctor</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600;">004</td>
+          <td>
+            <a href="./cases.html#case-004" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">hotkey-vs-literal</a>
+            
+          </td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="font-size: 12px; color: var(--ink-secondary);">Unilaterally selected a resolution policy without asking user</td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600;">010</td>
+          <td>
+            <a href="./cases.html#case-010" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">focus-restore-after-trigger-removal</a>
+            
+          </td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="font-size: 12px; color: var(--ink-secondary);">Unilaterally selected a resolution policy without asking user</td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">011</td>
+          <td>
+            <a href="./cases.html#case-011" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">shared-canvas-bifurcation</a>
+            <span class="archival-badge retained" style="margin-left:6px; font-size:9px;">Doctor Stopped</span>
+          </td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict needs_manual_review_ambiguity">stopped (review)</span></td>
+          <td style="font-size: 12px; color: var(--ink-secondary);">Refused to guess unresolved policy; requested manual clarification</td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600;">013</td>
+          <td>
+            <a href="./cases.html#case-013" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">live-value-vs-drag</a>
+            
+          </td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="font-size: 12px; color: var(--ink-secondary);">Unilaterally selected a resolution policy without asking user</td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">016</td>
+          <td>
+            <a href="./cases.html#case-016" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-left-double-bound</a>
+            <span class="archival-badge retained" style="margin-left:6px; font-size:9px;">Doctor Stopped</span>
+          </td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict needs_manual_review_ambiguity">stopped (review)</span></td>
+          <td style="font-size: 12px; color: var(--ink-secondary);">Refused to guess unresolved policy; requested manual clarification</td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600;">019</td>
+          <td>
+            <a href="./cases.html#case-019" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">sheet-dismiss-vs-carousel</a>
+            
+          </td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="font-size: 12px; color: var(--ink-secondary);">Unilaterally selected a resolution policy without asking user</td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="prose">
+        <h3>Why Did Doctor Only Stop on 011 and 016?</h3>
+        <p>
+          In <code>case-011-shared-canvas-bifurcation</code> and <code>case-016-swipe-left-double-bound</code>, the conflict directly manifested as two conflicting event handlers attached to the same DOM target. Doctor's ownership graph extraction explicitly flagged the collision and triggered the protocol's <code>NEEDS_INTENT</code> disposition.
+        </p>
+        <p>
+          Conversely, on <code>case-004</code>, <code>case-010</code>, <code>case-013</code>, and <code>case-019</code>, the ambiguity stemmed from lifecycle scoping or environmental defaults rather than direct simultaneous event bindings. Despite possessing the skill prompt, the model rationalized a "standard" resolution and edited the files anyway.
+        </p>
+      </div>
+    </section>
+
+    <!-- 30-Case Observation Matrix -->
+    <section class="section-block">
+      <div class="section-label">Full Corpus Overview</div>
+      <h2 class="section-title">30-Case &times; 3-Arm Observation Matrix (90 Runs)</h2>
+      <p class="prose">
+        Every row represents one benchmark fixture. Click any row or case name to inspect the full prompt, hidden oracles, and execution telemetry in the Case Explorer.
+      </p>
+
+      <div class="archival-table-wrap">
+        <table class="archival-table observation-grid-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">ID</th>
+              <th>Case Name</th>
+              <th style="width: 90px;">Outcome</th>
+              <th>Arm A: Baseline</th>
+              <th>Arm B: Generic</th>
+              <th>Arm C: Doctor</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">001</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-001" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">media-library</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">002</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-002" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">kanban-board</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">003</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-003" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">drawing-canvas</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NO</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">004</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-004" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">hotkey-vs-literal</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NEEDS_INTENT</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">005</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-005" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">ime-guarded-confirm</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NO</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">006</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-006" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">backgrounded-tab-drag</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">007</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-007" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">offline-autosave-queue</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">008</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-008" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">midi-dual-blend</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NO</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">009</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-009" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">debounce-unmount-leak</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">010</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-010" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">focus-restore-after-trigger-removal</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NEEDS_INTENT</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;">
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">011</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-011" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">shared-canvas-bifurcation</a>
+            <span class="archival-badge retained" style="margin-left:4px; font-size:8px;">STOPPED</span>
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NEEDS_INTENT</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict needs_manual_review_ambiguity">stopped (review)</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">012</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-012" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">hold-to-confirm-never-completes</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">013</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-013" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">live-value-vs-drag</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NEEDS_INTENT</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">014</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-014" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">independent-toast-stack</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NO</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">015</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-015" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">backbutton-doesnt-cancel-rename</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;">
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">016</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-016" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">swipe-left-double-bound</a>
+            <span class="archival-badge retained" style="margin-left:4px; font-size:8px;">STOPPED</span>
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NEEDS_INTENT</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict needs_manual_review_ambiguity">stopped (review)</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">017</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-017" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">three-finger-transform-cap</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">018</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-018" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">highlight-slot-capacity-leak</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">019</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-019" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">sheet-dismiss-vs-carousel</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NEEDS_INTENT</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">020</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-020" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">swipe-actions-vs-reorder-handle</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">021</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-021" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">palm-rejection-recognition-timing</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">022</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-022" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">swipe-complete-recompose-staleness</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">023</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-023" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">physics-arena-registration-bypass</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">024</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-024" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">physics-arena-correct-routing</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">NO</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">025</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-025" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">grabmouse-altab-leak</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">026</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-026" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">midi-surface-disconnect</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">027</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-027" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">extrude-escape-scope</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">028</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-028" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">canvas-tool-arena-exclusivity-bypass</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">029</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-029" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">combo-order-and-animation-staleness</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr >
+          <td style="font-family: var(--font-mono); font-weight: 600; padding: 6px 10px;">030</td>
+          <td style="padding: 6px 10px;">
+            <a href="./cases.html#case-030" style="color: var(--ink-primary); font-weight: 500; text-decoration: none;">timeline-autoscroll-causal-staleness</a>
+            
+          </td>
+          <td style="padding: 6px 10px;"><span class="archival-badge" style="background:var(--bg-secondary); border:1px solid var(--rule-border); font-size:9px;">YES</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td style="padding: 6px 10px;"><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align: right; margin-top: 12px;">
+        <a href="./cases.html" style="font-family: var(--font-mono); font-size: 13px; font-weight: 600;">Open Filterable Case Explorer &rarr;</a>
+      </div>
+    </section>
+
+    <!-- Attempts to Save the Product -->
+    <section class="section-block">
+      <div class="section-label">Engineering Postmortem</div>
+      <h2 class="section-title">Why Productization Failed: Three Architectural Dead Ends</h2>
+      <p class="prose">
+        When early smoke tests revealed that always running Interaction Doctor doubled costs with zero repair benefit, engineering explored three separate mitigation architectures to selectively invoke the skill. All three failed.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 24px; margin-top: 24px;">
+        <div style="background: var(--bg-surface); border: 1px solid var(--rule-border); padding: 24px;">
+          <h3 style="font-family: var(--font-sans); font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--ink-primary);">
+            1. The Universal Semantic Eval Gate Problem
+          </h3>
+          <p class="prose" style="font-size: 14px; margin-bottom: 8px;">
+            <strong>Hypothesis:</strong> Place a fast, cheap upstream classifier prompt in front of the model to decide whether an incoming task contains an interaction-ownership problem before loading the heavy skill.
+          </p>
+          <p class="prose" style="font-size: 14px; margin-bottom: 0;">
+            <strong>Why it failed:</strong> Cascading classifiers have asymmetrical risk. If the gate has even a 10% false negative rate, it permanently locks out the downstream specialist from ever seeing the task. Tuning the gate for zero false negatives forced its recall so wide that it triggered on virtually every UI edit, returning total costs right back to 1.9&times;.
+          </p>
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--rule-border); padding: 24px;">
+          <h3 style="font-family: var(--font-sans); font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--ink-primary);">
+            2. The Self-Routing Failure
+          </h3>
+          <p class="prose" style="font-size: 14px; margin-bottom: 8px;">
+            <strong>Hypothesis:</strong> Give the baseline agent a concise tool or skill description and let the model self-route when it gets stuck or detects ambiguity.
+          </p>
+          <p class="prose" style="font-size: 14px; margin-bottom: 0;">
+            <strong>Why it failed:</strong> Frontier models suffer from severe meta-cognitive blindspots when dealing with interaction bugs. The baseline model confidently believes its first broken patch is correct, so it never experiences the doubt required to trigger an external consultation. Self-routing yielded an invocation rate near zero on the very cases that needed it.
+          </p>
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--rule-border); padding: 24px;">
+          <h3 style="font-family: var(--font-sans); font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--ink-primary);">
+            3. The Native Static Detector Experiment
+          </h3>
+          <p class="prose" style="font-size: 14px; margin-bottom: 8px;">
+            <strong>Hypothesis:</strong> Use lexical AST parsing and static regex triggers in the IDE/CLI to flag nested pointer events and inject the skill deterministically without LLM gating overhead.
+          </p>
+          <p class="prose" style="font-size: 14px; margin-bottom: 0;">
+            <strong>Why it failed:</strong> Static detectors proved completely brittle across custom frameworks and abstractions. They triggered endlessly on standard benign patterns (e.g. nested buttons with proper delegation) while completely missing cross-component lifecycle leaks (e.g. uncancelled RAF loops, background tab listeners, or React Native gesture responders wrapped in hooks).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final Decision Record -->
+    <section class="section-block">
+      <div class="section-label">Disposition Record</div>
+      <h2 class="section-title">Final Product Disposition</h2>
+
+      <div style="background: var(--bg-secondary); border: 2px solid var(--ink-primary); padding: 32px; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; border-bottom: 1px solid var(--rule-border); padding-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div style="font-family: var(--font-mono); font-size: 13px; font-weight: 700; text-transform: uppercase;">
+            ARCHIVAL DISPOSITION DECISION &bull; EXP-202609-ID
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted);">
+            EFFECTIVE DATE: SEPTEMBER 2026
+          </div>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 13px; line-height: 1.8; margin-bottom: 20px;">
+          <div><strong style="display:inline-block; width: 220px;">INTERACTION DOCTOR SKILL:</strong> <span class="archival-badge discontinued">DISCONTINUED</span></div>
+          <div><strong style="display:inline-block; width: 220px;">BENCHMARK &amp; HARNESS:</strong> <span class="archival-badge retained">RETAINED AS RESEARCH ASSET</span></div>
+          <div><strong style="display:inline-block; width: 220px;">EMPIRICAL OBSERVATIONS:</strong> <span class="archival-badge retained">PRESERVED (90 RUNS)</span></div>
+        </div>
+
+        <div class="prose" style="font-size: 14px;">
+          <p>
+            <strong>Core Rationale:</strong> The benchmark demonstrated that modern frontier coding models already possess sufficient latent capability to diagnose and repair well-specified interaction bugs without domain-specific skill intervention. The specialized skill introduced a ~1.91&times; token cost penalty and a ~2.44&times; latency overhead without improving repair outcomes.
+          </p>
+          <p style="margin-bottom: 0;">
+            The benchmark itself, however, remains a uniquely rigorous instrument: it features private behavioral oracles, distinguishes source churn from functional repairs, isolates protocol compliance from actual bug fixes, and rigorously scores ambiguous intent. It is preserved for future evaluations of agent architectures.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    
+    <footer class="site-footer">
+      <div>
+        <span>Interaction Doctor Benchmark &bull; Frozen Research Asset (2026)</span>
+        <span style="margin: 0 8px;">&bull;</span>
+        <span>Independent Variable: Frozen Interaction Doctor v1 Skill</span>
+      </div>
+      <div>
+        <a href="https://github.com/saramjh/interaction-doctor" class="footer-repo-link">Repository Source</a>
+        <span style="margin: 0 8px;">&bull;</span>
+        <a href="./methodology.html">Replication Protocol</a>
+      </div>
+    </footer>
+    
+  </div>
+  <script src="./assets/showroom.js"></script>
+</body>
+</html>

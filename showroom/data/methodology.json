@@ -1,0 +1,89 @@
+{
+  "experimental_design": {
+    "model": "claude-sonnet-5",
+    "effort": "medium",
+    "total_cases": 30,
+    "arms": [
+      {
+        "id": "baseline",
+        "name": "Arm A: Baseline",
+        "description": "Pure frontier model with task prompt only. Measures natural capability on interaction defects."
+      },
+      {
+        "id": "generic",
+        "name": "Arm B: Generic Rigorous Audit",
+        "description": "Same model with generic carefulness/audit instructions injected, controlling for mere prompt thoroughness without specialized domain terminology."
+      },
+      {
+        "id": "doctor",
+        "name": "Arm C: Interaction Doctor v1",
+        "description": "Same model with the frozen Interaction Doctor v1 skill injected into workspace .claude/skills/."
+      }
+    ]
+  },
+  "case_taxonomy": {
+    "total": 30,
+    "yes": {
+      "count": 19,
+      "description": "Defective interaction present. Model is evaluated on whether it successfully diagnoses and repairs the flaw according to hidden tests."
+    },
+    "no": {
+      "count": 5,
+      "description": "Negative control / benign pattern. No defect exists. Model is evaluated on whether it correctly leaves the interaction logic untouched (no-op)."
+    },
+    "needs_intent": {
+      "count": 6,
+      "cases": [
+        "case-004",
+        "case-010",
+        "case-011",
+        "case-013",
+        "case-016",
+        "case-019"
+      ],
+      "description": "Interaction specification is fundamentally ambiguous. Multiple valid policies exist; model must recognize ambiguity and stop for manual review/ask rather than unilaterally guessing."
+    },
+    "unmodeled": {
+      "count": 0,
+      "description": "Explicit note: UNMODELED count is 0. This benchmark pilot does NOT measure handling of unmodeled hardware/input domains."
+    }
+  },
+  "isolation_protocol": {
+    "architecture": "v6 native isolation",
+    "workspace_policy": "Fresh isolated directory per run in TMPDIR outside repository tree. Sequential execution: workspaces built, run, archived, and wiped sequentially.",
+    "tool_surface": "Read, Edit, Write, Glob, Grep, Bash, Skill. WebSearch and WebFetch disallowed.",
+    "permission_mode": "dontAsk with fail-closed inline settings policy denying repository root, cases-private, and external credential paths."
+  },
+  "retry_history": {
+    "cases_001_to_014": "Valid observations gathered on run-01.",
+    "cases_015_to_030": "Initial runs hit Claude API 429 rate/session limits. Failed infrastructure runs preserved in raw archives; valid observations sourced from run-03 after reset.",
+    "rerun_policy": "No successful observation was ever rerun to improve its score."
+  },
+  "preflight_qualification_limitation": {
+    "status": "HOLD (READY_FOR_EMPIRICAL_90_RUNS = False)",
+    "reason": "Model did not execute diagnostic probe appendix instructions embedded in preflight prompt (baseline/generic executed no probes, doctor executed bash probes but missed builtin read probes).",
+    "treatment": "Treated as probe-compliance insufficiency rather than sandbox infrastructure failure. Empirical 90-run execution performed under explicit qualification-gate waiver. Freeze verification and workspace isolation remained 100% active."
+  },
+  "failure_analysis_postmortem": [
+    {
+      "id": "eval_gate",
+      "title": "1. Universal Semantic Eval Gate Problem",
+      "summary": "Attempts to build a lightweight upstream classifier/filter to selectively invoke Interaction Doctor failed: any false negative in the gate permanently denies the specialist the opportunity to inspect and fix the defect, making a cascade filter unsafe."
+    },
+    {
+      "id": "self_routing",
+      "title": "2. Self-Routing Problem",
+      "summary": "Attempts to have the baseline model recognize when it needs to route to the specialized skill failed: baseline models do not reliably detect the very subtle ownership conflicts or ambiguities that warrant the skill."
+    },
+    {
+      "id": "native_detector",
+      "title": "3. Native Detector / Accelerator Experiment",
+      "summary": "Static AST and lexical token analyzers reliably detected canned textbook patterns, but completely broke on novel or bespoke abstractions, generating unacceptable false positives and false negatives that disqualified them as authoritative gates."
+    }
+  ],
+  "final_decision": {
+    "skill_status": "DISCONTINUED",
+    "benchmark_status": "RETAINED",
+    "verdict_statement": "Interaction Doctor v1 provided no repair advantage (19/19 in all arms), imposed ~1.91x cost and ~2.44x wall time, and its ambiguity handling signal (2/6 stopped) was insufficient to justify ongoing maintenance or productization."
+  }
+}

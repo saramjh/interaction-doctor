@@ -1,0 +1,9 @@
+{
+  "required_slots": 90,
+  "found_slots": 90,
+  "missing": [],
+  "duplicates": {},
+  "unexpected": [],
+  "graded_rows": 90
+}
+EMPIRICAL_BATCH_GRADEABLE = True

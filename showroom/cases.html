@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Explorer &bull; Interaction Doctor Benchmark</title>
+  <link rel="stylesheet" href="./assets/showroom.css">
+</head>
+<body>
+  <div class="site-wrapper">
+    
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div>DOSSIER: EXP-ID-2026-V1 &bull; REPO: saramjh/interaction-doctor</div>
+        <div class="masthead-badge-group">
+          <span class="archival-badge discontinued">Skill: Discontinued</span>
+          <span class="archival-badge retained">Benchmark: Retained</span>
+          <span>N = 30 &times; 3 = 90 Runs</span>
+        </div>
+      </div>
+      <div class="masthead-nav-bar">
+        <div class="masthead-title">
+          <a href="./index.html">Interaction Doctor Benchmark</a>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="./index.html" class="">Executive Report</a></li>
+            <li><a href="./cases.html" class="active">Case Matrix (30)</a></li>
+            <li><a href="./methodology.html" class="">Methodology &amp; Replication</a></li>
+            <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub Archive &rarr;</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+
+    <section class="section-block">
+      <div class="section-label">Case Corpus Dossier</div>
+      <h1 class="section-title">Benchmark Case Explorer (30 Fixtures)</h1>
+      <p class="lead-statement">
+        Inspect all 30 benchmark test fixtures, private test oracles, and the 90 comparative observations recorded across Baseline, Generic Rigor, and Doctor v1.
+      </p>
+
+      <!-- Filter Toolbar -->
+      <div class="filter-toolbar">
+        <div class="filter-group">
+          <span class="filter-label">Outcome:</span>
+          <button class="filter-btn active" data-filter-type="outcome" data-filter-val="ALL">All (30)</button>
+          <button class="filter-btn" data-filter-type="outcome" data-filter-val="YES">YES: Defects (19)</button>
+          <button class="filter-btn" data-filter-type="outcome" data-filter-val="NO">NO: Controls (5)</button>
+          <button class="filter-btn" data-filter-type="outcome" data-filter-val="NEEDS_INTENT">NEEDS_INTENT: Ambiguity (6)</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Difficulty:</span>
+          <button class="filter-btn active" data-filter-type="difficulty" data-filter-val="ALL">All</button>
+          <button class="filter-btn" data-filter-type="difficulty" data-filter-val="T1">T1 (Basic)</button>
+          <button class="filter-btn" data-filter-type="difficulty" data-filter-val="T2">T2 (Lifecycle/Multi-Actor)</button>
+        </div>
+
+        <div class="filter-group" style="margin-left: auto;">
+          <input type="text" id="case-search" placeholder="Search case name, ID, runtime..." style="padding: 4px 8px; font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--rule-border); border-radius: var(--radius-sm); width: 220px;">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">
+        <span id="filtered-count">Showing 30 of 30 cases</span>
+        <span>Click any row to open the full test case dossier</span>
+      </div>
+
+      <!-- Case Table -->
+      <div class="archival-table-wrap">
+        <table class="archival-table">
+          <thead>
+            <tr>
+              <th style="width: 48px;">ID</th>
+              <th>Case Name</th>
+              <th style="width: 100px;">Expected</th>
+              <th style="width: 60px;">Tier</th>
+              <th style="width: 140px;">Runtime</th>
+              <th>Arm A: Baseline</th>
+              <th>Arm B: Generic</th>
+              <th>Arm C: Doctor</th>
+            </tr>
+          </thead>
+          <tbody id="cases-table-body">
+            
+        <tr  data-case-id="001" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">001</td>
+          <td>
+            <a href="#case-001" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">media-library</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="002" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">002</td>
+          <td>
+            <a href="#case-002" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">kanban-board</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="003" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">003</td>
+          <td>
+            <a href="#case-003" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">drawing-canvas</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr  data-case-id="004" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">004</td>
+          <td>
+            <a href="#case-004" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">hotkey-vs-literal</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr  data-case-id="005" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">005</td>
+          <td>
+            <a href="#case-005" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">ime-guarded-confirm</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr  data-case-id="006" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">006</td>
+          <td>
+            <a href="#case-006" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">backgrounded-tab-drag</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="007" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">007</td>
+          <td>
+            <a href="#case-007" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">offline-autosave-queue</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="008" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">008</td>
+          <td>
+            <a href="#case-008" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">midi-dual-blend</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js-midi-shim</td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+        </tr>
+        
+        <tr  data-case-id="009" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">009</td>
+          <td>
+            <a href="#case-009" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">debounce-unmount-leak</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="010" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">010</td>
+          <td>
+            <a href="#case-010" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">focus-restore-after-trigger-removal</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;" data-case-id="011" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">011</td>
+          <td>
+            <a href="#case-011" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">shared-canvas-bifurcation</a>
+            <span class="archival-badge retained" style="margin-left: 6px; font-size: 9px;">Doctor Stopped</span>
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict needs_manual_review_ambiguity">stopped (review)</span></td>
+        </tr>
+        
+        <tr  data-case-id="012" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">012</td>
+          <td>
+            <a href="#case-012" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">hold-to-confirm-never-completes</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vue</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="013" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">013</td>
+          <td>
+            <a href="#case-013" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">live-value-vs-drag</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vue</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr  data-case-id="014" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">014</td>
+          <td>
+            <a href="#case-014" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">independent-toast-stack</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vue</td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr  data-case-id="015" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">015</td>
+          <td>
+            <a href="#case-015" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">backbutton-doesnt-cancel-rename</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;" data-case-id="016" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">016</td>
+          <td>
+            <a href="#case-016" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-left-double-bound</a>
+            <span class="archival-badge retained" style="margin-left: 6px; font-size: 9px;">Doctor Stopped</span>
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict needs_manual_review_ambiguity">stopped (review)</span></td>
+        </tr>
+        
+        <tr  data-case-id="017" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">017</td>
+          <td>
+            <a href="#case-017" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">three-finger-transform-cap</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="018" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">018</td>
+          <td>
+            <a href="#case-018" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">highlight-slot-capacity-leak</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="019" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">019</td>
+          <td>
+            <a href="#case-019" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">sheet-dismiss-vs-carousel</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">swiftui-shim</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">intent guess</span></td>
+        </tr>
+        
+        <tr  data-case-id="020" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">020</td>
+          <td>
+            <a href="#case-020" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-actions-vs-reorder-handle</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">swiftui-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="021" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">021</td>
+          <td>
+            <a href="#case-021" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">palm-rejection-recognition-timing</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">compose-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="022" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">022</td>
+          <td>
+            <a href="#case-022" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-complete-recompose-staleness</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">compose-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="023" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">023</td>
+          <td>
+            <a href="#case-023" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">physics-arena-registration-bypass</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">flutter-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="024" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">024</td>
+          <td>
+            <a href="#case-024" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">physics-arena-correct-routing</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">flutter-shim</td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">correct no-op</span></td>
+        </tr>
+        
+        <tr  data-case-id="025" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">025</td>
+          <td>
+            <a href="#case-025" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">grabmouse-altab-leak</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">qt-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="026" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">026</td>
+          <td>
+            <a href="#case-026" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">midi-surface-disconnect</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">qt-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="027" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">027</td>
+          <td>
+            <a href="#case-027" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">extrude-escape-scope</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">cad-viewport-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="028" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">028</td>
+          <td>
+            <a href="#case-028" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">canvas-tool-arena-exclusivity-bypass</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">canvas-arena-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="029" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">029</td>
+          <td>
+            <a href="#case-029" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">combo-order-and-animation-staleness</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">game-ecs-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+        <tr  data-case-id="030" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">030</td>
+          <td>
+            <a href="#case-030" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">timeline-autoscroll-causal-staleness</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">scene-graph-timeline-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+          <td><span class="grid-cell-verdict correct_repair">repair pass</span></td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    
+    <footer class="site-footer">
+      <div>
+        <span>Interaction Doctor Benchmark &bull; Frozen Research Asset (2026)</span>
+        <span style="margin: 0 8px;">&bull;</span>
+        <span>Independent Variable: Frozen Interaction Doctor v1 Skill</span>
+      </div>
+      <div>
+        <a href="https://github.com/saramjh/interaction-doctor" class="footer-repo-link">Repository Source</a>
+        <span style="margin: 0 8px;">&bull;</span>
+        <a href="./methodology.html">Replication Protocol</a>
+      </div>
+    </footer>
+    
+  </div>
+
+  <!-- Detail Slide-Over Drawer -->
+  <div class="case-drawer-overlay" id="case-drawer-overlay">
+    <div class="case-drawer" id="case-drawer">
+      <div class="case-drawer-header">
+        <div style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--ink-muted);">
+          Inspection Drawer
+        </div>
+        <button class="case-drawer-close" id="case-drawer-close">&times; Close</button>
+      </div>
+      <div id="case-drawer-content">
+        <!-- Injected dynamically by showroom.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/showroom.js"></script>
+</body>
+</html>

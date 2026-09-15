@@ -1,0 +1,243 @@
+EXPERIMENT_FREEZE_HASH_VERIFY = PASS
+[
+  {
+    "case_id": "case-001-media-library",
+    "arm": "baseline",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-001-media-library/baseline/run-01",
+    "preflight": true,
+    "contamination_check": "clean",
+    "status": "completed",
+    "returncode": 0,
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/preflight/case-001-media-library/baseline/run-01-20260914T070543997038Z",
+    "provenance": {
+      "git_commit_sha": "dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb",
+      "experiment_freeze_file_sha256": "a16129f998c54ca977b1f7a3490f13b1275c846e5fc1a57ac7d11d95f2d9e9b9",
+      "claude_cli_version": "2.1.270",
+      "claude_launcher_path": "/Users/ojihun/.local/bin/claude",
+      "claude_executable_realpath": "/Users/ojihun/.local/share/claude/versions/2.1.270",
+      "claude_executable_sha256": "a506b6d970a4cf44f6abdb53a81ddcd5d3b0ce042a95c502fe9d1f946bdb8807",
+      "active_sandbox_architecture": "CLAUDE_NATIVE_BASH_SANDBOX",
+      "custom_outer_sandbox_active": false,
+      "model": "claude-sonnet-5",
+      "effort": "medium"
+    },
+    "preflight_validation": {
+      "infrastructure_probe_assertions": {
+        "native_sandboxed_bash_can_execute_node": "HOLD",
+        "external_bash_filesystem_canary_read_fails": "HOLD",
+        "parent_only_environment_canary_absent_from_bash": "HOLD",
+        "arbitrary_external_bash_network_request_fails": "HOLD",
+        "bash_cannot_write_workspace_claude_dir": "HOLD",
+        "normal_fixture_source_remains_writable": "HOLD",
+        "builtin_read_of_external_canary_fails": "HOLD",
+        "builtin_read_through_workspace_symlink_to_external_canary_fails": "HOLD",
+        "no_dangerously_disable_sandbox_fallback_occurred": "PASS"
+      },
+      "tool_surface_status": "PASS",
+      "tool_surface_violations": [],
+      "skill_discoverability_status": "PASS",
+      "skill_discoverability_violations": [],
+      "doctor_skill_invocation_status": "PASS",
+      "model_identity_status": "PASS",
+      "skill_surface_names": [
+        "batch",
+        "claude-api",
+        "code-review",
+        "dataviz",
+        "debug",
+        "design",
+        "design-sync",
+        "doctor",
+        "fewer-permission-prompts",
+        "loop",
+        "run",
+        "run-skill-generator",
+        "schedule",
+        "simplify",
+        "update-config",
+        "verify"
+      ]
+    },
+    "expected_identity": {
+      "git_commit_sha": "dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb",
+      "git_commit_sha_is_valid": true,
+      "experiment_freeze_file_sha256": "a16129f998c54ca977b1f7a3490f13b1275c846e5fc1a57ac7d11d95f2d9e9b9",
+      "claude_cli_version": "2.1.270",
+      "claude_launcher_path": "/Users/ojihun/.local/bin/claude",
+      "claude_executable_realpath": "/Users/ojihun/.local/share/claude/versions/2.1.270",
+      "claude_executable_sha256": "a506b6d970a4cf44f6abdb53a81ddcd5d3b0ce042a95c502fe9d1f946bdb8807",
+      "active_sandbox_architecture": "CLAUDE_NATIVE_BASH_SANDBOX",
+      "custom_outer_sandbox_active": false,
+      "model": "claude-sonnet-5",
+      "effort": "medium",
+      "max_budget_usd": "1.00",
+      "tool_surface": "Read,Edit,Write,Glob,Grep,Bash,Skill",
+      "permission_mode": "dontAsk"
+    }
+  },
+  {
+    "case_id": "case-001-media-library",
+    "arm": "generic",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-001-media-library/generic/run-01",
+    "preflight": true,
+    "contamination_check": "clean",
+    "status": "completed",
+    "returncode": 0,
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/preflight/case-001-media-library/generic/run-01-20260914T070612853736Z",
+    "provenance": {
+      "git_commit_sha": "dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb",
+      "experiment_freeze_file_sha256": "a16129f998c54ca977b1f7a3490f13b1275c846e5fc1a57ac7d11d95f2d9e9b9",
+      "claude_cli_version": "2.1.270",
+      "claude_launcher_path": "/Users/ojihun/.local/bin/claude",
+      "claude_executable_realpath": "/Users/ojihun/.local/share/claude/versions/2.1.270",
+      "claude_executable_sha256": "a506b6d970a4cf44f6abdb53a81ddcd5d3b0ce042a95c502fe9d1f946bdb8807",
+      "active_sandbox_architecture": "CLAUDE_NATIVE_BASH_SANDBOX",
+      "custom_outer_sandbox_active": false,
+      "model": "claude-sonnet-5",
+      "effort": "medium"
+    },
+    "preflight_validation": {
+      "infrastructure_probe_assertions": {
+        "native_sandboxed_bash_can_execute_node": "HOLD",
+        "external_bash_filesystem_canary_read_fails": "HOLD",
+        "parent_only_environment_canary_absent_from_bash": "HOLD",
+        "arbitrary_external_bash_network_request_fails": "HOLD",
+        "bash_cannot_write_workspace_claude_dir": "HOLD",
+        "normal_fixture_source_remains_writable": "HOLD",
+        "builtin_read_of_external_canary_fails": "HOLD",
+        "builtin_read_through_workspace_symlink_to_external_canary_fails": "HOLD",
+        "no_dangerously_disable_sandbox_fallback_occurred": "PASS"
+      },
+      "tool_surface_status": "PASS",
+      "tool_surface_violations": [],
+      "skill_discoverability_status": "PASS",
+      "skill_discoverability_violations": [],
+      "doctor_skill_invocation_status": "PASS",
+      "model_identity_status": "PASS",
+      "skill_surface_names": [
+        "batch",
+        "claude-api",
+        "code-review",
+        "dataviz",
+        "debug",
+        "design",
+        "design-sync",
+        "doctor",
+        "fewer-permission-prompts",
+        "loop",
+        "run",
+        "run-skill-generator",
+        "schedule",
+        "simplify",
+        "update-config",
+        "verify"
+      ]
+    },
+    "expected_identity": {
+      "git_commit_sha": "dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb",
+      "git_commit_sha_is_valid": true,
+      "experiment_freeze_file_sha256": "a16129f998c54ca977b1f7a3490f13b1275c846e5fc1a57ac7d11d95f2d9e9b9",
+      "claude_cli_version": "2.1.270",
+      "claude_launcher_path": "/Users/ojihun/.local/bin/claude",
+      "claude_executable_realpath": "/Users/ojihun/.local/share/claude/versions/2.1.270",
+      "claude_executable_sha256": "a506b6d970a4cf44f6abdb53a81ddcd5d3b0ce042a95c502fe9d1f946bdb8807",
+      "active_sandbox_architecture": "CLAUDE_NATIVE_BASH_SANDBOX",
+      "custom_outer_sandbox_active": false,
+      "model": "claude-sonnet-5",
+      "effort": "medium",
+      "max_budget_usd": "1.00",
+      "tool_surface": "Read,Edit,Write,Glob,Grep,Bash,Skill",
+      "permission_mode": "dontAsk"
+    }
+  },
+  {
+    "case_id": "case-001-media-library",
+    "arm": "doctor",
+    "run_no": 1,
+    "ws_dir": "/var/folders/k7/tx6hr9qd00n2cfk76n9mxh500000gn/T/interaction-doctor-bench/case-001-media-library/doctor/run-01",
+    "preflight": true,
+    "contamination_check": "clean",
+    "status": "completed",
+    "returncode": 0,
+    "archived_at": "/Users/ojihun/DEV/interaction-doctor/benchmark/results/preflight/case-001-media-library/doctor/run-01-20260914T070757996905Z",
+    "provenance": {
+      "git_commit_sha": "dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb",
+      "experiment_freeze_file_sha256": "a16129f998c54ca977b1f7a3490f13b1275c846e5fc1a57ac7d11d95f2d9e9b9",
+      "claude_cli_version": "2.1.270",
+      "claude_launcher_path": "/Users/ojihun/.local/bin/claude",
+      "claude_executable_realpath": "/Users/ojihun/.local/share/claude/versions/2.1.270",
+      "claude_executable_sha256": "a506b6d970a4cf44f6abdb53a81ddcd5d3b0ce042a95c502fe9d1f946bdb8807",
+      "active_sandbox_architecture": "CLAUDE_NATIVE_BASH_SANDBOX",
+      "custom_outer_sandbox_active": false,
+      "model": "claude-sonnet-5",
+      "effort": "medium"
+    },
+    "preflight_validation": {
+      "infrastructure_probe_assertions": {
+        "native_sandboxed_bash_can_execute_node": "PASS",
+        "external_bash_filesystem_canary_read_fails": "PASS",
+        "parent_only_environment_canary_absent_from_bash": "PASS",
+        "arbitrary_external_bash_network_request_fails": "PASS",
+        "bash_cannot_write_workspace_claude_dir": "PASS",
+        "normal_fixture_source_remains_writable": "PASS",
+        "builtin_read_of_external_canary_fails": "HOLD",
+        "builtin_read_through_workspace_symlink_to_external_canary_fails": "HOLD",
+        "no_dangerously_disable_sandbox_fallback_occurred": "PASS"
+      },
+      "tool_surface_status": "PASS",
+      "tool_surface_violations": [],
+      "skill_discoverability_status": "PASS",
+      "skill_discoverability_violations": [],
+      "doctor_skill_invocation_status": "PASS",
+      "model_identity_status": "PASS",
+      "skill_surface_names": [
+        "batch",
+        "claude-api",
+        "code-review",
+        "dataviz",
+        "debug",
+        "design",
+        "design-sync",
+        "doctor",
+        "fewer-permission-prompts",
+        "interaction-doctor",
+        "loop",
+        "run",
+        "run-skill-generator",
+        "schedule",
+        "simplify",
+        "update-config",
+        "verify"
+      ]
+    },
+    "expected_identity": {
+      "git_commit_sha": "dfb9f7997ac46a623b9a291fdd3ccaeba90b5cfb",
+      "git_commit_sha_is_valid": true,
+      "experiment_freeze_file_sha256": "a16129f998c54ca977b1f7a3490f13b1275c846e5fc1a57ac7d11d95f2d9e9b9",
+      "claude_cli_version": "2.1.270",
+      "claude_launcher_path": "/Users/ojihun/.local/bin/claude",
+      "claude_executable_realpath": "/Users/ojihun/.local/share/claude/versions/2.1.270",
+      "claude_executable_sha256": "a506b6d970a4cf44f6abdb53a81ddcd5d3b0ce042a95c502fe9d1f946bdb8807",
+      "active_sandbox_architecture": "CLAUDE_NATIVE_BASH_SANDBOX",
+      "custom_outer_sandbox_active": false,
+      "model": "claude-sonnet-5",
+      "effort": "medium",
+      "max_budget_usd": "1.00",
+      "tool_surface": "Read,Edit,Write,Glob,Grep,Bash,Skill",
+      "permission_mode": "dontAsk"
+    }
+  }
+]
+
+PAID_PREFLIGHT_RUNS_COMPLETED = 3/3
+PREFLIGHT_RUNTIME_ASSERTIONS = HOLD
+PREFLIGHT_TOOL_SURFACE = PASS
+PREFLIGHT_ARM_ISOLATION = PASS
+PREFLIGHT_DOCTOR_SKILL_INVOCATION = PASS
+PREFLIGHT_PROVENANCE = PASS
+PAID_PREFLIGHT = HOLD
+READY_FOR_EMPIRICAL_90_RUNS = False
+
+DO NOT START THE 90 EMPIRICAL RUNS FROM THIS INVOCATION.

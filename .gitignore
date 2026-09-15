@@ -3,3 +3,8 @@ dist/
 .DS_Store
 .env
 evals/node_modules/
+*.zip
+__pycache__/
+*.pyc
+.playwright-mcp/
+.claude/scheduled_tasks.lock

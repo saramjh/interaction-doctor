@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology &amp; Replication &bull; Interaction Doctor Benchmark</title>
+  <link rel="stylesheet" href="./assets/showroom.css">
+</head>
+<body>
+  <div class="site-wrapper">
+    
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div>DOSSIER: EXP-ID-2026-V1 &bull; REPO: saramjh/interaction-doctor</div>
+        <div class="masthead-badge-group">
+          <span class="archival-badge discontinued">Skill: Discontinued</span>
+          <span class="archival-badge retained">Benchmark: Retained</span>
+          <span>N = 30 &times; 3 = 90 Runs</span>
+        </div>
+      </div>
+      <div class="masthead-nav-bar">
+        <div class="masthead-title">
+          <a href="./index.html">Interaction Doctor Benchmark</a>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="./index.html" class="">Executive Report</a></li>
+            <li><a href="./cases.html" class="">Case Matrix (30)</a></li>
+            <li><a href="./methodology.html" class="active">Methodology &amp; Replication</a></li>
+            <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub Archive &rarr;</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+
+    <section class="section-block">
+      <div class="section-label">Experimental Protocol</div>
+      <h1 class="section-title">Benchmark Methodology &amp; Reproducibility Guide</h1>
+      <p class="lead-statement">
+        A complete specification of experimental variables, isolation architecture, scoring oracles, preflight qualification limitations, and replication commands.
+      </p>
+
+      <div class="prose">
+        <h3>1. The Research Question</h3>
+        <p>
+          Does injecting a domain-specialized interaction-ownership coding skill (Interaction Doctor v1) into a frontier coding agent (<code>claude-sonnet-5</code>) improve its ability to diagnose and repair real-world interaction bugs, compared to the baseline agent or a generic rigorous prompt control?
+        </p>
+
+        <h3>2. Three Experimental Arms</h3>
+        <ul>
+          <li><strong>Arm A (Baseline):</strong> The frontier coding model provided solely with the task instructions and the project fixture. Measures the model's natural interaction troubleshooting capabilities.</li>
+          <li><strong>Arm B (Generic Rigor):</strong> The exact same model with a generic "careful review / edge-case audit" instruction appended to the prompt, without any Interaction Doctor terminology or formal protocol. Controls for prompt length and diligence bias.</li>
+          <li><strong>Arm C (Doctor v1):</strong> The exact same model with the frozen Interaction Doctor v1 skill injected into the workspace's <code>.claude/skills/</code> directory and explicit instruction to apply the skill.</li>
+        </ul>
+
+        <h3>3. Isolation Architecture (v6 Native Sandboxing)</h3>
+        <p>
+          Each test observation was executed in an ephemeral, completely isolated workspace created in <code>$TMPDIR/interaction-doctor-bench/</code> outside the repository root. Workspaces were created, executed, graded, archived, and wiped strictly sequentially.
+        </p>
+        <p>
+          Tool access was locked down using Claude Code's native architecture under <code>--permission-mode dontAsk</code>:
+        </p>
+        <ul>
+          <li><strong>File Tools:</strong> Built-in <code>Read</code>, <code>Edit</code>, <code>Write</code>, <code>Glob</code>, and <code>Grep</code> were restricted via inline per-run settings rules to the temporary workspace directory only. Access to the repository root, credential paths (<code>~/.ssh</code>, <code>~/.aws</code>, <code>~/.claude</code>, macOS Keychain), and private test oracles was denied fail-closed.</li>
+          <li><strong>Bash Sandbox:</strong> Spawns were constrained via macOS Seatbelt sandbox policies configured fail-closed (<code>failIfUnavailable: true</code>, <code>network.strictAllowlist: true</code>, <code>network.allowedDomains: []</code>).</li>
+          <li><strong>Disallowed Tools:</strong> Web search and web fetching tools (<code>WebSearch</code>, <code>WebFetch</code>) were explicitly forbidden to prevent web leakage or external retrieval.</li>
+        </ul>
+
+        <h3>4. Private Oracles &amp; Scoring</h3>
+        <p>
+          Grading is entirely deterministic and automated via <code>benchmark/graders/grade_run.py</code>. The evaluated agent is never shown the test assertions or the private ground truth:
+        </p>
+        <ul>
+          <li><strong>Repair Success:</strong> Target assertions in private <code>test.js</code> pass on the agent's edited code.</li>
+          <li><strong>Regression Check:</strong> All non-target assertions that held on the unmodified starting fixture must continue to hold.</li>
+          <li><strong>Source Churn vs Functional Change:</strong> Graders distinguish raw byte diffs (comments, whitespace) from actual behavioral alterations verified by state probes.</li>
+          <li><strong>NEEDS_INTENT Scoring:</strong> On ambiguous tasks, an agent is penalized for unilateral code modifications (intent guessing) and credited only when it identifies the ambiguity and stops to ask for user clarification.</li>
+        </ul>
+
+        <h3>5. Preflight Qualification Limitation (Preserved Caveat)</h3>
+        <div class="verdict-callout" style="border-left-color: var(--status-ambiguity); background: #FFFBEB;">
+          <div class="verdict-callout-title" style="color: var(--status-ambiguity);">Qualification Gate Limitation Note</div>
+          <div class="verdict-callout-text" style="font-size: 14px;">
+            The official paid preflight status before the 90-run batch was <strong>HOLD (READY_FOR_EMPIRICAL_90_RUNS = False)</strong>. This hold was issued because the evaluated models did not execute the diagnostic probe appendix instructions embedded in the preflight prompt. Doctor executed its bash probes successfully but skipped builtin read probes. This was recognized as prompt probe-compliance insufficiency rather than sandbox infrastructure failure; the 90-run empirical batch was executed under an explicit qualification waiver. Freeze verification and workspace isolation remained active throughout.
+          </div>
+        </div>
+
+        <h3>6. Execution History &amp; Retry Policy</h3>
+        <ul>
+          <li><strong>Cases 001–014:</strong> Sourced from valid first-attempt runs (<code>run-01</code>).</li>
+          <li><strong>Cases 015–030:</strong> Initial runs hit Anthropic API 429 concurrency/session limits. Failed infrastructure traces were archived, and valid observations were collected from <code>run-03</code> after the rate-limit window cleared.</li>
+          <li><strong>No Result Cherry-Picking:</strong> No successful or completed run was ever rerun to improve its result.</li>
+        </ul>
+
+        <h3>7. Scope Constraint: UNMODELED Count = 0</h3>
+        <p>
+          All 30 benchmark cases represent modeled interaction paradigms (pointer, touch, keyboard, focus, timing, composition, analog MIDI shims). <strong>The benchmark contains exactly 0 UNMODELED cases</strong>. Consequently, this benchmark makes no empirical claims regarding an agent's ability to recognize or handle unsupported physical interaction modalities.
+        </p>
+
+        <h3>8. How to Reproduce</h3>
+        <p>
+          Researchers with access to Claude Code can verify the benchmark freeze and run the self-tests locally from the repository root:
+        </p>
+        <div class="code-block">
+# 1. Verify freeze integrity against frozen hashes
+python3 benchmark/design/verify_experiment_freeze.py
+
+# 2. Run grader self-tests (verifies scoring logic against ground truth)
+python3 benchmark/graders/grade_run_selftest.py
+
+# 3. Validate showroom dataset against source-of-truth JSON
+python3 scripts/validate_showroom_data.py
+        </div>
+      </div>
+    </section>
+
+    
+    <footer class="site-footer">
+      <div>
+        <span>Interaction Doctor Benchmark &bull; Frozen Research Asset (2026)</span>
+        <span style="margin: 0 8px;">&bull;</span>
+        <span>Independent Variable: Frozen Interaction Doctor v1 Skill</span>
+      </div>
+      <div>
+        <a href="https://github.com/saramjh/interaction-doctor" class="footer-repo-link">Repository Source</a>
+        <span style="margin: 0 8px;">&bull;</span>
+        <a href="./methodology.html">Replication Protocol</a>
+      </div>
+    </footer>
+    
+  </div>
+</body>
+</html>

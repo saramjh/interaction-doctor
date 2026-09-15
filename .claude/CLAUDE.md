@@ -1,40 +1,43 @@
-## UX 표준 계층 — 필독, 모든 인터랙션 구현에 적용
+## Interaction work in this repo
 
-이 프로젝트에는 두 문서가 있다. 인터랙션을 구현하기 전에 반드시 읽는다.
+All interaction-capable code in this project (any input-driven UI or
+runtime behavior — pointer/touch, keyboard, gamepad, XR, accessibility
+activation, etc.) goes through the `interaction-doctor` skill before it is
+considered done:
 
-- research/ux-standards/patterns/ux-standards-architecture.md — 의사결정 절차
-- research/ux-standards/patterns/\*.md — 컴포넌트별 조사 결과 (아직 비어있음, 채워나갈 것)
+- `.claude/skills/interaction-doctor/SKILL.md` — the audit protocol
+- `.claude/skills/interaction-doctor/references/` — the full model
+  (Interaction Claims, ownership relationships, environment/runtime
+  modeling, intent-and-ambiguity protocol, audit modes, closure contract)
 
-### 절대 규칙
+### Absolute rules
 
-1. **명시적 요구가 없으면 추측해서 구현하지 않는다.**
-   레퍼런스/디자인이 있으면 시각 신호로 컴포넌트를 식별한다.
-   식별되면 OS 관성(iOS/Android 실제 앱 동작) → 웹 관행 순으로 조사한다.
-   조사 없이 "이게 표준이겠지"라고 판단해서 짜지 않는다 — 이게 과거
-   가장 심각한 실패였다 (핸들이 있는데 근거 없이 롱프레스를 강제했던 사고).
+1. **No guessing when product intent is undetermined.** Follow
+   `references/intent-and-ambiguity.md` — ask the user, with locatable
+   context, rather than inventing a mechanism or a binary choice.
+2. **Every ownership finding needs a disposition**, not a silent default:
+   `SAFE` / `RESOLVED` / `CONFLICT` / `NEEDS_INTENT` / `UNMODELED`, per
+   `references/closure-contract.md`. Don't report a change as closing an
+   audit while any item is `CONFLICT`, `NEEDS_INTENT`, or `UNMODELED` inside
+   the declared scope.
+3. **Disposition and verification level are separate facts — report both.**
+   `STATIC` (read the code, the logic holds) and `RUNTIME` (actually
+   exercised — a test run, a driven browser/simulator, a live check) are
+   independent of whether an item is closed. A `STATIC`-only item can
+   legitimately close as `SAFE`/`RESOLVED`; never report it as `RUNTIME`-
+   verified, and never withhold closure solely for lacking runtime
+   verification unless the task explicitly required it.
+4. **Revalidate recursively after every fix.** A fix is not done because
+   the reported symptom disappeared — rebuild the affected ownership graph
+   and check neighbors, lifecycle termination, and any relationship the fix
+   itself introduced (`references/audit-modes.md`).
+5. **The `.interaction-doctor/` index, if present, is a cache — never
+   truth.** Current source always wins over a cached ownership map.
 
-2. **모든 인터랙션 판단에 라벨을 붙인다.**
-   [표준] W3C/HIG/Material 공식 문서 인용 가능
-   [관성] 사용자 타겟 플랫폼의 실제 OS/앱에서 직접 확인
-   [관행] 표준 없음, 주요 제품 3개 이상에서 관찰
-   [미확정] 근거 없음 — 추측 대신 사용자에게 확인 요청
-   라벨 없는 인터랙션 판단은 응답에 포함하지 않는다.
-
-3. **자체 점검과 런타임 검증을 구분해서 명시한다.**
-   코드를 읽고 논리가 맞다고 판단한 것 = 자체 점검. "검증됨"이라고
-   부르지 않는다.
-   Playwright로 실제 브라우저를 열어 그 인터랙션을 조작해보고, 스크린샷으로
-   의도한 동작(예: 핸들 드래그 시 즉시 반응, 롱프레스 후 lift 이펙트,
-   재정렬 실제 발생)을 눈으로 확인한 것 = 런타임 검증. 이것만 "검증됨"이라
-   부른다.
-   인터랙션 코드 작성 시 `research/ux-standards/common-pitfalls.md`
-   체크리스트를 §4.5로 통과시킨 뒤에만 자체 점검 완료로 표시한다.
-
-4. **인터랙션 관련 코드를 작성했으면 반드시 Playwright로 실행 확인 후에만
-   완료로 보고한다.** 스크린샷 또는 액션 로그를 결과에 포함시킨다.
-   확인 못 했으면 "자체 점검만 완료, 실행 확인 필요"라고 명시하고 멈춘다.
-
-5. **오염(중첩 충돌) 점검.** 새 인터랙션을 붙일 요소가 이미 다른
-   제스처(스크롤, 다른 드래그 등)를 갖고 있으면, 우선순위를 코드에
-   명시적으로 선언한다 (activation distance/delay, requireFailureOf 등).
-   암묵적으로 겹치게 두지 않는다.
+This project previously used a different, mobile-web-specific gesture
+threshold architecture (fixed px/ms constants, a fixed cluster taxonomy).
+That approach was discarded in favor of the runtime-independent ownership
+model above — do not resurrect the old thresholds/clusters as if they were
+still normative; anything reused from them now exists only as a labeled
+instance inside the new model (see
+`references/adversarial-validation.md`).
