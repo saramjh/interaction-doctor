@@ -30,6 +30,11 @@
             <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub Archive &rarr;</a></li>
           </ul>
         </nav>
+        <div class="lang-switch-group">
+          <a href="./methodology.html" class="lang-btn active">EN</a>
+          <span class="lang-divider">|</span>
+          <a href="./methodology.ko.html" class="lang-btn">한국어</a>
+        </div>
       </div>
     </header>
     
@@ -42,6 +47,7 @@
       </p>
 
       <div class="prose">
+        
         <h3>1. The Research Question</h3>
         <p>
           Does injecting a domain-specialized interaction-ownership coding skill (Interaction Doctor v1) into a frontier coding agent (<code>claude-sonnet-5</code>) improve its ability to diagnose and repair real-world interaction bugs, compared to the baseline agent or a generic rigorous prompt control?
@@ -112,6 +118,7 @@ python3 benchmark/graders/grade_run_selftest.py
 # 3. Validate showroom dataset against source-of-truth JSON
 python3 scripts/validate_showroom_data.py
         </div>
+        
       </div>
     </section>
 

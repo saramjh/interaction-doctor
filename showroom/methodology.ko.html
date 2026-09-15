@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방법론 및 재현 가이드 &bull; Interaction Doctor 벤치마크</title>
+  <link rel="stylesheet" href="./assets/showroom.css">
+</head>
+<body>
+  <div class="site-wrapper">
+    
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div>문서: EXP-ID-2026-V1 &bull; 저장소: saramjh/interaction-doctor</div>
+        <div class="masthead-badge-group">
+          <span class="archival-badge discontinued">스킬: 개발 중단</span>
+          <span class="archival-badge retained">벤치마크: 보존 자산</span>
+          <span>N = 30 &times; 3 = 90회 실행</span>
+        </div>
+      </div>
+      <div class="masthead-nav-bar">
+        <div class="masthead-title">
+          <a href="./index.ko.html">Interaction Doctor 벤치마크</a>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="./index.ko.html" class="">총괄 보고서</a></li>
+            <li><a href="./cases.ko.html" class="">케이스 매트릭스 (30)</a></li>
+            <li><a href="./methodology.ko.html" class="active">방법론 및 재현 가이드</a></li>
+            <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub 저장소 &rarr;</a></li>
+          </ul>
+        </nav>
+        <div class="lang-switch-group">
+          <a href="./methodology.html" class="lang-btn">EN</a>
+          <span class="lang-divider">|</span>
+          <a href="./methodology.ko.html" class="lang-btn active">한국어</a>
+        </div>
+      </div>
+    </header>
+    
+
+    <section class="section-block">
+      <div class="section-label">실험 프로토콜 명세</div>
+      <h1 class="section-title">벤치마크 방법론 및 재현성 가이드</h1>
+      <p class="lead-statement">
+        실험 통제 변수, 격리 아키텍처, 채점 오라클, 사전 적격성 한계(보존된 주의사항) 및 재현 명령어에 대한 완전한 기술 명세서입니다.
+      </p>
+
+      <div class="prose">
+        
+        <h3>1. 연구 질문 (The Research Question)</h3>
+        <p>
+          프론티어 코딩 모델(<code>claude-sonnet-5</code>)에 UI 인터랙션 소유권 특화 스킬(Interaction Doctor v1)을 주입했을 때, 추가 개입이 없는 기본 모델(Baseline) 또는 일반적인 엄격성 프롬프트(Generic Rigor) 대조군과 비교하여 실제 인터랙션 결함을 진단하고 수정하는 능력이 유의미하게 향상되는가?
+        </p>
+
+        <h3>2. 3개 대조 실험군 (Three Experimental Arms)</h3>
+        <ul>
+          <li><strong>A군 (Baseline, 기본 모델):</strong> 추가 스킬이나 특수 지침 없이 순수 태스크 지시문과 대상 프로젝트 픽스처만 제공. 모델의 본원적 인터랙션 디버깅 역량을 측정.</li>
+          <li><strong>B군 (Generic Rigor, 일반 엄격 감사 프롬프트):</strong> 동일 모델에 Interaction Doctor 고유 용어 없이 일반적인 "면밀히 검토하고 엣지 케이스를 감사하라"는 지시만 추가. 프롬프트 길이와 일반적 신중함 편향을 통제.</li>
+          <li><strong>C군 (Doctor v1, 인터랙션 닥터 스킬):</strong> 동일 모델의 워크스페이스 내 <code>.claude/skills/</code> 경로에 동결된 Interaction Doctor v1 스킬을 주입하고 스킬 프로토콜 준수를 명시적으로 지시.</li>
+        </ul>
+
+        <h3>3. 격리 아키텍처 (v6 Native Sandboxing)</h3>
+        <p>
+          모든 테스트 관측치는 저장소 외부의 임시 디렉터리(<code>$TMPDIR/interaction-doctor-bench/</code>)에 생성된 일회성 독립 워크스페이스에서 실행되었습니다. 워크스페이스는 엄격하게 순차적으로 생성, 실행, 채점, 아카이브, 삭제되었습니다.
+        </p>
+        <p>
+          도구 접근은 Claude Code의 네이티브 아키텍처(<code>--permission-mode dontAsk</code>)로 엄격히 통제되었습니다:
+        </p>
+        <ul>
+          <li><strong>파일 도구 통제:</strong> 기본 <code>Read</code>, <code>Edit</code>, <code>Write</code>, <code>Glob</code>, <code>Grep</code> 도구는 실행별 인라인 설정 규칙을 통해 임시 워크스페이스 디렉터리로만 엄격히 제한되었습니다. 저장소 루트, 민감 인증 경로(<code>~/.ssh</code>, <code>~/.aws</code>, <code>~/.claude</code>, macOS Keychain) 및 비공개 테스트 오라클 접근은 Fail-closed 원칙으로 전면 차단되었습니다.</li>
+          <li><strong>Bash 샌드박스:</strong> 프로세스 생성은 macOS Seatbelt 샌드박스 정책을 통해 엄격히 제한되었습니다(<code>failIfUnavailable: true</code>, <code>network.strictAllowlist: true</code>, <code>network.allowedDomains: []</code>).</li>
+          <li><strong>금지 도구:</strong> 외부 데이터 유출이나 웹 검색을 통한 지식 오염을 방지하기 위해 웹 검색 및 가져오기 도구(<code>WebSearch</code>, <code>WebFetch</code>) 사용이 완전히 비활성화되었습니다.</li>
+        </ul>
+
+        <h3>4. 비공개 오라클 및 채점 프로토콜 (Private Oracles &amp; Scoring)</h3>
+        <p>
+          채점은 <code>benchmark/graders/grade_run.py</code>를 통해 100% 자동화되고 결정론적으로 수행되었습니다. 평가 대상 에이전트에게는 비공개 테스트 단언문이나 정답 오라클이 일절 공개되지 않았습니다:
+        </p>
+        <ul>
+          <li><strong>결함 수정 성공 (Repair Success):</strong> 에이전트가 수정한 코드에 대해 비공개 <code>test.js</code>의 목표 단언문이 모두 통과해야 함.</li>
+          <li><strong>기능 퇴행 검사 (Regression Check):</strong> 수정 전 원본 픽스처에서 정상 통과하던 모든 비목표 단언문이 수정 후에도 온전히 통과해야 함.</li>
+          <li><strong>단순 코드 변경(Churn)과 실제 기능 변경 구별:</strong> 채점기는 주석이나 서식 변경 같은 단순 바이트 차이와 상태 프로브로 검증된 실제 동작 변경을 엄격히 구별함.</li>
+          <li><strong>모호성 채점 (NEEDS_INTENT Scoring):</strong> 기획이 불완전한 태스크에서 에이전트가 일방적으로 코드를 수정(의도 추측)하면 감점하며, 모호성을 식별하고 수정을 멈춘 채 사용자 확인을 요청했을 때만 정답으로 인정함.</li>
+        </ul>
+
+        <h3>5. 사전 적격성 한계 (보존된 주의사항, Qualification Gate Limitation)</h3>
+        <div class="verdict-callout" style="border-left-color: var(--status-ambiguity); background: #FFFBEB;">
+          <div class="verdict-callout-title" style="color: var(--status-ambiguity);">사전 적격성 게이트 한계 고지</div>
+          <div class="verdict-callout-text" style="font-size: 14px;">
+            90회 정규 배치 실행 전의 공식 사전 적격성 상태는 <strong>보류(HOLD, READY_FOR_EMPIRICAL_90_RUNS = False)</strong>였습니다. 이 보류 조치는 평가 대상 모델이 프롬프트 부록에 명시된 진단 프로브 명령을 완벽히 실행하지 않았기 때문에 발동되었습니다. 닥터는 bash 프로브는 성공적으로 실행했으나 기본 read 프로브를 건너뛰었습니다. 이는 샌드박스 인프라 결함이 아닌 모델의 프롬프트 프로브 준수 부족으로 규명되었으며, 90회 실증 배치는 명시적인 적격성 유예(waiver) 하에 진행되었습니다. 동결 검증과 워크스페이스 격리는 전체 실험 동안 완벽히 유지되었습니다.
+          </div>
+        </div>
+
+        <h3>6. 실행 이력 및 재시도 정책 (Execution History &amp; Retry Policy)</h3>
+        <ul>
+          <li><strong>001~014번 케이스:</strong> 1차 실행(<code>run-01</code>)에서 오류 없이 정상 수집되었습니다.</li>
+          <li><strong>015~030번 케이스:</strong> 초기 실행 중 Anthropic API 429 동시성/세션 한도에 도달했습니다. 실패한 인프라 트레이스는 모두 보존되었으며, 속도 제한 해제 후 3차 실행(<code>run-03</code>)에서 정상 관측치가 수집되었습니다.</li>
+          <li><strong>결과 선별 재실행 금지:</strong> 결과를 좋게 만들기 위해 성공한 실행을 임의로 재실행한 적은 단 한 번도 없습니다.</li>
+        </ul>
+
+        <h3>7. 스코프 제약: 미모델링 케이스 부재 (UNMODELED Count = 0)</h3>
+        <p>
+          30개 벤치마크 케이스는 모두 모델링 가능한 표준 인터랙션 영역(포인터, 터치, 키보드, 포커스, 타이밍, 합성, 아날로그 MIDI 심)을 다룹니다. <strong>본 벤치마크는 미모델링(UNMODELED) 케이스를 정확히 0개 포함합니다</strong>. 따라서 본 벤치마크는 에이전트가 미지원 물리 인터랙션 양식을 인식하고 거부하는 능력에 대해 어떠한 실증적 주장도 하지 않습니다.
+        </p>
+
+        <h3>8. 재현 방법 안내 (How to Reproduce)</h3>
+        <p>
+          Claude Code 환경을 갖춘 연구자는 저장소 루트에서 동결 무결성을 검증하고 자체 테스트를 로컬에서 즉시 실행할 수 있습니다:
+        </p>
+        <div class="code-block">
+# 1. 동결 해시를 기준으로 파일 무결성 검증
+python3 benchmark/design/verify_experiment_freeze.py
+
+# 2. 채점기 자체 검증 실행 (정답 픽스처에 대한 채점 로직 검증)
+python3 benchmark/graders/grade_run_selftest.py
+
+# 3. 원천 데이터와 쇼룸 데이터 간 일치 검증
+python3 scripts/validate_showroom_data.py
+        </div>
+        
+      </div>
+    </section>
+
+    
+    <footer class="site-footer">
+      <div>
+        <span>Interaction Doctor 벤치마크 &bull; 동결된 연구 자산 (2026)</span>
+        <span style="margin: 0 8px;">&bull;</span>
+        <span>독립 변수: 동결된 Interaction Doctor v1 스킬</span>
+      </div>
+      <div>
+        <a href="https://github.com/saramjh/interaction-doctor" class="footer-repo-link">저장소 소스코드</a>
+        <span style="margin: 0 8px;">&bull;</span>
+        <a href="./methodology.ko.html">재현 프로토콜</a>
+      </div>
+    </footer>
+    
+  </div>
+</body>
+</html>

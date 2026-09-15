@@ -12,13 +12,14 @@
 
 ## 벤치마크 쇼룸 (웹 리포트)
 
-GitHub Pages를 통해 인터랙티브 연구 보고서와 케이스 탐색기를 제공합니다:
+GitHub Pages를 통해 인터랙티브 연구 보고서와 케이스 탐색기를 제공합니다 (상단 메뉴에서 한국어 / 영어 전환 지원):
 
-👉 **[https://saramjh.github.io/interaction-doctor/](https://saramjh.github.io/interaction-doctor/)**
+👉 **[https://saramjh.github.io/interaction-doctor/index.ko.html](https://saramjh.github.io/interaction-doctor/index.ko.html)** (한국어 모드)  
+👉 **[https://saramjh.github.io/interaction-doctor/](https://saramjh.github.io/interaction-doctor/)** (English)
 
-- **총괄 리포트 (`index.html`):** 실험 결과 분석, 리소스 오버헤드, 제품화를 시도했던 3가지 접근법의 실패 원인 분석.
-- **케이스 탐색기 (`cases.html`):** 30개 벤치마크 케이스의 필터링, 태스크 프롬프트 전문, 비공개 테스트 오라클 및 3개 실험군의 세부 실행 텔레메트리 제공.
-- **방법론 및 재현 가이드 (`methodology.html`):** v6 네이티브 샌드박스 격리 구조, 채점 프로토콜, 사전 적격성 한계 및 재현 명령어 안내.
+- **총괄 리포트 (`index.ko.html`):** 실험 결과 분석, 리소스 오버헤드, 제품화를 시도했던 3가지 접근법의 실패 원인 분석.
+- **케이스 탐색기 (`cases.ko.html`):** 30개 벤치마크 케이스의 필터링, 태스크 프롬프트 전문, 비공개 테스트 오라클 및 3개 실험군의 세부 실행 텔레메트리 제공.
+- **방법론 및 재현 가이드 (`methodology.ko.html`):** v6 네이티브 샌드박스 격리 구조, 채점 프로토콜, 사전 적격성 한계 및 재현 명령어 안내.
 
 ---
 

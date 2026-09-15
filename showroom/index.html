@@ -30,6 +30,11 @@
             <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub Archive &rarr;</a></li>
           </ul>
         </nav>
+        <div class="lang-switch-group">
+          <a href="./index.html" class="lang-btn active">EN</a>
+          <span class="lang-divider">|</span>
+          <a href="./index.ko.html" class="lang-btn">한국어</a>
+        </div>
       </div>
     </header>
     
@@ -129,9 +134,9 @@
           <tbody>
             <tr>
               <td><strong>Repair Success (Specified Defects)</strong></td>
-              <td class="num"><strong>19 / 19</strong> (100%)</td>
-              <td class="num"><strong>19 / 19</strong> (100%)</td>
-              <td class="num"><strong>19 / 19</strong> (100%)</td>
+              <td class="num"><strong>19 / 19 (100%)</strong></td>
+              <td class="num"><strong>19 / 19 (100%)</strong></td>
+              <td class="num"><strong>19 / 19 (100%)</strong></td>
               <td>0% lift. Pure parity on well-specified defects.</td>
             </tr>
             <tr>
@@ -242,18 +247,15 @@
             <div class="chart-title">Figure 1: Repair Success on Specified Defects (n=19)</div>
             <div class="chart-subtitle">Denom: 19 YES cases</div>
           </div>
-          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Repair success chart showing 19/19 parity in all arms">
-            <!-- Baseline -->
+          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Repair success chart">
             <text x="10" y="32" font-family="IBM Plex Mono" font-size="12" fill="#161616">Baseline</text>
             <rect x="120" y="18" width="300" height="20" fill="#252525" rx="1" />
             <text x="430" y="33" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">19/19 (100%)</text>
 
-            <!-- Generic -->
             <text x="10" y="77" font-family="IBM Plex Mono" font-size="12" fill="#161616">Generic</text>
             <rect x="120" y="63" width="300" height="20" fill="#6B7075" rx="1" />
             <text x="430" y="78" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">19/19 (100%)</text>
 
-            <!-- Doctor -->
             <text x="10" y="122" font-family="IBM Plex Mono" font-size="12" fill="#A33A2B">Doctor v1</text>
             <rect x="120" y="108" width="300" height="20" fill="#A33A2B" rx="1" />
             <text x="430" y="123" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">19/19 (100%)</text>
@@ -269,18 +271,15 @@
             <div class="chart-title">Figure 2: Total API Cost across 30 Runs ($ USD)</div>
             <div class="chart-subtitle">Denom: 30 runs per arm</div>
           </div>
-          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Cost comparison chart showing Doctor at nearly 2x baseline cost">
-            <!-- Baseline -->
+          <svg viewBox="0 0 500 160" class="svg-chart" role="img" aria-label="Cost comparison chart">
             <text x="10" y="32" font-family="IBM Plex Mono" font-size="12" fill="#161616">Baseline</text>
             <rect x="120" y="18" width="156" height="20" fill="#252525" rx="1" />
             <text x="286" y="33" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">$3.24 (1.00&times;)</text>
 
-            <!-- Generic -->
             <text x="10" y="77" font-family="IBM Plex Mono" font-size="12" fill="#161616">Generic</text>
             <rect x="120" y="63" width="166" height="20" fill="#6B7075" rx="1" />
             <text x="296" y="78" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#161616">$3.44 (1.06&times;)</text>
 
-            <!-- Doctor -->
             <text x="10" y="122" font-family="IBM Plex Mono" font-size="12" fill="#A33A2B">Doctor v1</text>
             <rect x="120" y="108" width="300" height="20" fill="#A33A2B" rx="1" />
             <text x="430" y="123" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#A33A2B">$6.20 (1.91&times;)</text>
@@ -446,7 +445,7 @@
           In <code>case-011-shared-canvas-bifurcation</code> and <code>case-016-swipe-left-double-bound</code>, the conflict directly manifested as two conflicting event handlers attached to the same DOM target. Doctor's ownership graph extraction explicitly flagged the collision and triggered the protocol's <code>NEEDS_INTENT</code> disposition.
         </p>
         <p>
-          Conversely, on <code>case-004</code>, <code>case-010</code>, <code>case-013</code>, and <code>case-019</code>, the ambiguity stemmed from lifecycle scoping or environmental defaults rather than direct simultaneous event bindings. Despite possessing the skill prompt, the model rationalized a "standard" resolution and edited the files anyway.
+          Conversely, on <code>case-004</code>, <code>case-010</code>, <code>case-013</code>, and <code>case-019</code>, the ambiguity stemmed from lifecycle scoping or environmental defaults rather than direct simultaneous event bindings. Despite possessing the skill prompt, the model rationalized a 'standard' resolution and edited the files anyway.
         </p>
       </div>
     </section>

@@ -11,14 +11,15 @@
 ---
 
 ## Benchmark Showroom
-
-An interactive research dossier and postmortem showroom is published on GitHub Pages:
-
-👉 **[https://saramjh.github.io/interaction-doctor/](https://saramjh.github.io/interaction-doctor/)**
-
-- **Executive Report (`index.html`):** Narrative breakdown of empirical results, resource overhead, and why three productization mitigation attempts failed.
-- **Case Explorer (`cases.html`):** Interactive matrix of all 30 benchmark cases, filterable by outcome, difficulty, and runtime, with complete task prompts, hidden oracles, and per-arm telemetry.
-- **Methodology & Replication (`methodology.html`):** Complete isolation architecture, scoring protocols, preflight caveats, and exact replication instructions.
+ 
+An interactive research dossier and postmortem showroom is published on GitHub Pages (with English and Korean modes):
+ 
+👉 **[https://saramjh.github.io/interaction-doctor/](https://saramjh.github.io/interaction-doctor/)** (English)  
+👉 **[https://saramjh.github.io/interaction-doctor/index.ko.html](https://saramjh.github.io/interaction-doctor/index.ko.html)** (한국어)
+ 
+- **Executive Report (`index.html` / `index.ko.html`):** Narrative breakdown of empirical results, resource overhead, and why three productization mitigation attempts failed.
+- **Case Explorer (`cases.html` / `cases.ko.html`):** Interactive matrix of all 30 benchmark cases, filterable by outcome, difficulty, and runtime, with complete task prompts, hidden oracles, and per-arm telemetry.
+- **Methodology & Replication (`methodology.html` / `methodology.ko.html`):** Complete isolation architecture, scoring protocols, preflight caveats, and exact replication instructions.
 
 ---
 

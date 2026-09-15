@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이스 탐색기 &bull; Interaction Doctor 벤치마크</title>
+  <link rel="stylesheet" href="./assets/showroom.css">
+</head>
+<body>
+  <div class="site-wrapper">
+    
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div>문서: EXP-ID-2026-V1 &bull; 저장소: saramjh/interaction-doctor</div>
+        <div class="masthead-badge-group">
+          <span class="archival-badge discontinued">스킬: 개발 중단</span>
+          <span class="archival-badge retained">벤치마크: 보존 자산</span>
+          <span>N = 30 &times; 3 = 90회 실행</span>
+        </div>
+      </div>
+      <div class="masthead-nav-bar">
+        <div class="masthead-title">
+          <a href="./index.ko.html">Interaction Doctor 벤치마크</a>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="./index.ko.html" class="">총괄 보고서</a></li>
+            <li><a href="./cases.ko.html" class="active">케이스 매트릭스 (30)</a></li>
+            <li><a href="./methodology.ko.html" class="">방법론 및 재현 가이드</a></li>
+            <li><a href="https://github.com/saramjh/interaction-doctor" target="_blank" rel="noopener">GitHub 저장소 &rarr;</a></li>
+          </ul>
+        </nav>
+        <div class="lang-switch-group">
+          <a href="./cases.html" class="lang-btn">EN</a>
+          <span class="lang-divider">|</span>
+          <a href="./cases.ko.html" class="lang-btn active">한국어</a>
+        </div>
+      </div>
+    </header>
+    
+
+    <section class="section-block">
+      <div class="section-label">케이스 코퍼스 명세</div>
+      <h1 class="section-title">벤치마크 케이스 탐색기 (30개 픽스처)</h1>
+      <p class="lead-statement">
+        30개 벤치마크 테스트 픽스처, 비공개 테스트 오라클, 베이스라인(A군)·일반 감사(B군)·닥터 v1(C군) 간에 기록된 90회의 비교 관측치를 확인하십시오.
+      </p>
+
+      <!-- Filter Toolbar -->
+      <div class="filter-toolbar">
+        <div class="filter-group">
+          <span class="filter-label">결과 유형:</span>
+          <button class="filter-btn active" data-filter-type="outcome" data-filter-val="ALL">전체 (30)</button>
+          <button class="filter-btn" data-filter-type="outcome" data-filter-val="YES">결함 케이스 (19)</button>
+          <button class="filter-btn" data-filter-type="outcome" data-filter-val="NO">정상 대조군 (5)</button>
+          <button class="filter-btn" data-filter-type="outcome" data-filter-val="NEEDS_INTENT">모호성 (6)</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">난이도:</span>
+          <button class="filter-btn active" data-filter-type="difficulty" data-filter-val="ALL">전체</button>
+          <button class="filter-btn" data-filter-type="difficulty" data-filter-val="T1">T1 (기본)</button>
+          <button class="filter-btn" data-filter-type="difficulty" data-filter-val="T2">T2 (생명주기/다자간)</button>
+        </div>
+
+        <div class="filter-group" style="margin-left: auto;">
+          <input type="text" id="case-search" placeholder="케이스명, ID, 런타임 검색..." style="padding: 4px 8px; font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--rule-border); border-radius: var(--radius-sm); width: 220px;">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">
+        <span id="filtered-count">총 30개 중 30개 케이스 표시 중</span>
+        <span>행을 클릭하면 세부 점검 드로어가 열립니다</span>
+      </div>
+
+      <!-- Case Table -->
+      <div class="archival-table-wrap">
+        <table class="archival-table">
+          <thead>
+            <tr>
+              <th style="width: 48px;">ID</th>
+              <th>케이스명</th>
+              <th style="width: 100px;">기대 결과</th>
+              <th style="width: 60px;">난이도</th>
+              <th style="width: 140px;">런타임</th>
+              <th>A군: 베이스라인</th>
+              <th>B군: 일반 감사</th>
+              <th>C군: 인터랙션 닥터</th>
+            </tr>
+          </thead>
+          <tbody id="cases-table-body">
+            
+        <tr  data-case-id="001" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">001</td>
+          <td>
+            <a href="#case-001" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">media-library</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="002" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">002</td>
+          <td>
+            <a href="#case-002" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">kanban-board</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="003" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">003</td>
+          <td>
+            <a href="#case-003" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">drawing-canvas</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr  data-case-id="004" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">004</td>
+          <td>
+            <a href="#case-004" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">hotkey-vs-literal</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+        </tr>
+        
+        <tr  data-case-id="005" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">005</td>
+          <td>
+            <a href="#case-005" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">ime-guarded-confirm</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr  data-case-id="006" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">006</td>
+          <td>
+            <a href="#case-006" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">backgrounded-tab-drag</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="007" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">007</td>
+          <td>
+            <a href="#case-007" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">offline-autosave-queue</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="008" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">008</td>
+          <td>
+            <a href="#case-008" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">midi-dual-blend</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vanilla-js-midi-shim</td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+        </tr>
+        
+        <tr  data-case-id="009" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">009</td>
+          <td>
+            <a href="#case-009" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">debounce-unmount-leak</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="010" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">010</td>
+          <td>
+            <a href="#case-010" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">focus-restore-after-trigger-removal</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;" data-case-id="011" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">011</td>
+          <td>
+            <a href="#case-011" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">shared-canvas-bifurcation</a>
+            <span class="archival-badge retained" style="margin-left: 6px; font-size: 9px;">닥터 중단</span>
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict needs_manual_review_ambiguity">모호성 중단</span></td>
+        </tr>
+        
+        <tr  data-case-id="012" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">012</td>
+          <td>
+            <a href="#case-012" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">hold-to-confirm-never-completes</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vue</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="013" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">013</td>
+          <td>
+            <a href="#case-013" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">live-value-vs-drag</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vue</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+        </tr>
+        
+        <tr  data-case-id="014" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">014</td>
+          <td>
+            <a href="#case-014" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">independent-toast-stack</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">vue</td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+        </tr>
+        
+        <tr  data-case-id="015" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">015</td>
+          <td>
+            <a href="#case-015" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">backbutton-doesnt-cancel-rename</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr style="background: #FEF3C7;" data-case-id="016" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">016</td>
+          <td>
+            <a href="#case-016" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-left-double-bound</a>
+            <span class="archival-badge retained" style="margin-left: 6px; font-size: 9px;">닥터 중단</span>
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict needs_manual_review_ambiguity">모호성 중단</span></td>
+        </tr>
+        
+        <tr  data-case-id="017" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">017</td>
+          <td>
+            <a href="#case-017" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">three-finger-transform-cap</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="018" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">018</td>
+          <td>
+            <a href="#case-018" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">highlight-slot-capacity-leak</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">react-native</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="019" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">019</td>
+          <td>
+            <a href="#case-019" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">sheet-dismiss-vs-carousel</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NEEDS_INTENT</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">swiftui-shim</td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+          <td><span class="grid-cell-verdict intent_guessing_violation">임의 추측</span></td>
+        </tr>
+        
+        <tr  data-case-id="020" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">020</td>
+          <td>
+            <a href="#case-020" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-actions-vs-reorder-handle</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">swiftui-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="021" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">021</td>
+          <td>
+            <a href="#case-021" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">palm-rejection-recognition-timing</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">compose-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="022" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">022</td>
+          <td>
+            <a href="#case-022" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">swipe-complete-recompose-staleness</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">compose-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="023" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">023</td>
+          <td>
+            <a href="#case-023" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">physics-arena-registration-bypass</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">flutter-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="024" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">024</td>
+          <td>
+            <a href="#case-024" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">physics-arena-correct-routing</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">NO</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">flutter-shim</td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+          <td><span class="grid-cell-verdict unnecessary_source_churn">unnecessary source churn</span></td>
+          <td><span class="grid-cell-verdict correct_no_op">정상 유지</span></td>
+        </tr>
+        
+        <tr  data-case-id="025" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">025</td>
+          <td>
+            <a href="#case-025" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">grabmouse-altab-leak</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T1</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">qt-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="026" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">026</td>
+          <td>
+            <a href="#case-026" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">midi-surface-disconnect</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">qt-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="027" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">027</td>
+          <td>
+            <a href="#case-027" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">extrude-escape-scope</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T2</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">cad-viewport-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="028" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">028</td>
+          <td>
+            <a href="#case-028" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">canvas-tool-arena-exclusivity-bypass</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">canvas-arena-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="029" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">029</td>
+          <td>
+            <a href="#case-029" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">combo-order-and-animation-staleness</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">game-ecs-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+        <tr  data-case-id="030" class="case-row" style="cursor: pointer;">
+          <td style="font-family: var(--font-mono); font-weight: 600;">030</td>
+          <td>
+            <a href="#case-030" class="case-name-link" style="font-weight: 600; color: var(--ink-primary); text-decoration: none;">timeline-autoscroll-causal-staleness</a>
+            
+          </td>
+          <td><span class="archival-badge" style="background: var(--bg-secondary); border: 1px solid var(--rule-border);">YES</span></td>
+          <td style="font-family: var(--font-mono); font-size: 11px;">T3</td>
+          <td style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">scene-graph-timeline-shim</td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+          <td><span class="grid-cell-verdict correct_repair">수정 성공</span></td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    
+    <footer class="site-footer">
+      <div>
+        <span>Interaction Doctor 벤치마크 &bull; 동결된 연구 자산 (2026)</span>
+        <span style="margin: 0 8px;">&bull;</span>
+        <span>독립 변수: 동결된 Interaction Doctor v1 스킬</span>
+      </div>
+      <div>
+        <a href="https://github.com/saramjh/interaction-doctor" class="footer-repo-link">저장소 소스코드</a>
+        <span style="margin: 0 8px;">&bull;</span>
+        <a href="./methodology.ko.html">재현 프로토콜</a>
+      </div>
+    </footer>
+    
+  </div>
+
+  <!-- Detail Slide-Over Drawer -->
+  <div class="case-drawer-overlay" id="case-drawer-overlay">
+    <div class="case-drawer" id="case-drawer">
+      <div class="case-drawer-header">
+        <div style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--ink-muted);">
+          세부 점검 드로어
+        </div>
+        <button class="case-drawer-close" id="case-drawer-close">&times; 닫기</button>
+      </div>
+      <div id="case-drawer-content">
+        <!-- Injected dynamically by showroom.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/showroom.js"></script>
+</body>
+</html>
